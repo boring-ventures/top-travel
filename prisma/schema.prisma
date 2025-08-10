@@ -1,0 +1,288 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+        
+
+enum UserRole {
+  USER
+  SUPERADMIN
+}
+
+// Content publication status used by most CMS entities
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+}
+
+// Currency enumeration for static "from" prices
+enum Currency {
+  BOB
+  USD
+}
+
+// Tags can be categorized for filtering and IA
+enum TagType {
+  REGION
+  THEME
+  DEPARTMENT
+}
+
+// Supported department landings
+enum DepartmentType {
+  WEDDINGS
+  QUINCEANERA
+}
+
+// Testimonials moderation lifecycle
+enum TestimonialStatus {
+  PENDING
+  APPROVED
+  PUBLISHED
+}
+
+model Profile {
+  id            String               @id @default(cuid())
+  userId        String               @unique
+  avatarUrl     String?
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  active        Boolean              @default(true)
+  firstName     String?              @map("first_name")
+  lastName      String?              @map("last_name")
+  role          UserRole             @default(USER)
+
+  @@index([userId])
+  @@map("profiles")
+}
+
+// Destinations (country/city) used for discovery and for linking to packages
+model Destination {
+  id            String        @id @default(cuid())
+  slug          String        @unique
+  country       String
+  city          String
+  description   String?
+  heroImageUrl  String?
+  isFeatured    Boolean       @default(false)
+
+  // Relations
+  packageDestinations PackageDestination[]
+  fixedDepartures     FixedDeparture[]
+  destinationTags     DestinationTag[]
+
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([country, city])
+  @@index([isFeatured])
+}
+
+// Tags taxonomy for regions, themes, departments, etc.
+model Tag {
+  id       String   @id @default(cuid())
+  name     String
+  slug     String   @unique
+  type     TagType
+
+  // Relations
+  packageTags    PackageTag[]
+  destinationTags DestinationTag[]
+
+  @@index([type])
+}
+
+// Explicit M:N between Destination and Tag
+model DestinationTag {
+  destinationId String
+  tagId         String
+
+  destination Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  tag         Tag         @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([destinationId, tagId])
+  @@map("destination_tags")
+  @@index([tagId])
+}
+
+// Core Package entity (pre-built or custom)
+model Package {
+  id               String           @id @default(cuid())
+  slug             String           @unique
+  title            String
+  summary          String?
+  heroImageUrl     String?
+  gallery          Json?
+  itineraryJson    Json?
+  inclusions       String[]
+  exclusions       String[]
+  durationDays     Int?
+  fromPrice        Decimal?
+  currency         Currency?
+  isCustom         Boolean          @default(false)
+  status           ContentStatus    @default(DRAFT)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  // Relations
+  packageDestinations PackageDestination[]
+  packageTags         PackageTag[]
+  offers              Offer[]
+
+  @@index([status])
+  @@index([isCustom])
+  @@index([createdAt])
+}
+
+// Explicit M:N between Package and Destination
+model PackageDestination {
+  packageId     String
+  destinationId String
+
+  package     Package     @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  destination Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+
+  @@id([packageId, destinationId])
+  @@map("package_destinations")
+  @@index([destinationId])
+}
+
+// Explicit M:N between Package and Tag
+model PackageTag {
+  packageId String
+  tagId     String
+
+  package Package @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([packageId, tagId])
+  @@map("package_tags")
+  @@index([tagId])
+}
+
+// Concerts/Events entity
+model Event {
+  id              String         @id @default(cuid())
+  slug            String         @unique
+  title           String
+  artistOrEvent   String
+  locationCity    String?
+  locationCountry String?
+  venue           String?
+  startDate       DateTime
+  endDate         DateTime
+  detailsJson     Json?
+  gallery         Json?
+  fromPrice       Decimal?
+  currency        Currency?
+  status          ContentStatus  @default(DRAFT)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([startDate, endDate])
+  @@index([status])
+}
+
+// Fixed departures (date-bound trips) referencing a Destination
+model FixedDeparture {
+  id            String        @id @default(cuid())
+  slug          String        @unique
+  title         String
+  destinationId String
+  startDate     DateTime
+  endDate       DateTime
+  detailsJson   Json?
+  seatsInfo     String?
+  status        ContentStatus @default(DRAFT)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  destination Destination @relation(fields: [destinationId], references: [id])
+
+  @@index([destinationId])
+  @@index([startDate, endDate])
+  @@index([status])
+}
+
+// Offers powering hero and promos; can link to a Package or an external URL
+model Offer {
+  id             String        @id @default(cuid())
+  title          String
+  subtitle       String?
+  bannerImageUrl String?
+  isFeatured     Boolean       @default(false)
+  startAt        DateTime?
+  endAt          DateTime?
+  status         ContentStatus @default(DRAFT)
+
+  // Either tie to a package or use externalUrl
+  packageId  String?
+  package    Package?   @relation(fields: [packageId], references: [id])
+  externalUrl String?
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([isFeatured])
+  @@index([status])
+  @@index([startAt, endAt])
+}
+
+// Department landing pages: Weddings, Quinceañera
+model Department {
+  id           String          @id @default(cuid())
+  type         DepartmentType  @unique
+  title        String
+  intro        String?
+  heroImageUrl String?
+  themeJson    Json?
+  featuredItemRefs Json?
+
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+}
+
+model Testimonial {
+  id         String            @id @default(cuid())
+  authorName String
+  location   String?
+  rating     Int
+  content    String
+  status     TestimonialStatus @default(PENDING)
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+
+  @@index([status])
+}
+
+model Page {
+  id           String        @id @default(cuid())
+  slug         String        @unique
+  title        String
+  sectionsJson Json?
+  status       ContentStatus @default(DRAFT)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([status])
+}
+
+model WhatsAppTemplate {
+  id           String  @id @default(cuid())
+  name         String  @unique
+  templateBody String
+  isDefault    Boolean @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
