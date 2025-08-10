@@ -1,0 +1,57 @@
+import { NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
+import { DestinationUpdateSchema } from "@/lib/validations/destination";
+import { auth, ensureSuperadmin } from "@/lib/auth";
+
+type Params = { params: { id: string } };
+
+export async function GET(_req: Request, { params }: Params) {
+  try {
+    const item = await prisma.destination.findUnique({
+      where: { id: params.id },
+    });
+    if (!item)
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return NextResponse.json(item);
+  } catch {
+    return NextResponse.json(
+      { error: "Failed to fetch destination" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PATCH(request: Request, { params }: Params) {
+  try {
+    const session = await auth();
+    ensureSuperadmin(session?.user);
+    const json = await request.json();
+    const parsed = DestinationUpdateSchema.parse(json);
+    const updated = await prisma.destination.update({
+      where: { id: params.id },
+      data: parsed,
+    });
+    return NextResponse.json(updated);
+  } catch (error: any) {
+    const status = error?.status ?? 400;
+    return NextResponse.json(
+      { error: error?.message ?? "Failed to update destination" },
+      { status }
+    );
+  }
+}
+
+export async function DELETE(_req: Request, { params }: Params) {
+  try {
+    const session = await auth();
+    ensureSuperadmin(session?.user);
+    await prisma.destination.delete({ where: { id: params.id } });
+    return NextResponse.json({ ok: true });
+  } catch (error: any) {
+    const status = error?.status ?? 400;
+    return NextResponse.json(
+      { error: error?.message ?? "Failed to delete destination" },
+      { status }
+    );
+  }
+}
