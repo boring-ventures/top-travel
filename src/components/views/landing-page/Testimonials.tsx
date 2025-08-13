@@ -14,7 +14,7 @@ export default function Testimonials({ items }: { items: TestimonialItem[] }) {
   return (
     <section id="testimonials" className="py-20 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-12">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-foreground mb-8 sm:mb-12">
           Opiniones de nuestros clientes
         </h2>
         {list.length === 0 ? (
@@ -22,11 +22,11 @@ export default function Testimonials({ items }: { items: TestimonialItem[] }) {
             Pronto publicaremos testimonios.
           </p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
             {list.map((t, idx) => (
               <div
                 key={t.id}
-                className="bg-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 animate-in fade-in slide-in-from-bottom-4 duration-700"
+                className="bg-card rounded-lg p-5 sm:p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 animate-in fade-in slide-in-from-bottom-4 duration-700"
                 style={{ animationDelay: `${idx * 100}ms` }}
               >
                 <div className="flex mb-4" aria-label={`${t.rating} estrellas`}>

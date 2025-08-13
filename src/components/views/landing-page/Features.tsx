@@ -75,7 +75,7 @@ export default function Features() {
           </p>
         </BlurFade>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
           {features.map((feature) => (
             <ShineBorder
               key={feature.id}
@@ -85,7 +85,7 @@ export default function Features() {
               color="rgba(var(--primary), 0.5)"
             >
               <div
-                className="relative p-8"
+                className="relative p-6 sm:p-8"
                 style={{ animationDelay: `${feature.animationDelay}ms` }}
               >
                 <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-primary/10 text-primary mb-6 group-hover:scale-110 transition-transform">
