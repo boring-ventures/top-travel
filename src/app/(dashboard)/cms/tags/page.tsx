@@ -1,8 +1,12 @@
 "use client";
 import Link from "next/link";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
+import { ListHeader } from "@/components/admin/cms/list-header";
+import { SearchInput } from "@/components/admin/cms/search-input";
+import { TableShell } from "@/components/admin/cms/table-shell";
+import { EmptyState } from "@/components/admin/cms/empty-state";
 
 async function fetchTags() {
   const res = await fetch(`/api/tags`);
@@ -16,51 +20,75 @@ export default function CmsTagsList() {
     queryFn: fetchTags,
   });
   const items = data ?? [];
+  const [search, setSearch] = useState("");
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return items;
+    return items.filter((t: any) =>
+      [t.name, t.slug, t.type]
+        .filter(Boolean)
+        .some((v: string) => (v ?? "").toLowerCase().includes(q))
+    );
+  }, [items, search]);
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Tags</h1>
-        <Button asChild size="sm">
-          <Link href="/cms/tags/new">New Tag</Link>
-        </Button>
-      </div>
-      {isLoading ? (
-        <div className="text-sm text-muted-foreground">Loading...</div>
-      ) : error ? (
+      <ListHeader
+        title="Tags"
+        description="Classify content with tags."
+        actions={
+          <Button asChild size="sm">
+            <Link href="/cms/tags/new">New Tag</Link>
+          </Button>
+        }
+      >
+        <SearchInput placeholder="Search tags" onSearch={setSearch} />
+      </ListHeader>
+      {error ? (
         <div className="text-sm text-red-600">Failed to load.</div>
       ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">All Tags</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-auto rounded border">
-              <table className="min-w-full text-sm">
-                <thead className="bg-neutral-50 dark:bg-neutral-900">
-                  <tr>
-                    <th className="px-3 py-2 text-left">Name</th>
-                    <th className="px-3 py-2 text-left">Slug</th>
-                    <th className="px-3 py-2 text-left">Type</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {items.map((t: any) => (
-                    <tr key={t.id} className="border-t hover:bg-muted/40">
-                      <td className="px-3 py-2">
-                        <Link href={`/cms/tags/${t.id}`} className="underline">
-                          {t.name}
-                        </Link>
-                      </td>
-                      <td className="px-3 py-2">{t.slug}</td>
-                      <td className="px-3 py-2">{t.type}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
+        <TableShell
+          title="All Tags"
+          isLoading={isLoading}
+          empty={
+            filtered.length === 0 ? (
+              <EmptyState
+                title={search ? "No tags match your search" : "No tags yet"}
+                description={
+                  search ? "Try a different query." : "Create your first tag."
+                }
+                action={
+                  <Button asChild size="sm">
+                    <Link href="/cms/tags/new">New Tag</Link>
+                  </Button>
+                }
+              />
+            ) : null
+          }
+        >
+          <table className="min-w-full text-sm">
+            <thead className="bg-neutral-50 dark:bg-neutral-900">
+              <tr>
+                <th className="px-3 py-2 text-left">Name</th>
+                <th className="px-3 py-2 text-left">Slug</th>
+                <th className="px-3 py-2 text-left">Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((t: any) => (
+                <tr key={t.id} className="border-t hover:bg-muted/40">
+                  <td className="px-3 py-2">
+                    <Link href={`/cms/tags/${t.id}`} className="underline">
+                      {t.name}
+                    </Link>
+                  </td>
+                  <td className="px-3 py-2">{t.slug}</td>
+                  <td className="px-3 py-2">{t.type}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </TableShell>
       )}
     </div>
   );
