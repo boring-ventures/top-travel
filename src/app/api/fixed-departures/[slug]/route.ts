@@ -3,12 +3,13 @@ import prisma from "@/lib/prisma";
 import { FixedDepartureUpdateSchema } from "@/lib/validations/fixed-departure";
 import { auth, ensureSuperadmin } from "@/lib/auth";
 
-type Params = { params: { slug: string } };
+type Params = { params: Promise<{ slug: string }> };
 
 export async function GET(_req: Request, { params }: Params) {
   try {
+    const { slug } = await params;
     const item = await prisma.fixedDeparture.findUnique({
-      where: { slug: params.slug },
+      where: { slug },
     });
     if (!item)
       return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -25,10 +26,11 @@ export async function PATCH(request: Request, { params }: Params) {
   try {
     const session = await auth();
     ensureSuperadmin(session?.user);
+    const { slug } = await params;
     const json = await request.json();
     const parsed = FixedDepartureUpdateSchema.parse(json);
     const updated = await prisma.fixedDeparture.update({
-      where: { slug: params.slug },
+      where: { slug },
       data: parsed,
     });
     return NextResponse.json(updated);
@@ -45,7 +47,8 @@ export async function DELETE(_req: Request, { params }: Params) {
   try {
     const session = await auth();
     ensureSuperadmin(session?.user);
-    await prisma.fixedDeparture.delete({ where: { slug: params.slug } });
+    const { slug } = await params;
+    await prisma.fixedDeparture.delete({ where: { slug } });
     return NextResponse.json({ ok: true });
   } catch (error: any) {
     const status = error?.status ?? 400;

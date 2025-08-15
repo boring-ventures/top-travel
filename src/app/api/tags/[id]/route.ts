@@ -3,11 +3,12 @@ import prisma from "@/lib/prisma";
 import { TagUpdateSchema } from "@/lib/validations/tag";
 import { auth, ensureSuperadmin } from "@/lib/auth";
 
-type Params = { params: { id: string } };
+type Params = { params: Promise<{ id: string }> };
 
 export async function GET(_req: Request, { params }: Params) {
   try {
-    const item = await prisma.tag.findUnique({ where: { id: params.id } });
+    const { id } = await params;
+    const item = await prisma.tag.findUnique({ where: { id } });
     if (!item)
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     return NextResponse.json(item);
@@ -20,10 +21,11 @@ export async function PATCH(request: Request, { params }: Params) {
   try {
     const session = await auth();
     ensureSuperadmin(session?.user);
+    const { id } = await params;
     const json = await request.json();
     const parsed = TagUpdateSchema.parse(json);
     const updated = await prisma.tag.update({
-      where: { id: params.id },
+      where: { id },
       data: parsed,
     });
     return NextResponse.json(updated);
@@ -40,7 +42,8 @@ export async function DELETE(_req: Request, { params }: Params) {
   try {
     const session = await auth();
     ensureSuperadmin(session?.user);
-    await prisma.tag.delete({ where: { id: params.id } });
+    const { id } = await params;
+    await prisma.tag.delete({ where: { id } });
     return NextResponse.json({ ok: true });
   } catch (error: any) {
     const status = error?.status ?? 400;

@@ -3,12 +3,13 @@ import prisma from "@/lib/prisma";
 import { WhatsAppTemplateUpdateSchema } from "@/lib/validations/whatsapp-template";
 import { auth, ensureSuperadmin } from "@/lib/auth";
 
-type Params = { params: { id: string } };
+type Params = { params: Promise<{ id: string }> };
 
 export async function GET(_req: Request, { params }: Params) {
   try {
+    const { id } = await params;
     const item = await prisma.whatsAppTemplate.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
     if (!item)
       return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -25,10 +26,11 @@ export async function PATCH(request: Request, { params }: Params) {
   try {
     const session = await auth();
     ensureSuperadmin(session?.user);
+    const { id } = await params;
     const json = await request.json();
     const parsed = WhatsAppTemplateUpdateSchema.parse(json);
     const updated = await prisma.whatsAppTemplate.update({
-      where: { id: params.id },
+      where: { id },
       data: parsed,
     });
     return NextResponse.json(updated);
@@ -45,7 +47,8 @@ export async function DELETE(_req: Request, { params }: Params) {
   try {
     const session = await auth();
     ensureSuperadmin(session?.user);
-    await prisma.whatsAppTemplate.delete({ where: { id: params.id } });
+    const { id } = await params;
+    await prisma.whatsAppTemplate.delete({ where: { id } });
     return NextResponse.json({ ok: true });
   } catch (error: any) {
     const status = error?.status ?? 400;

@@ -67,10 +67,15 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    console.log("POST request received for packages");
     const session = await auth();
     ensureSuperadmin(session?.user);
+
     const json = await request.json();
+    console.log("Request body:", json);
+
     const parsed = PackageCreateSchema.parse(json);
+    console.log("Parsed data:", parsed);
 
     const created = await prisma.package.create({
       data: {
@@ -101,8 +106,10 @@ export async function POST(request: Request) {
           : undefined,
       },
     });
+    console.log("Created package:", created);
     return NextResponse.json(created, { status: 201 });
   } catch (error: any) {
+    console.error("Error creating package:", error);
     const status = error?.status ?? 400;
     return NextResponse.json(
       { error: error?.message ?? "Failed to create package" },
