@@ -1,0 +1,332 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  FixedDepartureUpdateInput,
+  FixedDepartureUpdateSchema,
+} from "@/lib/validations/fixed-departure";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useToast } from "@/components/ui/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
+import { Loader2, Edit } from "lucide-react";
+import { FixedDepartureDateRangePicker } from "@/components/admin/forms/fixed-departure-date-range-picker";
+import { DateRange } from "react-day-picker";
+import { z } from "zod";
+import {
+  ContentStatusSchema,
+  NonEmptyStringSchema,
+  SlugSchema,
+} from "@/lib/validations/common";
+
+// Custom schema for the form that includes dateRange
+const FixedDepartureFormSchema = z.object({
+  slug: SlugSchema,
+  title: NonEmptyStringSchema,
+  destinationId: z.string(),
+  dateRange: z
+    .object({
+      from: z.date().optional(),
+      to: z.date().optional(),
+    })
+    .optional(),
+  detailsJson: z.any().optional(),
+  seatsInfo: z.string().optional(),
+  status: ContentStatusSchema.default("DRAFT"),
+});
+
+type FixedDepartureFormInput = z.infer<typeof FixedDepartureFormSchema>;
+
+interface EditFixedDepartureModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  fixedDepartureSlug: string | null;
+}
+
+export function EditFixedDepartureModal({
+  open,
+  onOpenChange,
+  fixedDepartureSlug,
+}: EditFixedDepartureModalProps) {
+  const [submitting, setSubmitting] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [fixedDeparture, setFixedDeparture] = useState<any>(null);
+  const [destinations, setDestinations] = useState<any[]>([]);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const form = useForm<FixedDepartureFormInput>({
+    resolver: zodResolver(FixedDepartureFormSchema),
+    defaultValues: {
+      slug: "",
+      title: "",
+      destinationId: "",
+      dateRange: undefined,
+      detailsJson: undefined,
+      seatsInfo: "",
+      status: "DRAFT",
+    },
+  });
+
+  // Fetch destinations when modal opens
+  useEffect(() => {
+    if (open) {
+      fetch("/api/destinations")
+        .then((res) => res.json())
+        .then((data) => {
+          setDestinations(data.items ?? data ?? []);
+        })
+        .catch(() => {
+          setDestinations([]);
+        });
+    }
+  }, [open]);
+
+  // Fetch fixed departure data when modal opens
+  useEffect(() => {
+    if (open && fixedDepartureSlug) {
+      setLoading(true);
+      fetch(`/api/fixed-departures/${fixedDepartureSlug}`)
+        .then((res) => {
+          if (!res.ok) throw new Error("Error al cargar la salida fija");
+          return res.json();
+        })
+        .then((data) => {
+          setFixedDeparture(data);
+          // Pre-populate form with existing data
+          const dateRange: DateRange | undefined =
+            data.startDate || data.endDate
+              ? {
+                  from: data.startDate ? new Date(data.startDate) : undefined,
+                  to: data.endDate ? new Date(data.endDate) : undefined,
+                }
+              : undefined;
+
+          form.reset({
+            slug: data.slug,
+            title: data.title,
+            destinationId: data.destinationId || "",
+            dateRange,
+            detailsJson: data.detailsJson,
+            seatsInfo: data.seatsInfo || "",
+            status: data.status,
+          });
+        })
+        .catch((error) => {
+          toast({
+            title: "Error",
+            description: error.message || "Error al cargar la salida fija",
+            variant: "destructive",
+          });
+          onOpenChange(false);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [open, fixedDepartureSlug, form, toast, onOpenChange]);
+
+  const handleSubmit = form.handleSubmit(async (values) => {
+    if (!fixedDepartureSlug) return;
+
+    setSubmitting(true);
+    try {
+      // Convert dateRange to startDate and endDate for API compatibility
+      const apiData: any = {
+        ...values,
+        startDate: values.dateRange?.from,
+        endDate: values.dateRange?.to,
+      };
+      delete apiData.dateRange;
+
+      // Clean up empty strings to avoid validation issues
+      Object.keys(apiData).forEach((key) => {
+        if (apiData[key] === "") {
+          delete apiData[key];
+        }
+      });
+
+      const res = await fetch(`/api/fixed-departures/${fixedDepartureSlug}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(apiData),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Error al actualizar la salida fija");
+      }
+
+      toast({
+        title: "Salida fija actualizada",
+        description: "La salida fija se ha actualizado exitosamente.",
+      });
+
+      // Refresh the fixed departures list
+      queryClient.invalidateQueries({ queryKey: ["cms", "fixed-departures"] });
+
+      onOpenChange(false);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Error al actualizar la salida fija",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  });
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="pb-6">
+          <DialogTitle className="text-xl font-semibold flex items-center gap-2">
+            <Edit className="h-5 w-5" />
+            Editar Salida Fija
+          </DialogTitle>
+        </DialogHeader>
+
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="flex items-center gap-2">
+              <Loader2 className="h-5 w-5 animate-spin" />
+              <span>Cargando salida fija...</span>
+            </div>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-6 px-2">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="slug">Slug</Label>
+                <Input
+                  id="slug"
+                  {...form.register("slug")}
+                  placeholder="salida-unica"
+                  className={form.formState.errors.slug ? "border-red-500" : ""}
+                />
+                {form.formState.errors.slug && (
+                  <p className="text-sm text-red-500">
+                    {form.formState.errors.slug.message}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="title">Título</Label>
+                <Input
+                  id="title"
+                  {...form.register("title")}
+                  placeholder="Título de la salida fija"
+                  className={
+                    form.formState.errors.title ? "border-red-500" : ""
+                  }
+                />
+                {form.formState.errors.title && (
+                  <p className="text-sm text-red-500">
+                    {form.formState.errors.title.message}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="destinationId">Destino</Label>
+                <Select
+                  value={form.watch("destinationId")}
+                  onValueChange={(value: string) =>
+                    form.setValue("destinationId", value)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar destino" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {destinations.map((destination) => (
+                      <SelectItem key={destination.id} value={destination.id}>
+                        {destination.city}, {destination.country}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {form.formState.errors.destinationId && (
+                  <p className="text-sm text-red-500">
+                    {form.formState.errors.destinationId.message}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <FixedDepartureDateRangePicker
+              control={form.control}
+              name="dateRange"
+              label="Período del Viaje"
+              placeholder="Seleccionar período del viaje"
+            />
+
+            <div className="space-y-2">
+              <Label htmlFor="seatsInfo">Información de Asientos</Label>
+              <Input
+                id="seatsInfo"
+                {...form.register("seatsInfo")}
+                placeholder="Ej: 20 asientos disponibles"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="status">Estado</Label>
+              <Select
+                value={form.watch("status")}
+                onValueChange={(value: string) =>
+                  form.setValue("status", value as "DRAFT" | "PUBLISHED")
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleccionar estado" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="DRAFT">Borrador</SelectItem>
+                  <SelectItem value="PUBLISHED">Publicado</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                disabled={submitting}
+              >
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={submitting}>
+                {submitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Actualizando...
+                  </>
+                ) : (
+                  "Actualizar Salida Fija"
+                )}
+              </Button>
+            </div>
+          </form>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
