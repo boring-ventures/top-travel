@@ -4,15 +4,20 @@ import prisma from "@/lib/prisma";
 import Image from "next/image";
 
 interface DestinationsPageProps {
-  searchParams?: { country?: string; city?: string; featured?: string };
+  searchParams?: Promise<{
+    country?: string;
+    city?: string;
+    featured?: string;
+  }>;
 }
 
 export default async function DestinationsPage({
   searchParams,
 }: DestinationsPageProps) {
-  const country = searchParams?.country || undefined;
-  const city = searchParams?.city || undefined;
-  const isFeatured = searchParams?.featured === "true" ? true : undefined;
+  const params = await searchParams;
+  const country = params?.country || undefined;
+  const city = params?.city || undefined;
+  const isFeatured = params?.featured === "true" ? true : undefined;
 
   const where: any = { country, city, isFeatured };
   const destinations = await prisma.destination.findMany({

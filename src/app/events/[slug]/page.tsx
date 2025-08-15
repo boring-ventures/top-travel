@@ -3,10 +3,11 @@ import WhatsAppCTA from "@/components/utils/whatsapp-cta";
 import { pageMeta } from "@/lib/seo";
 import Image from "next/image";
 
-type Params = { params: { slug: string } };
+type Params = { params: Promise<{ slug: string }> };
 
 export default async function EventDetailPage({ params }: Params) {
-  const evt = await prisma.event.findUnique({ where: { slug: params.slug } });
+  const { slug } = await params;
+  const evt = await prisma.event.findUnique({ where: { slug } });
   if (!evt || evt.status !== "PUBLISHED") {
     return (
       <div className="container mx-auto py-10">
@@ -61,7 +62,8 @@ export default async function EventDetailPage({ params }: Params) {
 }
 
 export async function generateMetadata({ params }: Params) {
-  const evt = await prisma.event.findUnique({ where: { slug: params.slug } });
+  const { slug } = await params;
+  const evt = await prisma.event.findUnique({ where: { slug } });
   const title = evt?.title ?? "Event";
   const description = evt?.artistOrEvent
     ? `${evt.artistOrEvent} - ${evt.locationCity ?? ""} ${evt.locationCountry ?? ""}`.trim()
@@ -70,7 +72,7 @@ export async function generateMetadata({ params }: Params) {
   return pageMeta({
     title,
     description,
-    urlPath: `/events/${params.slug}`,
+    urlPath: `/events/${slug}`,
     image,
   });
 }

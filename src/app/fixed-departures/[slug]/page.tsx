@@ -3,11 +3,12 @@ import WhatsAppCTA from "@/components/utils/whatsapp-cta";
 import { pageMeta } from "@/lib/seo";
 import Image from "next/image";
 
-type Params = { params: { slug: string } };
+type Params = { params: Promise<{ slug: string }> };
 
 export default async function FixedDepartureDetailPage({ params }: Params) {
+  const { slug } = await params;
   const item = await prisma.fixedDeparture.findUnique({
-    where: { slug: params.slug },
+    where: { slug },
     include: { destination: true },
   });
   if (!item || item.status !== "PUBLISHED") {
@@ -65,19 +66,20 @@ export default async function FixedDepartureDetailPage({ params }: Params) {
 }
 
 export async function generateMetadata({ params }: Params) {
+  const { slug } = await params;
   const item = await prisma.fixedDeparture.findUnique({
-    where: { slug: params.slug },
+    where: { slug },
     include: { destination: true },
   });
   const title = item?.title ?? "Fixed Departure";
   const description = item?.destination
     ? `${item.destination.city}, ${item.destination.country}`
     : undefined;
-  const image = (item as any)?.heroImageUrl ?? undefined;
+  const image = (item as any).heroImageUrl ?? undefined;
   return pageMeta({
     title,
     description,
-    urlPath: `/fixed-departures/${params.slug}`,
+    urlPath: `/fixed-departures/${slug}`,
     image,
   });
 }

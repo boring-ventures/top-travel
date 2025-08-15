@@ -4,11 +4,12 @@ import WhatsAppCTA from "@/components/utils/whatsapp-cta";
 import { pageMeta } from "@/lib/seo";
 import Image from "next/image";
 
-type Params = { params: { slug: string } };
+type Params = { params: Promise<{ slug: string }> };
 
 export default async function DestinationDetailPage({ params }: Params) {
+  const { slug } = await params;
   const dest = await prisma.destination.findUnique({
-    where: { slug: params.slug },
+    where: { slug },
   });
   if (!dest) {
     return (
@@ -80,8 +81,9 @@ export default async function DestinationDetailPage({ params }: Params) {
 }
 
 export async function generateMetadata({ params }: Params) {
+  const { slug } = await params;
   const dest = await prisma.destination.findUnique({
-    where: { slug: params.slug },
+    where: { slug },
   });
   const title = dest ? `${dest.city}, ${dest.country}` : "Destination";
   const description = dest?.description ?? undefined;
@@ -89,7 +91,7 @@ export async function generateMetadata({ params }: Params) {
   return pageMeta({
     title,
     description,
-    urlPath: `/destinations/${params.slug}`,
+    urlPath: `/destinations/${slug}`,
     image,
   });
 }

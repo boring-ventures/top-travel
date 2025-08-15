@@ -4,15 +4,20 @@ import prisma from "@/lib/prisma";
 import Image from "next/image";
 
 interface FDPageProps {
-  searchParams?: { destinationId?: string; from?: string; to?: string };
+  searchParams?: Promise<{
+    destinationId?: string;
+    from?: string;
+    to?: string;
+  }>;
 }
 
 export default async function FixedDeparturesPage({
   searchParams,
 }: FDPageProps) {
-  const destinationId = searchParams?.destinationId || undefined;
-  const from = searchParams?.from;
-  const to = searchParams?.to;
+  const params = await searchParams;
+  const destinationId = params?.destinationId || undefined;
+  const from = params?.from;
+  const to = params?.to;
 
   const where: any = {
     status: "PUBLISHED",

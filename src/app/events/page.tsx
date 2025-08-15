@@ -4,19 +4,20 @@ import prisma from "@/lib/prisma";
 import Image from "next/image";
 
 interface EventsPageProps {
-  searchParams?: {
+  searchParams?: Promise<{
     country?: string;
     city?: string;
     from?: string;
     to?: string;
-  };
+  }>;
 }
 
 export default async function EventsPage({ searchParams }: EventsPageProps) {
-  const country = searchParams?.country || undefined;
-  const city = searchParams?.city || undefined;
-  const from = searchParams?.from;
-  const to = searchParams?.to;
+  const params = await searchParams;
+  const country = params?.country || undefined;
+  const city = params?.city || undefined;
+  const from = params?.from;
+  const to = params?.to;
 
   const where: any = {
     status: "PUBLISHED",
