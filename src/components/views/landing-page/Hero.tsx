@@ -2,64 +2,66 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { useMemo } from "react";
+import { ArrowRight, Sparkles, Music2, Heart, MapPin } from "lucide-react";
 import { SparklesText } from "@/components/magicui/sparkles-text";
 import { BoxReveal } from "@/components/magicui/box-reveal";
 import { ShineBorder } from "@/components/magicui/shine-border";
 import { BlurFade } from "@/components/magicui/blur-fade";
 import { WhatsAppCTA } from "@/components/utils/whatsapp-cta";
+import { Button } from "@/components/ui/button";
 
 type HeroItem = { src: string; title: string; href: string; subtitle?: string };
 type HeroProps = { items?: HeroItem[] };
 
 export default function Hero({ items = [] }: HeroProps) {
-  const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    if (!items.length) return;
-    const id = setInterval(() => {
-      setIndex((i) => (i + 1) % items.length);
-    }, 4500);
-    return () => clearInterval(id);
-  }, [items.length]);
-  const current = items[index];
+  const featured = items[0];
+  const isVideo = useMemo(() => {
+    if (!featured?.src) return false;
+    return /(\.mp4|\.webm|\.ogg)(\?.*)?$/i.test(featured.src);
+  }, [featured?.src]);
   return (
-    <section className="relative overflow-hidden">
-      {/* Background slideshow */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-radial from-primary/15 via-transparent to-transparent" />
-        {items.length > 0 ? (
-          items.slice(0, 6).map((it, i) => (
-            <motion.div
-              key={`${it.src}-${i}`}
-              className="absolute inset-0"
-              initial={{ opacity: i === 0 ? 1 : 0 }}
-              animate={{ opacity: i === index ? 1 : 0 }}
-              transition={{ duration: 0.8, ease: "easeInOut" }}
+    <section
+      className="relative overflow-hidden"
+      aria-label="GABYTOPTRAVEL hero"
+      role="region"
+    >
+      {/* Background media: single featured image or video */}
+      <div className="absolute inset-0 -z-10">
+        {featured ? (
+          isVideo ? (
+            <video
+              className="absolute inset-0 h-full w-full object-cover"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              aria-label={featured.title}
             >
-              <Image
-                src={it.src}
-                alt={it.title || "Hero"}
-                fill
-                priority={i === 0}
-                className="object-cover"
-                sizes="100vw"
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/30 to-background" />
-            </motion.div>
-          ))
-        ) : (
-          <div className="absolute inset-0">
+              <source src={featured.src} />
+            </video>
+          ) : (
             <Image
-              src="/window.svg"
-              alt="Travel"
+              src={featured.src}
+              alt={featured.title || "Hero"}
               fill
-              className="object-cover opacity-40"
+              priority
+              className="object-cover"
+              sizes="100vw"
             />
-          </div>
+          )
+        ) : (
+          <Image
+            src="/window.svg"
+            alt="Travel"
+            fill
+            className="object-cover opacity-40"
+          />
         )}
+        {/* Overlays for readability */}
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
       </div>
 
       {/* Foreground content */}
@@ -99,27 +101,74 @@ export default function Hero({ items = [] }: HeroProps) {
                       label="Consultar por WhatsApp"
                       size="lg"
                     />
-                    {current ? (
+                    {featured ? (
                       <ShineBorder className="rounded-md">
                         <Link
-                          href={current.href}
+                          href={featured.href}
                           className="inline-flex items-center rounded-md px-6 py-3 text-sm font-medium text-foreground hover:text-primary transition-colors"
                         >
-                          Ver: {current.title}
+                          Ver: {featured.title}
                           <ArrowRight className="ml-2" size={20} />
                         </Link>
                       </ShineBorder>
                     ) : null}
                   </div>
+                  {/* Quick niche links for fast discovery */}
+                  <div className="mt-4 flex flex-wrap items-center gap-2">
+                    <Button
+                      asChild
+                      variant="outline"
+                      size="sm"
+                      className="gap-2"
+                    >
+                      <Link href="/events" aria-label="Conciertos y Eventos">
+                        <Music2 className="h-4 w-4" aria-hidden="true" />
+                        Conciertos y Eventos
+                      </Link>
+                    </Button>
+                    <Button
+                      asChild
+                      variant="outline"
+                      size="sm"
+                      className="gap-2"
+                    >
+                      <Link href="/weddings" aria-label="Bodas Destino">
+                        <Heart className="h-4 w-4" aria-hidden="true" />
+                        Bodas Destino
+                      </Link>
+                    </Button>
+                    <Button
+                      asChild
+                      variant="outline"
+                      size="sm"
+                      className="gap-2"
+                    >
+                      <Link href="/quinceanera" aria-label="Quinceañeras">
+                        <Sparkles className="h-4 w-4" aria-hidden="true" />
+                        Quinceañeras
+                      </Link>
+                    </Button>
+                    <Button
+                      asChild
+                      variant="outline"
+                      size="sm"
+                      className="gap-2"
+                    >
+                      <Link href="/destinations" aria-label="Destinos Top">
+                        <MapPin className="h-4 w-4" aria-hidden="true" />
+                        Destinos Top
+                      </Link>
+                    </Button>
+                  </div>
                 </BlurFade>
               </div>
 
               {/* Current slide caption */}
-              {current ? (
+              {featured ? (
                 <div className="mt-6 text-sm text-muted-foreground">
                   Destacado:{" "}
                   <span className="text-foreground font-medium">
-                    {current.title}
+                    {featured.title}
                   </span>
                 </div>
               ) : null}
