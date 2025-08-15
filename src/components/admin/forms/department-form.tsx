@@ -18,7 +18,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 
 type DepartmentFormProps = {
   onSuccess?: () => void;
@@ -80,24 +88,29 @@ export function DepartmentForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={handleSubmit} className="space-y-6 max-w-xl">
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="type"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Type</FormLabel>
-                <FormControl>
-                  <select
-                    className="w-full rounded border px-3 py-2 text-sm"
-                    {...field}
-                    disabled={disableType}
-                  >
-                    <option value="WEDDINGS">WEDDINGS</option>
-                    <option value="QUINCEANERA">QUINCEANERA</option>
-                  </select>
-                </FormControl>
+                <FormLabel>Tipo de Departamento</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  disabled={disableType}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccionar tipo" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="WEDDINGS">Bodas</SelectItem>
+                    <SelectItem value="QUINCEANERA">Quinceañera</SelectItem>
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
@@ -107,48 +120,66 @@ export function DepartmentForm({
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Title</FormLabel>
+                <FormLabel>Título</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input 
+                    placeholder="Título del departamento" 
+                    {...field} 
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
+        
         <FormField
           control={form.control}
           name="intro"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Intro</FormLabel>
+              <FormLabel>Introducción</FormLabel>
               <FormControl>
-                <Textarea rows={3} placeholder="Short intro" {...field} />
+                <Textarea 
+                  rows={4} 
+                  placeholder="Breve descripción del departamento..." 
+                  {...field} 
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+        
         <FormField
           control={form.control}
           name="heroImageUrl"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Hero Image URL</FormLabel>
+              <FormLabel>URL de Imagen Principal</FormLabel>
               <FormControl>
-                <Input placeholder="https://..." {...field} />
+                <Input 
+                  placeholder="https://ejemplo.com/imagen.jpg" 
+                  {...field} 
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <div className="pt-2">
-          <Button type="submit" disabled={submitting}>
-            {submitting
-              ? "Saving..."
-              : initialValues?.type
-                ? "Save Changes"
-                : "Create Department"}
+        
+        <div className="flex justify-end pt-4">
+          <Button type="submit" disabled={submitting} className="min-w-[120px]">
+            {submitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Guardando...
+              </>
+            ) : initialValues?.type ? (
+              "Guardar Cambios"
+            ) : (
+              "Crear Departamento"
+            )}
           </Button>
         </div>
       </form>
