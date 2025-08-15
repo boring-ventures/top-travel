@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Disable standalone output on Windows to avoid symlink issues
+  ...(process.platform === 'win32' && { output: undefined }),
   images: {
     remotePatterns: [
       {
