@@ -23,16 +23,33 @@ function getClassesForStatus(status: string) {
   }
 }
 
+function getStatusLabel(status: string) {
+  const s = status.toUpperCase();
+  switch (s) {
+    case "PUBLISHED":
+      return "Publicado";
+    case "APPROVED":
+      return "Aprobado";
+    case "PENDING":
+      return "Pendiente";
+    case "DRAFT":
+      return "Borrador";
+    case "REJECTED":
+      return "Rechazado";
+    case "ERROR":
+      return "Error";
+    case "ARCHIVED":
+      return "Archivado";
+    default:
+      return status;
+  }
+}
+
 export function StatusBadge({ status }: { status: StatusValue }) {
   if (!status) return null;
   return (
     <Badge variant="outline" className={getClassesForStatus(String(status))}>
-      {String(status)}
+      {getStatusLabel(String(status))}
     </Badge>
   );
 }
-
-
-
-
-
