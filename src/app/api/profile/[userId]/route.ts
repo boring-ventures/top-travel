@@ -11,7 +11,10 @@ export async function GET(
     const userId = (await params).userId;
 
     // Create Supabase client with awaited cookies
-    const supabase = createRouteHandlerClient({ cookies });
+    const cookieStore = await cookies();
+    const supabase = createRouteHandlerClient({
+      cookies: () => Promise.resolve(cookieStore),
+    });
 
     // Get the current user's session
     const {
@@ -62,7 +65,10 @@ export async function PATCH(
     const userId = (await params).userId;
 
     // Create Supabase client with awaited cookies
-    const supabase = createRouteHandlerClient({ cookies });
+    const cookieStore = await cookies();
+    const supabase = createRouteHandlerClient({
+      cookies: () => Promise.resolve(cookieStore),
+    });
 
     // Get the current user's session
     const {
