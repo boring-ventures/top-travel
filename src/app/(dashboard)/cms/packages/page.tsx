@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -8,20 +7,34 @@ import { ListHeader } from "@/components/admin/cms/list-header";
 import { SearchInput } from "@/components/admin/cms/search-input";
 import { TableShell } from "@/components/admin/cms/table-shell";
 import { EmptyState } from "@/components/admin/cms/empty-state";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  NewPackageModal,
+  EditPackageModal,
+  ViewPackageModal,
+  DeletePackageDialog,
+} from "@/components/admin/cms/packages";
+import { Plus } from "lucide-react";
 
 async function fetchPackages() {
   const res = await fetch(`/api/packages?page=1&pageSize=20`);
-  if (!res.ok) throw new Error("Failed to load packages");
+  if (!res.ok) throw new Error("Error al cargar los paquetes");
   return res.json();
 }
 
 export default function CmsPackagesList() {
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["cms", "packages", { page: 1, pageSize: 20 }],
     queryFn: fetchPackages,
   });
   const items = data?.items ?? [];
   const [search, setSearch] = useState("");
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return items;
@@ -32,71 +45,106 @@ export default function CmsPackagesList() {
     );
   }, [items, search]);
 
+  const handleSuccess = () => {
+    refetch();
+  };
+
   return (
-    <div className="space-y-4">
-      <ListHeader
-        title="Packages"
-        description="Create and manage travel packages."
-        actions={
-          <Button asChild size="sm">
-            <Link href="/cms/packages/new">New Package</Link>
-          </Button>
-        }
-      >
-        <SearchInput placeholder="Search packages" onSearch={setSearch} />
-      </ListHeader>
-      {error ? (
-        <div className="text-sm text-red-600">Failed to load.</div>
-      ) : (
-        <TableShell
-          title="All Packages"
-          isLoading={isLoading}
-          empty={
-            filtered.length === 0 ? (
-              <EmptyState
-                title={search ? "No packages match your search" : "No packages yet"}
-                description={
-                  search ? "Try a different query." : "Create your first package."
-                }
-                action={
-                  <Button asChild size="sm">
-                    <Link href="/cms/packages/new">New Package</Link>
-                  </Button>
-                }
-              />
-            ) : null
-          }
+    <TooltipProvider>
+      <div className="space-y-4">
+        <ListHeader
+          title="Paquetes"
+          description="Crear y gestionar paquetes de viaje."
+          actions={<NewPackageModal onSuccess={handleSuccess} />}
         >
-          <table className="min-w-full text-sm">
-            <thead className="bg-neutral-50 dark:bg-neutral-900">
-              <tr>
-                <th className="px-3 py-2 text-left">Title</th>
-                <th className="px-3 py-2 text-left">Custom</th>
-                <th className="px-3 py-2 text-left">From Price</th>
-                <th className="px-3 py-2 text-left">Currency</th>
-                <th className="px-3 py-2 text-left">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((p: any) => (
-                <tr key={p.id} className="border-t hover:bg-muted/40">
-                  <td className="px-3 py-2">
-                    <Link href={`/cms/packages/${p.slug}`} className="underline">
-                      {p.title}
-                    </Link>
-                  </td>
-                  <td className="px-3 py-2">{p.isCustom ? "Yes" : "No"}</td>
-                  <td className="px-3 py-2">{p.fromPrice ?? "-"}</td>
-                  <td className="px-3 py-2">{p.currency ?? "-"}</td>
-                  <td className="px-3 py-2">
-                    <StatusBadge status={p.status} />
-                  </td>
+          <SearchInput placeholder="Buscar paquetes" onSearch={setSearch} />
+        </ListHeader>
+
+        {error ? (
+          <div className="text-sm text-red-600">
+            Error al cargar los paquetes.
+          </div>
+        ) : (
+          <TableShell
+            title="Todos los Paquetes"
+            isLoading={isLoading}
+            empty={
+              filtered.length === 0 ? (
+                <EmptyState
+                  title={
+                    search
+                      ? "No se encontraron paquetes"
+                      : "Aún no hay paquetes"
+                  }
+                  description={
+                    search
+                      ? "Intenta con otra búsqueda."
+                      : "Crea tu primer paquete."
+                  }
+                  action={<NewPackageModal onSuccess={handleSuccess} />}
+                />
+              ) : null
+            }
+          >
+            <table className="min-w-full text-sm">
+              <thead className="bg-neutral-50 dark:bg-neutral-900">
+                <tr>
+                  <th className="px-3 py-2 text-left">Título</th>
+                  <th className="px-3 py-2 text-left">Slug</th>
+                  <th className="px-3 py-2 text-left">Personalizado</th>
+                  <th className="px-3 py-2 text-left">Precio desde</th>
+                  <th className="px-3 py-2 text-left">Moneda</th>
+                  <th className="px-3 py-2 text-left">Estado</th>
+                  <th className="px-3 py-2 text-right">Acciones</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </TableShell>
-      )}
-    </div>
+              </thead>
+              <tbody>
+                {filtered.map((p: any) => (
+                  <tr key={p.id} className="border-t hover:bg-muted/40">
+                    <td className="px-3 py-2">
+                      <span className="font-medium">{p.title}</span>
+                    </td>
+                    <td className="px-3 py-2">
+                      <code className="text-xs bg-muted px-1 py-0.5 rounded">
+                        {p.slug || "—"}
+                      </code>
+                    </td>
+                    <td className="px-3 py-2">
+                      {p.isCustom ? (
+                        <span className="text-green-600 font-medium">Sí</span>
+                      ) : (
+                        <span className="text-muted-foreground">No</span>
+                      )}
+                    </td>
+                    <td className="px-3 py-2">{p.fromPrice ?? "-"}</td>
+                    <td className="px-3 py-2">{p.currency ?? "-"}</td>
+                    <td className="px-3 py-2">
+                      <StatusBadge status={p.status} />
+                    </td>
+                    <td className="px-3 py-2 text-right">
+                      <div className="flex justify-end gap-1">
+                        <ViewPackageModal packageSlug={p.slug} />
+                        <EditPackageModal
+                          packageSlug={p.slug}
+                          onSuccess={handleSuccess}
+                        />
+                        <DeletePackageDialog
+                          packageSlug={p.slug}
+                          packageTitle={p.title}
+                          onSuccess={handleSuccess}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </TableShell>
+        )}
+
+        {/* Modals */}
+        <NewPackageModal onSuccess={handleSuccess} />
+      </div>
+    </TooltipProvider>
   );
 }

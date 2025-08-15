@@ -1,49 +1,47 @@
 "use client";
-import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Badge } from "@/components/ui/badge";
+import { useQuery } from "@tanstack/react-query";
 import { ListHeader } from "@/components/admin/cms/list-header";
 import { SearchInput } from "@/components/admin/cms/search-input";
 import { TableShell } from "@/components/admin/cms/table-shell";
 import { EmptyState } from "@/components/admin/cms/empty-state";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Separator } from "@/components/ui/separator";
-import { Eye, Pencil, Trash2 } from "lucide-react";
-import { DestinationForm } from "@/components/admin/forms/destination-form";
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  NewDestinationModal,
+  EditDestinationModal,
+  ViewDestinationModal,
+  DeleteDestinationDialog,
+} from "@/components/admin/cms/destinations";
+import { Eye, Edit, Trash2, Plus, Star } from "lucide-react";
 
 async function fetchDestinations() {
   const res = await fetch(`/api/destinations?page=1&pageSize=20`);
-  if (!res.ok) throw new Error("Failed to load destinations");
+  if (!res.ok) throw new Error("Error al cargar los destinos");
   return res.json();
 }
 
 export default function CmsDestinationsList() {
-  const queryClient = useQueryClient();
   const { data, isLoading, error } = useQuery({
     queryKey: ["cms", "destinations", { page: 1, pageSize: 20 }],
     queryFn: fetchDestinations,
   });
   const items = data?.items ?? [];
   const [search, setSearch] = useState("");
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
-  const [deleting, setDeleting] = useState(false);
-  const [createOpen, setCreateOpen] = useState(false);
-  const [viewOpen, setViewOpen] = useState(false);
-  const [viewId, setViewId] = useState<string | null>(null);
-  const [viewItem, setViewItem] = useState<any | null>(null);
-  const [viewLoading, setViewLoading] = useState(false);
-  const [editOpen, setEditOpen] = useState(false);
-  const [editId, setEditId] = useState<string | null>(null);
-  const [editItem, setEditItem] = useState<any | null>(null);
-  const [editLoading, setEditLoading] = useState(false);
+
+  // Modal states
+  const [newModalOpen, setNewModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedDestination, setSelectedDestination] = useState<any>(null);
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return items;
@@ -54,318 +52,181 @@ export default function CmsDestinationsList() {
     );
   }, [items, search]);
 
-  const handleConfirmDelete = async () => {
-    if (!deleteTarget) return;
-    setDeleting(true);
-    try {
-      const res = await fetch(`/api/destinations/${deleteTarget}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) throw new Error("Failed to delete");
-      await queryClient.invalidateQueries({
-        queryKey: ["cms", "destinations"],
-      });
-    } finally {
-      setDeleting(false);
-      setConfirmOpen(false);
-      setDeleteTarget(null);
-    }
+  const handleView = (destination: any) => {
+    setSelectedDestination(destination);
+    setViewModalOpen(true);
   };
 
-  const openView = (id: string) => {
-    setViewId(id);
-    setViewItem(null);
-    setViewLoading(true);
-    setViewOpen(true);
+  const handleEdit = (destination: any) => {
+    setSelectedDestination(destination);
+    setEditModalOpen(true);
   };
 
-  const openEdit = (id: string) => {
-    setEditId(id);
-    setEditItem(null);
-    setEditLoading(true);
-    setEditOpen(true);
+  const handleDelete = (destination: any) => {
+    setSelectedDestination(destination);
+    setDeleteDialogOpen(true);
   };
-
-  useEffect(() => {
-    let isMounted = true;
-    if (viewOpen && viewId) {
-      (async () => {
-        try {
-          const res = await fetch(`/api/destinations/${viewId}`);
-          if (res.ok) {
-            const json = await res.json();
-            if (isMounted) setViewItem(json);
-          }
-        } finally {
-          if (isMounted) setViewLoading(false);
-        }
-      })();
-    }
-    return () => {
-      isMounted = false;
-    };
-  }, [viewOpen, viewId]);
-
-  useEffect(() => {
-    let isMounted = true;
-    if (editOpen && editId) {
-      (async () => {
-        try {
-          const res = await fetch(`/api/destinations/${editId}`);
-          if (res.ok) {
-            const json = await res.json();
-            if (isMounted) setEditItem(json);
-          }
-        } finally {
-          if (isMounted) setEditLoading(false);
-        }
-      })();
-    }
-    return () => {
-      isMounted = false;
-    };
-  }, [editOpen, editId]);
 
   return (
-    <div className="space-y-4">
-      <ListHeader
-        title="Destinations"
-        description="Manage destination cities and countries."
-        actions={
-          <Button size="sm" onClick={() => setCreateOpen(true)}>
-            New Destination
-          </Button>
-        }
-      >
-        <SearchInput
-          placeholder="Search by city, country or slug"
-          onSearch={setSearch}
-        />
-      </ListHeader>
-      {error ? (
-        <div className="text-sm text-red-600">Failed to load.</div>
-      ) : (
-        <TableShell
-          title="All Destinations"
-          isLoading={isLoading}
-          empty={
-            filtered.length === 0 ? (
-              <EmptyState
-                title={
-                  search
-                    ? "No destinations match your search"
-                    : "No destinations yet"
-                }
-                description={
-                  search
-                    ? "Try a different query."
-                    : "Create your first destination to get started."
-                }
-                action={
-                  <Button asChild size="sm">
-                    <Link href="/cms/destinations/new">New Destination</Link>
-                  </Button>
-                }
-              />
-            ) : null
+    <TooltipProvider>
+      <div className="space-y-4">
+        <ListHeader
+          title="Destinos"
+          description="Gestiona ciudades y países de destino."
+          actions={
+            <Button size="sm" onClick={() => setNewModalOpen(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Nuevo Destino
+            </Button>
           }
         >
-          <table className="min-w-full text-sm">
-            <thead className="bg-neutral-50 dark:bg-neutral-900">
-              <tr>
-                <th className="px-3 py-2 text-left">Country</th>
-                <th className="px-3 py-2 text-left">City</th>
-                <th className="px-3 py-2 text-left">Featured</th>
-                <th className="px-3 py-2 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((d: any) => (
-                <tr key={d.id} className="border-t hover:bg-muted/40">
-                  <td className="px-3 py-2">{d.country}</td>
-                  <td className="px-3 py-2">{d.city}</td>
-                  <td className="px-3 py-2">
-                    {d.isFeatured ? (
-                      <span className="inline-flex items-center rounded bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-400">
-                        Featured
-                      </span>
-                    ) : (
-                      <span className="text-muted-foreground">-</span>
-                    )}
-                  </td>
-                  <td className="px-3 py-2 text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="destructive"
-                        size="icon"
-                        aria-label="Delete destination"
-                        onClick={() => {
-                          setDeleteTarget(d.id);
-                          setConfirmOpen(true);
-                        }}
-                        disabled={deleting}
-                      >
-                        <Trash2 />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex items-center gap-2"
-                        onClick={() => openView(d.id)}
-                      >
-                        <Eye /> View
-                      </Button>
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        className="flex items-center gap-2"
-                        onClick={() => openEdit(d.id)}
-                      >
-                        <Pencil /> Edit
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </TableShell>
-      )}
-      <ConfirmDialog
-        open={confirmOpen}
-        onOpenChange={(open) => {
-          setConfirmOpen(open);
-          if (!open) setDeleteTarget(null);
-        }}
-        onConfirm={handleConfirmDelete}
-        title="Delete destination?"
-        description={
-          deleteTarget
-            ? `This will permanently remove the destination.`
-            : "This will permanently remove the destination."
-        }
-      />
-
-      {/* Create Modal */}
-      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>New Destination</DialogTitle>
-          </DialogHeader>
-          <DestinationForm
-            onSuccess={async () => {
-              setCreateOpen(false);
-              await queryClient.invalidateQueries({
-                queryKey: ["cms", "destinations"],
-              });
-            }}
+          <SearchInput
+            placeholder="Buscar por ciudad, país o slug"
+            onSearch={setSearch}
           />
-        </DialogContent>
-      </Dialog>
+        </ListHeader>
 
-      {/* View Modal */}
-      <Dialog
-        open={viewOpen}
-        onOpenChange={(open) => {
-          setViewOpen(open);
-          if (!open) {
-            setViewId(null);
-            setViewItem(null);
-          }
-        }}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Destination</DialogTitle>
-          </DialogHeader>
-          {viewLoading ? (
-            <div className="space-y-2">
-              <div className="h-4 w-40 bg-muted rounded" />
-              <div className="h-24 w-full bg-muted rounded" />
-            </div>
-          ) : !viewItem ? (
-            <div className="text-sm text-muted-foreground">Not found.</div>
-          ) : (
-            <div className="space-y-4">
-              <div className="text-base font-medium">
-                {viewItem.city}, {viewItem.country}
-              </div>
-              <Separator />
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm">
-                <div className="space-y-2 sm:col-span-2">
-                  <div className="text-muted-foreground">Slug</div>
-                  <div className="break-all">{viewItem.slug || "—"}</div>
-                  <div className="text-muted-foreground">Description</div>
-                  <div className="whitespace-pre-wrap">
-                    {viewItem.description || "—"}
-                  </div>
-                  <Separator className="my-2" />
-                  <div className="text-muted-foreground">Featured</div>
-                  <div>{viewItem.isFeatured ? "Yes" : "No"}</div>
-                  <div className="text-muted-foreground">Created</div>
-                  <div>{new Date(viewItem.createdAt).toLocaleString()}</div>
-                  <div className="text-muted-foreground">Updated</div>
-                  <div>{new Date(viewItem.updatedAt).toLocaleString()}</div>
-                </div>
-                <div className="space-y-2">
-                  <div className="text-muted-foreground">Hero Image</div>
-                  {viewItem.heroImageUrl ? (
-                    <a
-                      href={viewItem.heroImageUrl}
-                      target="_blank"
-                      className="block"
-                    >
-                      <img
-                        src={viewItem.heroImageUrl}
-                        alt="hero"
-                        className="h-32 w-full rounded object-cover ring-1 ring-border"
-                      />
-                    </a>
-                  ) : (
-                    <div className="text-muted-foreground">—</div>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+        {error ? (
+          <div className="text-sm text-red-600">
+            Error al cargar los destinos.
+          </div>
+        ) : (
+          <TableShell
+            title="Todos los Destinos"
+            isLoading={isLoading}
+            empty={
+              filtered.length === 0 ? (
+                <EmptyState
+                  title={
+                    search
+                      ? "No hay destinos que coincidan con tu búsqueda"
+                      : "Aún no hay destinos"
+                  }
+                  description={
+                    search
+                      ? "Intenta con una consulta diferente."
+                      : "Crea tu primer destino para comenzar."
+                  }
+                  action={
+                    <Button onClick={() => setNewModalOpen(true)} size="sm">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Nuevo Destino
+                    </Button>
+                  }
+                />
+              ) : null
+            }
+          >
+            <table className="min-w-full text-sm">
+              <thead className="bg-neutral-50 dark:bg-neutral-900">
+                <tr>
+                  <th className="px-3 py-2 text-left">País</th>
+                  <th className="px-3 py-2 text-left">Ciudad</th>
+                  <th className="px-3 py-2 text-left">Slug</th>
+                  <th className="px-3 py-2 text-left">Estado</th>
+                  <th className="px-3 py-2 text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((d: any) => (
+                  <tr key={d.id} className="border-t hover:bg-muted/40">
+                    <td className="px-3 py-2 font-medium">{d.country}</td>
+                    <td className="px-3 py-2">{d.city}</td>
+                    <td className="px-3 py-2">
+                      <code className="text-xs bg-muted px-1 py-0.5 rounded">
+                        {d.slug || "—"}
+                      </code>
+                    </td>
+                    <td className="px-3 py-2">
+                      {d.isFeatured ? (
+                        <Badge
+                          variant="default"
+                          className="flex items-center gap-1 w-fit"
+                        >
+                          <Star className="h-3 w-3" />
+                          Destacado
+                        </Badge>
+                      ) : (
+                        <Badge variant="secondary">Regular</Badge>
+                      )}
+                    </td>
+                    <td className="px-3 py-2 text-right">
+                      <div className="flex justify-end gap-1">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleView(d)}
+                              className="h-8 w-8"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Ver detalles</TooltipContent>
+                        </Tooltip>
 
-      {/* Edit Modal */}
-      <Dialog
-        open={editOpen}
-        onOpenChange={(open) => {
-          setEditOpen(open);
-          if (!open) {
-            setEditId(null);
-            setEditItem(null);
-          }
-        }}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Destination</DialogTitle>
-          </DialogHeader>
-          {editLoading ? (
-            <div className="space-y-2">
-              <div className="h-4 w-40 bg-muted rounded" />
-              <div className="h-24 w-full bg-muted rounded" />
-            </div>
-          ) : !editItem ? (
-            <div className="text-sm text-muted-foreground">Not found.</div>
-          ) : (
-            <DestinationForm
-              initialValues={editItem}
-              onSuccess={async () => {
-                setEditOpen(false);
-                await queryClient.invalidateQueries({
-                  queryKey: ["cms", "destinations"],
-                });
-              }}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
-    </div>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleEdit(d)}
+                              className="h-8 w-8"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Editar destino</TooltipContent>
+                        </Tooltip>
+
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDelete(d)}
+                              className="h-8 w-8 text-destructive hover:text-destructive"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Eliminar destino</TooltipContent>
+                        </Tooltip>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </TableShell>
+        )}
+
+        {/* Modals */}
+        <NewDestinationModal
+          open={newModalOpen}
+          onOpenChange={setNewModalOpen}
+        />
+
+        <EditDestinationModal
+          open={editModalOpen}
+          onOpenChange={setEditModalOpen}
+          destinationId={selectedDestination?.id || null}
+        />
+
+        <ViewDestinationModal
+          open={viewModalOpen}
+          onOpenChange={setViewModalOpen}
+          destinationId={selectedDestination?.id || null}
+        />
+
+        <DeleteDestinationDialog
+          open={deleteDialogOpen}
+          onOpenChange={setDeleteDialogOpen}
+          destinationId={selectedDestination?.id || null}
+          destinationName={`${selectedDestination?.city}, ${selectedDestination?.country}`}
+        />
+      </div>
+    </TooltipProvider>
   );
 }

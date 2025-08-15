@@ -1,12 +1,17 @@
 "use client";
-import Link from "next/link";
 import { useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
+import { Badge } from "@/components/ui/badge";
 import { ListHeader } from "@/components/admin/cms/list-header";
 import { SearchInput } from "@/components/admin/cms/search-input";
 import { TableShell } from "@/components/admin/cms/table-shell";
 import { EmptyState } from "@/components/admin/cms/empty-state";
+import {
+  NewItemModal,
+  EditItemModal,
+  ViewItemModal,
+  DeleteItemDialog,
+} from "@/components/admin/cms/whatsapp-templates";
 
 async function fetchTemplates() {
   const res = await fetch(`/api/whatsapp-templates?page=1&pageSize=20`);
@@ -15,7 +20,7 @@ async function fetchTemplates() {
 }
 
 export default function CmsWhatsAppTemplatesList() {
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["cms", "whatsapp-templates", { page: 1, pageSize: 20 }],
     queryFn: fetchTemplates,
   });
@@ -31,40 +36,40 @@ export default function CmsWhatsAppTemplatesList() {
     );
   }, [items, search]);
 
+  const handleSuccess = () => {
+    refetch();
+  };
+
   return (
     <div className="space-y-4">
       <ListHeader
-        title="WhatsApp Templates"
-        description="Preset messages to share via WhatsApp."
+        title="Plantillas de WhatsApp"
+        description="Mensajes predefinidos para compartir vía WhatsApp."
         actions={
-          <Button asChild size="sm">
-            <Link href="/cms/whatsapp-templates/new">New Template</Link>
-          </Button>
+          <NewItemModal onSuccess={handleSuccess} />
         }
       >
-        <SearchInput placeholder="Search templates" onSearch={setSearch} />
+        <SearchInput placeholder="Buscar plantillas" onSearch={setSearch} />
       </ListHeader>
       {error ? (
-        <div className="text-sm text-red-600">Failed to load.</div>
+        <div className="text-sm text-red-600">Error al cargar las plantillas.</div>
       ) : (
         <TableShell
-          title="All WhatsApp Templates"
+          title="Todas las Plantillas de WhatsApp"
           isLoading={isLoading}
           empty={
             filtered.length === 0 ? (
               <EmptyState
                 title={
                   search
-                    ? "No templates match your search"
-                    : "No templates yet"
+                    ? "No se encontraron plantillas"
+                    : "Aún no hay plantillas"
                 }
                 description={
-                  search ? "Try a different query." : "Create your first template."
+                  search ? "Intenta con una búsqueda diferente." : "Crea tu primera plantilla."
                 }
                 action={
-                  <Button asChild size="sm">
-                    <Link href="/cms/whatsapp-templates/new">New Template</Link>
-                  </Button>
+                  <NewItemModal onSuccess={handleSuccess} />
                 }
               />
             ) : null
@@ -73,19 +78,35 @@ export default function CmsWhatsAppTemplatesList() {
           <table className="min-w-full text-sm">
             <thead className="bg-neutral-50 dark:bg-neutral-900">
               <tr>
-                <th className="px-3 py-2 text-left">Name</th>
-                <th className="px-3 py-2 text-left">Default</th>
+                <th className="px-3 py-2 text-left">Nombre</th>
+                <th className="px-3 py-2 text-left">Por defecto</th>
+                <th className="px-3 py-2 text-left">Acciones</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map((t: any) => (
                 <tr key={t.id} className="border-t">
-                  <td className="px-3 py-2">
-                    <Link href={`/cms/whatsapp-templates/${t.id}`} className="underline">
-                      {t.name}
-                    </Link>
+                  <td className="px-3 py-2 font-medium">
+                    {t.name}
                   </td>
-                  <td className="px-3 py-2">{t.isDefault ? "Yes" : "No"}</td>
+                  <td className="px-3 py-2">
+                    {t.isDefault ? (
+                      <Badge variant="secondary">Sí</Badge>
+                    ) : (
+                      <span className="text-muted-foreground">No</span>
+                    )}
+                  </td>
+                  <td className="px-3 py-2">
+                    <div className="flex items-center gap-1">
+                      <ViewItemModal templateId={t.id} onSuccess={handleSuccess} />
+                      <EditItemModal templateId={t.id} onSuccess={handleSuccess} />
+                      <DeleteItemDialog 
+                        templateId={t.id} 
+                        templateName={t.name}
+                        onSuccess={handleSuccess} 
+                      />
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>

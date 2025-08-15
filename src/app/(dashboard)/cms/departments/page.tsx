@@ -1,24 +1,21 @@
 "use client";
-import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { ListHeader } from "@/components/admin/cms/list-header";
 import { SearchInput } from "@/components/admin/cms/search-input";
 import { TableShell } from "@/components/admin/cms/table-shell";
 import { EmptyState } from "@/components/admin/cms/empty-state";
 import { Badge } from "@/components/ui/badge";
-import { Pencil, Eye, Trash2 } from "lucide-react";
+import { Pencil, Eye, Trash2, Plus } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Separator } from "@/components/ui/separator";
-import { DepartmentForm } from "@/components/admin/forms/department-form";
+  NewItemModal,
+  EditItemModal,
+  ViewItemModal,
+  DeleteItemDialog,
+} from "@/components/admin/cms/departments";
 
 async function fetchDepartments() {
   const res = await fetch(`/api/departments`);
@@ -27,7 +24,6 @@ async function fetchDepartments() {
 }
 
 export default function CmsDepartmentsList() {
-  const queryClient = useQueryClient();
   const { data, isLoading, error } = useQuery({
     queryKey: ["cms", "departments"],
     queryFn: fetchDepartments,
@@ -35,18 +31,16 @@ export default function CmsDepartmentsList() {
   const items = data ?? [];
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<string>("ALL");
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
-  const [deleting, setDeleting] = useState(false);
+  
+  // Modal states
   const [createOpen, setCreateOpen] = useState(false);
   const [viewOpen, setViewOpen] = useState(false);
   const [viewType, setViewType] = useState<string | null>(null);
-  const [viewItem, setViewItem] = useState<any | null>(null);
-  const [viewLoading, setViewLoading] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [editType, setEditType] = useState<string | null>(null);
-  const [editItem, setEditItem] = useState<any | null>(null);
-  const [editLoading, setEditLoading] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteType, setDeleteType] = useState<string | null>(null);
+  const [deleteTitle, setDeleteTitle] = useState<string>("");
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     const base = items.filter((d: any) =>
@@ -60,120 +54,80 @@ export default function CmsDepartmentsList() {
     );
   }, [items, search, typeFilter]);
 
-  const handleConfirmDelete = async () => {
-    if (!deleteTarget) return;
-    setDeleting(true);
-    try {
-      const res = await fetch(`/api/departments/${deleteTarget}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) throw new Error("Failed to delete");
-      await queryClient.invalidateQueries({ queryKey: ["cms", "departments"] });
-    } finally {
-      setDeleting(false);
-      setConfirmOpen(false);
-      setDeleteTarget(null);
+  const getTypeLabel = (type: string) => {
+    switch (type) {
+      case 'WEDDINGS':
+        return 'Bodas';
+      case 'QUINCEANERA':
+        return 'Quinceañera';
+      default:
+        return type;
     }
   };
 
-  const openView = (type: string) => {
+  const handleView = (type: string) => {
     setViewType(type);
-    setViewItem(null);
-    setViewLoading(true);
     setViewOpen(true);
   };
 
-  const openEdit = (type: string) => {
+  const handleEdit = (type: string) => {
     setEditType(type);
-    setEditItem(null);
-    setEditLoading(true);
     setEditOpen(true);
   };
 
-  useEffect(() => {
-    let isMounted = true;
-    if (viewOpen && viewType) {
-      (async () => {
-        try {
-          const res = await fetch(`/api/departments/${viewType}`);
-          if (res.ok) {
-            const json = await res.json();
-            if (isMounted) setViewItem(json);
-          }
-        } finally {
-          if (isMounted) setViewLoading(false);
-        }
-      })();
-    }
-    return () => {
-      isMounted = false;
-    };
-  }, [viewOpen, viewType]);
-
-  useEffect(() => {
-    let isMounted = true;
-    if (editOpen && editType) {
-      (async () => {
-        try {
-          const res = await fetch(`/api/departments/${editType}`);
-          if (res.ok) {
-            const json = await res.json();
-            if (isMounted) setEditItem(json);
-          }
-        } finally {
-          if (isMounted) setEditLoading(false);
-        }
-      })();
-    }
-    return () => {
-      isMounted = false;
-    };
-  }, [editOpen, editType]);
+  const handleDelete = (type: string, title: string) => {
+    setDeleteType(type);
+    setDeleteTitle(title);
+    setDeleteOpen(true);
+  };
 
   return (
-    <div className="space-y-4">
-      <ListHeader
-        title="Departments"
-        description="Website departments and landing content."
-        actions={
-          <Button size="sm" onClick={() => setCreateOpen(true)}>
-            New Department
-          </Button>
-        }
-      >
-        <div className="flex w-full items-center justify-between gap-2">
-          <SearchInput placeholder="Search departments" onSearch={setSearch} />
-          <Tabs value={typeFilter} onValueChange={(v) => setTypeFilter(v)}>
-            <TabsList>
-              <TabsTrigger value="ALL">All</TabsTrigger>
-              <TabsTrigger value="WEDDINGS">Weddings</TabsTrigger>
-              <TabsTrigger value="QUINCEANERA">Quinceañera</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
-      </ListHeader>
+    <TooltipProvider>
+      <div className="space-y-4">
+        <ListHeader
+          title="Departamentos"
+          description="Departamentos del sitio web y contenido de aterrizaje."
+          actions={
+            <Button size="sm" onClick={() => setCreateOpen(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Nuevo Departamento
+            </Button>
+          }
+        >
+          <div className="flex w-full items-center justify-between gap-2">
+            <SearchInput placeholder="Buscar departamentos..." onSearch={setSearch} />
+            <Tabs value={typeFilter} onValueChange={(v) => setTypeFilter(v)}>
+              <TabsList>
+                <TabsTrigger value="ALL">Todos</TabsTrigger>
+                <TabsTrigger value="WEDDINGS">Bodas</TabsTrigger>
+                <TabsTrigger value="QUINCEANERA">Quinceañera</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+        </ListHeader>
       {error ? (
-        <div className="text-sm text-red-600">Failed to load.</div>
+        <div className="text-sm text-red-600">Error al cargar los departamentos.</div>
       ) : (
         <TableShell
-          title="All Departments"
+          title="Todos los Departamentos"
           isLoading={isLoading}
           empty={
             filtered.length === 0 ? (
               <EmptyState
                 title={
                   search
-                    ? "No departments match your search"
-                    : "No departments yet"
+                    ? "No se encontraron departamentos"
+                    : "No hay departamentos aún"
                 }
                 description={
                   search
-                    ? "Try a different query."
-                    : "Create your first department."
+                    ? "Intenta con una búsqueda diferente."
+                    : "Crea tu primer departamento."
                 }
                 action={
-                  <Button asChild size="sm">
-                    <Link href="/cms/departments/new">New Department</Link>
+                  <Button size="sm" onClick={() => setCreateOpen(true)}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Nuevo Departamento
                   </Button>
                 }
               />
@@ -183,31 +137,26 @@ export default function CmsDepartmentsList() {
           <table className="min-w-full text-sm">
             <thead className="bg-neutral-50 dark:bg-neutral-900">
               <tr>
-                <th className="px-3 py-2 text-left">Type</th>
-                <th className="px-3 py-2 text-left">Title</th>
-                <th className="px-3 py-2 text-left">Hero</th>
-                <th className="px-3 py-2 text-right">Actions</th>
+                <th className="px-3 py-2 text-left">Tipo</th>
+                <th className="px-3 py-2 text-left">Título</th>
+                <th className="px-3 py-2 text-left">Imagen Principal</th>
+                <th className="px-3 py-2 text-right">Acciones</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map((d: any) => (
                 <tr key={d.id} className="border-t hover:bg-muted/40">
                   <td className="px-3 py-2">
-                    <Badge variant="secondary">{d.type}</Badge>
+                    <Badge variant="secondary">{getTypeLabel(d.type)}</Badge>
                   </td>
                   <td className="px-3 py-2">
-                    <Link
-                      href={`/cms/departments/${d.type}`}
-                      className="underline"
-                    >
-                      {d.title}
-                    </Link>
+                    <span className="font-medium">{d.title}</span>
                   </td>
                   <td className="px-3 py-2">
                     {d.heroImageUrl ? (
                       <img
                         src={d.heroImageUrl}
-                        alt="hero"
+                        alt="Imagen principal"
                         className="h-8 w-14 rounded object-cover ring-1 ring-border"
                       />
                     ) : (
@@ -215,33 +164,51 @@ export default function CmsDepartmentsList() {
                     )}
                   </td>
                   <td className="px-3 py-2 text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="destructive"
-                        size="icon"
-                        aria-label="Delete department"
-                        onClick={() => {
-                          setDeleteTarget(d.type);
-                          setConfirmOpen(true);
-                        }}
-                        disabled={deleting}
-                      >
-                        <Trash2 />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => openView(d.type)}
-                      >
-                        <Eye /> View
-                      </Button>
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => openEdit(d.type)}
-                      >
-                        <Pencil /> Edit
-                      </Button>
+                    <div className="flex justify-end gap-1">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => handleView(d.type)}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Ver departamento</p>
+                        </TooltipContent>
+                      </Tooltip>
+                      
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => handleEdit(d.type)}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Editar departamento</p>
+                        </TooltipContent>
+                      </Tooltip>
+                      
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="destructive"
+                            size="icon"
+                            onClick={() => handleDelete(d.type, d.title)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Eliminar departamento</p>
+                        </TooltipContent>
+                      </Tooltip>
                     </div>
                   </td>
                 </tr>
@@ -250,139 +217,32 @@ export default function CmsDepartmentsList() {
           </table>
         </TableShell>
       )}
-      <ConfirmDialog
-        open={confirmOpen}
-        onOpenChange={(open) => {
-          setConfirmOpen(open);
-          if (!open) setDeleteTarget(null);
-        }}
-        onConfirm={handleConfirmDelete}
-        title="Delete department?"
-        description={
-          deleteTarget
-            ? `This will permanently remove ${deleteTarget}.`
-            : "This will permanently remove the department."
-        }
+
+      {/* Modals */}
+      <NewItemModal 
+        open={createOpen} 
+        onOpenChange={setCreateOpen} 
       />
-
-      {/* Create Modal */}
-      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>New Department</DialogTitle>
-          </DialogHeader>
-          <DepartmentForm
-            onSuccess={async () => {
-              setCreateOpen(false);
-              await queryClient.invalidateQueries({
-                queryKey: ["cms", "departments"],
-              });
-            }}
-          />
-        </DialogContent>
-      </Dialog>
-
-      {/* View Modal */}
-      <Dialog
-        open={viewOpen}
-        onOpenChange={(open) => {
-          setViewOpen(open);
-          if (!open) {
-            setViewType(null);
-            setViewItem(null);
-          }
-        }}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Department</DialogTitle>
-          </DialogHeader>
-          {viewLoading ? (
-            <div className="space-y-2">
-              <div className="h-4 w-40 bg-muted rounded" />
-              <div className="h-24 w-full bg-muted rounded" />
-            </div>
-          ) : !viewItem ? (
-            <div className="text-sm text-muted-foreground">Not found.</div>
-          ) : (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 text-base font-medium">
-                {viewItem.title}
-                <Badge variant="secondary">{viewItem.type}</Badge>
-              </div>
-              <Separator />
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm">
-                <div className="space-y-2 sm:col-span-2">
-                  <div className="text-muted-foreground">Intro</div>
-                  <div className="whitespace-pre-wrap">
-                    {viewItem.intro || "—"}
-                  </div>
-                  <Separator className="my-2" />
-                  <div className="text-muted-foreground">Created</div>
-                  <div>{new Date(viewItem.createdAt).toLocaleString()}</div>
-                  <div className="text-muted-foreground">Updated</div>
-                  <div>{new Date(viewItem.updatedAt).toLocaleString()}</div>
-                </div>
-                <div className="space-y-2">
-                  <div className="text-muted-foreground">Hero Image</div>
-                  {viewItem.heroImageUrl ? (
-                    <a
-                      href={viewItem.heroImageUrl}
-                      target="_blank"
-                      className="block"
-                    >
-                      <img
-                        src={viewItem.heroImageUrl}
-                        alt="hero"
-                        className="h-32 w-full rounded object-cover ring-1 ring-border"
-                      />
-                    </a>
-                  ) : (
-                    <div className="text-muted-foreground">—</div>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Edit Modal */}
-      <Dialog
-        open={editOpen}
-        onOpenChange={(open) => {
-          setEditOpen(open);
-          if (!open) {
-            setEditType(null);
-            setEditItem(null);
-          }
-        }}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Department</DialogTitle>
-          </DialogHeader>
-          {editLoading ? (
-            <div className="space-y-2">
-              <div className="h-4 w-40 bg-muted rounded" />
-              <div className="h-24 w-full bg-muted rounded" />
-            </div>
-          ) : !editItem ? (
-            <div className="text-sm text-muted-foreground">Not found.</div>
-          ) : (
-            <DepartmentForm
-              initialValues={editItem}
-              disableType
-              onSuccess={async () => {
-                setEditOpen(false);
-                await queryClient.invalidateQueries({
-                  queryKey: ["cms", "departments"],
-                });
-              }}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+      
+      <ViewItemModal 
+        open={viewOpen} 
+        onOpenChange={setViewOpen} 
+        departmentType={viewType} 
+      />
+      
+      <EditItemModal 
+        open={editOpen} 
+        onOpenChange={setEditOpen} 
+        departmentType={editType} 
+      />
+      
+      <DeleteItemDialog 
+        open={deleteOpen} 
+        onOpenChange={setDeleteOpen} 
+        departmentType={deleteType} 
+        departmentTitle={deleteTitle} 
+      />
     </div>
+  </TooltipProvider>
   );
 }

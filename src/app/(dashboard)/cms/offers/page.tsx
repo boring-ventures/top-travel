@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +8,12 @@ import { ListHeader } from "@/components/admin/cms/list-header";
 import { SearchInput } from "@/components/admin/cms/search-input";
 import { TableShell } from "@/components/admin/cms/table-shell";
 import { EmptyState } from "@/components/admin/cms/empty-state";
+import {
+  NewOfferModal,
+  EditOfferModal,
+  ViewOfferModal,
+  DeleteOfferDialog,
+} from "@/components/admin/cms/offers";
 
 async function fetchOffers() {
   const res = await fetch(`/api/offers?page=1&pageSize=20`);
@@ -17,7 +22,7 @@ async function fetchOffers() {
 }
 
 export default function CmsOffersList() {
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["cms", "offers", { page: 1, pageSize: 20 }],
     queryFn: fetchOffers,
   });
@@ -33,37 +38,37 @@ export default function CmsOffersList() {
     );
   }, [items, search]);
 
+  const handleSuccess = () => {
+    refetch();
+  };
+
   return (
     <div className="space-y-4">
       <ListHeader
-        title="Offers"
-        description="Create promotional offers for campaigns."
-        actions={
-          <Button asChild size="sm">
-            <Link href="/cms/offers/new">New Offer</Link>
-          </Button>
-        }
+        title="Ofertas"
+        description="Crear ofertas promocionales para campañas."
+        actions={<NewOfferModal onSuccess={handleSuccess} />}
       >
-        <SearchInput placeholder="Search offers" onSearch={setSearch} />
+        <SearchInput placeholder="Buscar ofertas" onSearch={setSearch} />
       </ListHeader>
       {error ? (
-        <div className="text-sm text-red-600">Failed to load.</div>
+        <div className="text-sm text-red-600">Error al cargar.</div>
       ) : (
         <TableShell
-          title="All Offers"
+          title="Todas las Ofertas"
           isLoading={isLoading}
           empty={
             filtered.length === 0 ? (
               <EmptyState
-                title={search ? "No offers match your search" : "No offers yet"}
+                title={
+                  search ? "No se encontraron ofertas" : "Aún no hay ofertas"
+                }
                 description={
-                  search ? "Try a different query." : "Create your first offer."
+                  search
+                    ? "Intenta con otra búsqueda."
+                    : "Crea tu primera oferta."
                 }
-                action={
-                  <Button asChild size="sm">
-                    <Link href="/cms/offers/new">New Offer</Link>
-                  </Button>
-                }
+                action={<NewOfferModal onSuccess={handleSuccess} />}
               />
             ) : null
           }
@@ -71,24 +76,23 @@ export default function CmsOffersList() {
           <table className="min-w-full text-sm">
             <thead className="bg-neutral-50 dark:bg-neutral-900">
               <tr>
-                <th className="px-3 py-2 text-left">Title</th>
-                <th className="px-3 py-2 text-left">Featured</th>
-                <th className="px-3 py-2 text-left">Status</th>
-                <th className="px-3 py-2 text-left">Start</th>
-                <th className="px-3 py-2 text-left">End</th>
+                <th className="px-3 py-2 text-left">Título</th>
+                <th className="px-3 py-2 text-left">Destacada</th>
+                <th className="px-3 py-2 text-left">Estado</th>
+                <th className="px-3 py-2 text-left">Inicio</th>
+                <th className="px-3 py-2 text-left">Fin</th>
+                <th className="px-3 py-2 text-left">Acciones</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map((o: any) => (
                 <tr key={o.id} className="border-t hover:bg-muted/40">
                   <td className="px-3 py-2">
-                    <Link href={`/cms/offers/${o.id}`} className="underline">
-                      {o.title}
-                    </Link>
+                    <span className="font-medium">{o.title}</span>
                   </td>
                   <td className="px-3 py-2">
                     {o.isFeatured ? (
-                      <Badge variant="secondary">Featured</Badge>
+                      <Badge variant="secondary">Destacada</Badge>
                     ) : (
                       <span className="text-muted-foreground">-</span>
                     )}
@@ -101,6 +105,20 @@ export default function CmsOffersList() {
                   </td>
                   <td className="px-3 py-2">
                     {o.endAt ? new Date(o.endAt).toLocaleDateString() : "-"}
+                  </td>
+                  <td className="px-3 py-2">
+                    <div className="flex items-center gap-2">
+                      <ViewOfferModal offerId={o.id} />
+                      <EditOfferModal
+                        offerId={o.id}
+                        onSuccess={handleSuccess}
+                      />
+                      <DeleteOfferDialog
+                        offerId={o.id}
+                        offerTitle={o.title}
+                        onSuccess={handleSuccess}
+                      />
+                    </div>
                   </td>
                 </tr>
               ))}

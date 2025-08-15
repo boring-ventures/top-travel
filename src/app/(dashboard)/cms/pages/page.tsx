@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -8,11 +7,25 @@ import { ListHeader } from "@/components/admin/cms/list-header";
 import { SearchInput } from "@/components/admin/cms/search-input";
 import { TableShell } from "@/components/admin/cms/table-shell";
 import { EmptyState } from "@/components/admin/cms/empty-state";
+import {
+  NewItemModal,
+  EditItemModal,
+  ViewItemModal,
+  DeleteItemDialog,
+} from "@/components/admin/cms/pages";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Eye, Edit, Trash2, Plus } from "lucide-react";
 
 async function fetchPages() {
   const res = await fetch(`/api/pages`);
   if (!res.ok) throw new Error("Failed to load pages");
-  return res.json();
+  const result = await res.json();
+  return result.data || [];
 }
 
 export default function CmsPagesList() {
@@ -21,8 +34,16 @@ export default function CmsPagesList() {
     queryKey: ["cms", "pages"],
     queryFn: fetchPages,
   });
-  const items = data ?? [];
+  const items = Array.isArray(data) ? data : [];
   const [search, setSearch] = useState("");
+
+  // Modal states
+  const [newModalOpen, setNewModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedPage, setSelectedPage] = useState<any>(null);
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return items;
@@ -43,75 +64,192 @@ export default function CmsPagesList() {
     if (res.ok) queryClient.invalidateQueries({ queryKey: ["cms", "pages"] });
   };
 
+  const handleView = (page: any) => {
+    setSelectedPage(page);
+    setViewModalOpen(true);
+  };
+
+  const handleEdit = (page: any) => {
+    setSelectedPage(page);
+    setEditModalOpen(true);
+  };
+
+  const handleDelete = (page: any) => {
+    setSelectedPage(page);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleEditFromView = () => {
+    setViewModalOpen(false);
+    setEditModalOpen(true);
+  };
+
+  const handleDeleteFromView = () => {
+    setViewModalOpen(false);
+    setDeleteDialogOpen(true);
+  };
+
   return (
-    <div className="space-y-4">
-      <ListHeader
-        title="Pages"
-        description="Manage static website pages."
-        actions={
-          <Button asChild size="sm">
-            <Link href="/cms/pages/new">New Page</Link>
-          </Button>
-        }
-      >
-        <SearchInput placeholder="Search pages" onSearch={setSearch} />
-      </ListHeader>
-      {error ? (
-        <div className="text-sm text-red-600">Failed to load.</div>
-      ) : (
-        <TableShell
-          title="All Pages"
-          isLoading={isLoading}
-          empty={
-            filtered.length === 0 ? (
-              <EmptyState
-                title={search ? "No pages match your search" : "No pages yet"}
-                description={search ? "Try a different query." : "Create your first page."}
-                action={
-                  <Button asChild size="sm">
-                    <Link href="/cms/pages/new">New Page</Link>
-                  </Button>
-                }
-              />
-            ) : null
+    <TooltipProvider>
+      <div className="space-y-4">
+        <ListHeader
+          title="Páginas"
+          description="Gestionar páginas estáticas del sitio web."
+          actions={
+            <Button
+              size="sm"
+              onClick={() => setNewModalOpen(true)}
+              className="flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Nueva Página
+            </Button>
           }
         >
-          <table className="min-w-full text-sm">
-            <thead className="bg-neutral-50 dark:bg-neutral-900">
-              <tr>
-                <th className="px-3 py-2 text-left">Slug</th>
-                <th className="px-3 py-2 text-left">Title</th>
-                <th className="px-3 py-2 text-left">Status</th>
-                <th className="px-3 py-2 text-left">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((p: any) => (
-                <tr key={p.id} className="border-t hover:bg-muted/40">
-                  <td className="px-3 py-2">
-                    <Link href={`/cms/pages/${p.slug}`} className="underline">
-                      {p.slug}
-                    </Link>
-                  </td>
-                  <td className="px-3 py-2">{p.title}</td>
-                  <td className="px-3 py-2">
-                    <StatusBadge status={p.status} />
-                  </td>
-                  <td className="px-3 py-2">
+          <SearchInput placeholder="Buscar páginas" onSearch={setSearch} />
+        </ListHeader>
+
+        {error ? (
+          <div className="text-sm text-red-600">
+            Error al cargar las páginas.
+          </div>
+        ) : (
+          <TableShell
+            title="Todas las Páginas"
+            isLoading={isLoading}
+            empty={
+              filtered.length === 0 ? (
+                <EmptyState
+                  title={
+                    search
+                      ? "No hay páginas que coincidan con tu búsqueda"
+                      : "Aún no hay páginas"
+                  }
+                  description={
+                    search
+                      ? "Intenta con una consulta diferente."
+                      : "Crea tu primera página."
+                  }
+                  action={
                     <Button
-                      variant="secondary"
                       size="sm"
-                      onClick={() => handleToggleStatus(p.slug, p.status)}
+                      onClick={() => setNewModalOpen(true)}
+                      className="flex items-center gap-2"
                     >
-                      {p.status === "PUBLISHED" ? "Unpublish" : "Publish"}
+                      <Plus className="h-4 w-4" />
+                      Nueva Página
                     </Button>
-                  </td>
+                  }
+                />
+              ) : null
+            }
+          >
+            <table className="min-w-full text-sm">
+              <thead className="bg-neutral-50 dark:bg-neutral-900">
+                <tr>
+                  <th className="px-3 py-2 text-left">Slug</th>
+                  <th className="px-3 py-2 text-left">Título</th>
+                  <th className="px-3 py-2 text-left">Estado</th>
+                  <th className="px-3 py-2 text-left">Acciones</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </TableShell>
-      )}
-    </div>
+              </thead>
+              <tbody>
+                {filtered.map((p: any) => (
+                  <tr key={p.id} className="border-t hover:bg-muted/40">
+                    <td className="px-3 py-2">
+                      <span className="font-mono text-sm">{p.slug}</span>
+                    </td>
+                    <td className="px-3 py-2">{p.title}</td>
+                    <td className="px-3 py-2">
+                      <StatusBadge status={p.status} />
+                    </td>
+                    <td className="px-3 py-2">
+                      <div className="flex items-center gap-2">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleView(p)}
+                              className="h-8 w-8 p-0"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Ver página</TooltipContent>
+                        </Tooltip>
+
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEdit(p)}
+                              className="h-8 w-8 p-0"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Editar página</TooltipContent>
+                        </Tooltip>
+
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDelete(p)}
+                              className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Eliminar página</TooltipContent>
+                        </Tooltip>
+
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => handleToggleStatus(p.slug, p.status)}
+                          className="ml-2"
+                        >
+                          {p.status === "PUBLISHED"
+                            ? "Despublicar"
+                            : "Publicar"}
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </TableShell>
+        )}
+
+        {/* Modals */}
+        <NewItemModal open={newModalOpen} onOpenChange={setNewModalOpen} />
+
+        <EditItemModal
+          open={editModalOpen}
+          onOpenChange={setEditModalOpen}
+          pageSlug={selectedPage?.slug || null}
+        />
+
+        <ViewItemModal
+          open={viewModalOpen}
+          onOpenChange={setViewModalOpen}
+          pageSlug={selectedPage?.slug || null}
+          onEdit={handleEditFromView}
+          onDelete={handleDeleteFromView}
+        />
+
+        <DeleteItemDialog
+          open={deleteDialogOpen}
+          onOpenChange={setDeleteDialogOpen}
+          pageSlug={selectedPage?.slug || null}
+          pageTitle={selectedPage?.title}
+        />
+      </div>
+    </TooltipProvider>
   );
 }
