@@ -24,6 +24,8 @@ import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
 import { ShineBorder } from "@/components/magicui/shine-border";
 import { BlurFade } from "@/components/magicui/blur-fade";
 import { MagicCard } from "@/components/magicui/magic-card";
+import Partners from "@/components/views/landing-page/Partners";
+import { Music2, Heart, Sparkles, MapPin } from "lucide-react";
 
 export const metadata = {
   title: "GABYTOPTRAVEL – Viajes premium, eventos y experiencias",
@@ -157,6 +159,180 @@ export default async function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-transparent -z-10" />
 
         <Hero items={heroItems} />
+        {/* Hero CTA bar for immediate engagement */}
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
+            <div className="flex-1">
+              <h1 className="text-2xl md:text-4xl font-semibold tracking-tight">
+                Viajes premium, eventos y experiencias memorables
+              </h1>
+              <p className="mt-2 text-sm md:text-base text-muted-foreground max-w-2xl">
+                Atención personalizada y logística segura para tu próximo
+                concierto, boda de destino, quinceañera o escapada soñada.
+              </p>
+            </div>
+            <div className="shrink-0">
+              <WhatsAppCTA
+                template="Hola, quiero más información — {url}"
+                variables={{ url: "" }}
+                label="Consultar por WhatsApp"
+                variant="default"
+                size="lg"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Specialized Niches */}
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="flex items-end justify-between gap-4 mb-6">
+            <div>
+              <AnimatedShinyText>
+                <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">
+                  Especialidades
+                </h2>
+              </AnimatedShinyText>
+              <p className="text-sm text-muted-foreground">
+                Descubre nuestras experiencias más solicitadas
+              </p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Conciertos y Eventos */}
+            <MagicCard className="overflow-hidden rounded-xl group">
+              <Link href="/events" className="block relative">
+                <div className="relative h-44 w-full">
+                  {/* Fallback visual if no event images available */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-secondary/20 to-background" />
+                  <div className="absolute inset-0 flex items-end p-4 bg-gradient-to-t from-background/90 via-background/20 to-transparent">
+                    <div className="flex items-center gap-2 text-base font-medium">
+                      <Music2 className="h-5 w-5" aria-hidden="true" />{" "}
+                      Conciertos y Eventos
+                    </div>
+                  </div>
+                </div>
+                <div className="p-4">
+                  <p className="text-sm text-muted-foreground">
+                    Accede a entradas, logística y experiencias VIP.
+                  </p>
+                  <div className="mt-3">
+                    <Button variant="secondary" size="sm" asChild>
+                      <span>Más información</span>
+                    </Button>
+                  </div>
+                </div>
+              </Link>
+            </MagicCard>
+            {/* Bodas Destino */}
+            <MagicCard className="overflow-hidden rounded-xl group">
+              <Link href="/weddings" className="block relative">
+                <div className="relative h-44 w-full">
+                  {/* Try using departments WEDDINGS image when available */}
+                  {departments.find((d) => d.type === "WEDDINGS")
+                    ?.heroImageUrl ? (
+                    <Image
+                      src={
+                        departments.find((d) => d.type === "WEDDINGS")!
+                          .heroImageUrl
+                      }
+                      alt="Bodas de destino"
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      sizes="(max-width: 640px) 100vw, 25vw"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-gradient-to-br from-pink-200/30 via-primary/20 to-background" />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent" />
+                  <div className="absolute bottom-0 left-0 p-4 flex items-center gap-2">
+                    <Heart className="h-5 w-5" aria-hidden="true" />
+                    <span className="text-base font-medium">Bodas Destino</span>
+                  </div>
+                </div>
+                <div className="p-4">
+                  <p className="text-sm text-muted-foreground">
+                    Planeamos tu “sí, acepto” en el lugar perfecto.
+                  </p>
+                  <div className="mt-3">
+                    <Button variant="secondary" size="sm" asChild>
+                      <span>Más información</span>
+                    </Button>
+                  </div>
+                </div>
+              </Link>
+            </MagicCard>
+            {/* Quinceañeras */}
+            <MagicCard className="overflow-hidden rounded-xl group">
+              <Link href="/quinceanera" className="block relative">
+                <div className="relative h-44 w-full">
+                  {departments.find((d) => d.type === "QUINCEANERA")
+                    ?.heroImageUrl ? (
+                    <Image
+                      src={
+                        departments.find((d) => d.type === "QUINCEANERA")!
+                          .heroImageUrl
+                      }
+                      alt="Quinceañeras"
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      sizes="(max-width: 640px) 100vw, 25vw"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-gradient-to-br from-violet-200/30 via-secondary/20 to-background" />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent" />
+                  <div className="absolute bottom-0 left-0 p-4 flex items-center gap-2">
+                    <Sparkles className="h-5 w-5" aria-hidden="true" />
+                    <span className="text-base font-medium">Quinceañeras</span>
+                  </div>
+                </div>
+                <div className="p-4">
+                  <p className="text-sm text-muted-foreground">
+                    Celebraciones únicas con estilo y seguridad.
+                  </p>
+                  <div className="mt-3">
+                    <Button variant="secondary" size="sm" asChild>
+                      <span>Más información</span>
+                    </Button>
+                  </div>
+                </div>
+              </Link>
+            </MagicCard>
+            {/* Destinos Top */}
+            <MagicCard className="overflow-hidden rounded-xl group">
+              <Link href="/destinations" className="block relative">
+                <div className="relative h-44 w-full">
+                  {topDestinations[0]?.heroImageUrl ? (
+                    <Image
+                      src={topDestinations[0].heroImageUrl}
+                      alt={`${topDestinations[0].city}, ${topDestinations[0].country}`}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      sizes="(max-width: 640px) 100vw, 25vw"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-200/30 via-primary/20 to-background" />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent" />
+                  <div className="absolute bottom-0 left-0 p-4 flex items-center gap-2">
+                    <MapPin className="h-5 w-5" aria-hidden="true" />
+                    <span className="text-base font-medium">Destinos Top</span>
+                  </div>
+                </div>
+                <div className="p-4">
+                  <p className="text-sm text-muted-foreground">
+                    Inspiración para tu próxima aventura.
+                  </p>
+                  <div className="mt-3">
+                    <Button variant="secondary" size="sm" asChild>
+                      <span>Más información</span>
+                    </Button>
+                  </div>
+                </div>
+              </Link>
+            </MagicCard>
+          </div>
+        </section>
         <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="flex items-end justify-between gap-4 mb-6">
             <div>
@@ -198,6 +374,9 @@ export default async function Home() {
                           href={href}
                           className="block relative h-48 w-full"
                         >
+                          <div className="absolute top-3 left-3 z-10 inline-flex items-center rounded-full bg-primary/90 px-2 py-1 text-xs text-background shadow">
+                            Destacado
+                          </div>
                           <Image
                             src={o.bannerImageUrl}
                             alt={o.title}
@@ -451,9 +630,23 @@ export default async function Home() {
         <SocialProof />
         <Features />
         <About />
+        <Partners />
         <Testimonials items={testimonials} />
         <CTA />
       </main>
+
+      {/* Persistent WhatsApp CTA - bottom right */}
+      <div className="fixed bottom-4 right-4 z-50 pointer-events-none">
+        <div className="pointer-events-auto">
+          <WhatsAppCTA
+            template="Hola, me gustaría hablar con un asesor — {url}"
+            variables={{ url: "" }}
+            label="WhatsApp"
+            variant="default"
+            size="lg"
+          />
+        </div>
+      </div>
 
       <Footer />
     </div>

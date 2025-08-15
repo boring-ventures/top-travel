@@ -4,11 +4,12 @@ import WhatsAppCTA from "@/components/utils/whatsapp-cta";
 import { pageMeta } from "@/lib/seo";
 import Image from "next/image";
 
-type Params = { params: { slug: string } };
+type Params = { params: Promise<{ slug: string }> };
 
 export default async function PackageDetailPage({ params }: Params) {
+  const { slug } = await params;
   const pkg = await prisma.package.findUnique({
-    where: { slug: params.slug },
+    where: { slug },
     include: {
       packageDestinations: { include: { destination: true } },
       packageTags: { include: { tag: true } },
@@ -113,14 +114,15 @@ export default async function PackageDetailPage({ params }: Params) {
 }
 
 export async function generateMetadata({ params }: Params) {
-  const pkg = await prisma.package.findUnique({ where: { slug: params.slug } });
+  const { slug } = await params;
+  const pkg = await prisma.package.findUnique({ where: { slug } });
   const title = pkg?.title ? `${pkg.title}` : "Package";
   const description = pkg?.summary ?? undefined;
   const image = pkg?.heroImageUrl ?? undefined;
   return pageMeta({
     title,
     description,
-    urlPath: `/packages/${params.slug}`,
+    urlPath: `/packages/${slug}`,
     image,
   });
 }

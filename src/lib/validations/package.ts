@@ -10,7 +10,7 @@ export const PackageCreateSchema = z.object({
   slug: SlugSchema,
   title: NonEmptyStringSchema,
   summary: z.string().optional(),
-  heroImageUrl: z.string().url().optional(),
+  heroImageUrl: z.string().optional(),
   gallery: z.any().optional(),
   itineraryJson: z.any().optional(),
   inclusions: z.array(z.string()).default([]),

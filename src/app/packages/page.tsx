@@ -4,22 +4,23 @@ import prisma from "@/lib/prisma";
 import Image from "next/image";
 
 interface PackagesPageProps {
-  searchParams?: {
+  searchParams?: Promise<{
     q?: string;
     tagId?: string;
     destinationId?: string;
     isCustom?: string;
     page?: string;
-  };
+  }>;
 }
 
 export default async function PackagesPage({
   searchParams,
 }: PackagesPageProps) {
-  const q = searchParams?.q?.trim() || undefined;
-  const tagId = searchParams?.tagId || undefined;
-  const destinationId = searchParams?.destinationId || undefined;
-  const isCustomParam = searchParams?.isCustom;
+  const params = await searchParams;
+  const q = params?.q?.trim() || undefined;
+  const tagId = params?.tagId || undefined;
+  const destinationId = params?.destinationId || undefined;
+  const isCustomParam = params?.isCustom;
   const isCustom = isCustomParam == null ? undefined : isCustomParam === "true";
 
   const where: any = {

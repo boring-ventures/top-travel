@@ -15,8 +15,10 @@ interface Session {
 // Server-side auth using Supabase session and Prisma profile role
 export async function auth(): Promise<Session | null> {
   try {
-    const cookieStore = cookies();
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+    const cookieStore = await cookies();
+    const supabase = createRouteHandlerClient({
+      cookies: () => Promise.resolve(cookieStore),
+    });
     const {
       data: { session },
     } = await supabase.auth.getSession();

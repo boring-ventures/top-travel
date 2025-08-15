@@ -9,13 +9,13 @@ export const OfferCreateSchema = z
   .object({
     title: NonEmptyStringSchema,
     subtitle: z.string().optional(),
-    bannerImageUrl: z.string().url().optional(),
+    bannerImageUrl: z.string().optional(),
     isFeatured: z.boolean().optional(),
     startAt: z.coerce.date().optional(),
     endAt: z.coerce.date().optional(),
     status: ContentStatusSchema.default("DRAFT"),
     packageId: z.string().optional(),
-    externalUrl: URLStringSchema.optional(),
+    externalUrl: z.string().optional(),
   })
   .refine(
     (data) => {
@@ -29,13 +29,13 @@ export const OfferCreateSchema = z
 export const OfferUpdateSchema = z.object({
   title: z.string().optional(),
   subtitle: z.string().optional(),
-  bannerImageUrl: z.string().url().optional(),
+  bannerImageUrl: z.string().optional(),
   isFeatured: z.boolean().optional(),
   startAt: z.coerce.date().optional(),
   endAt: z.coerce.date().optional(),
   status: ContentStatusSchema.optional(),
   packageId: z.string().optional(),
-  externalUrl: URLStringSchema.optional(),
+  externalUrl: z.string().optional(),
 });
 
 export type OfferCreateInput = z.infer<typeof OfferCreateSchema>;
