@@ -17,7 +17,7 @@ export async function auth(): Promise<Session | null> {
   try {
     const cookieStore = await cookies();
     const supabase = createRouteHandlerClient({
-      cookies: () => Promise.resolve(cookieStore),
+      cookies: async () => cookieStore,
     });
     const {
       data: { session },
@@ -25,20 +25,66 @@ export async function auth(): Promise<Session | null> {
 
     if (!session?.user) return null;
 
-    // Lookup role from our Profile table; default to USER if missing
-    const profile = await prisma.profile.findUnique({
+    // Lookup role from our Profile table; create profile if missing
+    let profile = await prisma.profile.findUnique({
       where: { userId: session.user.id },
       select: { role: true },
     });
+
+    console.log("Auth debug:", {
+      userId: session.user.id,
+      email: session.user.email,
+      profileRole: profile?.role,
+      profileExists: !!profile,
+      timestamp: new Date().toISOString(),
+    });
+
+    // If profile doesn't exist, create a default one
+    if (!profile) {
+      // Check if MOCK_SUPERADMIN is enabled for local development
+      const mockSuperadmin = process.env.MOCK_SUPERADMIN === "true";
+      const defaultRole = mockSuperadmin ? "SUPERADMIN" : "USER";
+
+      const newProfile = await prisma.profile.create({
+        data: {
+          userId: session.user.id,
+          firstName: null,
+          lastName: null,
+          avatarUrl: null,
+          active: true,
+          role: defaultRole,
+        },
+        select: { role: true },
+      });
+      profile = newProfile;
+      console.log("Created new profile with role:", newProfile.role);
+    } else if (process.env.MOCK_SUPERADMIN === "true") {
+      // If MOCK_SUPERADMIN is enabled and profile exists, ensure SUPERADMIN role
+      if (profile.role !== "SUPERADMIN") {
+        const updatedProfile = await prisma.profile.update({
+          where: { userId: session.user.id },
+          data: { role: "SUPERADMIN" },
+          select: { role: true },
+        });
+        profile = updatedProfile;
+        console.log(
+          "Updated profile to SUPERADMIN due to MOCK_SUPERADMIN=true"
+        );
+      }
+    }
+
+    const userRole = (profile?.role as User["role"]) ?? "USER";
+    console.log("Final user role:", userRole);
 
     return {
       user: {
         id: session.user.id,
         email: session.user.email,
-        role: (profile?.role as User["role"]) ?? "USER",
+        role: userRole,
       },
     };
   } catch (e) {
+    console.error("Auth error:", e);
     return null;
   }
 }

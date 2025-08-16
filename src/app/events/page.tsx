@@ -2,6 +2,8 @@ import Link from "next/link";
 import WhatsAppCTA from "@/components/utils/whatsapp-cta";
 import prisma from "@/lib/prisma";
 import Image from "next/image";
+import { Card } from "@/components/ui/card";
+import { isValidImageUrl } from "@/lib/utils";
 
 interface EventsPageProps {
   searchParams?: Promise<{
@@ -41,7 +43,9 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
 
   return (
     <div className="container mx-auto py-10 space-y-6">
-      <h1 className="text-2xl font-semibold">Events</h1>
+      <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">
+        Eventos
+      </h1>
       <form className="grid grid-cols-1 md:grid-cols-4 gap-3" method="get">
         <input
           name="country"
@@ -77,12 +81,12 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
           No events match your filters.
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
           {events.map((e) => (
-            <div key={e.id} className="rounded border p-4 hover:bg-neutral-50">
+            <Card key={e.id} className="overflow-hidden">
               <Link href={`/events/${e.slug}`} className="block">
-                {(e as any).heroImageUrl && (
-                  <div className="relative w-full h-40 mb-3 overflow-hidden rounded">
+                <div className="relative w-full h-40">
+                  {(e as any).heroImageUrl && isValidImageUrl((e as any).heroImageUrl) ? (
                     <Image
                       src={(e as any).heroImageUrl}
                       alt={e.title}
@@ -90,14 +94,18 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       className="object-cover"
                     />
+                  ) : (
+                    <div className="h-full w-full bg-muted" />
+                  )}
+                </div>
+                <div className="p-4">
+                  <div className="font-medium">{e.title}</div>
+                  <div className="text-sm text-muted-foreground">
+                    {e.locationCity ?? "-"}, {e.locationCountry ?? "-"}
                   </div>
-                )}
-                <div className="font-medium">{e.title}</div>
-                <div className="text-sm text-muted-foreground">
-                  {e.locationCity ?? "-"}, {e.locationCountry ?? "-"}
                 </div>
               </Link>
-              <div className="mt-3">
+              <div className="px-4 pb-4">
                 <WhatsAppCTA
                   variant="outline"
                   size="sm"
@@ -108,7 +116,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
                   content={e.slug}
                 />
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       )}

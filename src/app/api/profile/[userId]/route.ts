@@ -8,13 +8,11 @@ export async function GET(
   { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
-    const userId = (await params).userId;
+    const { userId } = await params;
 
-    // Create Supabase client with awaited cookies
+    // Create Supabase client
     const cookieStore = await cookies();
-    const supabase = createRouteHandlerClient({
-      cookies: () => Promise.resolve(cookieStore),
-    });
+    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
 
     // Get the current user's session
     const {
@@ -62,13 +60,11 @@ export async function PATCH(
   { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
-    const userId = (await params).userId;
+    const { userId } = await params;
 
-    // Create Supabase client with awaited cookies
+    // Create Supabase client
     const cookieStore = await cookies();
-    const supabase = createRouteHandlerClient({
-      cookies: () => Promise.resolve(cookieStore),
-    });
+    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
 
     // Get the current user's session
     const {
@@ -95,14 +91,22 @@ export async function PATCH(
 
     const json = await request.json();
 
+    // Prepare update data
+    const updateData: any = {
+      firstName: json.firstName || undefined,
+      lastName: json.lastName || undefined,
+      avatarUrl: json.avatarUrl || undefined,
+      active: json.active !== undefined ? json.active : undefined,
+    };
+
+    // Only SUPERADMIN can update roles
+    if (json.role && userProfile?.role === "SUPERADMIN") {
+      updateData.role = json.role;
+    }
+
     const updatedProfile = await prisma.profile.update({
       where: { userId },
-      data: {
-        firstName: json.firstName || undefined,
-        lastName: json.lastName || undefined,
-        avatarUrl: json.avatarUrl || undefined,
-        active: json.active !== undefined ? json.active : undefined,
-      },
+      data: updateData,
     });
 
     return NextResponse.json({ profile: updatedProfile });

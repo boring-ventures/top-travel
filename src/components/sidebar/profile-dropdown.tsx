@@ -13,12 +13,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { useCurrentUser } from "@/hooks/use-current-user";
+import { useAuth } from "@/providers/auth-provider";
 import { Badge } from "@/components/ui/badge";
 import { UserRole } from "@prisma/client";
+import { isValidImageUrl } from "@/lib/utils";
 
 export function ProfileDropdown() {
-  const { profile, user, isLoading } = useCurrentUser();
+  const { profile, user, isLoading, signOut } = useAuth();
 
   if (isLoading) {
     return (
@@ -59,7 +60,7 @@ export function ProfileDropdown() {
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8 ring-2 ring-primary/10">
             <AvatarImage
-              src={profile.avatarUrl || ""}
+              src={profile.avatarUrl && isValidImageUrl(profile.avatarUrl) ? profile.avatarUrl : ""}
               alt={displayName || user.email || "User"}
             />
             <AvatarFallback className="bg-primary/10">
@@ -110,8 +111,7 @@ export function ProfileDropdown() {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={async () => {
-            await fetch("/api/auth/signout", { method: "POST" });
-            window.location.href = "/login";
+            await signOut();
           }}
         >
           <LogOut className="mr-2 h-4 w-4" />

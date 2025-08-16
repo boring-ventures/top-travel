@@ -7,9 +7,7 @@ import prisma from "@/lib/prisma";
 export async function GET() {
   try {
     const cookieStore = await cookies();
-    const supabase = createRouteHandlerClient({
-      cookies: () => Promise.resolve(cookieStore),
-    });
+    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
 
     // Get the current user's session
     const {
@@ -24,12 +22,22 @@ export async function GET() {
     const userId = session.user.id;
 
     // Fetch profile from the database
-    const profile = await prisma.profile.findUnique({
+    let profile = await prisma.profile.findUnique({
       where: { userId },
     });
 
+    // If profile doesn't exist, create a default one
     if (!profile) {
-      return NextResponse.json({ error: "Profile not found" }, { status: 404 });
+      profile = await prisma.profile.create({
+        data: {
+          userId,
+          firstName: null,
+          lastName: null,
+          avatarUrl: null,
+          active: true,
+          role: "USER",
+        },
+      });
     }
 
     return NextResponse.json(profile);
@@ -46,9 +54,7 @@ export async function GET() {
 export async function PUT(request: NextRequest) {
   try {
     const cookieStore = await cookies();
-    const supabase = createRouteHandlerClient({
-      cookies: () => Promise.resolve(cookieStore),
-    });
+    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
 
     // Get the current user's session
     const {
@@ -105,6 +111,10 @@ export async function POST(request: NextRequest) {
         );
       }
 
+      // Check if MOCK_SUPERADMIN is enabled for local development
+      const mockSuperadmin = process.env.MOCK_SUPERADMIN === "true";
+      const defaultRole = mockSuperadmin ? "SUPERADMIN" : "USER";
+
       // Create profile in the database
       const newProfile = await prisma.profile.create({
         data: {
@@ -113,7 +123,7 @@ export async function POST(request: NextRequest) {
           lastName,
           avatarUrl,
           active: true,
-          role: "USER",
+          role: defaultRole,
         },
       });
 
@@ -122,9 +132,7 @@ export async function POST(request: NextRequest) {
 
     // Normal flow requiring authentication
     const cookieStore = await cookies();
-    const supabase = createRouteHandlerClient({
-      cookies: () => Promise.resolve(cookieStore),
-    });
+    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
 
     // Get the current user's session
     const {
@@ -150,6 +158,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check if MOCK_SUPERADMIN is enabled for local development
+    const mockSuperadmin = process.env.MOCK_SUPERADMIN === "true";
+    const defaultRole = mockSuperadmin ? "SUPERADMIN" : "USER";
+
     // Create profile in the database
     const newProfile = await prisma.profile.create({
       data: {
@@ -158,7 +170,7 @@ export async function POST(request: NextRequest) {
         lastName,
         avatarUrl,
         active: true,
-        role: "USER",
+        role: defaultRole,
       },
     });
 

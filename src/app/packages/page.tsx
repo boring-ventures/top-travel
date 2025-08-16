@@ -2,6 +2,8 @@ import Link from "next/link";
 import WhatsAppCTA from "@/components/utils/whatsapp-cta";
 import prisma from "@/lib/prisma";
 import Image from "next/image";
+import { Card } from "@/components/ui/card";
+import { isValidImageUrl } from "@/lib/utils";
 
 interface PackagesPageProps {
   searchParams?: Promise<{
@@ -54,7 +56,9 @@ export default async function PackagesPage({
 
   return (
     <div className="container mx-auto py-10 space-y-6">
-      <h1 className="text-2xl font-semibold">Packages</h1>
+      <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">
+        Paquetes
+      </h1>
       <form className="grid grid-cols-1 md:grid-cols-4 gap-3" method="get">
         <input
           className="w-full rounded border px-3 py-2 text-sm"
@@ -106,12 +110,12 @@ export default async function PackagesPage({
       {packages.length === 0 ? (
         <div className="text-sm text-muted-foreground">No packages found.</div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
           {packages.map((p) => (
-            <div key={p.id} className="rounded border p-4 hover:bg-neutral-50">
+            <Card key={p.id} className="overflow-hidden">
               <Link href={`/packages/${p.slug}`} className="block">
-                {p.heroImageUrl && (
-                  <div className="relative w-full h-40 mb-3 overflow-hidden rounded">
+                <div className="relative w-full h-40">
+                  {p.heroImageUrl && isValidImageUrl(p.heroImageUrl) ? (
                     <Image
                       src={p.heroImageUrl}
                       alt={p.title}
@@ -119,19 +123,23 @@ export default async function PackagesPage({
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       className="object-cover"
                     />
+                  ) : (
+                    <div className="h-full w-full bg-muted" />
+                  )}
+                </div>
+                <div className="p-4">
+                  <div className="font-medium">{p.title}</div>
+                  {p.summary && (
+                    <div className="text-sm text-muted-foreground mt-1">
+                      {p.summary}
+                    </div>
+                  )}
+                  <div className="text-xs mt-2">
+                    {p.isCustom ? "Custom" : "Pre-built"}
                   </div>
-                )}
-                <div className="font-medium">{p.title}</div>
-                {p.summary && (
-                  <div className="text-sm text-muted-foreground">
-                    {p.summary}
-                  </div>
-                )}
-                <div className="text-xs mt-2">
-                  {p.isCustom ? "Custom" : "Pre-built"}
                 </div>
               </Link>
-              <div className="mt-3">
+              <div className="px-4 pb-4">
                 <WhatsAppCTA
                   variant="outline"
                   size="sm"
@@ -142,7 +150,7 @@ export default async function PackagesPage({
                   content={p.slug}
                 />
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       )}

@@ -7,6 +7,7 @@ import { ListHeader } from "@/components/admin/cms/list-header";
 import { SearchInput } from "@/components/admin/cms/search-input";
 import { TableShell } from "@/components/admin/cms/table-shell";
 import { EmptyState } from "@/components/admin/cms/empty-state";
+import { CmsAuthGuard } from "@/components/admin/cms-auth-guard";
 import {
   Tooltip,
   TooltipContent,
@@ -27,7 +28,7 @@ async function fetchDestinations() {
   return res.json();
 }
 
-export default function CmsDestinationsList() {
+function CmsDestinationsListContent() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["cms", "destinations", { page: 1, pageSize: 20 }],
     queryFn: fetchDestinations,
@@ -99,16 +100,16 @@ export default function CmsDestinationsList() {
                 <EmptyState
                   title={
                     search
-                      ? "No hay destinos que coincidan con tu búsqueda"
+                      ? "No se encontraron destinos"
                       : "Aún no hay destinos"
                   }
                   description={
                     search
-                      ? "Intenta con una consulta diferente."
-                      : "Crea tu primer destino para comenzar."
+                      ? "Intenta con otra búsqueda."
+                      : "Crea tu primer destino."
                   }
                   action={
-                    <Button onClick={() => setNewModalOpen(true)} size="sm">
+                    <Button size="sm" onClick={() => setNewModalOpen(true)}>
                       <Plus className="h-4 w-4 mr-2" />
                       Nuevo Destino
                     </Button>
@@ -123,75 +124,69 @@ export default function CmsDestinationsList() {
                   <th className="px-3 py-2 text-left">País</th>
                   <th className="px-3 py-2 text-left">Ciudad</th>
                   <th className="px-3 py-2 text-left">Slug</th>
-                  <th className="px-3 py-2 text-left">Estado</th>
+                  <th className="px-3 py-2 text-left">Destacado</th>
                   <th className="px-3 py-2 text-right">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.map((d: any) => (
                   <tr key={d.id} className="border-t hover:bg-muted/40">
-                    <td className="px-3 py-2 font-medium">{d.country}</td>
+                    <td className="px-3 py-2">
+                      <span className="font-medium">{d.country}</span>
+                    </td>
                     <td className="px-3 py-2">{d.city}</td>
                     <td className="px-3 py-2">
                       <code className="text-xs bg-muted px-1 py-0.5 rounded">
-                        {d.slug || "—"}
+                        {d.slug}
                       </code>
                     </td>
                     <td className="px-3 py-2">
                       {d.isFeatured ? (
-                        <Badge
-                          variant="default"
-                          className="flex items-center gap-1 w-fit"
-                        >
+                        <Badge variant="secondary" className="gap-1">
                           <Star className="h-3 w-3" />
                           Destacado
                         </Badge>
                       ) : (
-                        <Badge variant="secondary">Regular</Badge>
+                        <span className="text-muted-foreground">-</span>
                       )}
                     </td>
                     <td className="px-3 py-2 text-right">
-                      <div className="flex justify-end gap-1">
+                      <div className="flex items-center justify-end gap-1">
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button
+                              size="sm"
                               variant="ghost"
-                              size="icon"
                               onClick={() => handleView(d)}
-                              className="h-8 w-8"
                             >
                               <Eye className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>Ver detalles</TooltipContent>
                         </Tooltip>
-
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button
+                              size="sm"
                               variant="ghost"
-                              size="icon"
                               onClick={() => handleEdit(d)}
-                              className="h-8 w-8"
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
-                          <TooltipContent>Editar destino</TooltipContent>
+                          <TooltipContent>Editar</TooltipContent>
                         </Tooltip>
-
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button
+                              size="sm"
                               variant="ghost"
-                              size="icon"
                               onClick={() => handleDelete(d)}
-                              className="h-8 w-8 text-destructive hover:text-destructive"
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
-                          <TooltipContent>Eliminar destino</TooltipContent>
+                          <TooltipContent>Eliminar</TooltipContent>
                         </Tooltip>
                       </div>
                     </td>
@@ -207,26 +202,30 @@ export default function CmsDestinationsList() {
           open={newModalOpen}
           onOpenChange={setNewModalOpen}
         />
-
         <EditDestinationModal
           open={editModalOpen}
           onOpenChange={setEditModalOpen}
-          destinationId={selectedDestination?.id || null}
+          destination={selectedDestination}
         />
-
         <ViewDestinationModal
           open={viewModalOpen}
           onOpenChange={setViewModalOpen}
-          destinationId={selectedDestination?.id || null}
+          destination={selectedDestination}
         />
-
         <DeleteDestinationDialog
           open={deleteDialogOpen}
           onOpenChange={setDeleteDialogOpen}
-          destinationId={selectedDestination?.id || null}
-          destinationName={`${selectedDestination?.city}, ${selectedDestination?.country}`}
+          destination={selectedDestination}
         />
       </div>
     </TooltipProvider>
+  );
+}
+
+export default function CmsDestinationsList() {
+  return (
+    <CmsAuthGuard>
+      <CmsDestinationsListContent />
+    </CmsAuthGuard>
   );
 }

@@ -2,33 +2,66 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useMemo } from "react";
-import { ArrowRight, Sparkles, Music2, Heart, MapPin } from "lucide-react";
-import { SparklesText } from "@/components/magicui/sparkles-text";
-import { BoxReveal } from "@/components/magicui/box-reveal";
-import { ShineBorder } from "@/components/magicui/shine-border";
+import { useEffect, useMemo, useState } from "react";
+
 import { BlurFade } from "@/components/magicui/blur-fade";
 import { WhatsAppCTA } from "@/components/utils/whatsapp-cta";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { isValidImageUrl } from "@/lib/utils";
 
 type HeroItem = { src: string; title: string; href: string; subtitle?: string };
 type HeroProps = { items?: HeroItem[] };
 
 export default function Hero({ items = [] }: HeroProps) {
   const featured = items[0];
+  const fallbackBackgrounds: { src: string; title: string }[] = [
+    {
+      src: "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=1600&q=80",
+      title: "Beach paradise",
+    },
+    {
+      src: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1600&q=80",
+      title: "Iconic city",
+    },
+    {
+      src: "https://images.unsplash.com/photo-1483683804023-6ccdb62f86ef?auto=format&fit=crop&w=1600&q=80",
+      title: "Mountain adventure",
+    },
+  ];
+  const monthIndex = new Date().getMonth() % fallbackBackgrounds.length;
+  const defaultBackgroundSrc = fallbackBackgrounds[monthIndex].src;
+  const heroBackgroundSrc = featured?.src && isValidImageUrl(featured.src) ? featured.src : defaultBackgroundSrc;
+  const [backgroundSrc, setBackgroundSrc] = useState<string>(heroBackgroundSrc);
+
+  useEffect(() => {
+    const validSrc = heroBackgroundSrc && isValidImageUrl(heroBackgroundSrc) ? heroBackgroundSrc : defaultBackgroundSrc;
+    setBackgroundSrc(validSrc);
+  }, [heroBackgroundSrc, defaultBackgroundSrc]);
+
   const isVideo = useMemo(() => {
-    if (!featured?.src) return false;
-    return /(\.mp4|\.webm|\.ogg)(\?.*)?$/i.test(featured.src);
-  }, [featured?.src]);
+    if (!backgroundSrc) return false;
+    return /(\.mp4|\.webm|\.ogg)(\?.*)?$/i.test(backgroundSrc);
+  }, [backgroundSrc]);
+
+  const offerItem = items[1] || featured;
+  const offerHref = offerItem?.href;
+  const offerTitle =
+    offerItem?.title || "Exclusive Offer: 20% Off on All-Inclusive Resorts";
+  const offerSubtitle =
+    offerItem?.subtitle ||
+    "Book your dream vacation now and save on luxurious all-inclusive resorts. Limited time offer!";
+  // Carousel removed for new layout
+
   return (
     <section
       className="relative overflow-hidden"
-      aria-label="GABYTOPTRAVEL hero"
+      aria-label="Sección principal de GABYTOPTRAVEL"
       role="region"
     >
       {/* Background media: single featured image or video */}
-      <div className="absolute inset-0 -z-10">
-        {featured ? (
+      <div className="absolute inset-0 z-0">
+        {backgroundSrc ? (
           isVideo ? (
             <video
               className="absolute inset-0 h-full w-full object-cover"
@@ -37,167 +70,78 @@ export default function Hero({ items = [] }: HeroProps) {
               loop
               playsInline
               preload="metadata"
-              aria-label={featured.title}
+              aria-label={featured?.title || "Hero background"}
+              onError={() => setBackgroundSrc(defaultBackgroundSrc)}
             >
-              <source src={featured.src} />
+              <source src={backgroundSrc} />
             </video>
           ) : (
             <Image
-              src={featured.src}
-              alt={featured.title || "Hero"}
+              src={backgroundSrc}
+              alt={featured?.title || "Hero"}
               fill
               priority
               className="object-cover"
               sizes="100vw"
+              onError={() => setBackgroundSrc(defaultBackgroundSrc)}
             />
           )
         ) : (
-          <Image
-            src="/window.svg"
-            alt="Travel"
-            fill
-            className="object-cover opacity-40"
-          />
+          <div className="absolute inset-0 bg-muted" />
         )}
-        {/* Overlays for readability */}
-        <div className="absolute inset-0 bg-black/30" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
+        {/* Overlays for readability (dark gradient, avoid washing out image) */}
+        <div className="absolute inset-0 bg-black/10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/40" />
       </div>
 
       {/* Foreground content */}
-      <div className="relative py-20 md:py-32">
+      <div className="relative z-10 pt-4 md:pt-6 pb-6 md:pb-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <ShineBorder className="p-8 rounded-2xl bg-background/60 backdrop-blur">
-              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                {/* Floating badge */}
-                <BlurFade>
-                  <div className="inline-flex items-center rounded-full border border-primary/20 bg-background/50 px-6 py-2 mb-8 shadow-glow backdrop-blur-sm">
-                    <Sparkles className="h-4 w-4 text-primary mr-2" />
-                    <SparklesText text="Agencia de viajes premium en Bolivia" />
-                  </div>
-                </BlurFade>
+          {/* Centered hero content */}
+          <div className="flex min-h-[60vh] md:min-h-[70vh] flex-col items-center justify-center gap-4 md:gap-6 text-center">
+            <BlurFade>
+              <h1 className="text-white text-4xl md:text-5xl font-extrabold leading-tight tracking-tight">
+                Tu próxima experiencia inolvidable empieza aquí.
+              </h1>
+            </BlurFade>
+            <BlurFade delay={0.08}>
+              <h2 className="text-white/90 text-sm md:text-base font-normal">
+                Conciertos, Quinceañeras, Bodas y Destinos TOP
+              </h2>
+            </BlurFade>
+            <BlurFade delay={0.16}>
+              <WhatsAppCTA
+                template="¡Hola! Me gustaría planear mi viaje — {url}"
+                variables={{ url: "" }}
+                label="Planifica tu viaje ahora"
+                size="lg"
+                className="rounded-full h-12 px-5"
+              />
+            </BlurFade>
+          </div>
 
-                <BoxReveal>
-                  <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground leading-tight tracking-tight">
-                    Viajes inolvidables, planificación experta
-                    <br />
-                    <span className="text-primary">
-                      Weddings • Quinceañera • Eventos • Destinos
-                    </span>
-                  </h1>
-                </BoxReveal>
-
-                <BlurFade delay={0.2}>
-                  <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto lg:mx-0">
-                    Experiencias a medida con seguridad, logística y atención
-                    personalizada. Escríbenos por WhatsApp.
-                  </p>
-
-                  <div className="flex flex-col sm:flex-row items-center gap-4 mt-8">
-                    <WhatsAppCTA
-                      template="Hola, me interesa {itemTitle} — desde {url}"
-                      variables={{ itemTitle: "GABYTOPTRAVEL", url: "" }}
-                      label="Consultar por WhatsApp"
-                      size="lg"
-                    />
-                    {featured ? (
-                      <ShineBorder className="rounded-md">
-                        <Link
-                          href={featured.href}
-                          className="inline-flex items-center rounded-md px-6 py-3 text-sm font-medium text-foreground hover:text-primary transition-colors"
-                        >
-                          Ver: {featured.title}
-                          <ArrowRight className="ml-2" size={20} />
-                        </Link>
-                      </ShineBorder>
-                    ) : null}
-                  </div>
-                  {/* Quick niche links for fast discovery */}
-                  <div className="mt-4 flex flex-wrap items-center gap-2">
-                    <Button
-                      asChild
-                      variant="outline"
-                      size="sm"
-                      className="gap-2"
-                    >
-                      <Link href="/events" aria-label="Conciertos y Eventos">
-                        <Music2 className="h-4 w-4" aria-hidden="true" />
-                        Conciertos y Eventos
-                      </Link>
-                    </Button>
-                    <Button
-                      asChild
-                      variant="outline"
-                      size="sm"
-                      className="gap-2"
-                    >
-                      <Link href="/weddings" aria-label="Bodas Destino">
-                        <Heart className="h-4 w-4" aria-hidden="true" />
-                        Bodas Destino
-                      </Link>
-                    </Button>
-                    <Button
-                      asChild
-                      variant="outline"
-                      size="sm"
-                      className="gap-2"
-                    >
-                      <Link href="/quinceanera" aria-label="Quinceañeras">
-                        <Sparkles className="h-4 w-4" aria-hidden="true" />
-                        Quinceañeras
-                      </Link>
-                    </Button>
-                    <Button
-                      asChild
-                      variant="outline"
-                      size="sm"
-                      className="gap-2"
-                    >
-                      <Link href="/destinations" aria-label="Destinos Top">
-                        <MapPin className="h-4 w-4" aria-hidden="true" />
-                        Destinos Top
-                      </Link>
-                    </Button>
-                  </div>
-                </BlurFade>
-              </div>
-
-              {/* Current slide caption */}
-              {featured ? (
-                <div className="mt-6 text-sm text-muted-foreground">
-                  Destacado:{" "}
-                  <span className="text-foreground font-medium">
-                    {featured.title}
-                  </span>
+          {/* Offer highlight block (text-only, no image) */}
+          <div className="py-4">
+            <div className="rounded-xl bg-background/70 backdrop-blur p-4 xl:p-6">
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <Badge className="bg-primary text-primary-foreground border-primary/80">
+                    Oferta especial
+                  </Badge>
                 </div>
-              ) : null}
-
-              {/* Stats section with enhanced styling */}
-              <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-3xl">
-                {[
-                  {
-                    label: "Oficinas",
-                    value: "Santa Cruz • Cochabamba • La Paz",
-                  },
-                  { label: "Experiencia", value: "+10 años" },
-                  { label: "Satisfacción", value: "4.9/5" },
-                ].map((stat, i) => (
-                  <BlurFade
-                    key={stat.label}
-                    delay={i * 0.1}
-                    className="flex flex-col items-center p-4 rounded-lg bg-card/50 backdrop-blur-sm border border-border/50 hover:border-primary/50 transition-all duration-300"
-                  >
-                    <div className="text-2xl font-bold text-foreground">
-                      {stat.value}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {stat.label}
-                    </div>
-                  </BlurFade>
-                ))}
+                <p className="text-white text-lg md:text-xl font-bold leading-tight tracking-tight">
+                  {offerTitle}
+                </p>
+                <div className="flex items-end gap-3 justify-between">
+                  <p className="text-white/80 text-base">{offerSubtitle}</p>
+                  {offerHref ? (
+                    <Button asChild className="rounded-full h-8 px-4">
+                      <Link href={offerHref}>Reservar ahora</Link>
+                    </Button>
+                  ) : null}
+                </div>
               </div>
-            </ShineBorder>
+            </div>
           </div>
         </div>
       </div>

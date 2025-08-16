@@ -2,6 +2,8 @@ import Link from "next/link";
 import WhatsAppCTA from "@/components/utils/whatsapp-cta";
 import prisma from "@/lib/prisma";
 import Image from "next/image";
+import { Card } from "@/components/ui/card";
+import { isValidImageUrl } from "@/lib/utils";
 
 interface FDPageProps {
   searchParams?: Promise<{
@@ -45,7 +47,9 @@ export default async function FixedDeparturesPage({
 
   return (
     <div className="container mx-auto py-10 space-y-6">
-      <h1 className="text-2xl font-semibold">Fixed Departures</h1>
+      <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">
+        Salidas fijas
+      </h1>
       <form className="grid grid-cols-1 md:grid-cols-3 gap-3" method="get">
         <select
           name="destinationId"
@@ -81,12 +85,12 @@ export default async function FixedDeparturesPage({
           No fixed departures match your filters.
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
           {items.map((f) => (
-            <div key={f.id} className="rounded border p-4 hover:bg-neutral-50">
+            <Card key={f.id} className="overflow-hidden">
               <Link href={`/fixed-departures/${f.slug}`} className="block">
-                {(f as any).heroImageUrl && (
-                  <div className="relative w-full h-40 mb-3 overflow-hidden rounded">
+                <div className="relative w-full h-40">
+                  {(f as any).heroImageUrl && isValidImageUrl((f as any).heroImageUrl) ? (
                     <Image
                       src={(f as any).heroImageUrl}
                       alt={f.title}
@@ -94,15 +98,19 @@ export default async function FixedDeparturesPage({
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       className="object-cover"
                     />
+                  ) : (
+                    <div className="h-full w-full bg-muted" />
+                  )}
+                </div>
+                <div className="p-4">
+                  <div className="font-medium">{f.title}</div>
+                  <div className="text-sm text-muted-foreground">
+                    {new Date(f.startDate).toLocaleDateString()} -{" "}
+                    {new Date(f.endDate).toLocaleDateString()}
                   </div>
-                )}
-                <div className="font-medium">{f.title}</div>
-                <div className="text-sm text-muted-foreground">
-                  {new Date(f.startDate).toLocaleDateString()} -{" "}
-                  {new Date(f.endDate).toLocaleDateString()}
                 </div>
               </Link>
-              <div className="mt-3">
+              <div className="px-4 pb-4">
                 <WhatsAppCTA
                   variant="outline"
                   size="sm"
@@ -113,7 +121,7 @@ export default async function FixedDeparturesPage({
                   content={f.slug}
                 />
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       )}

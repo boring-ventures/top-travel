@@ -6,6 +6,7 @@ import { UploadCloud } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { uploadAvatar } from "@/lib/supabase/upload-avatar";
+import { isValidImageUrl } from "@/lib/utils";
 
 interface AvatarUploadProps {
   userId: string;
@@ -60,7 +61,7 @@ export function AvatarUpload({
   return (
     <div className="flex flex-col items-center gap-4">
       <div className="relative h-24 w-24">
-        {previewUrl || currentAvatarUrl ? (
+        {previewUrl || (currentAvatarUrl && isValidImageUrl(currentAvatarUrl)) ? (
           <Image
             src={previewUrl || currentAvatarUrl || ""}
             alt="Avatar preview"

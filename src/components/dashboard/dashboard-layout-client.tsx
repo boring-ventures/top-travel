@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import { SearchProvider } from "@/context/search-context";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/sidebar/app-sidebar";
+import { DynamicSidebar } from "@/components/sidebar/dynamic-sidebar";
 import SkipToMain from "@/components/skip-to-main";
 import { Header } from "@/components/sidebar/header";
 import { Search } from "@/components/sidebar/search";
@@ -19,7 +19,7 @@ export function DashboardLayoutClient({ children }: DashboardLayoutProps) {
     <SearchProvider>
       <SidebarProvider defaultOpen={true}>
         <SkipToMain />
-        <AppSidebar className="fixed inset-y-0 left-0 z-20" />
+        <DynamicSidebar className="fixed inset-y-0 left-0 z-20" />
         <div
           id="content"
           className={cn(
@@ -44,4 +44,4 @@ export function DashboardLayoutClient({ children }: DashboardLayoutProps) {
       </SidebarProvider>
     </SearchProvider>
   );
-} 
+}

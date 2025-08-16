@@ -37,10 +37,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Fetch profile function
   const fetchProfile = async (userId: string) => {
     try {
-      const response = await fetch(`/api/profile/${userId}`);
+      const response = await fetch(`/api/profile`);
       if (!response.ok) throw new Error("Failed to fetch profile");
       const data = await response.json();
-      setProfile(data.profile);
+      setProfile(data);
     } catch (error) {
       console.error("Error fetching profile:", error);
       setProfile(null);
@@ -118,4 +118,4 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export const useAuth = () => useContext(AuthContext); 
+export const useAuth = () => useContext(AuthContext);

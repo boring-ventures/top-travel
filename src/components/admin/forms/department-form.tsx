@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/select";
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 type DepartmentFormProps = {
   onSuccess?: () => void;
@@ -41,6 +42,7 @@ export function DepartmentForm({
   disableType,
 }: DepartmentFormProps) {
   const [submitting, setSubmitting] = useState(false);
+  const { toast } = useToast();
   const form = useForm<DepartmentCreateInput>({
     resolver: zodResolver(DepartmentCreateSchema),
     defaultValues: {
@@ -76,11 +78,30 @@ export function DepartmentForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
-      if (!res.ok) throw new Error("Failed to save");
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || `Failed to save (${res.status})`);
+      }
+
+      toast({
+        title: "Success",
+        description: isEdit
+          ? "Department updated successfully"
+          : "Department created successfully",
+      });
       onSuccess?.();
       if (!isEdit) {
         form.reset();
       }
+    } catch (error) {
+      console.error("Form submission error:", error);
+      toast({
+        title: "Error",
+        description:
+          error instanceof Error ? error.message : "Failed to save department",
+        variant: "destructive",
+      });
     } finally {
       setSubmitting(false);
     }
@@ -112,6 +133,12 @@ export function DepartmentForm({
                   </SelectContent>
                 </Select>
                 <FormMessage />
+                {!initialValues?.type && (
+                  <p className="text-xs text-muted-foreground">
+                    Nota: Solo puede existir un departamento de cada tipo. Si ya
+                    existe, use la función de editar.
+                  </p>
+                )}
               </FormItem>
             )}
           />
@@ -122,17 +149,14 @@ export function DepartmentForm({
               <FormItem>
                 <FormLabel>Título</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="Título del departamento" 
-                    {...field} 
-                  />
+                  <Input placeholder="Título del departamento" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
-        
+
         <FormField
           control={form.control}
           name="intro"
@@ -140,17 +164,17 @@ export function DepartmentForm({
             <FormItem>
               <FormLabel>Introducción</FormLabel>
               <FormControl>
-                <Textarea 
-                  rows={4} 
-                  placeholder="Breve descripción del departamento..." 
-                  {...field} 
+                <Textarea
+                  rows={4}
+                  placeholder="Breve descripción del departamento..."
+                  {...field}
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
           name="heroImageUrl"
@@ -158,16 +182,16 @@ export function DepartmentForm({
             <FormItem>
               <FormLabel>URL de Imagen Principal</FormLabel>
               <FormControl>
-                <Input 
-                  placeholder="https://ejemplo.com/imagen.jpg" 
-                  {...field} 
+                <Input
+                  placeholder="https://ejemplo.com/imagen.jpg"
+                  {...field}
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        
+
         <div className="flex justify-end pt-4">
           <Button type="submit" disabled={submitting} className="min-w-[120px]">
             {submitting ? (

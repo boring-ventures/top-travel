@@ -38,48 +38,39 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  // Enforce SUPERADMIN for CMS (allow when MOCK_SUPERADMIN=true)
+  // Enforce SUPERADMIN for CMS
   if (req.nextUrl.pathname.startsWith("/cms")) {
-    // Retrieve role from a custom claim or load from RLS-protected table if needed.
-    // For MVP, check env MOCK_SUPERADMIN, then try JWT claim, then fall back to fetching Profile via API.
-    const mockSuperadmin = process.env.MOCK_SUPERADMIN === "true";
-    if (!mockSuperadmin) {
-      // If no session or not SUPERADMIN and no mock, block access
-      if (!session) {
-        const redirectUrl = req.nextUrl.clone();
-        redirectUrl.pathname = "/sign-in";
-        redirectUrl.searchParams.set("redirectTo", req.nextUrl.pathname);
-        return NextResponse.redirect(redirectUrl);
-      }
-      // First try role on JWT if present
-      const role = (session.user as any)?.role;
-      if (role !== "SUPERADMIN") {
-        // Fallback: fetch profile from our API and check role
-        try {
-          const profileUrl = new URL(
-            `/api/profile/${session.user.id}`,
-            req.url
-          );
-          const profileRes = await fetch(profileUrl.toString(), {
-            headers: {
-              // Pass through cookies so the API can authenticate the user
-              cookie: req.headers.get("cookie") ?? "",
-            },
-          });
-          if (profileRes.ok) {
-            const { profile } = (await profileRes.json()) as {
-              profile?: { role?: string };
-            };
-            if (profile?.role !== "SUPERADMIN") {
-              return NextResponse.redirect(new URL("/dashboard", req.url));
-            }
-          } else {
-            // If we cannot verify, deny access by default
+    if (!session) {
+      const redirectUrl = req.nextUrl.clone();
+      redirectUrl.pathname = "/sign-in";
+      redirectUrl.searchParams.set("redirectTo", req.nextUrl.pathname);
+      return NextResponse.redirect(redirectUrl);
+    }
+    // First try role on JWT if present
+    const role = (session.user as any)?.role;
+    if (role !== "SUPERADMIN") {
+      // Fallback: fetch profile from our API and check role
+      try {
+        const profileUrl = new URL(`/api/profile/${session.user.id}`, req.url);
+        const profileRes = await fetch(profileUrl.toString(), {
+          headers: {
+            // Pass through cookies so the API can authenticate the user
+            cookie: req.headers.get("cookie") ?? "",
+          },
+        });
+        if (profileRes.ok) {
+          const { profile } = (await profileRes.json()) as {
+            profile?: { role?: string };
+          };
+          if (profile?.role !== "SUPERADMIN") {
             return NextResponse.redirect(new URL("/dashboard", req.url));
           }
-        } catch {
+        } else {
+          // If we cannot verify, deny access by default
           return NextResponse.redirect(new URL("/dashboard", req.url));
         }
+      } catch {
+        return NextResponse.redirect(new URL("/dashboard", req.url));
       }
     }
   }

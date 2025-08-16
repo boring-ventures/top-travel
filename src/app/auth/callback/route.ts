@@ -22,12 +22,22 @@ export async function GET(request: NextRequest) {
       });
 
       if (!existingProfile) {
+        // Check if MOCK_SUPERADMIN is enabled for local development
+        const mockSuperadmin = process.env.MOCK_SUPERADMIN === "true";
+        const defaultRole = mockSuperadmin
+          ? UserRole.SUPERADMIN
+          : UserRole.USER;
+
         await prisma.profile.create({
           data: {
             userId,
-            role: UserRole.USER,
+            role: defaultRole,
           },
         });
+
+        console.log(
+          `Created new profile with role: ${defaultRole} (MOCK_SUPERADMIN: ${mockSuperadmin})`
+        );
       }
     }
   }

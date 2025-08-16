@@ -41,3 +41,41 @@ export function buildWhatsAppUrl(
   url.searchParams.set("text", finalText);
   return url.toString();
 }
+
+/**
+ * Validates if a string is a valid image URL
+ * @param url - The URL to validate
+ * @returns boolean indicating if the URL is valid
+ */
+export function isValidImageUrl(url: string | null | undefined): boolean {
+  if (!url || typeof url !== 'string') return false;
+  
+  // Filter out common invalid values
+  if (url === '1' || url === '0' || url === '' || url === 'null' || url === 'undefined') {
+    return false;
+  }
+  
+  // Check if it's a valid URL
+  try {
+    const urlObj = new URL(url);
+    return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Filters an array of objects to only include those with valid image URLs
+ * @param items - Array of objects with image URL properties
+ * @param imageUrlKey - The key containing the image URL
+ * @returns Filtered array
+ */
+export function filterValidImageUrls<T extends Record<string, any>>(
+  items: T[],
+  imageUrlKey: keyof T
+): T[] {
+  return items.filter(item => {
+    const imageUrl = item[imageUrlKey];
+    return isValidImageUrl(imageUrl);
+  });
+}

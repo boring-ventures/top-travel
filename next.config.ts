@@ -1,18 +1,23 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Disable standalone output on Windows to avoid symlink issues
-  ...(process.platform === 'win32' && { output: undefined }),
+  ...(process.platform === "win32" && { output: undefined }),
   images: {
+    domains: [
+      // Add your Supabase project domain
+      "swfgvfhpmicwptupjyko.supabase.co",
+      "xqakfzhkeiongvzgbhji.supabase.co",
+      "erbemjrbtyxryzdiqtnl.supabase.co",
+      "images.unsplash.com",
+      // Add randomuser.me for placeholder avatars
+      "randomuser.me",
+    ],
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "*.supabase.co",
-        pathname: "/storage/*",
-      },
-      {
-        protocol: "https",
         hostname: "images.unsplash.com",
+        port: "",
+        pathname: "/**",
       },
     ],
   },

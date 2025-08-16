@@ -25,6 +25,12 @@ export async function GET(_req: Request, { params }: Params) {
 export async function PATCH(request: Request, { params }: Params) {
   try {
     const session = await auth();
+    console.log("PATCH /api/departments/[type] - Session:", session);
+    console.log(
+      "PATCH /api/departments/[type] - User role:",
+      session?.user?.role
+    );
+
     ensureSuperadmin(session?.user);
     const { type } = await params;
     const json = await request.json();
@@ -35,6 +41,7 @@ export async function PATCH(request: Request, { params }: Params) {
     });
     return NextResponse.json(updated);
   } catch (error: any) {
+    console.error("PATCH /api/departments/[type] - Error:", error);
     const status = error?.status ?? 400;
     return NextResponse.json(
       { error: error?.message ?? "Failed to update department" },

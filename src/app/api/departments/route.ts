@@ -24,6 +24,19 @@ export async function POST(request: Request) {
     ensureSuperadmin(session?.user);
     const json = await request.json();
     const parsed = DepartmentCreateSchema.parse(json);
+
+    // Check if department with this type already exists
+    const existing = await prisma.department.findUnique({
+      where: { type: parsed.type },
+    });
+
+    if (existing) {
+      return NextResponse.json(
+        { error: `Department with type '${parsed.type}' already exists` },
+        { status: 409 }
+      );
+    }
+
     const created = await prisma.department.create({
       data: {
         ...parsed,
@@ -33,6 +46,24 @@ export async function POST(request: Request) {
     });
     return NextResponse.json(created, { status: 201 });
   } catch (error: any) {
+    console.error("Department creation error:", error);
+
+    // Handle Prisma unique constraint errors
+    if (error.code === "P2002") {
+      return NextResponse.json(
+        { error: "A department with this type already exists" },
+        { status: 409 }
+      );
+    }
+
+    // Handle validation errors
+    if (error.name === "ZodError") {
+      return NextResponse.json(
+        { error: "Invalid data provided", details: error.errors },
+        { status: 400 }
+      );
+    }
+
     const status = error?.status ?? 400;
     return NextResponse.json(
       { error: error?.message ?? "Failed to create department" },

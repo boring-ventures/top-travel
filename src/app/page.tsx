@@ -11,21 +11,14 @@ import CTA from "@/components/views/landing-page/CTA";
 import Footer from "@/components/views/landing-page/Footer";
 import prisma from "@/lib/prisma";
 import { WhatsAppCTA } from "@/components/utils/whatsapp-cta";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
-import { ShineBorder } from "@/components/magicui/shine-border";
 import { BlurFade } from "@/components/magicui/blur-fade";
-import { MagicCard } from "@/components/magicui/magic-card";
 import Partners from "@/components/views/landing-page/Partners";
 import { Music2, Heart, Sparkles, MapPin } from "lucide-react";
+import { filterValidImageUrls, isValidImageUrl } from "@/lib/utils";
 
 export const metadata = {
   title: "GABYTOPTRAVEL – Viajes premium, eventos y experiencias",
@@ -130,23 +123,19 @@ export default async function Home() {
 
   const heroItems = (
     [
-      ...offers
-        .filter((o) => !!o.bannerImageUrl)
-        .map((o) => ({
-          src: o.bannerImageUrl as string,
-          title: o.title,
-          href: o.package?.slug
-            ? `/packages/${o.package.slug}`
-            : o.externalUrl || "#",
-          subtitle: o.subtitle || undefined,
-        })),
-      ...topDestinations
-        .filter((d) => !!d.heroImageUrl)
-        .map((d) => ({
-          src: d.heroImageUrl as string,
-          title: `${d.city}, ${d.country}`,
-          href: `/destinations/${d.slug}`,
-        })),
+      ...filterValidImageUrls(offers, "bannerImageUrl").map((o) => ({
+        src: o.bannerImageUrl as string,
+        title: o.title,
+        href: o.package?.slug
+          ? `/packages/${o.package.slug}`
+          : o.externalUrl || "#",
+        subtitle: o.subtitle || undefined,
+      })),
+      ...filterValidImageUrls(topDestinations, "heroImageUrl").map((d) => ({
+        src: d.heroImageUrl as string,
+        title: `${d.city}, ${d.country}`,
+        href: `/destinations/${d.slug}`,
+      })),
     ] as { src: string; title: string; href: string; subtitle?: string }[]
   ).slice(0, 6);
 
@@ -154,13 +143,13 @@ export default async function Home() {
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-background via-background to-secondary/20">
       <Header />
 
-      <main className="flex-grow relative">
+      <main className="flex-grow relative pt-24 sm:pt-28">
         <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-transparent -z-10" />
 
         <Hero items={heroItems} />
         {/* Hero CTA bar for immediate engagement */}
-        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-14">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
             <div className="flex-1">
               <h1 className="text-2xl md:text-4xl font-semibold tracking-tight">
@@ -184,7 +173,7 @@ export default async function Home() {
         </section>
 
         {/* Specialized Niches */}
-        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
           <div className="flex items-end justify-between gap-4 mb-6">
             <div>
               <AnimatedShinyText>
@@ -197,18 +186,14 @@ export default async function Home() {
               </p>
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
             {/* Conciertos y Eventos */}
-            <MagicCard className="overflow-hidden rounded-xl group">
-              <Link href="/events" className="block relative">
-                <div className="relative h-44 w-full">
-                  {/* Fallback visual if no event images available */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-secondary/20 to-background" />
-                  <div className="absolute inset-0 flex items-end p-4 bg-gradient-to-t from-background/90 via-background/20 to-transparent">
-                    <div className="flex items-center gap-2 text-base font-medium">
-                      <Music2 className="h-5 w-5" aria-hidden="true" />{" "}
-                      Conciertos y Eventos
-                    </div>
+            <Card className="overflow-hidden rounded-xl">
+              <Link href="/events" className="block">
+                <div className="h-40 md:h-44 w-full flex items-center justify-center bg-muted">
+                  <div className="flex items-center gap-2 text-base font-medium">
+                    <Music2 className="h-5 w-5" aria-hidden="true" /> Conciertos
+                    y Eventos
                   </div>
                 </div>
                 <div className="p-4">
@@ -222,12 +207,11 @@ export default async function Home() {
                   </div>
                 </div>
               </Link>
-            </MagicCard>
+            </Card>
             {/* Bodas Destino */}
-            <MagicCard className="overflow-hidden rounded-xl group">
-              <Link href="/weddings" className="block relative">
-                <div className="relative h-44 w-full">
-                  {/* Try using departments WEDDINGS image when available */}
+            <Card className="overflow-hidden rounded-xl">
+              <Link href="/weddings" className="block">
+                <div className="relative h-40 md:h-44 w-full">
                   {departments.find((d) => d.type === "WEDDINGS")
                     ?.heroImageUrl ? (
                     <Image
@@ -237,20 +221,19 @@ export default async function Home() {
                       }
                       alt="Bodas de destino"
                       fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      className="object-cover"
                       sizes="(max-width: 640px) 100vw, 25vw"
                     />
                   ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-pink-200/30 via-primary/20 to-background" />
+                    <div className="h-full w-full bg-muted" />
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent" />
-                  <div className="absolute bottom-0 left-0 p-4 flex items-center gap-2">
+                </div>
+                <div className="p-4">
+                  <div className="flex items-center gap-2">
                     <Heart className="h-5 w-5" aria-hidden="true" />
                     <span className="text-base font-medium">Bodas Destino</span>
                   </div>
-                </div>
-                <div className="p-4">
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-muted-foreground mt-1">
                     Planeamos tu “sí, acepto” en el lugar perfecto.
                   </p>
                   <div className="mt-3">
@@ -260,11 +243,11 @@ export default async function Home() {
                   </div>
                 </div>
               </Link>
-            </MagicCard>
+            </Card>
             {/* Quinceañeras */}
-            <MagicCard className="overflow-hidden rounded-xl group">
-              <Link href="/quinceanera" className="block relative">
-                <div className="relative h-44 w-full">
+            <Card className="overflow-hidden rounded-xl">
+              <Link href="/quinceanera" className="block">
+                <div className="relative h-40 md:h-44 w-full">
                   {departments.find((d) => d.type === "QUINCEANERA")
                     ?.heroImageUrl ? (
                     <Image
@@ -274,20 +257,19 @@ export default async function Home() {
                       }
                       alt="Quinceañeras"
                       fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      className="object-cover"
                       sizes="(max-width: 640px) 100vw, 25vw"
                     />
                   ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-violet-200/30 via-secondary/20 to-background" />
+                    <div className="h-full w-full bg-muted" />
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent" />
-                  <div className="absolute bottom-0 left-0 p-4 flex items-center gap-2">
+                </div>
+                <div className="p-4">
+                  <div className="flex items-center gap-2">
                     <Sparkles className="h-5 w-5" aria-hidden="true" />
                     <span className="text-base font-medium">Quinceañeras</span>
                   </div>
-                </div>
-                <div className="p-4">
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-muted-foreground mt-1">
                     Celebraciones únicas con estilo y seguridad.
                   </p>
                   <div className="mt-3">
@@ -297,30 +279,30 @@ export default async function Home() {
                   </div>
                 </div>
               </Link>
-            </MagicCard>
+            </Card>
             {/* Destinos Top */}
-            <MagicCard className="overflow-hidden rounded-xl group">
-              <Link href="/destinations" className="block relative">
-                <div className="relative h-44 w-full">
-                  {topDestinations[0]?.heroImageUrl ? (
+            <Card className="overflow-hidden rounded-xl">
+              <Link href="/destinations" className="block">
+                <div className="relative h-40 md:h-44 w-full">
+                  {topDestinations[0]?.heroImageUrl &&
+                  isValidImageUrl(topDestinations[0].heroImageUrl) ? (
                     <Image
                       src={topDestinations[0].heroImageUrl}
                       alt={`${topDestinations[0].city}, ${topDestinations[0].country}`}
                       fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      className="object-cover"
                       sizes="(max-width: 640px) 100vw, 25vw"
                     />
                   ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-200/30 via-primary/20 to-background" />
+                    <div className="h-full w-full bg-muted" />
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent" />
-                  <div className="absolute bottom-0 left-0 p-4 flex items-center gap-2">
+                </div>
+                <div className="p-4">
+                  <div className="flex items-center gap-2">
                     <MapPin className="h-5 w-5" aria-hidden="true" />
                     <span className="text-base font-medium">Destinos Top</span>
                   </div>
-                </div>
-                <div className="p-4">
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-muted-foreground mt-1">
                     Inspiración para tu próxima aventura.
                   </p>
                   <div className="mt-3">
@@ -330,10 +312,10 @@ export default async function Home() {
                   </div>
                 </div>
               </Link>
-            </MagicCard>
+            </Card>
           </div>
         </section>
-        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
           <div className="flex items-end justify-between gap-4 mb-6">
             <div>
               <AnimatedShinyText>
@@ -358,7 +340,7 @@ export default async function Home() {
               No hay ofertas destacadas por el momento.
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6 lg:gap-8">
               {offers.map((o) => {
                 const href = o.package?.slug
                   ? `/packages/${o.package.slug}`
@@ -369,25 +351,24 @@ export default async function Home() {
                     className="overflow-hidden border-border/60 hover:border-primary/40 transition-colors"
                   >
                     <div className="group">
-                      {o.bannerImageUrl ? (
+                      {o.bannerImageUrl && isValidImageUrl(o.bannerImageUrl) ? (
                         <Link
                           href={href}
-                          className="block relative h-48 w-full"
+                          className="block relative h-44 md:h-56 w-full"
                         >
-                          <div className="absolute top-3 left-3 z-10 inline-flex items-center rounded-full bg-primary/90 px-2 py-1 text-xs text-background shadow">
+                          <div className="absolute top-3 left-3 z-10 inline-flex items-center rounded-full bg-primary/90 px-2 py-1 text-xs text-background">
                             Destacado
                           </div>
                           <Image
                             src={o.bannerImageUrl}
                             alt={o.title}
                             fill
-                            className="object-cover transition-transform duration-300 group-hover:scale-105"
-                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                            className="object-cover"
+                            sizes="(max-width: 640px) 100vw, 33vw"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
                         </Link>
                       ) : (
-                        <div className="h-48 w-full bg-muted" />
+                        <div className="h-44 md:h-56 w-full bg-muted" />
                       )}
                       <div className="p-3 sm:p-4">
                         <div className="text-base sm:text-lg font-semibold text-foreground line-clamp-2">
@@ -421,7 +402,7 @@ export default async function Home() {
             </div>
           )}
         </section>
-        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
           <div className="flex items-end justify-between gap-4 mb-6">
             <div>
               <AnimatedShinyText>
@@ -444,36 +425,33 @@ export default async function Home() {
               Aún no hay destinos destacados.
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 lg:gap-6">
               {topDestinations.map((d) => (
-                <MagicCard key={d.id} className="overflow-hidden rounded-xl">
-                  <Link
-                    href={`/destinations/${d.slug}`}
-                    className="group block"
-                  >
-                    <div className="relative h-32 w-full">
-                      {d.heroImageUrl ? (
+                <Card key={d.id} className="overflow-hidden rounded-xl">
+                  <Link href={`/destinations/${d.slug}`} className="block">
+                    <div className="relative h-28 sm:h-32 w-full">
+                      {d.heroImageUrl && isValidImageUrl(d.heroImageUrl) ? (
                         <Image
                           src={d.heroImageUrl}
                           alt={`${d.city}, ${d.country}`}
                           fill
-                          className="object-cover transition-transform duration-300 group-hover:scale-105"
+                          className="object-cover"
                           sizes="(max-width: 640px) 50vw, 16vw"
                         />
                       ) : (
                         <div className="h-full w-full bg-muted" />
                       )}
-                      <div className="absolute inset-x-0 bottom-0 p-3 text-xs sm:text-sm bg-gradient-to-t from-background/90 to-transparent">
-                        {d.city}, {d.country}
-                      </div>
+                    </div>
+                    <div className="p-3 text-[0.8rem] sm:text-sm">
+                      {d.city}, {d.country}
                     </div>
                   </Link>
-                </MagicCard>
+                </Card>
               ))}
             </div>
           )}
         </section>
-        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
           <div className="flex items-end justify-between gap-4 mb-6">
             <div>
               <AnimatedShinyText>
@@ -491,35 +469,29 @@ export default async function Home() {
               Pronto publicaremos departamentos.
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
               {departments.map((dep) => (
-                <ShineBorder
-                  key={dep.id}
-                  className="rounded-xl overflow-hidden"
-                  borderWidth={1}
-                  color="rgba(var(--primary),0.4)"
-                >
+                <Card key={dep.id} className="rounded-xl overflow-hidden">
                   <Link
                     href={
                       dep.type === "WEDDINGS" ? "/weddings" : "/quinceanera"
                     }
-                    className="group block"
+                    className="block"
                   >
-                    <div className="relative h-40 w-full">
-                      {dep.heroImageUrl ? (
+                    <div className="relative h-36 sm:h-40 w-full">
+                      {dep.heroImageUrl && isValidImageUrl(dep.heroImageUrl) ? (
                         <Image
                           src={dep.heroImageUrl}
                           alt={dep.title}
                           fill
-                          className="object-cover transition-transform duration-300 group-hover:scale-105"
+                          className="object-cover"
                           sizes="(max-width: 640px) 100vw, 50vw"
                         />
                       ) : (
                         <div className="h-full w-full bg-muted" />
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
                     </div>
-                    <div className="p-4">
+                    <div className="p-3 sm:p-4">
                       <div className="font-medium">
                         {dep.type === "WEDDINGS"
                           ? "Bodas de destino"
@@ -530,12 +502,12 @@ export default async function Home() {
                       </div>
                     </div>
                   </Link>
-                </ShineBorder>
+                </Card>
               ))}
             </div>
           )}
         </section>
-        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
           <div className="flex items-end justify-between gap-4 mb-6">
             <div>
               <AnimatedShinyText>
@@ -558,13 +530,13 @@ export default async function Home() {
               No hay eventos próximos.
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
               {featuredEvents.map((e, idx) => (
                 <Card
                   key={e.id}
                   className="border-border/60 hover:border-primary/40 transition-colors"
                 >
-                  <Link href={`/events/${e.slug}`} className="block p-5">
+                  <Link href={`/events/${e.slug}`} className="block p-4 sm:p-5">
                     <BlurFade delay={idx * 0.05}>
                       <div className="font-medium text-foreground">
                         {e.title}
@@ -579,7 +551,7 @@ export default async function Home() {
             </div>
           )}
         </section>
-        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
           <div className="flex items-end justify-between gap-4 mb-6">
             <div>
               <AnimatedShinyText>
@@ -602,7 +574,7 @@ export default async function Home() {
               No hay salidas fijas disponibles.
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
               {fixedDepartures.map((fd, idx) => (
                 <Card
                   key={fd.id}
@@ -610,7 +582,7 @@ export default async function Home() {
                 >
                   <Link
                     href={`/fixed-departures/${fd.slug}`}
-                    className="block p-5"
+                    className="block p-4 sm:p-5"
                   >
                     <BlurFade delay={idx * 0.05}>
                       <div className="font-medium text-foreground">

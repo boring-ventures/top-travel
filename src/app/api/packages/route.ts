@@ -14,7 +14,12 @@ export async function GET(request: Request) {
     });
     const { searchParams } = new URL(request.url);
     const session = await auth();
-    const isSuperadmin = session?.user?.role === "SUPERADMIN";
+
+    if (!session?.user) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
+    const isSuperadmin = session.user.role === "SUPERADMIN";
     const status = searchParams.get("status") as "DRAFT" | "PUBLISHED" | null;
     const isCustomParam = searchParams.get("isCustom");
     const isCustom =

@@ -23,8 +23,20 @@ export async function GET(_req: Request, { params }: Params) {
 export async function PATCH(request: Request, { params }: Params) {
   try {
     console.log("PATCH request received for offers");
+
+    // Debug: Check auth step by step
+    console.log("Step 1: Calling auth() function...");
     const session = await auth();
+    console.log("Step 2: Auth result:", {
+      hasSession: !!session,
+      userId: session?.user?.id,
+      email: session?.user?.email,
+      role: session?.user?.role,
+    });
+
+    console.log("Step 3: Checking superadmin role...");
     ensureSuperadmin(session?.user);
+    console.log("Step 4: Superadmin check passed");
 
     const { id } = await params;
     console.log("Updating offer with ID:", id);
@@ -43,6 +55,11 @@ export async function PATCH(request: Request, { params }: Params) {
     return NextResponse.json(updated);
   } catch (error: any) {
     console.error("Error updating offer:", error);
+    console.error("Error details:", {
+      message: error?.message,
+      status: error?.status,
+      stack: error?.stack,
+    });
     const status = error?.status ?? 400;
     return NextResponse.json(
       { error: error?.message ?? "Failed to update offer" },
