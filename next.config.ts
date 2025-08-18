@@ -1,13 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  ...(process.platform === "win32" && { output: undefined }),
   images: {
     domains: [
-      // Add your Supabase project domain
-      "swfgvfhpmicwptupjyko.supabase.co",
-      "xqakfzhkeiongvzgbhji.supabase.co",
-      "erbemjrbtyxryzdiqtnl.supabase.co",
+      "gjsxdqrdkhbyvcfjuxiq.supabase.co",
       "images.unsplash.com",
       // Add randomuser.me for placeholder avatars
       "randomuser.me",
@@ -24,6 +20,7 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  serverExternalPackages: ["@prisma/client"],
 };
 
 export default nextConfig;

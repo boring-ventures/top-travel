@@ -4,15 +4,14 @@ const nextConfig = {
     domains: [
       // Add your Supabase project domain
       "gjsxdqrdkhbyvcfjuxiq.supabase.co",
-      "swfgvfhpmicwptupjyko.supabase.co",
-      "xqakfzhkeiongvzgbhji.supabase.co",
+
       "images.unsplash.com",
     ],
   },
-  output: "standalone",
   eslint: {
     ignoreDuringBuilds: true,
   },
+  serverExternalPackages: ["@prisma/client"],
 };
 
 module.exports = nextConfig;
