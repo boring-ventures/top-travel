@@ -35,14 +35,14 @@ export default function Header() {
       >
         <div
           className={cn(
-            "mx-auto mt-2 max-w-6xl px-4 sm:px-6 lg:px-12 transition-all duration-300",
+            "mx-auto mt-1 max-w-6xl px-4 sm:px-6 lg:px-12 transition-all duration-300",
             isScrolled &&
               "bg-background/60 backdrop-blur-2xl border border-border/50 rounded-2xl max-w-5xl lg:px-8"
           )}
         >
           <div
             className={cn(
-              "relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4"
+              "relative flex flex-wrap items-center justify-between gap-4 py-2 lg:gap-0 lg:py-3"
             )}
           >
             {/* Left: brand + mobile menu button */}
@@ -52,8 +52,8 @@ export default function Header() {
                 aria-label="home"
                 className="flex items-center gap-2"
               >
-                <Globe2 className="h-6 w-6 text-primary" aria-hidden="true" />
-                <span className="text-base sm:text-lg font-bold tracking-tight text-primary">
+                <Globe2 className="h-5 w-5 text-primary" aria-hidden="true" />
+                <span className="text-sm sm:text-base font-bold tracking-tight text-primary">
                   GABYTOPTRAVEL
                 </span>
               </Link>

@@ -47,7 +47,15 @@ export default async function Home() {
           subtitle: true,
           bannerImageUrl: true,
           externalUrl: true,
-          package: { select: { slug: true, title: true } },
+          package: {
+            select: {
+              slug: true,
+              title: true,
+              fromPrice: true,
+              currency: true,
+              summary: true,
+            },
+          },
         },
       }),
       prisma.destination.findMany({
@@ -123,14 +131,28 @@ export default async function Home() {
 
   const heroItems = (
     [
-      ...filterValidImageUrls(offers, "bannerImageUrl").map((o) => ({
-        src: o.bannerImageUrl as string,
-        title: o.title,
-        href: o.package?.slug
-          ? `/packages/${o.package.slug}`
-          : o.externalUrl || "#",
-        subtitle: o.subtitle || undefined,
-      })),
+      // Prioritize the first featured offer for hero background
+      ...filterValidImageUrls(offers, "bannerImageUrl")
+        .slice(0, 1)
+        .map((o) => ({
+          src: o.bannerImageUrl as string,
+          title: o.title,
+          href: o.package?.slug
+            ? `/packages/${o.package.slug}`
+            : o.externalUrl || "#",
+          subtitle: o.subtitle || undefined,
+        })),
+      // Add remaining offers and destinations
+      ...filterValidImageUrls(offers, "bannerImageUrl")
+        .slice(1)
+        .map((o) => ({
+          src: o.bannerImageUrl as string,
+          title: o.title,
+          href: o.package?.slug
+            ? `/packages/${o.package.slug}`
+            : o.externalUrl || "#",
+          subtitle: o.subtitle || undefined,
+        })),
       ...filterValidImageUrls(topDestinations, "heroImageUrl").map((d) => ({
         src: d.heroImageUrl as string,
         title: `${d.city}, ${d.country}`,
@@ -143,7 +165,7 @@ export default async function Home() {
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-background via-background to-secondary/20">
       <Header />
 
-      <main className="flex-grow relative pt-24 sm:pt-28">
+      <main className="flex-grow relative pt-16 sm:pt-20">
         <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-transparent -z-10" />
 
@@ -340,60 +362,120 @@ export default async function Home() {
               No hay ofertas destacadas por el momento.
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {offers.map((o) => {
                 const href = o.package?.slug
                   ? `/packages/${o.package.slug}`
                   : o.externalUrl || "#";
+                const price = o.package?.fromPrice;
+                const currency = o.package?.currency || "USD";
+                const description =
+                  o.subtitle ||
+                  o.package?.summary ||
+                  "Descubre esta increíble oferta";
+
                 return (
                   <Card
                     key={o.id}
-                    className="overflow-hidden border-border/60 hover:border-primary/40 transition-colors"
+                    className="overflow-hidden rounded-xl border-border/60 hover:border-primary/40 transition-all duration-300 hover:shadow-lg"
                   >
-                    <div className="group">
+                    {/* Image Section */}
+                    <div className="relative h-48 md:h-56 w-full">
                       {o.bannerImageUrl && isValidImageUrl(o.bannerImageUrl) ? (
-                        <Link
-                          href={href}
-                          className="block relative h-44 md:h-56 w-full"
-                        >
-                          <div className="absolute top-3 left-3 z-10 inline-flex items-center rounded-full bg-primary/90 px-2 py-1 text-xs text-background">
-                            Destacado
-                          </div>
-                          <Image
-                            src={o.bannerImageUrl}
-                            alt={o.title}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 640px) 100vw, 33vw"
-                          />
-                        </Link>
+                        <Image
+                          src={o.bannerImageUrl}
+                          alt={o.title}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        />
                       ) : (
-                        <div className="h-44 md:h-56 w-full bg-muted" />
-                      )}
-                      <div className="p-3 sm:p-4">
-                        <div className="text-base sm:text-lg font-semibold text-foreground line-clamp-2">
-                          {o.title}
-                        </div>
-                        {o.subtitle ? (
-                          <div className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                            {o.subtitle}
+                        <div className="h-full w-full bg-gradient-to-br from-muted to-muted/60 flex items-center justify-center">
+                          <div className="text-muted-foreground text-center">
+                            <div className="text-2xl mb-2">🏖️</div>
+                            <div className="text-sm">Imagen no disponible</div>
                           </div>
-                        ) : null}
-                        <div className="mt-3 flex flex-wrap items-center gap-3">
-                          <Link
-                            href={href}
-                            className="text-sm text-primary/80 hover:text-primary underline underline-offset-4"
-                          >
-                            Ver detalle
-                          </Link>
-                          <WhatsAppCTA
-                            template="Hola, me interesa {itemTitle} — {url}"
-                            variables={{ itemTitle: o.title, url: "" }}
-                            label="Consultar"
-                            variant="secondary"
-                            size="sm"
-                          />
                         </div>
+                      )}
+                      {/* Featured Badge */}
+                      <div className="absolute top-3 left-3 z-10">
+                        <div className="inline-flex items-center rounded-full bg-primary/90 px-3 py-1 text-xs font-medium text-primary-foreground shadow-sm">
+                          Destacado
+                        </div>
+                      </div>
+                      {/* Price Badge */}
+                      {price && (
+                        <div className="absolute top-3 right-3 z-10">
+                          <div className="inline-flex items-center rounded-full bg-background/90 backdrop-blur px-3 py-1 text-sm font-semibold text-foreground shadow-sm">
+                            ${price.toString()}
+                            <span className="text-xs text-muted-foreground ml-1">
+                              {currency === "USD" ? "USD" : currency}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Content Section */}
+                    <div className="p-4">
+                      {/* Title and Price Row */}
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <h3 className="text-lg font-bold text-foreground line-clamp-2 flex-1">
+                          {o.title}
+                        </h3>
+                        {price && (
+                          <div className="text-right shrink-0">
+                            <div className="text-lg font-bold text-primary">
+                              ${price.toString()}
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              {currency === "USD" ? "USD" : currency}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Description */}
+                      <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                        {description}
+                      </p>
+
+                      {/* Features */}
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        <div className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-xs text-muted-foreground">
+                          <span>👁️</span>
+                          <span>Ver</span>
+                        </div>
+                        <div className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-xs text-muted-foreground">
+                          <span>✈️</span>
+                          <span>Vuelos</span>
+                        </div>
+                        <div className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-xs text-muted-foreground">
+                          <span>🏨</span>
+                          <span>Hotel</span>
+                        </div>
+                      </div>
+
+                      {/* Call to Action */}
+                      <div className="flex items-center gap-2">
+                        <WhatsAppCTA
+                          template="Hola, me interesa reservar {itemTitle} — {url}"
+                          variables={{ itemTitle: o.title, url: "" }}
+                          label="Reservar ahora"
+                          variant="default"
+                          size="default"
+                          className="flex-1 rounded-lg h-10"
+                        />
+                        <Button
+                          asChild
+                          variant="outline"
+                          className="h-10 w-10 p-0"
+                        >
+                          <Link href={href}>
+                            <span className="sr-only">Ver detalles</span>
+                            <span>👁️</span>
+                          </Link>
+                        </Button>
                       </div>
                     </div>
                   </Card>
@@ -425,25 +507,76 @@ export default async function Home() {
               Aún no hay destinos destacados.
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 lg:gap-6">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {topDestinations.map((d) => (
-                <Card key={d.id} className="overflow-hidden rounded-xl">
+                <Card
+                  key={d.id}
+                  className="overflow-hidden rounded-xl border-border/60 hover:border-primary/40 transition-all duration-300 hover:shadow-lg"
+                >
                   <Link href={`/destinations/${d.slug}`} className="block">
-                    <div className="relative h-28 sm:h-32 w-full">
+                    {/* Image Section */}
+                    <div className="relative h-48 md:h-56 w-full">
                       {d.heroImageUrl && isValidImageUrl(d.heroImageUrl) ? (
                         <Image
                           src={d.heroImageUrl}
                           alt={`${d.city}, ${d.country}`}
                           fill
                           className="object-cover"
-                          sizes="(max-width: 640px) 50vw, 16vw"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         />
                       ) : (
-                        <div className="h-full w-full bg-muted" />
+                        <div className="h-full w-full bg-gradient-to-br from-muted to-muted/60 flex items-center justify-center">
+                          <div className="text-muted-foreground text-center">
+                            <div className="text-2xl mb-2">🌍</div>
+                            <div className="text-sm">Imagen no disponible</div>
+                          </div>
+                        </div>
                       )}
+                      {/* Location Badge */}
+                      <div className="absolute top-3 left-3 z-10">
+                        <div className="inline-flex items-center rounded-full bg-background/90 backdrop-blur px-3 py-1 text-xs font-medium text-foreground shadow-sm">
+                          <MapPin className="h-3 w-3 mr-1" />
+                          Destino
+                        </div>
+                      </div>
                     </div>
-                    <div className="p-3 text-[0.8rem] sm:text-sm">
-                      {d.city}, {d.country}
+
+                    {/* Content Section */}
+                    <div className="p-4">
+                      {/* Title */}
+                      <h3 className="text-lg font-bold text-foreground mb-2">
+                        {d.city}, {d.country}
+                      </h3>
+
+                      {/* Description */}
+                      <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                        {d.description ||
+                          `Descubre la belleza y cultura de ${d.city}, ${d.country}. Una experiencia única te espera.`}
+                      </p>
+
+                      {/* Features */}
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        <div className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-xs text-muted-foreground">
+                          <span>👁️</span>
+                          <span>Explorar</span>
+                        </div>
+                        <div className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-xs text-muted-foreground">
+                          <span>📸</span>
+                          <span>Fotos</span>
+                        </div>
+                        <div className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-xs text-muted-foreground">
+                          <span>🗺️</span>
+                          <span>Guía</span>
+                        </div>
+                      </div>
+
+                      {/* Call to Action */}
+                      <Button asChild className="w-full rounded-lg h-10">
+                        <span>
+                          Explorar destino
+                          <span className="ml-1">→</span>
+                        </span>
+                      </Button>
                     </div>
                   </Link>
                 </Card>

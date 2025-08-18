@@ -31,12 +31,21 @@ export default function Hero({ items = [] }: HeroProps) {
   ];
   const monthIndex = new Date().getMonth() % fallbackBackgrounds.length;
   const defaultBackgroundSrc = fallbackBackgrounds[monthIndex].src;
-  const heroBackgroundSrc = featured?.src && isValidImageUrl(featured.src) ? featured.src : defaultBackgroundSrc;
+  const heroBackgroundSrc =
+    featured?.src && isValidImageUrl(featured.src)
+      ? featured.src
+      : defaultBackgroundSrc;
   const [backgroundSrc, setBackgroundSrc] = useState<string>(heroBackgroundSrc);
 
   useEffect(() => {
-    const validSrc = heroBackgroundSrc && isValidImageUrl(heroBackgroundSrc) ? heroBackgroundSrc : defaultBackgroundSrc;
+    const validSrc =
+      heroBackgroundSrc && isValidImageUrl(heroBackgroundSrc)
+        ? heroBackgroundSrc
+        : defaultBackgroundSrc;
     setBackgroundSrc(validSrc);
+    console.log("Hero background src:", heroBackgroundSrc);
+    console.log("Is valid image URL:", isValidImageUrl(heroBackgroundSrc));
+    console.log("Final background src:", validSrc);
   }, [heroBackgroundSrc, defaultBackgroundSrc]);
 
   const isVideo = useMemo(() => {
@@ -44,7 +53,8 @@ export default function Hero({ items = [] }: HeroProps) {
     return /(\.mp4|\.webm|\.ogg)(\?.*)?$/i.test(backgroundSrc);
   }, [backgroundSrc]);
 
-  const offerItem = items[1] || featured;
+  // Use the first item (featured offer) for both background and offer details
+  const offerItem = featured;
   const offerHref = offerItem?.href;
   const offerTitle =
     offerItem?.title || "Exclusive Offer: 20% Off on All-Inclusive Resorts";
@@ -90,22 +100,22 @@ export default function Hero({ items = [] }: HeroProps) {
           <div className="absolute inset-0 bg-muted" />
         )}
         {/* Overlays for readability (dark gradient, avoid washing out image) */}
-        <div className="absolute inset-0 bg-black/10" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/40" />
+        <div className="absolute inset-0 bg-black/20" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/50" />
       </div>
 
       {/* Foreground content */}
-      <div className="relative z-10 pt-4 md:pt-6 pb-6 md:pb-10">
+      <div className="relative z-10 pt-2 md:pt-4 pb-6 md:pb-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* Centered hero content */}
           <div className="flex min-h-[60vh] md:min-h-[70vh] flex-col items-center justify-center gap-4 md:gap-6 text-center">
             <BlurFade>
-              <h1 className="text-white text-4xl md:text-5xl font-extrabold leading-tight tracking-tight">
+              <h1 className="text-white text-4xl md:text-5xl font-extrabold leading-tight tracking-tight drop-shadow-lg">
                 Tu próxima experiencia inolvidable empieza aquí.
               </h1>
             </BlurFade>
             <BlurFade delay={0.08}>
-              <h2 className="text-white/90 text-sm md:text-base font-normal">
+              <h2 className="text-white/95 text-sm md:text-base font-medium drop-shadow-md">
                 Conciertos, Quinceañeras, Bodas y Destinos TOP
               </h2>
             </BlurFade>
@@ -115,25 +125,27 @@ export default function Hero({ items = [] }: HeroProps) {
                 variables={{ url: "" }}
                 label="Planifica tu viaje ahora"
                 size="lg"
-                className="rounded-full h-12 px-5"
+                className="rounded-full h-12 px-5 shadow-lg"
               />
             </BlurFade>
           </div>
 
           {/* Offer highlight block (text-only, no image) */}
           <div className="py-4">
-            <div className="rounded-xl bg-background/70 backdrop-blur p-4 xl:p-6">
-              <div className="flex flex-col gap-2">
+            <div className="rounded-xl bg-white/95 backdrop-blur-md border border-white/20 shadow-2xl p-4 xl:p-6">
+              <div className="flex flex-col gap-3">
                 <div className="flex items-center gap-2">
                   <Badge className="bg-primary text-primary-foreground border-primary/80">
                     Oferta especial
                   </Badge>
                 </div>
-                <p className="text-white text-lg md:text-xl font-bold leading-tight tracking-tight">
+                <p className="text-foreground text-lg md:text-xl font-bold leading-tight tracking-tight">
                   {offerTitle}
                 </p>
                 <div className="flex items-end gap-3 justify-between">
-                  <p className="text-white/80 text-base">{offerSubtitle}</p>
+                  <p className="text-muted-foreground text-base">
+                    {offerSubtitle}
+                  </p>
                   {offerHref ? (
                     <Button asChild className="rounded-full h-8 px-4">
                       <Link href={offerHref}>Reservar ahora</Link>
