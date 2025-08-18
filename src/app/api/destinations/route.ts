@@ -60,6 +60,7 @@ export async function POST(request: Request) {
         description: parsed.description,
         heroImageUrl: parsed.heroImageUrl,
         isFeatured: parsed.isFeatured ?? false,
+        displayTag: parsed.displayTag,
       },
     });
     return NextResponse.json(created, { status: 201 });

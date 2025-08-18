@@ -14,6 +14,7 @@ export const OfferCreateSchema = z
     startAt: z.coerce.date().optional(),
     endAt: z.coerce.date().optional(),
     status: ContentStatusSchema.default("DRAFT"),
+    displayTag: z.string().optional(),
     packageId: z.string().optional(),
     externalUrl: z.string().optional(),
   })
@@ -34,6 +35,7 @@ export const OfferUpdateSchema = z.object({
   startAt: z.coerce.date().optional(),
   endAt: z.coerce.date().optional(),
   status: ContentStatusSchema.optional(),
+  displayTag: z.string().optional(),
   packageId: z.string().optional(),
   externalUrl: z.string().optional(),
 });

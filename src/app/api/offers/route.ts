@@ -80,6 +80,7 @@ export async function POST(request: Request) {
         subtitle: parsed.subtitle,
         bannerImageUrl: parsed.bannerImageUrl,
         isFeatured: parsed.isFeatured ?? false,
+        displayTag: parsed.displayTag,
         startAt: parsed.startAt ? new Date(parsed.startAt) : undefined,
         endAt: parsed.endAt ? new Date(parsed.endAt) : undefined,
         status: parsed.status,
