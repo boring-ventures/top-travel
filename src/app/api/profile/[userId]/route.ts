@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+import { createServerSupabaseClient } from "@/lib/supabase-server";
 import prisma from "@/lib/prisma";
 
 export async function GET(
@@ -8,34 +7,17 @@ export async function GET(
   { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
-    const { userId } = await params;
+    const supabase = await createServerSupabaseClient();
 
-    // Create Supabase client
-    const cookieStore = await cookies();
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
-
-    // Get the current user's session
     const {
       data: { session },
-      error: sessionError,
     } = await supabase.auth.getSession();
 
-    if (sessionError || !session) {
+    if (!session) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    // Only allow users to view their own profile (or admin users to view any profile)
-    const currentUser = session.user;
-    const userProfile = await prisma.profile.findUnique({
-      where: { userId: currentUser.id },
-    });
-
-    if (userId !== currentUser.id && userProfile?.role !== "SUPERADMIN") {
-      return NextResponse.json(
-        { error: "Unauthorized to view this profile" },
-        { status: 403 }
-      );
-    }
+    const { userId } = await params;
 
     const profile = await prisma.profile.findUnique({
       where: { userId },
@@ -55,58 +37,31 @@ export async function GET(
   }
 }
 
-export async function PATCH(
+export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
-    const { userId } = await params;
+    const supabase = await createServerSupabaseClient();
 
-    // Create Supabase client
-    const cookieStore = await cookies();
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
-
-    // Get the current user's session
     const {
       data: { session },
-      error: sessionError,
     } = await supabase.auth.getSession();
 
-    if (sessionError || !session) {
+    if (!session) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    // Only allow users to update their own profile (or admin users to update any profile)
-    const currentUser = session.user;
-    const userProfile = await prisma.profile.findUnique({
-      where: { userId: currentUser.id },
-    });
-
-    if (userId !== currentUser.id && userProfile?.role !== "SUPERADMIN") {
-      return NextResponse.json(
-        { error: "Unauthorized to update this profile" },
-        { status: 403 }
-      );
-    }
-
-    const json = await request.json();
-
-    // Prepare update data
-    const updateData: any = {
-      firstName: json.firstName || undefined,
-      lastName: json.lastName || undefined,
-      avatarUrl: json.avatarUrl || undefined,
-      active: json.active !== undefined ? json.active : undefined,
-    };
-
-    // Only SUPERADMIN can update roles
-    if (json.role && userProfile?.role === "SUPERADMIN") {
-      updateData.role = json.role;
-    }
+    const { userId } = await params;
+    const body = await request.json();
 
     const updatedProfile = await prisma.profile.update({
       where: { userId },
-      data: updateData,
+      data: {
+        firstName: body.firstName,
+        lastName: body.lastName,
+        avatarUrl: body.avatarUrl,
+      },
     });
 
     return NextResponse.json({ profile: updatedProfile });

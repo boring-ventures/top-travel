@@ -1,46 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+import { createServerSupabaseClient } from "@/lib/supabase-server";
 import prisma from "@/lib/prisma";
 
-// GET: Fetch profile for the current authenticated user
 export async function GET() {
   try {
-    const cookieStore = await cookies();
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+    const supabase = await createServerSupabaseClient();
 
-    // Get the current user's session
     const {
       data: { session },
-      error: sessionError,
     } = await supabase.auth.getSession();
 
-    if (sessionError || !session) {
+    if (!session) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
     const userId = session.user.id;
 
-    // Fetch profile from the database
-    let profile = await prisma.profile.findUnique({
+    const profile = await prisma.profile.findUnique({
       where: { userId },
     });
 
-    // If profile doesn't exist, create a default one
     if (!profile) {
-      profile = await prisma.profile.create({
-        data: {
-          userId,
-          firstName: null,
-          lastName: null,
-          avatarUrl: null,
-          active: true,
-          role: "USER",
-        },
-      });
+      return NextResponse.json({ error: "Profile not found" }, { status: 404 });
     }
 
-    return NextResponse.json(profile);
+    return NextResponse.json({ profile });
   } catch (error) {
     console.error("Error fetching profile:", error);
     return NextResponse.json(
@@ -50,38 +34,31 @@ export async function GET() {
   }
 }
 
-// PUT: Update profile for the current authenticated user
 export async function PUT(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+    const supabase = await createServerSupabaseClient();
 
-    // Get the current user's session
     const {
       data: { session },
-      error: sessionError,
     } = await supabase.auth.getSession();
 
-    if (sessionError || !session) {
+    if (!session) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
     const userId = session.user.id;
-    const data = await request.json();
-    const { firstName, lastName, avatarUrl, active } = data;
+    const body = await request.json();
 
-    // Update profile in the database
     const updatedProfile = await prisma.profile.update({
       where: { userId },
       data: {
-        firstName,
-        lastName,
-        avatarUrl,
-        active,
+        firstName: body.firstName,
+        lastName: body.lastName,
+        avatarUrl: body.avatarUrl,
       },
     });
 
-    return NextResponse.json(updatedProfile);
+    return NextResponse.json({ profile: updatedProfile });
   } catch (error) {
     console.error("Error updating profile:", error);
     return NextResponse.json(
@@ -91,94 +68,29 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-// POST: Create a new profile for the current authenticated user
-export async function POST(request: NextRequest) {
+export async function DELETE() {
   try {
-    const data = await request.json();
-    const { userId, firstName, lastName, avatarUrl } = data;
+    const supabase = await createServerSupabaseClient();
 
-    // If userId is provided directly (during signup flow)
-    if (userId) {
-      // Check if profile already exists
-      const existingProfile = await prisma.profile.findUnique({
-        where: { userId },
-      });
-
-      if (existingProfile) {
-        return NextResponse.json(
-          { error: "Profile already exists" },
-          { status: 409 }
-        );
-      }
-
-      // Check if MOCK_SUPERADMIN is enabled for local development
-      const mockSuperadmin = process.env.MOCK_SUPERADMIN === "true";
-      const defaultRole = mockSuperadmin ? "SUPERADMIN" : "USER";
-
-      // Create profile in the database
-      const newProfile = await prisma.profile.create({
-        data: {
-          userId,
-          firstName,
-          lastName,
-          avatarUrl,
-          active: true,
-          role: defaultRole,
-        },
-      });
-
-      return NextResponse.json(newProfile, { status: 201 });
-    }
-
-    // Normal flow requiring authentication
-    const cookieStore = await cookies();
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
-
-    // Get the current user's session
     const {
       data: { session },
-      error: sessionError,
     } = await supabase.auth.getSession();
 
-    if (sessionError || !session) {
+    if (!session) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    const authenticatedUserId = session.user.id;
+    const userId = session.user.id;
 
-    // Check if profile already exists
-    const existingProfile = await prisma.profile.findUnique({
-      where: { userId: authenticatedUserId },
+    await prisma.profile.delete({
+      where: { userId },
     });
 
-    if (existingProfile) {
-      return NextResponse.json(
-        { error: "Profile already exists" },
-        { status: 409 }
-      );
-    }
-
-    // Check if MOCK_SUPERADMIN is enabled for local development
-    const mockSuperadmin = process.env.MOCK_SUPERADMIN === "true";
-    const defaultRole = mockSuperadmin ? "SUPERADMIN" : "USER";
-
-    // Create profile in the database
-    const newProfile = await prisma.profile.create({
-      data: {
-        userId: authenticatedUserId,
-        firstName,
-        lastName,
-        avatarUrl,
-        active: true,
-        role: defaultRole,
-      },
-    });
-
-    return NextResponse.json(newProfile, { status: 201 });
+    return NextResponse.json({ message: "Profile deleted successfully" });
   } catch (error) {
-    console.error("Error creating profile:", error);
+    console.error("Error deleting profile:", error);
     return NextResponse.json(
-      { error: "Failed to create profile" },
+      { error: "Failed to delete profile" },
       { status: 500 }
     );
   }

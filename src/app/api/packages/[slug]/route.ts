@@ -57,10 +57,71 @@ export async function PATCH(request: Request, { params }: Params) {
     const parsed = PackageUpdateSchema.parse(json);
     console.log("Parsed data:", parsed);
 
-    const updated = await prisma.package.update({
-      where: { slug },
-      data: parsed,
+    // Extract relation data
+    const { destinationIds, tagIds, ...packageData } = parsed;
+
+    // Update package with transaction to handle relations
+    const updated = await prisma.$transaction(async (tx) => {
+      // Update the package itself
+      const packageUpdate = await tx.package.update({
+        where: { slug },
+        data: packageData,
+      });
+
+      // Handle destination relations if provided
+      if (destinationIds !== undefined) {
+        // Delete existing destination relations
+        await tx.packageDestination.deleteMany({
+          where: { packageId: packageUpdate.id },
+        });
+
+        // Create new destination relations
+        if (destinationIds.length > 0) {
+          await tx.packageDestination.createMany({
+            data: destinationIds.map((destinationId) => ({
+              packageId: packageUpdate.id,
+              destinationId,
+            })),
+          });
+        }
+      }
+
+      // Handle tag relations if provided
+      if (tagIds !== undefined) {
+        // Delete existing tag relations
+        await tx.packageTag.deleteMany({
+          where: { packageId: packageUpdate.id },
+        });
+
+        // Create new tag relations
+        if (tagIds.length > 0) {
+          await tx.packageTag.createMany({
+            data: tagIds.map((tagId) => ({
+              packageId: packageUpdate.id,
+              tagId,
+            })),
+          });
+        }
+      }
+
+      // Return the updated package with relations
+      return await tx.package.findUnique({
+        where: { id: packageUpdate.id },
+        include: {
+          packageDestinations: {
+            include: {
+              destination: true,
+            },
+          },
+          packageTags: {
+            include: {
+              tag: true,
+            },
+          },
+        },
+      });
     });
+
     console.log("Updated package:", updated);
     return NextResponse.json(updated);
   } catch (error: any) {

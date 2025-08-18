@@ -1,59 +1,45 @@
 import { NextResponse } from "next/server";
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import prisma from "@/lib/prisma";
 
 export async function GET() {
   try {
-    const cookieStore = cookies();
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+    const cookieStore = await cookies();
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return cookieStore.getAll();
+          },
+          setAll(cookiesToSet) {
+            try {
+              cookiesToSet.forEach(({ name, value, options }) =>
+                cookieStore.set(name, value, options)
+              );
+            } catch {
+              // The `setAll` method was called from a Server Component.
+              // This can be ignored if you have middleware refreshing
+              // user sessions.
+            }
+          },
+        },
+      }
+    );
 
-    // Get the current user's session
     const {
       data: { session },
-      error: sessionError,
     } = await supabase.auth.getSession();
 
-    if (sessionError || !session) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-    }
-
-    const userId = session.user.id;
-
-    // Raw database query to check all profiles
-    const allProfiles = await prisma.profile.findMany({
-      select: {
-        id: true,
-        userId: true,
-        role: true,
-        active: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
-
-    // Find the current user's profile
-    const currentUserProfile = allProfiles.find((p) => p.userId === userId);
-
-    // Also try a direct query for the current user
-    const directQuery = await prisma.profile.findUnique({
-      where: { userId },
-    });
-
     return NextResponse.json({
-      userId: session.user.id,
-      email: session.user.email,
-      allProfiles: allProfiles,
-      currentUserProfile: currentUserProfile,
-      directQuery: directQuery,
-      profileCount: allProfiles.length,
-      currentUserExists: !!currentUserProfile,
-      directQueryExists: !!directQuery,
+      authenticated: !!session,
+      user: session?.user || null,
     });
   } catch (error) {
-    console.error("Error in db check:", error);
+    console.error("DB check error:", error);
     return NextResponse.json(
-      { error: "Failed to check database", details: error },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }
