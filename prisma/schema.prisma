@@ -76,6 +76,7 @@ model Destination {
   description   String?
   heroImageUrl  String?
   isFeatured    Boolean       @default(false)
+  displayTag    String?       // Tag to use for home page sections (e.g., "destinos-top", "europa")
 
   // Relations
   packageDestinations PackageDestination[]
@@ -87,6 +88,7 @@ model Destination {
 
   @@index([country, city])
   @@index([isFeatured])
+  @@index([displayTag])
 }
 
 // Tags taxonomy for regions, themes, departments, etc.
@@ -225,6 +227,7 @@ model Offer {
   startAt        DateTime?
   endAt          DateTime?
   status         ContentStatus @default(DRAFT)
+  displayTag     String?       // Tag to use for home page sections (e.g., "destinos-top", "ofertas-verano")
 
   // Either tie to a package or use externalUrl
   packageId  String?
@@ -237,6 +240,7 @@ model Offer {
   @@index([isFeatured])
   @@index([status])
   @@index([startAt, endAt])
+  @@index([displayTag])
 }
 
 // Department landing pages: Weddings, Quinceañera
@@ -278,11 +282,26 @@ model Page {
   @@index([status])
 }
 
+// Template usage types for different content categories
+enum TemplateUsageType {
+  OFFERS
+  PACKAGES
+  DESTINATIONS
+  EVENTS
+  FIXED_DEPARTURES
+  GENERAL
+}
+
 model WhatsAppTemplate {
-  id           String  @id @default(cuid())
-  name         String  @unique
+  id           String            @id @default(cuid())
+  name         String            @unique
   templateBody String
-  isDefault    Boolean @default(false)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  phoneNumber  String            // Different phone number for each template
+  usageType    TemplateUsageType // What type of content this template is for
+  isDefault    Boolean           @default(false)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  @@index([usageType])
+  @@index([isDefault])
 }

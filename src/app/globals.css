@@ -87,7 +87,15 @@ body {
   }
 }
 
-
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
 
 @layer base {
   * {
@@ -95,5 +103,21 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Ensure backdrop filters work in dark mode */
+  .dark [class*="backdrop-blur"] {
+    -webkit-backdrop-filter: blur(40px);
+    backdrop-filter: blur(40px);
   }
 }

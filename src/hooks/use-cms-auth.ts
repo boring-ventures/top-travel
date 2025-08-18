@@ -36,3 +36,4 @@ export function useCmsAuth() {
     isSuperAdmin: profile?.role === UserRole.SUPERADMIN,
   };
 }
+
