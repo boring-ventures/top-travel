@@ -29,6 +29,7 @@ const OfferFormSchema = z.object({
   subtitle: z.string().optional(),
   bannerImageUrl: z.string().optional(),
   isFeatured: z.boolean().optional(),
+  displayTag: z.string().optional(),
   dateRange: z
     .object({
       from: z.date().optional(),
@@ -78,6 +79,7 @@ export function OfferForm({ onSuccess, initialValues }: OfferFormProps) {
         subtitle: (initialValues as any).subtitle ?? "",
         bannerImageUrl: (initialValues as any).bannerImageUrl ?? "",
         isFeatured: Boolean((initialValues as any).isFeatured) ?? false,
+        displayTag: (initialValues as any).displayTag ?? "",
         status: (initialValues as any).status ?? "DRAFT",
         dateRange,
         packageId: (initialValues as any).packageId ?? "",
@@ -203,6 +205,19 @@ export function OfferForm({ onSuccess, initialValues }: OfferFormProps) {
           placeholder="Subtítulo descriptivo"
           className="w-full"
         />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="displayTag">Etiqueta de Visualización</Label>
+        <Input
+          id="displayTag"
+          {...form.register("displayTag")}
+          placeholder="Ej: destinos-top, ofertas-verano"
+          className="w-full"
+        />
+        <p className="text-xs text-muted-foreground">
+          Etiqueta para mostrar en secciones específicas de la página principal
+        </p>
       </div>
 
       <div className="space-y-2">

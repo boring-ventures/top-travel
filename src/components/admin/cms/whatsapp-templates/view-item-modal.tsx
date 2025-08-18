@@ -66,7 +66,7 @@ export function ViewItemModal({
   }, [open, templateId]);
 
   const previewUrl = templateData 
-    ? buildWhatsAppUrl(phone, templateData.templateBody, previewVars) 
+    ? buildWhatsAppUrl(templateData.phoneNumber || phone, templateData.templateBody, previewVars) 
     : "";
 
   const handleOpenChange = (newOpen: boolean) => {
@@ -123,6 +123,27 @@ export function ViewItemModal({
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-sm font-medium">Tipo de Uso</Label>
+                        <div className="mt-2">
+                          <Badge variant="outline">
+                            {templateData.usageType === "OFFERS" ? "Ofertas" :
+                             templateData.usageType === "PACKAGES" ? "Paquetes" :
+                             templateData.usageType === "DESTINATIONS" ? "Destinos" :
+                             templateData.usageType === "EVENTS" ? "Eventos" :
+                             templateData.usageType === "FIXED_DEPARTURES" ? "Salidas Fijas" :
+                             "General"}
+                          </Badge>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium">Número de Teléfono</Label>
+                        <div className="mt-2 p-2 bg-muted rounded-md text-sm font-mono">
+                          {templateData.phoneNumber || "No definido"}
+                        </div>
+                      </div>
+                    </div>
                     <div>
                       <Label className="text-sm font-medium">Cuerpo de la plantilla</Label>
                       <div className="mt-2 p-3 bg-muted rounded-md text-sm whitespace-pre-wrap">

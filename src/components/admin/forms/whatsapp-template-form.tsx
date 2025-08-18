@@ -8,15 +8,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2, Save, X } from "lucide-react";
 import {
   WhatsAppTemplateCreateSchema,
   WhatsAppTemplateUpdateSchema,
+  TemplateUsageTypeSchema,
 } from "@/lib/validations/whatsapp-template";
 import type {
   WhatsAppTemplateCreateInput,
   WhatsAppTemplateUpdateInput,
+  TemplateUsageType,
 } from "@/lib/validations/whatsapp-template";
 
 interface WhatsAppTemplateFormProps {
@@ -49,6 +58,8 @@ export function WhatsAppTemplateForm({
     defaultValues: initialValues || {
       name: "",
       templateBody: "",
+      phoneNumber: "",
+      usageType: "GENERAL",
       isDefault: false,
     },
   });
@@ -115,6 +126,48 @@ export function WhatsAppTemplateForm({
           {errors.name && (
             <p className="text-sm text-red-600">{errors.name.message}</p>
           )}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="phoneNumber">Número de Teléfono *</Label>
+          <Input
+            id="phoneNumber"
+            placeholder="Ej: +59171234567"
+            {...register("phoneNumber")}
+            className={errors.phoneNumber ? "border-red-500" : ""}
+          />
+          {errors.phoneNumber && (
+            <p className="text-sm text-red-600">{errors.phoneNumber.message}</p>
+          )}
+          <p className="text-xs text-muted-foreground">
+            Número de WhatsApp que recibirá los mensajes para este tipo de contenido
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="usageType">Tipo de Uso *</Label>
+          <Select
+            value={watch("usageType") || "GENERAL"}
+            onValueChange={(value) => setValue("usageType", value as TemplateUsageType)}
+          >
+            <SelectTrigger className={errors.usageType ? "border-red-500" : ""}>
+              <SelectValue placeholder="Selecciona el tipo de uso" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="OFFERS">Ofertas</SelectItem>
+              <SelectItem value="PACKAGES">Paquetes</SelectItem>
+              <SelectItem value="DESTINATIONS">Destinos</SelectItem>
+              <SelectItem value="EVENTS">Eventos</SelectItem>
+              <SelectItem value="FIXED_DEPARTURES">Salidas Fijas</SelectItem>
+              <SelectItem value="GENERAL">General</SelectItem>
+            </SelectContent>
+          </Select>
+          {errors.usageType && (
+            <p className="text-sm text-red-600">{errors.usageType.message}</p>
+          )}
+          <p className="text-xs text-muted-foreground">
+            Define para qué tipo de contenido se usará esta plantilla
+          </p>
         </div>
 
         <div className="space-y-2">

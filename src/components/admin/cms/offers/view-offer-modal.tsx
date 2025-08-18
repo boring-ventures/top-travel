@@ -99,6 +99,46 @@ export function ViewOfferModal({ offerId }: ViewOfferModalProps) {
                       </div>
                     </div>
 
+                    {offer.displayTag && (
+                      <div>
+                        <label className="text-sm font-medium text-muted-foreground">
+                          Etiqueta de Visualización
+                        </label>
+                        <div className="mt-1">
+                          <Badge variant="outline">{offer.displayTag}</Badge>
+                        </div>
+                      </div>
+                    )}
+
+                    {offer.package && (
+                      <div>
+                        <label className="text-sm font-medium text-muted-foreground">
+                          Paquete Vinculado
+                        </label>
+                        <div className="mt-1">
+                          <Badge variant="default">{offer.package.title}</Badge>
+                        </div>
+                      </div>
+                    )}
+
+                    {offer.externalUrl && (
+                      <div>
+                        <label className="text-sm font-medium text-muted-foreground">
+                          URL Externa
+                        </label>
+                        <div className="mt-1">
+                          <a 
+                            href={offer.externalUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:underline text-sm break-all"
+                          >
+                            {offer.externalUrl}
+                          </a>
+                        </div>
+                      </div>
+                    )}
+
                     {(offer.startAt || offer.endAt) && (
                       <div className="col-span-full">
                         <label className="text-sm font-medium text-muted-foreground">

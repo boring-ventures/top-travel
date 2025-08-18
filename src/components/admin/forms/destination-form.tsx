@@ -46,6 +46,7 @@ export function DestinationForm({
       description: "",
       heroImageUrl: "",
       isFeatured: false,
+      displayTag: "",
       tagIds: [],
     },
   });
@@ -194,6 +195,26 @@ export function DestinationForm({
                   aspectRatio={3 / 2}
                 />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="displayTag"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Etiqueta de Visualización</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Ej: destinos-top, europa, sudamerica"
+                  {...field}
+                />
+              </FormControl>
+              <p className="text-xs text-muted-foreground">
+                Etiqueta para mostrar en secciones específicas de la página principal
+              </p>
               <FormMessage />
             </FormItem>
           )}
