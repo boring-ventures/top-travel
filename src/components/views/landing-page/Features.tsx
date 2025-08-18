@@ -58,24 +58,27 @@ const features = [
 
 export default function Features() {
   return (
-    <section id="features" className="relative py-20 overflow-hidden">
+    <section
+      id="features"
+      className="relative py-12 sm:py-16 md:py-20 overflow-hidden"
+    >
       {/* Background decorations */}
       <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
       <div className="absolute inset-0 bg-gradient-to-b from-background to-secondary/20 -z-10" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <BlurFade className="text-center mb-16">
+        <BlurFade className="text-center mb-8 sm:mb-12 md:mb-16">
           <AnimatedShinyText>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3 sm:mb-4">
               ¿Por qué GABYTOPTRAVEL?
             </h2>
           </AnimatedShinyText>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
             Viajes personalizados con calidad, seguridad y servicio excepcional.
           </p>
         </BlurFade>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-3 lg:gap-8">
           {features.map((feature) => (
             <ShineBorder
               key={feature.id}
@@ -85,18 +88,20 @@ export default function Features() {
               color="rgba(var(--primary), 0.5)"
             >
               <div
-                className="relative p-6 sm:p-8"
+                className="relative p-4 sm:p-6 md:p-8"
                 style={{ animationDelay: `${feature.animationDelay}ms` }}
               >
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-primary/10 text-primary mb-6 group-hover:scale-110 transition-transform">
-                  <feature.icon className="h-6 w-6" />
+                <div className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-primary/10 text-primary mb-4 sm:mb-6 group-hover:scale-110 transition-transform">
+                  <feature.icon className="h-5 w-5 sm:h-6 sm:w-6" />
                 </div>
 
-                <h3 className="text-xl font-semibold text-foreground mb-3">
+                <h3 className="text-base sm:text-lg md:text-xl font-semibold text-foreground mb-2 sm:mb-3">
                   {feature.title}
                 </h3>
 
-                <p className="text-muted-foreground">{feature.description}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  {feature.description}
+                </p>
               </div>
             </ShineBorder>
           ))}

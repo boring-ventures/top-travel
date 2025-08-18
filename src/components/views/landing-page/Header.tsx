@@ -13,8 +13,9 @@ const navItems = [
   { href: "/events", label: "Eventos" },
   { href: "/fixed-departures", label: "Salidas Fijas" },
   { href: "/weddings", label: "Bodas" },
-  { href: "/quinceanera", label: "Quinceañera" },
+  { href: "/quinceanera", label: "Quinceañeras" },
   { href: "/about", label: "Nosotros" },
+  { href: "/contact", label: "Contacto" },
 ];
 
 export default function Header() {
@@ -35,14 +36,19 @@ export default function Header() {
       >
         <div
           className={cn(
-            "mx-auto mt-1 max-w-6xl px-4 sm:px-6 lg:px-12 transition-all duration-300",
+            "mx-auto mt-1 w-full max-w-[95vw] lg:max-w-[1200px] xl:max-w-[1400px] 2xl:max-w-[1600px] px-4 sm:px-6 lg:px-8 xl:px-12 transition-all duration-700 ease-out backdrop-blur-md border border-border/20",
+            "bg-white/20 dark:bg-black/20",
             isScrolled &&
-              "bg-background/60 backdrop-blur-2xl border border-border/50 rounded-2xl max-w-5xl lg:px-8"
+              "bg-white/40 dark:bg-black/40 rounded-xl border backdrop-blur-lg shadow-lg w-full max-w-[75vw] lg:max-w-[700px] xl:max-w-[800px] 2xl:max-w-[900px] px-6 sm:px-8 lg:px-10 xl:px-12"
           )}
+          style={{
+            transition: "all 700ms cubic-bezier(0.4, 0, 0.2, 1)",
+          }}
         >
           <div
             className={cn(
-              "relative flex flex-wrap items-center justify-between gap-4 py-2 lg:gap-0 lg:py-3"
+              "relative flex flex-wrap items-center justify-between gap-4 py-2 lg:gap-0 lg:py-3 transition-all duration-700 ease-out",
+              isScrolled && "py-3 lg:py-4"
             )}
           >
             {/* Left: brand + mobile menu button */}
@@ -52,8 +58,19 @@ export default function Header() {
                 aria-label="home"
                 className="flex items-center gap-2"
               >
-                <Globe2 className="h-5 w-5 text-primary" aria-hidden="true" />
-                <span className="text-sm sm:text-base font-bold tracking-tight text-primary">
+                <Globe2
+                  className={cn(
+                    "h-5 w-5 text-primary transition-all duration-300",
+                    isScrolled && "h-4 w-4"
+                  )}
+                  aria-hidden="true"
+                />
+                <span
+                  className={cn(
+                    "text-sm sm:text-base font-bold tracking-tight text-primary transition-all duration-300",
+                    isScrolled && "text-xs sm:text-sm"
+                  )}
+                >
                   GABYTOPTRAVEL
                 </span>
               </Link>
@@ -69,7 +86,12 @@ export default function Header() {
 
             {/* Center: desktop nav */}
             <div className="absolute inset-0 m-auto hidden size-fit lg:block">
-              <ul className="flex gap-6 text-sm">
+              <ul
+                className={cn(
+                  "flex gap-6 text-sm transition-all duration-300",
+                  isScrolled && "gap-5 text-xs"
+                )}
+              >
                 {navItems.map((item) => (
                   <li key={item.href}>
                     <Link
@@ -84,7 +106,7 @@ export default function Header() {
             </div>
 
             {/* Right: auth / CTAs */}
-            <div className="bg-background group-data-[state=active]:block lg:group-data-[state=active]:flex mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border p-6 shadow-2xl shadow-zinc-300/20 md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:shadow-none">
+            <div className="bg-background/95 backdrop-blur-xl group-data-[state=active]:block lg:group-data-[state=active]:flex mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border p-6 shadow-2xl shadow-zinc-300/20 md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:shadow-none">
               {/* Mobile nav list when open */}
               <div className="lg:hidden">
                 <ul className="space-y-6 text-base">
@@ -105,16 +127,17 @@ export default function Header() {
                 <div className={cn(isScrolled ? "lg:hidden" : "")}>
                   <AuthHeader />
                 </div>
-                {/* Optional primary CTA visible when scrolled on desktop */}
+                {/* Contact Us button */}
                 <Button
                   asChild
-                  size="sm"
+                  size={isScrolled ? "sm" : "sm"}
                   className={cn(
-                    isScrolled ? "hidden lg:inline-flex" : "hidden"
+                    "bg-primary text-primary-foreground transition-all duration-300",
+                    isScrolled && "text-xs px-3 py-1"
                   )}
                 >
-                  <Link href="/packages">
-                    <span>Explorar paquetes</span>
+                  <Link href="/contact">
+                    <span>Contactar</span>
                   </Link>
                 </Button>
               </div>

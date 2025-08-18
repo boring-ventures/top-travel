@@ -29,20 +29,73 @@ const partnerLogos = [
 
 export default function Partners() {
   return (
-    <section className="bg-background pb-8 pt-4">
-      <div className="group relative m-auto max-w-7xl px-6">
-        <div className="flex flex-col items-center md:flex-row">
-          <div className="md:max-w-44 md:border-r md:pr-6">
+    <section className="bg-background py-6 sm:py-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Mobile Layout */}
+        <div className="block md:hidden">
+          <div className="text-center mb-4">
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Empresas que confían en nosotros
+            </p>
+          </div>
+          <div className="relative">
+            <InfiniteSlider speedOnHover={20} speed={40} gap={40}>
+              {partnerLogos.map((logo) => (
+                <div key={logo.name} className="flex justify-center">
+                  <img
+                    className="h-8 w-auto object-contain opacity-60 transition-opacity hover:opacity-100"
+                    src={logo.src}
+                    alt={`${logo.name} Logo`}
+                    height={32}
+                    width={100}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+              ))}
+            </InfiniteSlider>
+
+            {/* Mobile blur effects */}
+            <div
+              className="absolute inset-y-0 left-0 w-6"
+              style={{
+                background:
+                  "linear-gradient(to right, var(--background) 0%, transparent 100%)",
+              }}
+            />
+            <div
+              className="absolute inset-y-0 right-0 w-6"
+              style={{
+                background:
+                  "linear-gradient(to left, var(--background) 0%, transparent 100%)",
+              }}
+            />
+            <ProgressiveBlur
+              className="pointer-events-none absolute left-0 top-0 h-full w-6"
+              direction="left"
+              blurIntensity={1}
+            />
+            <ProgressiveBlur
+              className="pointer-events-none absolute right-0 top-0 h-full w-6"
+              direction="right"
+              blurIntensity={1}
+            />
+          </div>
+        </div>
+
+        {/* Desktop Layout */}
+        <div className="hidden md:flex items-center">
+          <div className="max-w-44 border-r pr-6">
             <p className="text-end text-sm text-muted-foreground">
               Empresas que confían en nosotros
             </p>
           </div>
-          <div className="relative py-6 md:w-[calc(100%-11rem)]">
-            <InfiniteSlider speedOnHover={20} speed={40} gap={112}>
+          <div className="relative flex-1 py-6 pl-6">
+            <InfiniteSlider speedOnHover={20} speed={40} gap={80}>
               {partnerLogos.map((logo) => (
-                <div key={logo.name} className="flex">
+                <div key={logo.name} className="flex justify-center">
                   <img
-                    className="mx-auto h-8 w-auto object-contain opacity-60 transition-opacity hover:opacity-100"
+                    className="h-8 w-auto object-contain opacity-60 transition-opacity hover:opacity-100"
                     src={logo.src}
                     alt={`${logo.name} Logo`}
                     height={32}
@@ -54,6 +107,7 @@ export default function Partners() {
               ))}
             </InfiniteSlider>
 
+            {/* Desktop blur effects */}
             <div
               className="absolute inset-y-0 left-0 w-20"
               style={{
