@@ -10,9 +10,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
+import { ImageUpload } from "@/components/ui/image-upload";
 import { OfferDateRangePicker } from "./offer-date-range-picker";
 import { useState, useEffect } from "react";
-import { uploadImageToStorage } from "@/lib/supabase/upload-image";
+import { uploadOfferImage } from "@/lib/supabase/storage";
 import { DateRange } from "react-day-picker";
 import { z } from "zod";
 import { useToast } from "@/components/ui/use-toast";
@@ -205,16 +206,17 @@ export function OfferForm({ onSuccess, initialValues }: OfferFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="bannerImageUrl">URL de Imagen de Banner</Label>
-        <Input
-          id="bannerImageUrl"
-          {...form.register("bannerImageUrl")}
-          placeholder="https://ejemplo.com/imagen.jpg"
-          className="w-full"
+        <Label htmlFor="bannerImageUrl">Imagen de Banner</Label>
+        <ImageUpload
+          value={form.watch("bannerImageUrl")}
+          onChange={(url) => form.setValue("bannerImageUrl", url)}
+          onUpload={async (file) => {
+            const offerId = (initialValues as any)?.id || "temp";
+            return uploadOfferImage(file, offerId);
+          }}
+          placeholder="Imagen de Banner de la Oferta"
+          aspectRatio={2 / 1}
         />
-        <p className="text-xs text-muted-foreground">
-          Ingresa la URL de una imagen para mostrar como banner de la oferta
-        </p>
       </div>
 
       <OfferDateRangePicker

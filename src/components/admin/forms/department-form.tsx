@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { ImageUpload } from "@/components/ui/image-upload";
 import {
   Form,
   FormControl,
@@ -28,6 +29,7 @@ import {
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { uploadDepartmentImage } from "@/lib/supabase/storage";
 
 type DepartmentFormProps = {
   onSuccess?: () => void;
@@ -180,11 +182,17 @@ export function DepartmentForm({
           name="heroImageUrl"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>URL de Imagen Principal</FormLabel>
+              <FormLabel>Imagen Principal</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="https://ejemplo.com/imagen.jpg"
-                  {...field}
+                <ImageUpload
+                  value={field.value}
+                  onChange={field.onChange}
+                  onUpload={async (file) => {
+                    const departmentType = form.watch("type") || "temp";
+                    return uploadDepartmentImage(file, departmentType);
+                  }}
+                  placeholder="Imagen Principal del Departamento"
+                  aspectRatio={3 / 2}
                 />
               </FormControl>
               <FormMessage />

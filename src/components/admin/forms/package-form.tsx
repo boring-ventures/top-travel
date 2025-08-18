@@ -13,7 +13,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { ImageUpload } from "@/components/ui/image-upload";
 import { useToast } from "@/components/ui/use-toast";
+import { uploadPackageImage } from "@/lib/supabase/storage";
 
 interface PackageFormProps {
   onSuccess?: () => void;
@@ -198,17 +200,16 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="heroImageUrl">URL de Imagen Principal</Label>
-        <Input
-          id="heroImageUrl"
-          {...form.register("heroImageUrl")}
-          placeholder="https://ejemplo.com/imagen.jpg"
-          className="w-full"
+        <ImageUpload
+          value={form.watch("heroImageUrl")}
+          onChange={(url) => form.setValue("heroImageUrl", url)}
+          onUpload={async (file) => {
+            const slug = form.watch("slug") || "temp";
+            return uploadPackageImage(file, slug);
+          }}
+          placeholder="Imagen Principal del Paquete"
+          aspectRatio={3 / 2}
         />
-        <p className="text-xs text-muted-foreground">
-          Ingresa la URL de una imagen para mostrar como imagen principal del
-          paquete
-        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { ImageUpload } from "@/components/ui/image-upload";
 import {
   Form,
   FormControl,
@@ -22,6 +23,7 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
+import { uploadDestinationImage } from "@/lib/supabase/storage";
 
 type DestinationFormProps = {
   onSuccess?: () => void;
@@ -179,12 +181,17 @@ export function DestinationForm({
           name="heroImageUrl"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>URL de Imagen Principal</FormLabel>
+              <FormLabel>Imagen Principal</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="https://ejemplo.com/imagen.jpg"
-                  type="url"
-                  {...field}
+                <ImageUpload
+                  value={field.value}
+                  onChange={field.onChange}
+                  onUpload={async (file) => {
+                    const slug = form.watch("slug") || "temp";
+                    return uploadDestinationImage(file, slug);
+                  }}
+                  placeholder="Imagen Principal del Destino"
+                  aspectRatio={3 / 2}
                 />
               </FormControl>
               <FormMessage />
