@@ -37,3 +37,4 @@ export function CmsAuthGuard({ children, fallback }: CmsAuthGuardProps) {
 
   return <>{children}</>;
 }
+
