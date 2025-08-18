@@ -79,6 +79,8 @@ export default function CmsWhatsAppTemplatesList() {
             <thead className="bg-neutral-50 dark:bg-neutral-900">
               <tr>
                 <th className="px-3 py-2 text-left">Nombre</th>
+                <th className="px-3 py-2 text-left">Tipo de Uso</th>
+                <th className="px-3 py-2 text-left">Teléfono</th>
                 <th className="px-3 py-2 text-left">Por defecto</th>
                 <th className="px-3 py-2 text-left">Acciones</th>
               </tr>
@@ -88,6 +90,23 @@ export default function CmsWhatsAppTemplatesList() {
                 <tr key={t.id} className="border-t">
                   <td className="px-3 py-2 font-medium">
                     {t.name}
+                  </td>
+                  <td className="px-3 py-2">
+                    {t.usageType ? (
+                      <Badge variant="outline">
+                        {t.usageType === "OFFERS" ? "Ofertas" :
+                         t.usageType === "PACKAGES" ? "Paquetes" :
+                         t.usageType === "DESTINATIONS" ? "Destinos" :
+                         t.usageType === "EVENTS" ? "Eventos" :
+                         t.usageType === "FIXED_DEPARTURES" ? "Salidas Fijas" :
+                         "General"}
+                      </Badge>
+                    ) : (
+                      <span className="text-muted-foreground">No definido</span>
+                    )}
+                  </td>
+                  <td className="px-3 py-2 text-muted-foreground">
+                    {t.phoneNumber || "No definido"}
                   </td>
                   <td className="px-3 py-2">
                     {t.isDefault ? (

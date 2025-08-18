@@ -147,23 +147,39 @@ export default function CmsPagesList() {
             <table className="min-w-full text-sm">
               <thead className="bg-neutral-50 dark:bg-neutral-900">
                 <tr>
-                  <th className="px-3 py-2 text-left">Slug</th>
+                  <th className="px-3 py-2 text-left">Página</th>
                   <th className="px-3 py-2 text-left">Título</th>
+                  <th className="px-3 py-2 text-left">Secciones</th>
                   <th className="px-3 py-2 text-left">Estado</th>
-                  <th className="px-3 py-2 text-left">Acciones</th>
+                  <th className="px-3 py-2 text-right">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.map((p: any) => (
                   <tr key={p.id} className="border-t hover:bg-muted/40">
                     <td className="px-3 py-2">
-                      <span className="font-mono text-sm">{p.slug}</span>
+                      <div>
+                        <span className="font-medium">{p.title}</span>
+                        <div className="text-xs text-muted-foreground font-mono">
+                          /{p.slug}
+                        </div>
+                      </div>
                     </td>
-                    <td className="px-3 py-2">{p.title}</td>
+                    <td className="px-3 py-2">
+                      <span className="text-sm">{p.title}</span>
+                    </td>
+                    <td className="px-3 py-2">
+                      <span className="text-sm text-muted-foreground">
+                        {p.sectionsJson ? 
+                          `${Object.keys(JSON.parse(p.sectionsJson) || {}).length} secciones` :
+                          'Sin secciones'
+                        }
+                      </span>
+                    </td>
                     <td className="px-3 py-2">
                       <StatusBadge status={p.status} />
                     </td>
-                    <td className="px-3 py-2">
+                    <td className="px-3 py-2 text-right">
                       <div className="flex items-center gap-2">
                         <Tooltip>
                           <TooltipTrigger asChild>

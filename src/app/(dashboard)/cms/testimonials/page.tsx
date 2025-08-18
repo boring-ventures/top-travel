@@ -2,6 +2,8 @@
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Badge } from "@/components/ui/badge";
+import { Star, Check, X, Clock } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { ListHeader } from "@/components/admin/cms/list-header";
 import { SearchInput } from "@/components/admin/cms/search-input";
@@ -62,6 +64,52 @@ export default function CmsTestimonialsList() {
     setDeleteDialogOpen(true);
   };
 
+  const handleApprove = async (testimonial: any) => {
+    try {
+      const res = await fetch(`/api/testimonials/${testimonial.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'APPROVED' })
+      });
+      if (res.ok) {
+        // Refetch data
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('Error approving testimonial:', error);
+    }
+  };
+
+  const handleReject = async (testimonial: any) => {
+    try {
+      const res = await fetch(`/api/testimonials/${testimonial.id}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        // Refetch data
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('Error rejecting testimonial:', error);
+    }
+  };
+
+  const handlePublish = async (testimonial: any) => {
+    try {
+      const res = await fetch(`/api/testimonials/${testimonial.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'PUBLISHED' })
+      });
+      if (res.ok) {
+        // Refetch data
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('Error publishing testimonial:', error);
+    }
+  };
+
   return (
     <div className="space-y-4">
       <ListHeader
@@ -108,22 +156,98 @@ export default function CmsTestimonialsList() {
             <thead className="bg-neutral-50 dark:bg-neutral-900">
               <tr>
                 <th className="px-3 py-2 text-left">Autor</th>
+                <th className="px-3 py-2 text-left">Ubicación</th>
                 <th className="px-3 py-2 text-left">Calificación</th>
+                <th className="px-3 py-2 text-left">Contenido</th>
                 <th className="px-3 py-2 text-left">Estado</th>
-                <th className="px-3 py-2 text-left">Acciones</th>
+                <th className="px-3 py-2 text-left">Moderación</th>
+                <th className="px-3 py-2 text-right">Acciones</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map((t: any) => (
                 <tr key={t.id} className="border-t hover:bg-muted/40">
-                  <td className="px-3 py-2 font-medium">
-                    {t.authorName}
-                  </td>
-                  <td className="px-3 py-2">{t.rating}/5</td>
                   <td className="px-3 py-2">
-                    <StatusBadge status={t.status} />
+                    <span className="font-medium">{t.authorName}</span>
                   </td>
                   <td className="px-3 py-2">
+                    <span className="text-sm text-muted-foreground">
+                      {t.location || "—"}
+                    </span>
+                  </td>
+                  <td className="px-3 py-2">
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: 5 }, (_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-3 w-3 ${
+                            i < t.rating 
+                              ? "fill-yellow-400 text-yellow-400" 
+                              : "text-gray-300"
+                          }`}
+                        />
+                      ))}
+                      <span className="text-sm ml-1">({t.rating})</span>
+                    </div>
+                  </td>
+                  <td className="px-3 py-2">
+                    <p className="text-sm text-muted-foreground line-clamp-2 max-w-xs">
+                      {t.content}
+                    </p>
+                  </td>
+                  <td className="px-3 py-2">
+                    {t.status === 'PENDING' && (
+                      <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
+                        <Clock className="h-3 w-3 mr-1" />
+                        Pendiente
+                      </Badge>
+                    )}
+                    {t.status === 'APPROVED' && (
+                      <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                        <Check className="h-3 w-3 mr-1" />
+                        Aprobado
+                      </Badge>
+                    )}
+                    {t.status === 'PUBLISHED' && (
+                      <Badge variant="default" className="bg-green-600">
+                        <Check className="h-3 w-3 mr-1" />
+                        Publicado
+                      </Badge>
+                    )}
+                  </td>
+                  <td className="px-3 py-2">
+                    {t.status === 'PENDING' && (
+                      <div className="flex gap-1">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-7 w-7 p-0 text-green-600 hover:bg-green-50"
+                          onClick={() => handleApprove(t)}
+                        >
+                          <Check className="h-3 w-3" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-7 w-7 p-0 text-red-600 hover:bg-red-50"
+                          onClick={() => handleReject(t)}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    )}
+                    {t.status === 'APPROVED' && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-7 px-2 text-green-600 hover:bg-green-50"
+                        onClick={() => handlePublish(t)}
+                      >
+                        Publicar
+                      </Button>
+                    )}
+                  </td>
+                  <td className="px-3 py-2 text-right">
                     <div className="flex items-center space-x-1">
                       <TooltipProvider>
                         <Tooltip>

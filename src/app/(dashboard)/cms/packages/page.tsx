@@ -91,9 +91,9 @@ export default function CmsPackagesList() {
                 <tr>
                   <th className="px-3 py-2 text-left">Título</th>
                   <th className="px-3 py-2 text-left">Slug</th>
-                  <th className="px-3 py-2 text-left">Personalizado</th>
-                  <th className="px-3 py-2 text-left">Precio desde</th>
-                  <th className="px-3 py-2 text-left">Moneda</th>
+                  <th className="px-3 py-2 text-left">Duración</th>
+                  <th className="px-3 py-2 text-left">Precio</th>
+                  <th className="px-3 py-2 text-left">Tipo</th>
                   <th className="px-3 py-2 text-left">Estado</th>
                   <th className="px-3 py-2 text-right">Acciones</th>
                 </tr>
@@ -110,14 +110,34 @@ export default function CmsPackagesList() {
                       </code>
                     </td>
                     <td className="px-3 py-2">
-                      {p.isCustom ? (
-                        <span className="text-green-600 font-medium">Sí</span>
+                      {p.durationDays ? (
+                        <span className="text-sm">
+                          {p.durationDays} día{p.durationDays !== 1 ? 's' : ''}
+                        </span>
                       ) : (
-                        <span className="text-muted-foreground">No</span>
+                        <span className="text-muted-foreground">—</span>
                       )}
                     </td>
-                    <td className="px-3 py-2">{p.fromPrice ?? "-"}</td>
-                    <td className="px-3 py-2">{p.currency ?? "-"}</td>
+                    <td className="px-3 py-2">
+                      {p.fromPrice ? (
+                        <span className="text-sm font-medium">
+                          {p.currency === 'USD' ? '$' : 'Bs. '}{p.fromPrice}
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
+                    </td>
+                    <td className="px-3 py-2">
+                      {p.isCustom ? (
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
+                          Personalizado
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                          Estándar
+                        </span>
+                      )}
+                    </td>
                     <td className="px-3 py-2">
                       <StatusBadge status={p.status} />
                     </td>

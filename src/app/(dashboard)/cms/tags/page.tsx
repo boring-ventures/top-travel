@@ -168,8 +168,10 @@ export default function CmsTagsList() {
                 {filtered.map((t: any) => (
                   <tr key={t.id} className="border-t hover:bg-muted/40">
                     <td className="px-3 py-2 font-medium">{t.name}</td>
-                    <td className="px-3 py-2 font-mono text-xs bg-muted px-2 py-1 rounded">
-                      {t.slug}
+                    <td className="px-3 py-2">
+                      <code className="text-xs bg-muted px-2 py-1 rounded">
+                        {t.slug}
+                      </code>
                     </td>
                     <td className="px-3 py-2">
                       <Badge className={getTypeColor(t.type)}>

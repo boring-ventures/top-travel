@@ -117,10 +117,11 @@ export default function CmsEventsList() {
             <table className="min-w-full text-sm">
               <thead className="bg-neutral-50 dark:bg-neutral-900">
                 <tr>
-                  <th className="px-3 py-2 text-left">Título</th>
-                  <th className="px-3 py-2 text-left">Slug</th>
+                  <th className="px-3 py-2 text-left">Evento</th>
+                  <th className="px-3 py-2 text-left">Artista/Evento</th>
                   <th className="px-3 py-2 text-left">Ubicación</th>
                   <th className="px-3 py-2 text-left">Fechas</th>
+                  <th className="px-3 py-2 text-left">Precio</th>
                   <th className="px-3 py-2 text-left">Estado</th>
                   <th className="px-3 py-2 text-right">Acciones</th>
                 </tr>
@@ -129,19 +130,51 @@ export default function CmsEventsList() {
                 {filtered.map((e: any) => (
                   <tr key={e.id} className="border-t hover:bg-muted/40">
                     <td className="px-3 py-2">
-                      <span className="font-medium">{e.title}</span>
+                      <div>
+                        <span className="font-medium">{e.title}</span>
+                        <div className="text-xs text-muted-foreground">
+                          {e.slug || "Sin slug"}
+                        </div>
+                      </div>
                     </td>
                     <td className="px-3 py-2">
-                      <code className="text-xs bg-muted px-1 py-0.5 rounded">
-                        {e.slug || "—"}
-                      </code>
+                      <span className="text-sm">{e.artistOrEvent || "—"}</span>
                     </td>
                     <td className="px-3 py-2">
-                      {e.locationCity ?? "-"}, {e.locationCountry ?? "-"}
+                      <div className="text-sm">
+                        {e.venue && <div className="font-medium">{e.venue}</div>}
+                        <div className="text-muted-foreground">
+                          {[e.locationCity, e.locationCountry].filter(Boolean).join(", ") || "—"}
+                        </div>
+                      </div>
                     </td>
                     <td className="px-3 py-2">
-                      {new Date(e.startDate).toLocaleDateString("es-ES")} -{" "}
-                      {new Date(e.endDate).toLocaleDateString("es-ES")}
+                      <div className="text-sm">
+                        <div>
+                          {new Date(e.startDate).toLocaleDateString("es-ES", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric"
+                          })}
+                        </div>
+                        {e.startDate !== e.endDate && (
+                          <div className="text-muted-foreground">
+                            hasta {new Date(e.endDate).toLocaleDateString("es-ES", {
+                              day: "2-digit",
+                              month: "short"
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-3 py-2">
+                      {e.fromPrice ? (
+                        <span className="text-sm font-medium">
+                          {e.currency === 'USD' ? '$' : 'Bs. '}{e.fromPrice}
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground text-sm">—</span>
+                      )}
                     </td>
                     <td className="px-3 py-2">
                       <StatusBadge status={e.status} />

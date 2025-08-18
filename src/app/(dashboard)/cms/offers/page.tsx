@@ -77,6 +77,7 @@ export default function CmsOffersList() {
             <thead className="bg-neutral-50 dark:bg-neutral-900">
               <tr>
                 <th className="px-3 py-2 text-left">Título</th>
+                <th className="px-3 py-2 text-left">Etiqueta</th>
                 <th className="px-3 py-2 text-left">Destacada</th>
                 <th className="px-3 py-2 text-left">Estado</th>
                 <th className="px-3 py-2 text-left">Inicio</th>
@@ -89,6 +90,15 @@ export default function CmsOffersList() {
                 <tr key={o.id} className="border-t hover:bg-muted/40">
                   <td className="px-3 py-2">
                     <span className="font-medium">{o.title}</span>
+                  </td>
+                  <td className="px-3 py-2">
+                    {o.displayTag ? (
+                      <Badge variant="outline" className="text-xs">
+                        {o.displayTag}
+                      </Badge>
+                    ) : (
+                      <span className="text-muted-foreground">-</span>
+                    )}
                   </td>
                   <td className="px-3 py-2">
                     {o.isFeatured ? (
