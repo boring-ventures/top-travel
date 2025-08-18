@@ -205,17 +205,22 @@ function CmsDestinationsListContent() {
         <EditDestinationModal
           open={editModalOpen}
           onOpenChange={setEditModalOpen}
-          destination={selectedDestination}
+          destinationId={selectedDestination?.id || null}
         />
         <ViewDestinationModal
           open={viewModalOpen}
           onOpenChange={setViewModalOpen}
-          destination={selectedDestination}
+          destinationId={selectedDestination?.id || null}
         />
         <DeleteDestinationDialog
           open={deleteDialogOpen}
           onOpenChange={setDeleteDialogOpen}
-          destination={selectedDestination}
+          destinationId={selectedDestination?.id || null}
+          destinationName={
+            selectedDestination
+              ? `${selectedDestination.city}, ${selectedDestination.country}`
+              : undefined
+          }
         />
       </div>
     </TooltipProvider>
