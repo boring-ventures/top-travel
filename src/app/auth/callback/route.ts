@@ -1,47 +1,52 @@
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import prisma from "@/lib/prisma";
-import { UserRole } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
-  const requestUrl = new URL(request.url);
-  const code = requestUrl.searchParams.get("code");
+  const { searchParams, origin } = new URL(request.url);
+  const code = searchParams.get("code");
+  // if "next" is in param, use it as the redirect URL
+  const next = searchParams.get("next") ?? "/dashboard";
 
   if (code) {
-    const supabase = createRouteHandlerClient({ cookies });
-    const { data } = await supabase.auth.exchangeCodeForSession(code);
-
-    // Create user profile in Prisma if it doesn't exist and we have a session
-    if (data?.session) {
-      const userId = data.session.user.id;
-
-      const existingProfile = await prisma.profile.findUnique({
-        where: { userId },
-      });
-
-      if (!existingProfile) {
-        // Check if MOCK_SUPERADMIN is enabled for local development
-        const mockSuperadmin = process.env.MOCK_SUPERADMIN === "true";
-        const defaultRole = mockSuperadmin
-          ? UserRole.SUPERADMIN
-          : UserRole.USER;
-
-        await prisma.profile.create({
-          data: {
-            userId,
-            role: defaultRole,
+    const cookieStore = await cookies();
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return cookieStore.getAll();
           },
-        });
-
-        console.log(
-          `Created new profile with role: ${defaultRole} (MOCK_SUPERADMIN: ${mockSuperadmin})`
-        );
+          setAll(cookiesToSet) {
+            try {
+              cookiesToSet.forEach(({ name, value, options }) =>
+                cookieStore.set(name, value, options)
+              );
+            } catch {
+              // The `setAll` method was called from a Server Component.
+              // This can be ignored if you have middleware refreshing
+              // user sessions.
+            }
+          },
+        },
       }
+    );
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    if (!error) {
+      const forwardedHost = request.headers.get("x-forwarded-host");
+      const redirectUrl = forwardedHost
+        ? `${request.headers.get("x-forwarded-proto")}://${forwardedHost}${next}`
+        : `${origin}${next}`;
+      return NextResponse.redirect(redirectUrl);
     }
   }
 
-  // URL to redirect to after sign in process completes
-  return NextResponse.redirect(new URL("/dashboard", request.url));
+  // return the user to an error page with instructions
+  const forwardedHost = request.headers.get("x-forwarded-host");
+  const redirectUrl = forwardedHost
+    ? `${request.headers.get("x-forwarded-proto")}://${forwardedHost}/auth/auth-code-error`
+    : `${origin}/auth/auth-code-error`;
+
+  return NextResponse.redirect(redirectUrl);
 }

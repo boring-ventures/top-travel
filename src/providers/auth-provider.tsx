@@ -1,8 +1,8 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import type { User, Session } from "@supabase/auth-helpers-nextjs";
+import { createBrowserClient } from "@supabase/ssr";
+import type { User, Session } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import type { Profile } from "@/types/profile";
 
@@ -32,7 +32,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-  const supabase = createClientComponentClient();
+
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
   // Fetch profile function
   const fetchProfile = async (userId: string) => {
@@ -40,7 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const response = await fetch(`/api/profile`);
       if (!response.ok) throw new Error("Failed to fetch profile");
       const data = await response.json();
-      setProfile(data);
+      setProfile(data.profile);
     } catch (error) {
       console.error("Error fetching profile:", error);
       setProfile(null);

@@ -1,91 +1,94 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createBrowserClient } from "@supabase/ssr";
 import type { User } from "@supabase/supabase-js";
-import type { Profile } from "@prisma/client";
 
-type CurrentUserData = {
-  user: User | null;
-  profile: Profile | null;
-  isLoading: boolean;
-  error: Error | null;
-  refetch?: () => Promise<void>;
-};
+interface Profile {
+  id: string;
+  userId: string;
+  firstName: string | null;
+  lastName: string | null;
+  avatarUrl: string | null;
+  role: string;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
 
-export function useCurrentUser(): CurrentUserData {
+export function useCurrentUser() {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-  const supabase = createClientComponentClient();
+  const [loading, setLoading] = useState(true);
 
-  const fetchUserData = useCallback(async () => {
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+
+  // Fetch profile function
+  const fetchProfile = async (userId: string) => {
     try {
-      setIsLoading(true);
-      setError(null);
-
-      // Get current user from Supabase
-      const { data: userData, error: userError } =
-        await supabase.auth.getUser();
-
-      if (userError) {
-        throw userError;
-      }
-
-      if (userData.user) {
-        setUser(userData.user);
-
-        // Fetch the user's profile from the API
-        const response = await fetch("/api/profile");
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch profile");
-        }
-
-        const profileData = await response.json();
-        setProfile(profileData);
-      }
-    } catch (err) {
-      console.error("Error fetching user data:", err);
-      setError(err instanceof Error ? err : new Error(String(err)));
-    } finally {
-      setIsLoading(false);
+      const response = await fetch(`/api/profile/${userId}`);
+      if (!response.ok) throw new Error("Failed to fetch profile");
+      const data = await response.json();
+      setProfile(data.profile);
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      setProfile(null);
     }
-  }, [supabase.auth]);
+  };
+
+  // Refetch function to refresh user and profile data
+  const refetch = useCallback(async () => {
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      setUser(session?.user ?? null);
+
+      if (session?.user) {
+        await fetchProfile(session.user.id);
+      } else {
+        setProfile(null);
+      }
+    } catch (error) {
+      console.error("Error refetching user data:", error);
+    }
+  }, [supabase]);
 
   useEffect(() => {
-    fetchUserData();
+    const getUser = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      setUser(session?.user ?? null);
 
-    // Listen for auth state changes
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
-          if (session) {
-            setUser(session.user);
-
-            // Fetch the user's profile when auth state changes
-            try {
-              const response = await fetch("/api/profile");
-              if (response.ok) {
-                const profileData = await response.json();
-                setProfile(profileData);
-              }
-            } catch (err) {
-              console.error("Error fetching profile:", err);
-            }
-          }
-        } else if (event === "SIGNED_OUT") {
-          setUser(null);
-          setProfile(null);
-        }
+      if (session?.user) {
+        await fetchProfile(session.user.id);
       }
-    );
 
-    return () => {
-      authListener.subscription.unsubscribe();
+      setLoading(false);
     };
-  }, [supabase.auth, fetchUserData]);
 
-  return { user, profile, isLoading, error, refetch: fetchUserData };
+    getUser();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setUser(session?.user ?? null);
+
+      if (session?.user) {
+        await fetchProfile(session.user.id);
+      } else {
+        setProfile(null);
+      }
+
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [supabase]);
+
+  return { user, profile, loading, isLoading: loading, refetch };
 }

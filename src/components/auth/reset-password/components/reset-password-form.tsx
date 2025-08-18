@@ -3,9 +3,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
+import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -15,45 +13,32 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { PasswordInput } from "@/components/utils/password-input";
-import { PasswordStrengthIndicator } from "@/components/utils/password-strength-indicator";
-import { hashPassword } from "@/lib/auth/password-crypto";
+import { createBrowserClient } from "@supabase/ssr";
 
 const formSchema = z
   .object({
-    password: z
-      .string()
-      .min(8, "Password must be at least 8 characters")
-      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-      .regex(/[0-9]/, "Password must contain at least one number")
-      .regex(
-        /[^A-Za-z0-9]/,
-        "Password must contain at least one special character"
-      ),
+    password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
+    message: "Passwords don't match",
     path: ["confirmPassword"],
   });
 
-type FormValues = z.infer<typeof formSchema>;
+type FormData = z.infer<typeof formSchema>;
 
-type ResetPasswordFormProps = React.HTMLAttributes<HTMLDivElement>;
-
-export function ResetPasswordForm({
-  className,
-  ...props
-}: ResetPasswordFormProps) {
+export function ResetPasswordForm() {
   const [isLoading, setIsLoading] = useState(false);
-  const [password, setPassword] = useState("");
-  const router = useRouter();
-  const supabase = createClientComponentClient();
+  const [isSuccess, setIsSuccess] = useState(false);
 
-  const form = useForm<FormValues>({
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+
+  const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       password: "",
@@ -61,96 +46,96 @@ export function ResetPasswordForm({
     },
   });
 
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-    form.setValue("password", e.target.value);
-  };
-
-  async function onSubmit(data: FormValues) {
+  const onSubmit = async (data: FormData) => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
-
-      // Get the current user
-      const { data: userData, error: userError } =
-        await supabase.auth.getUser();
-
-      if (userError || !userData.user) {
-        throw new Error("User not found. Please try logging in again.");
-      }
-
-      // Hash the password before sending to server
-      const hashedPassword = await hashPassword(data.password);
-
-      // Update the user's password
       const { error } = await supabase.auth.updateUser({
-        password: hashedPassword,
+        password: data.password,
       });
 
       if (error) {
         throw error;
       }
 
+      setIsSuccess(true);
       toast({
-        title: "Password Updated",
-        description: "Your password has been reset successfully.",
+        title: "Password updated!",
+        description: "Your password has been successfully updated.",
       });
-
-      // Redirect to the login page
-      router.push("/sign-in");
     } catch (error) {
-      console.error("Reset password error:", error);
+      console.error("Error updating password:", error);
       toast({
         title: "Error",
-        description: "Failed to reset password. Please try again.",
+        description: "Failed to update password. Please try again.",
         variant: "destructive",
       });
     } finally {
       setIsLoading(false);
     }
+  };
+
+  if (isSuccess) {
+    return (
+      <div className="text-center space-y-4">
+        <h2 className="text-2xl font-semibold">Password updated!</h2>
+        <p className="text-muted-foreground">
+          Your password has been successfully updated. You can now sign in with
+          your new password.
+        </p>
+        <Button
+          variant="outline"
+          onClick={() => {
+            setIsSuccess(false);
+            form.reset();
+          }}
+        >
+          Reset another password
+        </Button>
+      </div>
+    );
   }
 
   return (
-    <div className={cn("grid gap-6", className)} {...props}>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>New Password</FormLabel>
-                <FormControl>
-                  <PasswordInput
-                    placeholder="********"
-                    {...field}
-                    onChange={handlePasswordChange}
-                  />
-                </FormControl>
-                <PasswordStrengthIndicator password={password} />
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="confirmPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Confirm Password</FormLabel>
-                <FormControl>
-                  <PasswordInput placeholder="********" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Resetting..." : "Reset Password"}
-          </Button>
-        </form>
-      </Form>
-    </div>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>New Password</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Enter your new password"
+                  type="password"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirm Password</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Confirm your new password"
+                  type="password"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? "Updating..." : "Update password"}
+        </Button>
+      </form>
+    </Form>
   );
 }
