@@ -167,6 +167,8 @@ async function main() {
       name: "Default",
       templateBody:
         "Hola, estoy interesado en {itemTitle} - {url} (utm: {utmSource}/{utmCampaign})",
+      phoneNumber: "+59170000000",
+      usageType: "GENERAL",
       isDefault: true,
     },
   });
