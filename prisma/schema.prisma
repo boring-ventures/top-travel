@@ -76,7 +76,6 @@ model Destination {
   description   String?
   heroImageUrl  String?
   isFeatured    Boolean       @default(false)
-  displayTag    String?       // Tag to use for home page sections (e.g., "destinos-top", "europa")
 
   // Relations
   packageDestinations PackageDestination[]
@@ -88,7 +87,6 @@ model Destination {
 
   @@index([country, city])
   @@index([isFeatured])
-  @@index([displayTag])
 }
 
 // Tags taxonomy for regions, themes, departments, etc.
