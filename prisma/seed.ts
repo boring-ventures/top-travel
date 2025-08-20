@@ -24,6 +24,76 @@ async function main() {
     },
   });
 
+  const beachTag = await prisma.tag.upsert({
+    where: { slug: "beach" },
+    update: {},
+    create: {
+      name: "Beach",
+      slug: "beach",
+      type: "THEME",
+    },
+  });
+
+  const cultureTag = await prisma.tag.upsert({
+    where: { slug: "culture" },
+    update: {},
+    create: {
+      name: "Culture",
+      slug: "culture",
+      type: "THEME",
+    },
+  });
+
+  const adventureTag = await prisma.tag.upsert({
+    where: { slug: "adventure" },
+    update: {},
+    create: {
+      name: "Adventure",
+      slug: "adventure",
+      type: "THEME",
+    },
+  });
+
+  const europeTag = await prisma.tag.upsert({
+    where: { slug: "europe" },
+    update: {},
+    create: {
+      name: "Europe",
+      slug: "europe",
+      type: "REGION",
+    },
+  });
+
+  const asiaTag = await prisma.tag.upsert({
+    where: { slug: "asia" },
+    update: {},
+    create: {
+      name: "Asia",
+      slug: "asia",
+      type: "REGION",
+    },
+  });
+
+  const weddingsTag = await prisma.tag.upsert({
+    where: { slug: "weddings" },
+    update: {},
+    create: {
+      name: "Weddings",
+      slug: "weddings",
+      type: "DEPARTMENT",
+    },
+  });
+
+  const quinceaneraTag = await prisma.tag.upsert({
+    where: { slug: "quinceanera" },
+    update: {},
+    create: {
+      name: "Quinceañera",
+      slug: "quinceanera",
+      type: "DEPARTMENT",
+    },
+  });
+
   // Destination
   const rio = await prisma.destination.upsert({
     where: { slug: "rio-de-janeiro-brazil" },
@@ -40,6 +110,233 @@ async function main() {
       description: "Vibrant city known for beaches, culture, and carnival.",
       heroImageUrl:
         "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
+    },
+  });
+
+  // Connect Rio to tags
+  await prisma.destinationTag.upsert({
+    where: {
+      destinationId_tagId: {
+        destinationId: rio.id,
+        tagId: southAmericaTag.id,
+      },
+    },
+    update: {},
+    create: {
+      destinationId: rio.id,
+      tagId: southAmericaTag.id,
+    },
+  });
+
+  await prisma.destinationTag.upsert({
+    where: {
+      destinationId_tagId: {
+        destinationId: rio.id,
+        tagId: beachTag.id,
+      },
+    },
+    update: {},
+    create: {
+      destinationId: rio.id,
+      tagId: beachTag.id,
+    },
+  });
+
+  await prisma.destinationTag.upsert({
+    where: {
+      destinationId_tagId: {
+        destinationId: rio.id,
+        tagId: cultureTag.id,
+      },
+    },
+    update: {},
+    create: {
+      destinationId: rio.id,
+      tagId: cultureTag.id,
+    },
+  });
+
+  // More destinations
+  const paris = await prisma.destination.upsert({
+    where: { slug: "paris-france" },
+    update: {
+      isFeatured: true,
+      heroImageUrl:
+        "https://images.unsplash.com/photo-1502602898536-47ad22581b52",
+    },
+    create: {
+      slug: "paris-france",
+      country: "France",
+      city: "Paris",
+      isFeatured: true,
+      description: "The City of Light, known for art, fashion, and romance.",
+      heroImageUrl:
+        "https://images.unsplash.com/photo-1502602898536-47ad22581b52",
+    },
+  });
+
+  // Connect Paris to tags
+  await prisma.destinationTag.upsert({
+    where: {
+      destinationId_tagId: {
+        destinationId: paris.id,
+        tagId: europeTag.id,
+      },
+    },
+    update: {},
+    create: {
+      destinationId: paris.id,
+      tagId: europeTag.id,
+    },
+  });
+
+  await prisma.destinationTag.upsert({
+    where: {
+      destinationId_tagId: {
+        destinationId: paris.id,
+        tagId: cultureTag.id,
+      },
+    },
+    update: {},
+    create: {
+      destinationId: paris.id,
+      tagId: cultureTag.id,
+    },
+  });
+
+  await prisma.destinationTag.upsert({
+    where: {
+      destinationId_tagId: {
+        destinationId: paris.id,
+        tagId: weddingsTag.id,
+      },
+    },
+    update: {},
+    create: {
+      destinationId: paris.id,
+      tagId: weddingsTag.id,
+    },
+  });
+
+  const bali = await prisma.destination.upsert({
+    where: { slug: "bali-indonesia" },
+    update: {
+      isFeatured: true,
+      heroImageUrl:
+        "https://images.unsplash.com/photo-1537953773345-d172ccf13cf1",
+    },
+    create: {
+      slug: "bali-indonesia",
+      country: "Indonesia",
+      city: "Bali",
+      isFeatured: true,
+      description: "Tropical paradise with rich culture and stunning beaches.",
+      heroImageUrl:
+        "https://images.unsplash.com/photo-1537953773345-d172ccf13cf1",
+    },
+  });
+
+  // Connect Bali to tags
+  await prisma.destinationTag.upsert({
+    where: {
+      destinationId_tagId: {
+        destinationId: bali.id,
+        tagId: asiaTag.id,
+      },
+    },
+    update: {},
+    create: {
+      destinationId: bali.id,
+      tagId: asiaTag.id,
+    },
+  });
+
+  await prisma.destinationTag.upsert({
+    where: {
+      destinationId_tagId: {
+        destinationId: bali.id,
+        tagId: beachTag.id,
+      },
+    },
+    update: {},
+    create: {
+      destinationId: bali.id,
+      tagId: beachTag.id,
+    },
+  });
+
+  await prisma.destinationTag.upsert({
+    where: {
+      destinationId_tagId: {
+        destinationId: bali.id,
+        tagId: adventureTag.id,
+      },
+    },
+    update: {},
+    create: {
+      destinationId: bali.id,
+      tagId: adventureTag.id,
+    },
+  });
+
+  const machuPicchu = await prisma.destination.upsert({
+    where: { slug: "machu-picchu-peru" },
+    update: {
+      isFeatured: true,
+      heroImageUrl:
+        "https://images.unsplash.com/photo-1587595431973-160d0d94add1",
+    },
+    create: {
+      slug: "machu-picchu-peru",
+      country: "Peru",
+      city: "Machu Picchu",
+      isFeatured: true,
+      description: "Ancient Incan citadel high in the Andes Mountains.",
+      heroImageUrl:
+        "https://images.unsplash.com/photo-1587595431973-160d0d94add1",
+    },
+  });
+
+  // Connect Machu Picchu to tags
+  await prisma.destinationTag.upsert({
+    where: {
+      destinationId_tagId: {
+        destinationId: machuPicchu.id,
+        tagId: southAmericaTag.id,
+      },
+    },
+    update: {},
+    create: {
+      destinationId: machuPicchu.id,
+      tagId: southAmericaTag.id,
+    },
+  });
+
+  await prisma.destinationTag.upsert({
+    where: {
+      destinationId_tagId: {
+        destinationId: machuPicchu.id,
+        tagId: cultureTag.id,
+      },
+    },
+    update: {},
+    create: {
+      destinationId: machuPicchu.id,
+      tagId: cultureTag.id,
+    },
+  });
+
+  await prisma.destinationTag.upsert({
+    where: {
+      destinationId_tagId: {
+        destinationId: machuPicchu.id,
+        tagId: adventureTag.id,
+      },
+    },
+    update: {},
+    create: {
+      destinationId: machuPicchu.id,
+      tagId: adventureTag.id,
     },
   });
 
@@ -70,6 +367,105 @@ async function main() {
         create: [
           { tagId: southAmericaTag.id },
           { tagId: topDestinationsTag.id },
+          { tagId: beachTag.id },
+          { tagId: cultureTag.id },
+        ],
+      },
+    },
+  });
+
+  // More packages
+  const packageParis = await prisma.package.upsert({
+    where: { slug: "paris-romance-7d6n" },
+    update: {
+      heroImageUrl:
+        "https://images.unsplash.com/photo-1502602898536-47ad22581b52",
+    },
+    create: {
+      slug: "paris-romance-7d6n",
+      title: "Paris Romance 7D6N",
+      summary:
+        "Experience the magic of Paris with this romantic getaway package.",
+      isCustom: false,
+      fromPrice: 1800,
+      currency: "USD",
+      heroImageUrl:
+        "https://images.unsplash.com/photo-1502602898536-47ad22581b52",
+      inclusions: ["Hotel 4*", "Eiffel Tower visit", "Seine River cruise"],
+      exclusions: ["Flights", "Personal expenses"],
+      status: "PUBLISHED",
+      packageDestinations: {
+        create: [{ destinationId: paris.id }],
+      },
+      packageTags: {
+        create: [
+          { tagId: europeTag.id },
+          { tagId: cultureTag.id },
+          { tagId: weddingsTag.id },
+        ],
+      },
+    },
+  });
+
+  const packageBali = await prisma.package.upsert({
+    where: { slug: "bali-adventure-10d9n" },
+    update: {
+      heroImageUrl:
+        "https://images.unsplash.com/photo-1537953773345-d172ccf13cf1",
+    },
+    create: {
+      slug: "bali-adventure-10d9n",
+      title: "Bali Adventure 10D9N",
+      summary:
+        "Explore the natural beauty and culture of Bali with adventure activities.",
+      isCustom: false,
+      fromPrice: 1500,
+      currency: "USD",
+      heroImageUrl:
+        "https://images.unsplash.com/photo-1537953773345-d172ccf13cf1",
+      inclusions: ["Hotel 3*", "Temple tours", "Beach activities"],
+      exclusions: ["Flights", "Personal expenses"],
+      status: "PUBLISHED",
+      packageDestinations: {
+        create: [{ destinationId: bali.id }],
+      },
+      packageTags: {
+        create: [
+          { tagId: asiaTag.id },
+          { tagId: beachTag.id },
+          { tagId: adventureTag.id },
+        ],
+      },
+    },
+  });
+
+  const packageMachuPicchu = await prisma.package.upsert({
+    where: { slug: "machu-picchu-discovery-6d5n" },
+    update: {
+      heroImageUrl:
+        "https://images.unsplash.com/photo-1587595431973-160d0d94add1",
+    },
+    create: {
+      slug: "machu-picchu-discovery-6d5n",
+      title: "Machu Picchu Discovery 6D5N",
+      summary:
+        "Discover the ancient wonders of Machu Picchu and the Sacred Valley.",
+      isCustom: false,
+      fromPrice: 900,
+      currency: "USD",
+      heroImageUrl:
+        "https://images.unsplash.com/photo-1587595431973-160d0d94add1",
+      inclusions: ["Hotel 3*", "Machu Picchu entrance", "Guide service"],
+      exclusions: ["Flights", "Personal expenses"],
+      status: "PUBLISHED",
+      packageDestinations: {
+        create: [{ destinationId: machuPicchu.id }],
+      },
+      packageTags: {
+        create: [
+          { tagId: southAmericaTag.id },
+          { tagId: cultureTag.id },
+          { tagId: adventureTag.id },
         ],
       },
     },
@@ -203,16 +599,6 @@ async function main() {
   }
 
   // Additional Tags
-  const beachTag = await prisma.tag.upsert({
-    where: { slug: "beach" },
-    update: {},
-    create: { name: "Beach", slug: "beach", type: "THEME" },
-  });
-  const adventureTag = await prisma.tag.upsert({
-    where: { slug: "adventure" },
-    update: {},
-    create: { name: "Adventure", slug: "adventure", type: "THEME" },
-  });
   const cityTag = await prisma.tag.upsert({
     where: { slug: "city" },
     update: {},

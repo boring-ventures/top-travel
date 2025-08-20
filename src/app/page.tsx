@@ -11,6 +11,7 @@ import {
   Footer,
   PersistentWhatsAppCTA,
 } from "@/components/views/landing-page";
+import TagCloud from "@/components/views/landing-page/TagCloud";
 import prisma from "@/lib/prisma";
 import { filterValidImageUrls } from "@/lib/utils";
 import { getWhatsAppTemplateByUsage } from "@/lib/whatsapp-utils";
@@ -144,6 +145,7 @@ export default async function Home() {
   let departments: any[] = [];
   let fixedDepartures: any[] = [];
   let testimonials: any[] = [];
+  let tags: any[] = [];
   let whatsappTemplates: any = {};
 
   try {
@@ -229,6 +231,18 @@ export default async function Home() {
           content: true,
         },
       }),
+      prisma.tag.findMany({
+        orderBy: [{ type: "asc" }, { name: "asc" }],
+        include: {
+          _count: {
+            select: {
+              packageTags: true,
+              destinationTags: true,
+            },
+          },
+        },
+        take: 12,
+      }),
     ]);
     [
       offers,
@@ -237,6 +251,7 @@ export default async function Home() {
       departments,
       fixedDepartures,
       testimonials,
+      tags,
     ] = results as any;
 
     // Fetch WhatsApp templates for different usage types
@@ -396,6 +411,51 @@ export default async function Home() {
         <Hero items={heroItems} featuredOffer={offers[0]} />
         <CustomizablePackages />
         <TabbedContent tabs={tabbedContent} />
+
+        {/* Popular Tags Section */}
+        {tags.length > 0 && (
+          <section className="py-16 bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950">
+            <div className="container mx-auto px-4">
+              <div className="text-center mb-8">
+                <h2 className="text-3xl font-bold mb-4">
+                  Explorar por Etiquetas
+                </h2>
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                  Descubre contenido organizado por categorías. Haz clic en
+                  cualquier etiqueta para ver todo el contenido relacionado.
+                </p>
+              </div>
+              <TagCloud
+                tags={tags}
+                showCounts={true}
+                maxTags={12}
+                className="justify-center"
+              />
+              <div className="text-center mt-8">
+                <a
+                  href="/tags"
+                  className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
+                >
+                  Ver todas las etiquetas
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </section>
+        )}
+
         <SpecialDepartments departments={specialDepartments} />
         <FeaturedOffers
           offers={offers}

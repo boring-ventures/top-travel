@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 const navItems = [
   { href: "/destinations", label: "Destinos" },
   { href: "/packages", label: "Paquetes" },
+  { href: "/tags", label: "Etiquetas" },
   { href: "/events", label: "Eventos" },
   { href: "/fixed-departures", label: "Salidas Fijas" },
   { href: "/weddings", label: "Bodas" },

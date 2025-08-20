@@ -11,6 +11,13 @@ export default async function DestinationDetailPage({ params }: Params) {
   const { slug } = await params;
   const dest = await prisma.destination.findUnique({
     where: { slug },
+    include: {
+      destinationTags: {
+        include: {
+          tag: true,
+        },
+      },
+    },
   });
   if (!dest) {
     return (
@@ -53,6 +60,19 @@ export default async function DestinationDetailPage({ params }: Params) {
               {dest.description}
             </p>
           ) : null}
+          {dest.destinationTags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-3">
+              {dest.destinationTags.map((dt) => (
+                <Link
+                  key={dt.tagId}
+                  href={`/tags/${dt.tag.slug}`}
+                  className="rounded border px-2 py-1 text-xs hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer"
+                >
+                  {dt.tag.name}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
