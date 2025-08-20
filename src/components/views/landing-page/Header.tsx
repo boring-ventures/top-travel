@@ -40,7 +40,7 @@ export default function Header() {
             "mx-auto mt-1 w-full max-w-[95vw] lg:max-w-[1200px] xl:max-w-[1400px] 2xl:max-w-[1600px] px-4 sm:px-6 lg:px-8 xl:px-12 transition-all duration-700 ease-out backdrop-blur-md border border-border/20",
             "bg-white/20 dark:bg-black/20",
             isScrolled &&
-              "bg-white/40 dark:bg-black/40 rounded-xl border backdrop-blur-lg shadow-lg w-full max-w-[75vw] lg:max-w-[700px] xl:max-w-[800px] 2xl:max-w-[900px] px-6 sm:px-8 lg:px-10 xl:px-12"
+              "bg-white/40 dark:bg-black/40 rounded-xl border backdrop-blur-lg shadow-lg w-full max-w-[95vw] lg:max-w-[700px] xl:max-w-[800px] 2xl:max-w-[900px] px-6 sm:px-8 lg:px-10 xl:px-12"
           )}
           style={{
             transition: "all 700ms cubic-bezier(0.4, 0, 0.2, 1)",
@@ -49,7 +49,7 @@ export default function Header() {
           <div
             className={cn(
               "relative flex flex-wrap items-center justify-between gap-4 py-2 lg:gap-0 lg:py-3 transition-all duration-700 ease-out",
-              isScrolled && "py-3 lg:py-4"
+              isScrolled && "py-5 lg:py-4"
             )}
           >
             {/* Left: brand + mobile menu button */}
@@ -62,14 +62,14 @@ export default function Header() {
                 <Globe2
                   className={cn(
                     "h-5 w-5 text-primary transition-all duration-300",
-                    isScrolled && "h-4 w-4"
+                    isScrolled && "h-5 w-5 sm:h-4 sm:w-4"
                   )}
                   aria-hidden="true"
                 />
                 <span
                   className={cn(
                     "text-sm sm:text-base font-bold tracking-tight text-primary transition-all duration-300",
-                    isScrolled && "text-xs sm:text-sm"
+                    isScrolled && "text-sm sm:text-sm"
                   )}
                 >
                   GABYTOPTRAVEL
@@ -134,7 +134,7 @@ export default function Header() {
                   size={isScrolled ? "sm" : "sm"}
                   className={cn(
                     "bg-primary text-primary-foreground transition-all duration-300",
-                    isScrolled && "text-xs px-3 py-1"
+                    isScrolled && "text-sm px-4 py-2 sm:text-xs sm:px-3 sm:py-1"
                   )}
                 >
                   <Link href="/contact">

@@ -115,7 +115,7 @@ export default function Hero({ items = [], featuredOffer }: HeroProps) {
 
       {/* Foreground content */}
       <div className="relative z-10 pt-2 sm:pt-3 md:pt-4 lg:pt-5 xl:pt-6 2xl:pt-8 pb-3 sm:pb-4 md:pb-5 lg:pb-6 xl:pb-7 2xl:pb-8">
-        <div className="w-full max-w-[95vw] lg:max-w-[1200px] xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
+        <div className="w-full max-w-[98vw] lg:max-w-[1400px] xl:max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
           {/* Centered hero content with search */}
           <div className="flex min-h-[40vh] sm:min-h-[45vh] md:min-h-[50vh] lg:min-h-[55vh] xl:min-h-[60vh] 2xl:min-h-[65vh] flex-col items-center justify-center gap-3 sm:gap-4 md:gap-5 lg:gap-6 text-center">
             <BlurFade>
@@ -134,10 +134,10 @@ export default function Hero({ items = [], featuredOffer }: HeroProps) {
               {/* Integrated Search Bar */}
               <form
                 onSubmit={handleSearch}
-                className="flex flex-col min-w-40 h-14 w-full max-w-[99vw] sm:max-w-[98vw] md:max-w-[95vw] lg:max-w-[800px] xl:max-w-[900px] 2xl:max-w-[1000px] sm:h-16"
+                className="flex flex-col min-w-40 h-14 w-full max-w-[99vw] sm:max-w-[99vw] md:max-w-[98vw] lg:max-w-[1100px] xl:max-w-[1300px] 2xl:max-w-[1500px] sm:h-16"
               >
                 <div className="flex w-full flex-1 items-stretch rounded-lg h-full">
-                  <div className="text-muted-foreground flex border border-border bg-background/95 items-center justify-center pl-4 rounded-l-lg border-r-0">
+                  <div className="text-muted-foreground flex border border-border bg-background/95 items-center justify-center pl-6 sm:pl-8 lg:pl-10 rounded-l-lg border-r-0">
                     <Search className="h-5 w-5" />
                   </div>
                   <Input
@@ -150,7 +150,7 @@ export default function Hero({ items = [], featuredOffer }: HeroProps) {
                   <div className="flex items-center justify-center rounded-r-lg border-l-0 border border-border bg-background/95 pr-2">
                     <Button
                       type="submit"
-                      className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 sm:h-12 sm:px-5 bg-primary text-primary-foreground text-sm sm:text-base font-bold leading-normal tracking-[0.015em]"
+                      className="flex min-w-[140px] max-w-[300px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-8 sm:h-12 sm:px-10 lg:px-12 lg:min-w-[180px] xl:min-w-[220px] bg-primary text-primary-foreground text-sm sm:text-base font-bold leading-normal tracking-[0.015em]"
                     >
                       <span className="truncate">Buscar</span>
                     </Button>
