@@ -49,7 +49,11 @@ export default async function TagPage({ params }: TagPageProps) {
 
   const packages = tag.packageTags
     .map((pt) => pt.package)
-    .filter((pkg) => pkg.status === "PUBLISHED");
+    .filter((pkg) => pkg.status === "PUBLISHED")
+    .map(pkg => ({
+      ...pkg,
+      fromPrice: pkg.fromPrice ? Number(pkg.fromPrice) : undefined
+    }));
 
   const destinations = tag.destinationTags.map((dt) => dt.destination);
 

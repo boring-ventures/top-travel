@@ -25,16 +25,24 @@ export default async function PackageDetailPage({ params }: Params) {
     );
   }
 
-  const destinations = pkg.packageDestinations.map((pd) => pd.destination);
-  const tags = pkg.packageTags.map((pt) => pt.tag);
+  // Convert Decimal objects to numbers for client components
+  const pkgWithNumbers = {
+    ...pkg,
+    fromPrice: pkg.fromPrice ? Number(pkg.fromPrice) : undefined,
+  };
+
+  const destinations = pkgWithNumbers.packageDestinations.map(
+    (pd) => pd.destination
+  );
+  const tags = pkgWithNumbers.packageTags.map((pt) => pt.tag);
 
   return (
     <div className="container mx-auto py-8 sm:py-12 space-y-6">
       <section className="relative h-56 sm:h-64 w-full overflow-hidden rounded-xl border bg-muted">
-        {pkg.heroImageUrl ? (
+        {pkgWithNumbers.heroImageUrl ? (
           <Image
-            src={pkg.heroImageUrl}
-            alt={pkg.title}
+            src={pkgWithNumbers.heroImageUrl}
+            alt={pkgWithNumbers.title}
             fill
             sizes="100vw"
             className="object-cover"
@@ -43,10 +51,12 @@ export default async function PackageDetailPage({ params }: Params) {
         ) : null}
         <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
         <div className="absolute bottom-0 left-0 p-4 sm:p-6">
-          <h1 className="text-2xl sm:text-3xl font-semibold">{pkg.title}</h1>
-          {pkg.summary ? (
+          <h1 className="text-2xl sm:text-3xl font-semibold">
+            {pkgWithNumbers.title}
+          </h1>
+          {pkgWithNumbers.summary ? (
             <p className="text-xs sm:text-sm text-muted-foreground max-w-2xl mt-1">
-              {pkg.summary}
+              {pkgWithNumbers.summary}
             </p>
           ) : null}
         </div>
@@ -72,33 +82,35 @@ export default async function PackageDetailPage({ params }: Params) {
               ))}
             </div>
             <div className="text-sm">
-              {pkg.isCustom ? (
+              {pkgWithNumbers.isCustom ? (
                 <span className="font-medium">Paquete personalizado</span>
               ) : (
                 <span>
-                  Desde {pkg.currency ?? "USD"}{" "}
-                  {pkg.fromPrice?.toString() ?? "—"}
+                  Desde {pkgWithNumbers.currency ?? "USD"}{" "}
+                  {pkgWithNumbers.fromPrice?.toString() ?? "—"}
                 </span>
               )}
             </div>
           </Card>
 
-          {Array.isArray(pkg.inclusions) && pkg.inclusions.length > 0 ? (
+          {Array.isArray(pkgWithNumbers.inclusions) &&
+          pkgWithNumbers.inclusions.length > 0 ? (
             <Card className="p-4 sm:p-6">
               <h2 className="text-xl font-semibold mb-2">Incluye</h2>
               <ul className="list-disc pl-6 text-sm space-y-1">
-                {pkg.inclusions.map((inc, idx) => (
+                {pkgWithNumbers.inclusions.map((inc, idx) => (
                   <li key={idx}>{inc}</li>
                 ))}
               </ul>
             </Card>
           ) : null}
 
-          {Array.isArray(pkg.exclusions) && pkg.exclusions.length > 0 ? (
+          {Array.isArray(pkgWithNumbers.exclusions) &&
+          pkgWithNumbers.exclusions.length > 0 ? (
             <Card className="p-4 sm:p-6">
               <h2 className="text-xl font-semibold mb-2">No incluye</h2>
               <ul className="list-disc pl-6 text-sm space-y-1">
-                {pkg.exclusions.map((exc, idx) => (
+                {pkgWithNumbers.exclusions.map((exc, idx) => (
                   <li key={idx}>{exc}</li>
                 ))}
               </ul>

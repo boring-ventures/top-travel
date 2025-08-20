@@ -86,7 +86,11 @@ export default async function FixedDeparturesPage({
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-background via-background to-secondary/20">
       <Header />
 
-      <main className="flex-grow">
+      <main className="flex-grow relative pt-16 sm:pt-20">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-grid-black/[0.02] dark:bg-grid-white/[0.02] -z-10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-transparent -z-10" />
+
         {/* Hero Section */}
         <section className="relative bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-16">
           <div className="absolute inset-0 bg-black/20" />
@@ -105,10 +109,13 @@ export default async function FixedDeparturesPage({
 
         {/* Search and Filters */}
         <section className="container mx-auto px-4 py-8">
-          <Card className="p-6">
+          <Card className="p-6 bg-card/95 backdrop-blur-sm border-0 shadow-xl">
             <form className="space-y-4" method="get">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <Select name="destinationId" defaultValue={destinationId || "all"}>
+                <Select
+                  name="destinationId"
+                  defaultValue={destinationId || "all"}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccionar destino" />
                   </SelectTrigger>
@@ -150,10 +157,10 @@ export default async function FixedDeparturesPage({
             <div className="text-center py-16">
               <div className="text-muted-foreground mb-4">
                 <Plane className="h-16 w-16 mx-auto mb-4 opacity-50" />
-                <h3 className="text-xl font-semibold mb-2">
+                <h3 className="text-xl font-semibold mb-2 text-foreground">
                   No se encontraron salidas fijas
                 </h3>
-                <p className="text-sm">
+                <p className="text-sm text-muted-foreground">
                   Intenta ajustar tus filtros de búsqueda
                 </p>
               </div>
@@ -161,7 +168,7 @@ export default async function FixedDeparturesPage({
           ) : (
             <>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-semibold">
+                <h2 className="text-2xl font-semibold text-foreground">
                   {items.length} salida{items.length !== 1 ? "s" : ""} fija
                   {items.length !== 1 ? "s" : ""} encontrada
                   {items.length !== 1 ? "s" : ""}
@@ -174,7 +181,7 @@ export default async function FixedDeparturesPage({
                   return (
                     <Card
                       key={f.id}
-                      className="group overflow-hidden hover:shadow-lg transition-all duration-300"
+                      className="group overflow-hidden hover:shadow-lg transition-all duration-300 bg-card/50 backdrop-blur-sm border-0"
                     >
                       <Link
                         href={`/fixed-departures/${f.slug}`}
@@ -191,7 +198,7 @@ export default async function FixedDeparturesPage({
                               className="object-cover group-hover:scale-105 transition-transform duration-300"
                             />
                           ) : (
-                            <div className="h-full w-full bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center">
+                            <div className="h-full w-full bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/20 dark:to-teal-900/20 flex items-center justify-center">
                               <Plane className="h-12 w-12 text-muted-foreground" />
                             </div>
                           )}
@@ -219,7 +226,7 @@ export default async function FixedDeparturesPage({
                           </div>
                           {f.destination && (
                             <div className="absolute top-3 right-3">
-                              <Badge className="bg-white/90 text-black hover:bg-white text-xs">
+                              <Badge className="bg-card/90 text-card-foreground hover:bg-card text-xs">
                                 {f.destination.city}
                               </Badge>
                             </div>
@@ -227,7 +234,7 @@ export default async function FixedDeparturesPage({
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                         </div>
                         <div className="p-4">
-                          <h3 className="font-semibold text-lg mb-2 group-hover:text-emerald-600 transition-colors line-clamp-2">
+                          <h3 className="font-semibold text-lg mb-2 group-hover:text-emerald-600 transition-colors line-clamp-2 text-foreground">
                             {f.title}
                           </h3>
                           <div className="space-y-2 text-sm text-muted-foreground">
