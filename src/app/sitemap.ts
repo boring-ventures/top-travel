@@ -4,7 +4,7 @@ import type { MetadataRoute } from "next";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
-  const [packages, events, destinations, fixed] = await Promise.all([
+  const [packages, events, destinations, fixed, tags] = await Promise.all([
     prisma.package.findMany({
       where: { status: "PUBLISHED" },
       select: { slug: true, updatedAt: true },
@@ -17,6 +17,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     prisma.fixedDeparture.findMany({
       where: { status: "PUBLISHED" },
       select: { slug: true, updatedAt: true },
+    }),
+    prisma.tag.findMany({
+      select: { slug: true },
     }),
   ]);
 
@@ -31,6 +34,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/events",
     "/destinations",
     "/fixed-departures",
+    "/tags",
   ].map((p) => ({ url: `${baseUrl}${p}`, lastModified: new Date() }));
 
   const dynamicPaths: MetadataRoute.Sitemap = [
@@ -49,6 +53,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...fixed.map((i) => ({
       url: `${baseUrl}/fixed-departures/${i.slug}`,
       lastModified: i.updatedAt,
+    })),
+    ...tags.map((i) => ({
+      url: `${baseUrl}/tags/${i.slug}`,
+      lastModified: new Date(),
     })),
   ];
 

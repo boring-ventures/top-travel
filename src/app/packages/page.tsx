@@ -128,7 +128,10 @@ export default async function PackagesPage({
                     ))}
                   </SelectContent>
                 </Select>
-                <Select name="destinationId" defaultValue={destinationId || "all"}>
+                <Select
+                  name="destinationId"
+                  defaultValue={destinationId || "all"}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccionar destino" />
                   </SelectTrigger>
@@ -244,13 +247,18 @@ export default async function PackagesPage({
                         {p.packageTags.length > 0 && (
                           <div className="flex flex-wrap gap-1 mb-3">
                             {p.packageTags.slice(0, 3).map((pt) => (
-                              <Badge
+                              <Link
                                 key={pt.tagId}
-                                variant="outline"
-                                className="text-xs"
+                                href={`/tags/${pt.tag.slug}`}
+                                className="inline-block"
                               >
-                                {pt.tag.name}
-                              </Badge>
+                                <Badge
+                                  variant="outline"
+                                  className="text-xs hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer"
+                                >
+                                  {pt.tag.name}
+                                </Badge>
+                              </Link>
                             ))}
                             {p.packageTags.length > 3 && (
                               <Badge variant="outline" className="text-xs">

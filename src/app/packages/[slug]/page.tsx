@@ -62,9 +62,13 @@ export default async function PackageDetailPage({ params }: Params) {
                 </span>
               ))}
               {tags.map((t) => (
-                <span key={t.id} className="rounded border px-2 py-1">
+                <Link
+                  key={t.id}
+                  href={`/tags/${t.slug}`}
+                  className="rounded border px-2 py-1 hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer"
+                >
                   {t.name}
-                </span>
+                </Link>
               ))}
             </div>
             <div className="text-sm">

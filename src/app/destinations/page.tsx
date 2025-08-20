@@ -34,14 +34,21 @@ export default async function DestinationsPage({
   const city = params?.city || undefined;
   const isFeatured = params?.featured === "true" ? true : undefined;
 
-  const where: any = { 
-    country: country === "all" ? undefined : country, 
-    city, 
-    isFeatured 
+  const where: any = {
+    country: country === "all" ? undefined : country,
+    city,
+    isFeatured,
   };
   const destinations = await prisma.destination.findMany({
     where,
     orderBy: [{ country: "asc" }, { city: "asc" }],
+    include: {
+      destinationTags: {
+        include: {
+          tag: true,
+        },
+      },
+    },
   });
 
   // Get unique countries and cities for filters
@@ -195,6 +202,30 @@ export default async function DestinationsPage({
                         <p className="text-muted-foreground text-sm mb-3">
                           {d.country}
                         </p>
+                        {/* Tags */}
+                        {d.destinationTags.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mb-3">
+                            {d.destinationTags.slice(0, 3).map((dt) => (
+                              <Link
+                                key={dt.tagId}
+                                href={`/tags/${dt.tag.slug}`}
+                                className="inline-block"
+                              >
+                                <Badge
+                                  variant="outline"
+                                  className="text-xs hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer"
+                                >
+                                  {dt.tag.name}
+                                </Badge>
+                              </Link>
+                            ))}
+                            {d.destinationTags.length > 3 && (
+                              <Badge variant="outline" className="text-xs">
+                                +{d.destinationTags.length - 3}
+                              </Badge>
+                            )}
+                          </div>
+                        )}
                         {d.displayTag && (
                           <Badge variant="outline" className="text-xs">
                             {d.displayTag}
