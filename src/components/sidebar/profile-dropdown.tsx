@@ -60,7 +60,11 @@ export function ProfileDropdown() {
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8 ring-2 ring-primary/10">
             <AvatarImage
-              src={profile.avatarUrl && isValidImageUrl(profile.avatarUrl) ? profile.avatarUrl : ""}
+              src={
+                profile.avatarUrl && isValidImageUrl(profile.avatarUrl)
+                  ? profile.avatarUrl
+                  : ""
+              }
               alt={displayName || user.email || "User"}
             />
             <AvatarFallback className="bg-primary/10">
@@ -90,20 +94,20 @@ export function ProfileDropdown() {
           <DropdownMenuItem asChild>
             <Link href="/profile">
               <User className="mr-2 h-4 w-4" />
-              Profile
+              Perfil
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href="/settings">
               <Settings className="mr-2 h-4 w-4" />
-              Settings
+              Configuración
             </Link>
           </DropdownMenuItem>
           {profile.role === UserRole.SUPERADMIN && (
             <DropdownMenuItem asChild>
               <Link href="/admin">
                 <BadgeCheck className="mr-2 h-4 w-4" />
-                Admin
+                Administrador
               </Link>
             </DropdownMenuItem>
           )}
@@ -115,7 +119,7 @@ export function ProfileDropdown() {
           }}
         >
           <LogOut className="mr-2 h-4 w-4" />
-          Log out
+          Cerrar Sesión
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
