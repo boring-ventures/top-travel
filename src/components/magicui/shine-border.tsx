@@ -39,7 +39,7 @@ export function ShineBorder({
         } as React.CSSProperties
       }
       className={cn(
-        "relative min-h-[60px] w-full place-items-center rounded-[--border-radius] p-3 bg-background border",
+        "relative rounded-[--border-radius] border bg-card",
         className
       )}
     >
