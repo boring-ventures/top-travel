@@ -7,7 +7,10 @@ import { useQuery } from "@tanstack/react-query";
 import { ListHeader } from "@/components/admin/cms/list-header";
 import { TableShell } from "@/components/admin/cms/table-shell";
 import { EmptyState } from "@/components/admin/cms/empty-state";
-import { EnhancedSearch, SearchFilters } from "@/components/admin/cms/enhanced-search";
+import {
+  EnhancedSearch,
+  SearchFilters,
+} from "@/components/admin/cms/enhanced-search";
 import {
   NewOfferModal,
   EditOfferModal,
@@ -25,7 +28,7 @@ async function fetchOffers(filters: SearchFilters) {
     ...(filters.dateFilter !== "all" && { dateFilter: filters.dateFilter }),
     ...(filters.displayTag !== "all" && { displayTag: filters.displayTag }),
   });
-  
+
   const res = await fetch(`/api/offers?${params}`);
   if (!res.ok) throw new Error("Failed to load offers");
   return res.json();
@@ -44,7 +47,7 @@ export default function CmsOffersList() {
     queryKey: ["cms", "offers", filters],
     queryFn: () => fetchOffers(filters),
   });
-  
+
   const items = data?.items ?? [];
   const displayTags = data?.displayTags ?? [];
 
@@ -63,8 +66,8 @@ export default function CmsOffersList() {
         description="Crear ofertas promocionales para campañas."
         actions={<NewOfferModal onSuccess={handleSuccess} />}
       >
-        <EnhancedSearch 
-          placeholder="Buscar ofertas..." 
+        <EnhancedSearch
+          placeholder="Buscar ofertas..."
           onFiltersChange={handleFiltersChange}
           displayTags={displayTags}
         />
@@ -79,12 +82,20 @@ export default function CmsOffersList() {
             items.length === 0 ? (
               <EmptyState
                 title={
-                  filters.search || filters.status !== "all" || filters.featured !== "all" || filters.dateFilter !== "all" || filters.displayTag !== "all"
+                  filters.search ||
+                  filters.status !== "all" ||
+                  filters.featured !== "all" ||
+                  filters.dateFilter !== "all" ||
+                  filters.displayTag !== "all"
                     ? "No se encontraron ofertas"
                     : "Aún no hay ofertas"
                 }
                 description={
-                  filters.search || filters.status !== "all" || filters.featured !== "all" || filters.dateFilter !== "all" || filters.displayTag !== "all"
+                  filters.search ||
+                  filters.status !== "all" ||
+                  filters.featured !== "all" ||
+                  filters.dateFilter !== "all" ||
+                  filters.displayTag !== "all"
                     ? "Intenta con otros filtros."
                     : "Crea tu primera oferta."
                 }
