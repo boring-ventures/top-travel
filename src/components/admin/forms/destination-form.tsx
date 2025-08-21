@@ -68,7 +68,6 @@ export function DestinationForm({
       description: "",
       heroImageUrl: "",
       isFeatured: false,
-      displayTag: "",
       tagIds: [],
     },
     mode: "onChange",
@@ -76,6 +75,11 @@ export function DestinationForm({
 
   useEffect(() => {
     if (initialValues) {
+      // Extract tagIds from destinationTags relationship
+      const tagIds =
+        (initialValues as any).destinationTags?.map((dt: any) => dt.tagId) ||
+        [];
+
       form.reset({
         slug: (initialValues as any).slug ?? "",
         country: (initialValues as any).country ?? "",
@@ -83,8 +87,7 @@ export function DestinationForm({
         description: (initialValues as any).description ?? "",
         heroImageUrl: (initialValues as any).heroImageUrl ?? "",
         isFeatured: Boolean((initialValues as any).isFeatured) ?? false,
-        displayTag: (initialValues as any).displayTag ?? "",
-        tagIds: (initialValues as any).tagIds ?? [],
+        tagIds: tagIds,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -110,6 +113,9 @@ export function DestinationForm({
         }
       });
 
+      // Debug: Log the data being sent
+      console.log("Submitting destination data:", apiData);
+
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
@@ -118,8 +124,12 @@ export function DestinationForm({
 
       if (!res.ok) {
         const error = await res.json();
+        console.error("API Error:", error);
         throw new Error(error.error || "Error al guardar el destino");
       }
+
+      const result = await res.json();
+      console.log("API Response:", result);
 
       toast({
         title: isEdit ? "Destino actualizado" : "Destino creado",
@@ -131,6 +141,7 @@ export function DestinationForm({
       onSuccess?.();
       if (!isEdit) form.reset();
     } catch (error: any) {
+      console.error("Form submission error:", error);
       toast({
         title: "Error",
         description: error.message || "Error al guardar el destino",
@@ -221,24 +232,6 @@ export function DestinationForm({
         {form.formState.errors.heroImageUrl && (
           <p className="text-sm text-red-600">
             {form.formState.errors.heroImageUrl.message}
-          </p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="displayTag">Etiqueta de Visualización</Label>
-        <Input
-          id="displayTag"
-          {...form.register("displayTag")}
-          placeholder="Ej: destinos-top, europa, sudamerica"
-          className="w-full"
-        />
-        <p className="text-xs text-muted-foreground">
-          Etiqueta para mostrar en secciones específicas de la página principal
-        </p>
-        {form.formState.errors.displayTag && (
-          <p className="text-sm text-red-600">
-            {form.formState.errors.displayTag.message}
           </p>
         )}
       </div>

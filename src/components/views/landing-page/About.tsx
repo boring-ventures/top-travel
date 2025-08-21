@@ -32,7 +32,10 @@ export default function About() {
 
   return (
     <section className="py-12 sm:py-16 bg-gradient-to-b from-background to-secondary/10">
-      <div className="container mx-auto px-4">
+      <div
+        className="container mx-auto"
+        style={{ paddingLeft: "12vw", paddingRight: "12vw" }}
+      >
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-foreground text-2xl sm:text-3xl font-bold leading-tight tracking-[-0.015em] pb-4 sm:pb-6">
             Sobre Nosotros

@@ -109,17 +109,6 @@ export function ViewDestinationModal({
                       </div>
                     </div>
 
-                    {destination.displayTag && (
-                      <div>
-                        <div className="text-sm font-medium text-muted-foreground mb-1">
-                          Etiqueta de Visualización
-                        </div>
-                        <Badge variant="outline" className="text-xs">
-                          {destination.displayTag}
-                        </Badge>
-                      </div>
-                    )}
-
                     {destination.description && (
                       <div>
                         <div className="text-sm font-medium text-muted-foreground mb-1">

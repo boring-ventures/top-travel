@@ -32,6 +32,13 @@ export async function GET(request: Request) {
         orderBy: { createdAt: "desc" },
         skip,
         take: pageSize,
+        include: {
+          destinationTags: {
+            include: {
+              tag: true,
+            },
+          },
+        },
       }),
       prisma.destination.count({ where }),
     ]);
@@ -52,17 +59,29 @@ export async function POST(request: Request) {
     const json = await request.json();
     const parsed = DestinationCreateSchema.parse(json);
 
-    const created = await prisma.destination.create({
-      data: {
-        slug: parsed.slug,
-        country: parsed.country,
-        city: parsed.city,
-        description: parsed.description,
-        heroImageUrl: parsed.heroImageUrl,
-        isFeatured: parsed.isFeatured ?? false,
-        displayTag: parsed.displayTag,
-      },
+    // Extract tagIds from the parsed data
+    const { tagIds, ...destinationData } = parsed;
+
+    // Use a transaction to create the destination and its tags
+    const created = await prisma.$transaction(async (tx) => {
+      // Create the destination
+      const destination = await tx.destination.create({
+        data: destinationData,
+      });
+
+      // If tagIds is provided, create the many-to-many relationships
+      if (tagIds && tagIds.length > 0) {
+        await tx.destinationTag.createMany({
+          data: tagIds.map((tagId: string) => ({
+            destinationId: destination.id,
+            tagId,
+          })),
+        });
+      }
+
+      return destination;
     });
+
     return NextResponse.json(created, { status: 201 });
   } catch (error: any) {
     const status = error?.status ?? 400;

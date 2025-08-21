@@ -124,7 +124,6 @@ function CmsDestinationsListContent() {
                   <th className="px-3 py-2 text-left">País</th>
                   <th className="px-3 py-2 text-left">Ciudad</th>
                   <th className="px-3 py-2 text-left">Slug</th>
-                  <th className="px-3 py-2 text-left">Etiqueta</th>
                   <th className="px-3 py-2 text-left">Destacado</th>
                   <th className="px-3 py-2 text-right">Acciones</th>
                 </tr>
@@ -140,15 +139,6 @@ function CmsDestinationsListContent() {
                       <code className="text-xs bg-muted px-1 py-0.5 rounded">
                         {d.slug}
                       </code>
-                    </td>
-                    <td className="px-3 py-2">
-                      {d.displayTag ? (
-                        <Badge variant="outline" className="text-xs">
-                          {d.displayTag}
-                        </Badge>
-                      ) : (
-                        <span className="text-muted-foreground">-</span>
-                      )}
                     </td>
                     <td className="px-3 py-2">
                       {d.isFeatured ? (

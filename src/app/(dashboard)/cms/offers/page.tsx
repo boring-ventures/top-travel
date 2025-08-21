@@ -1,13 +1,13 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useQuery } from "@tanstack/react-query";
 import { ListHeader } from "@/components/admin/cms/list-header";
-import { SearchInput } from "@/components/admin/cms/search-input";
 import { TableShell } from "@/components/admin/cms/table-shell";
 import { EmptyState } from "@/components/admin/cms/empty-state";
+import { EnhancedSearch, SearchFilters } from "@/components/admin/cms/enhanced-search";
 import {
   NewOfferModal,
   EditOfferModal,
@@ -15,32 +15,46 @@ import {
   DeleteOfferDialog,
 } from "@/components/admin/cms/offers";
 
-async function fetchOffers() {
-  const res = await fetch(`/api/offers?page=1&pageSize=20`);
+async function fetchOffers(filters: SearchFilters) {
+  const params = new URLSearchParams({
+    page: "1",
+    pageSize: "20",
+    ...(filters.search && { search: filters.search }),
+    ...(filters.status !== "all" && { status: filters.status }),
+    ...(filters.featured !== "all" && { featured: filters.featured }),
+    ...(filters.dateFilter !== "all" && { dateFilter: filters.dateFilter }),
+    ...(filters.displayTag !== "all" && { displayTag: filters.displayTag }),
+  });
+  
+  const res = await fetch(`/api/offers?${params}`);
   if (!res.ok) throw new Error("Failed to load offers");
   return res.json();
 }
 
 export default function CmsOffersList() {
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["cms", "offers", { page: 1, pageSize: 20 }],
-    queryFn: fetchOffers,
+  const [filters, setFilters] = useState<SearchFilters>({
+    search: "",
+    status: "all",
+    featured: "all",
+    dateFilter: "all",
+    displayTag: "all",
   });
+
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["cms", "offers", filters],
+    queryFn: () => fetchOffers(filters),
+  });
+  
   const items = data?.items ?? [];
-  const [search, setSearch] = useState("");
-  const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return items;
-    return items.filter((o: any) =>
-      [o.title, o.subtitle]
-        .filter(Boolean)
-        .some((v: string) => (v ?? "").toLowerCase().includes(q))
-    );
-  }, [items, search]);
+  const displayTags = data?.displayTags ?? [];
 
   const handleSuccess = () => {
     refetch();
   };
+
+  const handleFiltersChange = useCallback((newFilters: SearchFilters) => {
+    setFilters(newFilters);
+  }, []);
 
   return (
     <div className="space-y-4">
@@ -49,7 +63,11 @@ export default function CmsOffersList() {
         description="Crear ofertas promocionales para campañas."
         actions={<NewOfferModal onSuccess={handleSuccess} />}
       >
-        <SearchInput placeholder="Buscar ofertas" onSearch={setSearch} />
+        <EnhancedSearch 
+          placeholder="Buscar ofertas..." 
+          onFiltersChange={handleFiltersChange}
+          displayTags={displayTags}
+        />
       </ListHeader>
       {error ? (
         <div className="text-sm text-red-600">Error al cargar.</div>
@@ -58,14 +76,16 @@ export default function CmsOffersList() {
           title="Todas las Ofertas"
           isLoading={isLoading}
           empty={
-            filtered.length === 0 ? (
+            items.length === 0 ? (
               <EmptyState
                 title={
-                  search ? "No se encontraron ofertas" : "Aún no hay ofertas"
+                  filters.search || filters.status !== "all" || filters.featured !== "all" || filters.dateFilter !== "all" || filters.displayTag !== "all"
+                    ? "No se encontraron ofertas"
+                    : "Aún no hay ofertas"
                 }
                 description={
-                  search
-                    ? "Intenta con otra búsqueda."
+                  filters.search || filters.status !== "all" || filters.featured !== "all" || filters.dateFilter !== "all" || filters.displayTag !== "all"
+                    ? "Intenta con otros filtros."
                     : "Crea tu primera oferta."
                 }
                 action={<NewOfferModal onSuccess={handleSuccess} />}
@@ -86,7 +106,7 @@ export default function CmsOffersList() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((o: any) => (
+              {items.map((o: any) => (
                 <tr key={o.id} className="border-t hover:bg-muted/40">
                   <td className="px-3 py-2">
                     <span className="font-medium">{o.title}</span>

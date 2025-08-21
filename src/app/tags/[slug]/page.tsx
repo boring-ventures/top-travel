@@ -5,7 +5,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { Tag, Package, MapPin, ArrowLeft, Calendar, Star } from "lucide-react";
+import {
+  Tag,
+  Package,
+  MapPin,
+  ArrowLeft,
+  Calendar,
+  Star,
+  Share2,
+  Heart,
+  Globe,
+  Plane,
+} from "lucide-react";
 import Header from "@/components/views/landing-page/Header";
 import Footer from "@/components/views/landing-page/Footer";
 import { pageMeta } from "@/lib/seo";
@@ -50,9 +61,9 @@ export default async function TagPage({ params }: TagPageProps) {
   const packages = tag.packageTags
     .map((pt) => pt.package)
     .filter((pkg) => pkg.status === "PUBLISHED")
-    .map(pkg => ({
+    .map((pkg) => ({
       ...pkg,
-      fromPrice: pkg.fromPrice ? Number(pkg.fromPrice) : undefined
+      fromPrice: pkg.fromPrice ? Number(pkg.fromPrice) : undefined,
     }));
 
   const destinations = tag.destinationTags.map((dt) => dt.destination);
@@ -86,7 +97,7 @@ export default async function TagPage({ params }: TagPageProps) {
   const getTypeIcon = (type: string) => {
     switch (type) {
       case "REGION":
-        return <MapPin className="h-4 w-4" />;
+        return <Globe className="h-4 w-4" />;
       case "THEME":
         return <Tag className="h-4 w-4" />;
       case "DEPARTMENT":
@@ -180,7 +191,7 @@ export default async function TagPage({ params }: TagPageProps) {
                   {packages.slice(0, 6).map((pkg) => (
                     <Card
                       key={pkg.id}
-                      className="group overflow-hidden hover:shadow-lg transition-shadow"
+                      className="group overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
                     >
                       <Link href={`/packages/${pkg.slug}`} className="block">
                         <div className="relative w-full h-48 overflow-hidden">
@@ -270,7 +281,7 @@ export default async function TagPage({ params }: TagPageProps) {
                   {destinations.map((destination) => (
                     <Card
                       key={destination.id}
-                      className="group overflow-hidden hover:shadow-lg transition-shadow"
+                      className="group overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
                     >
                       <Link
                         href={`/destinations/${destination.slug}`}
@@ -322,8 +333,8 @@ export default async function TagPage({ params }: TagPageProps) {
 
             {/* Related Tags */}
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold">Etiquetas relacionadas</h2>
-              <div className="flex flex-wrap gap-2">
+              <h2 className="text-2xl font-bold">Explorar más</h2>
+              <div className="flex flex-wrap gap-3">
                 <Button asChild variant="outline" size="sm">
                   <Link href="/tags">Ver todas las etiquetas</Link>
                 </Button>
@@ -332,6 +343,9 @@ export default async function TagPage({ params }: TagPageProps) {
                 </Button>
                 <Button asChild variant="outline" size="sm">
                   <Link href="/destinations">Explorar destinos</Link>
+                </Button>
+                <Button asChild variant="outline" size="sm">
+                  <Link href="/fixed-departures">Ver salidas fijas</Link>
                 </Button>
               </div>
             </div>
@@ -373,4 +387,3 @@ export async function generateMetadata({ params }: TagPageProps) {
     urlPath: `/tags/${slug}`,
   });
 }
-

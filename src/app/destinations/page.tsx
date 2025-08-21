@@ -281,14 +281,6 @@ export default async function DestinationsPage({
                               )}
                             </div>
                           )}
-                          {d.displayTag && (
-                            <Badge
-                              variant="outline"
-                              className="text-xs border-primary/30 text-primary"
-                            >
-                              {d.displayTag}
-                            </Badge>
-                          )}
                         </div>
                       </div>
                     </Link>

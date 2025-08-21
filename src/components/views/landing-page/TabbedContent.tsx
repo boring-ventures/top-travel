@@ -38,7 +38,10 @@ export default function TabbedContent({ tabs, activeTab }: TabbedContentProps) {
 
   return (
     <section className="py-8">
-      <div className="container mx-auto px-4">
+      <div
+        className="container mx-auto"
+        style={{ paddingLeft: "12vw", paddingRight: "12vw" }}
+      >
         <h2 className="text-foreground text-[22px] font-bold leading-tight tracking-[-0.015em] pb-3">
           Paquetes Pre-Diseñados
         </h2>

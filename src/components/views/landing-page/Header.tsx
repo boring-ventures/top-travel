@@ -37,10 +37,10 @@ export default function Header() {
       >
         <div
           className={cn(
-            "mx-auto mt-1 w-full max-w-[95vw] lg:max-w-[1200px] xl:max-w-[1400px] 2xl:max-w-[1600px] px-4 sm:px-6 lg:px-8 xl:px-12 transition-all duration-700 ease-out backdrop-blur-md border border-border/20",
-            "bg-white/20 dark:bg-black/20",
+            "mx-auto mt-1 w-full max-w-[95vw] lg:max-w-[1200px] xl:max-w-[1400px] 2xl:max-w-[1600px] px-4 sm:px-6 lg:px-8 xl:px-12 transition-all duration-700 ease-out backdrop-blur-xl border border-border/10",
+            "bg-white/10 dark:bg-black/10",
             isScrolled &&
-              "bg-white/40 dark:bg-black/40 rounded-xl border backdrop-blur-lg shadow-lg w-full max-w-[95vw] lg:max-w-[700px] xl:max-w-[800px] 2xl:max-w-[900px] px-6 sm:px-8 lg:px-10 xl:px-12"
+              "bg-white/60 dark:bg-black/60 rounded-xl border backdrop-blur-2xl shadow-lg w-full max-w-[95vw] lg:max-w-[700px] xl:max-w-[800px] 2xl:max-w-[900px] px-6 sm:px-8 lg:px-10 xl:px-12"
           )}
           style={{
             transition: "all 700ms cubic-bezier(0.4, 0, 0.2, 1)",
@@ -61,15 +61,15 @@ export default function Header() {
               >
                 <Globe2
                   className={cn(
-                    "h-5 w-5 text-primary transition-all duration-300",
-                    isScrolled && "h-5 w-5 sm:h-4 sm:w-4"
+                    "h-5 w-5 text-white transition-all duration-300",
+                    isScrolled && "h-5 w-5 sm:h-4 sm:w-4 text-primary"
                   )}
                   aria-hidden="true"
                 />
                 <span
                   className={cn(
-                    "text-sm sm:text-base font-bold tracking-tight text-primary transition-all duration-300",
-                    isScrolled && "text-sm sm:text-sm"
+                    "text-sm sm:text-base font-bold tracking-tight text-white transition-all duration-300",
+                    isScrolled && "text-sm sm:text-sm text-primary"
                   )}
                 >
                   GABYTOPTRAVEL
@@ -78,7 +78,7 @@ export default function Header() {
               <button
                 onClick={() => setMenuState((v) => !v)}
                 aria-label={menuState ? "Cerrar menú" : "Abrir menú"}
-                className="relative z-20 -m-2.5 -mr-3 block cursor-pointer p-2.5 lg:hidden"
+                className="relative z-20 -m-2.5 -mr-3 block cursor-pointer p-2.5 lg:hidden text-white"
               >
                 <Menu className="group-data-[state=active]:scale-0 group-data-[state=active]:opacity-0 m-auto size-6 duration-200" />
                 <X className="group-data-[state=active]:rotate-0 group-data-[state=active]:scale-100 group-data-[state=active]:opacity-100 absolute inset-0 m-auto size-6 -rotate-180 scale-0 opacity-0 duration-200" />
@@ -97,7 +97,7 @@ export default function Header() {
                   <li key={item.href}>
                     <Link
                       href={item.href}
-                      className="block text-muted-foreground hover:text-foreground/90 duration-150"
+                      className="block text-white/90 hover:text-white duration-150"
                     >
                       <span>{item.label}</span>
                     </Link>
@@ -107,7 +107,7 @@ export default function Header() {
             </div>
 
             {/* Right: auth / CTAs */}
-            <div className="bg-background/95 backdrop-blur-xl group-data-[state=active]:block lg:group-data-[state=active]:flex mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border p-6 shadow-2xl shadow-zinc-300/20 md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:shadow-none">
+            <div className="bg-background/80 backdrop-blur-xl group-data-[state=active]:block lg:group-data-[state=active]:flex mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border p-6 shadow-2xl shadow-zinc-300/20 md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:shadow-none">
               {/* Mobile nav list when open */}
               <div className="lg:hidden">
                 <ul className="space-y-6 text-base">
@@ -115,7 +115,7 @@ export default function Header() {
                     <li key={item.href}>
                       <Link
                         href={item.href}
-                        className="block text-muted-foreground hover:text-foreground duration-150"
+                        className="block text-white/90 hover:text-white duration-150"
                       >
                         <span>{item.label}</span>
                       </Link>
@@ -133,8 +133,10 @@ export default function Header() {
                   asChild
                   size={isScrolled ? "sm" : "sm"}
                   className={cn(
-                    "bg-primary text-primary-foreground transition-all duration-300",
-                    isScrolled && "text-sm px-4 py-2 sm:text-xs sm:px-3 sm:py-1"
+                    "transition-all duration-300",
+                    isScrolled
+                      ? "bg-primary text-primary-foreground text-sm px-4 py-2 sm:text-xs sm:px-3 sm:py-1"
+                      : "bg-white text-black hover:bg-white/90 text-sm px-4 py-2 sm:text-xs sm:px-3 sm:py-1"
                   )}
                 >
                   <Link href="/contact">

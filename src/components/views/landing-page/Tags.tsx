@@ -13,7 +13,10 @@ export default function Tags({ tags, className = "" }: TagsProps) {
     <section
       className={`py-16 bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950 ${className}`}
     >
-      <div className="container mx-auto px-4">
+      <div
+        className="container mx-auto"
+        style={{ paddingLeft: "12vw", paddingRight: "12vw" }}
+      >
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold mb-4">Explorar por Etiquetas</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -52,5 +55,3 @@ export default function Tags({ tags, className = "" }: TagsProps) {
     </section>
   );
 }
-
-

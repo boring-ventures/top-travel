@@ -8,7 +8,10 @@ import { WhatsAppCTA } from "@/components/utils/whatsapp-cta";
 export default function CustomizablePackages() {
   return (
     <section className="py-8">
-      <div className="container mx-auto px-4">
+      <div
+        className="container mx-auto"
+        style={{ paddingLeft: "12vw", paddingRight: "12vw" }}
+      >
         <div className="flex items-stretch justify-between gap-4 rounded-lg">
           <div className="flex flex-[2_2_0px] flex-col gap-4">
             <div className="flex flex-col gap-1">
@@ -16,7 +19,9 @@ export default function CustomizablePackages() {
                 Paquetes Diarios Personalizables
               </h3>
               <p className="text-muted-foreground text-sm font-normal leading-normal">
-                Crea tu viaje de un día perfecto con nuestros paquetes personalizados. Ten en cuenta que las cotizaciones son personalizadas y no en tiempo real.
+                Crea tu viaje de un día perfecto con nuestros paquetes
+                personalizados. Ten en cuenta que las cotizaciones son
+                personalizadas y no en tiempo real.
               </p>
             </div>
             <WhatsAppCTA
