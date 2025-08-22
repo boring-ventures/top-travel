@@ -15,18 +15,18 @@ export default function Footer() {
               <Image
                 src="/logos/iso_blue.svg"
                 alt="Logo"
-                width={32}
-                height={32}
+                width={40}
+                height={40}
                 className="dark:hidden"
               />
               <Image
                 src="/logos/iso_white.svg"
                 alt="Logo"
-                width={32}
-                height={32}
+                width={40}
+                height={40}
                 className="hidden dark:block"
               />
-              <TextLogo variant="dark" size="lg" />
+              <TextLogo variant="light" size="lg" />
             </div>
             <p className="text-sm text-foreground/80">
               Viajes premium, atención personalizada y logística sin estrés.
@@ -87,7 +87,7 @@ export default function Footer() {
             <div className="flex gap-4">
               <ShineBorder className="rounded-md p-2" borderWidth={1}>
                 <a
-                  href="https://facebook.com/"
+                  href="https://www.facebook.com/gabytoptravel"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Facebook"
@@ -96,7 +96,7 @@ export default function Footer() {
                   <FacebookIcon size={20} />
                 </a>
               </ShineBorder>
-              <ShineBorder className="rounded-md p-2" borderWidth={1}>
+              {/* <ShineBorder className="rounded-md p-2" borderWidth={1}>
                 <a
                   href="https://twitter.com/"
                   target="_blank"
@@ -106,10 +106,10 @@ export default function Footer() {
                 >
                   <TwitterIcon size={20} />
                 </a>
-              </ShineBorder>
+              </ShineBorder> */}
               <ShineBorder className="rounded-md p-2" borderWidth={1}>
                 <a
-                  href="https://instagram.com/"
+                  href="https://www.instagram.com/gaby_top_travel/"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram"

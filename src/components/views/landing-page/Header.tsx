@@ -76,7 +76,7 @@ export default function Header() {
                   height={38}
                   className={cn(
                     "transition-all duration-300 ease-out dark:hidden",
-                    isScrolled && "w-10 h-8"
+                    isScrolled && "w-12 h-9.5"
                   )}
                 />
                 <Image
@@ -86,7 +86,7 @@ export default function Header() {
                   height={38}
                   className={cn(
                     "transition-all duration-300 ease-out hidden dark:block",
-                    isScrolled && "w-10 h-8"
+                    isScrolled && "w-12 h-9.5"
                   )}
                 />
                 <TextLogo
@@ -100,7 +100,7 @@ export default function Header() {
                 aria-label={menuState ? "Cerrar menú" : "Abrir menú"}
                 className={cn(
                   "relative z-20 -m-2.5 -mr-3 block cursor-pointer p-2.5 lg:hidden",
-                  isScrolled ? "text-primary" : "text-white"
+                  isScrolled ? "text-primary dark:text-white" : "text-white"
                 )}
               >
                 <Menu className="group-data-[state=active]:scale-0 group-data-[state=active]:opacity-0 m-auto size-6 duration-200" />
