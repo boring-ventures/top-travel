@@ -113,16 +113,7 @@ export function ImageUpload({
   };
 
   // Method to get the selected file (for deferred uploads)
-  const getSelectedFile = () => selectedFile;
-
-  // Expose the method via ref or callback
-  React.useImperativeHandle(
-    React.useRef(),
-    () => ({
-      getSelectedFile,
-    }),
-    [selectedFile]
-  );
+  //const getSelectedFile = () => selectedFile;
 
   return (
     <div className={cn("space-y-4", className)}>
