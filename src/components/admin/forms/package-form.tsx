@@ -14,8 +14,24 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ImageUpload } from "@/components/ui/image-upload";
+import { AmenitiesInput } from "@/components/ui/amenities-input";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { useToast } from "@/components/ui/use-toast";
 import { uploadPackageImage } from "@/lib/supabase/storage";
+import { Check, ChevronsUpDown, X, MapPin, Tag } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface PackageFormProps {
   onSuccess?: () => void;
@@ -26,6 +42,10 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
   const [submitting, setSubmitting] = useState(false);
   const [destinations, setDestinations] = useState<any[]>([]);
   const [tags, setTags] = useState<any[]>([]);
+  const [destinationsOpen, setDestinationsOpen] = useState(false);
+  const [tagsOpen, setTagsOpen] = useState(false);
+  const [currencyOpen, setCurrencyOpen] = useState(false);
+  const [statusOpen, setStatusOpen] = useState(false);
   const { toast } = useToast();
 
   console.log("PackageForm rendered with initialValues:", initialValues);
@@ -84,6 +104,14 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialValues?.id]);
+
+  const selectedDestinationIds = form.watch("destinationIds") || [];
+  const selectedTagIds = form.watch("tagIds") || [];
+
+  const selectedDestinations = destinations.filter((d) =>
+    selectedDestinationIds.includes(d.id)
+  );
+  const selectedTags = tags.filter((t) => selectedTagIds.includes(t.id));
 
   const handleSubmit = form.handleSubmit(async (values) => {
     console.log("=== PACKAGE FORM SUBMISSION START ===");
@@ -235,58 +263,334 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="currency">Moneda</Label>
-          <select
-            id="currency"
-            {...form.register("currency")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="">-</option>
-            <option value="BOB">BOB</option>
-            <option value="USD">USD</option>
-          </select>
+          <Label>Moneda</Label>
+          <Popover open={currencyOpen} onOpenChange={setCurrencyOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                aria-expanded={currencyOpen}
+                className="w-full justify-between"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-sm">
+                    {form.watch("currency") === "BOB"
+                      ? "BOB - Boliviano"
+                      : form.watch("currency") === "USD"
+                        ? "USD - Dólar Estadounidense"
+                        : "Seleccionar moneda"}
+                  </span>
+                </div>
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-full p-0" align="start">
+              <Command>
+                <CommandInput placeholder="Buscar moneda..." />
+                <CommandList>
+                  <CommandEmpty>No se encontraron monedas.</CommandEmpty>
+                  <CommandGroup>
+                    <CommandItem
+                      value=""
+                      onSelect={() => {
+                        form.setValue("currency", undefined);
+                        setCurrencyOpen(false);
+                      }}
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          !form.watch("currency") ? "opacity-100" : "opacity-0"
+                        )}
+                      />
+                      Sin moneda
+                    </CommandItem>
+                    <CommandItem
+                      value="BOB"
+                      onSelect={() => {
+                        form.setValue("currency", "BOB");
+                        setCurrencyOpen(false);
+                      }}
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          form.watch("currency") === "BOB"
+                            ? "opacity-100"
+                            : "opacity-0"
+                        )}
+                      />
+                      BOB - Boliviano
+                    </CommandItem>
+                    <CommandItem
+                      value="USD"
+                      onSelect={() => {
+                        form.setValue("currency", "USD");
+                        setCurrencyOpen(false);
+                      }}
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          form.watch("currency") === "USD"
+                            ? "opacity-100"
+                            : "opacity-0"
+                        )}
+                      />
+                      USD - Dólar Estadounidense
+                    </CommandItem>
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="destinationIds">Destinos</Label>
-          <select
-            id="destinationIds"
-            multiple
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent h-28"
-            {...form.register("destinationIds")}
-          >
-            {destinations.map((d) => (
-              <option key={d.id} value={d.id}>
-                {d.city}, {d.country}
-              </option>
-            ))}
-          </select>
-          <p className="text-xs text-muted-foreground">
-            Mantén presionado Ctrl (Cmd en Mac) para seleccionar múltiples
-            destinos
-          </p>
+          <Label>Destinos</Label>
+          <Popover open={destinationsOpen} onOpenChange={setDestinationsOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                aria-expanded={destinationsOpen}
+                className="w-full justify-between"
+              >
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
+                  <span>
+                    {selectedDestinations.length > 0
+                      ? `${selectedDestinations.length} destino${selectedDestinations.length !== 1 ? "s" : ""} seleccionado${selectedDestinations.length !== 1 ? "s" : ""}`
+                      : "Seleccionar destinos..."}
+                  </span>
+                </div>
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-full p-0" align="start">
+              <Command>
+                <CommandInput placeholder="Buscar destinos..." />
+                <CommandList>
+                  <CommandEmpty>No se encontraron destinos.</CommandEmpty>
+                  <CommandGroup>
+                    <div
+                      className="max-h-64 overflow-y-auto"
+                      onWheel={(e) => {
+                        e.stopPropagation();
+                        const target = e.currentTarget;
+                        const scrollTop = target.scrollTop;
+                        const scrollHeight = target.scrollHeight;
+                        const clientHeight = target.clientHeight;
+
+                        if (
+                          e.deltaY > 0 &&
+                          scrollTop + clientHeight >= scrollHeight
+                        ) {
+                          e.preventDefault();
+                        } else if (e.deltaY < 0 && scrollTop <= 0) {
+                          e.preventDefault();
+                        }
+                      }}
+                    >
+                      {destinations.map((destination) => (
+                        <CommandItem
+                          key={destination.id}
+                          value={`${destination.city} ${destination.country}`}
+                          onSelect={() => {
+                            const currentIds =
+                              form.getValues("destinationIds") || [];
+                            const isSelected = currentIds.includes(
+                              destination.id
+                            );
+
+                            if (isSelected) {
+                              form.setValue(
+                                "destinationIds",
+                                currentIds.filter((id) => id !== destination.id)
+                              );
+                            } else {
+                              form.setValue("destinationIds", [
+                                ...currentIds,
+                                destination.id,
+                              ]);
+                            }
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              selectedDestinationIds.includes(destination.id)
+                                ? "opacity-100"
+                                : "opacity-0"
+                            )}
+                          />
+                          <div className="flex flex-col">
+                            <span className="font-medium">
+                              {destination.city}
+                            </span>
+                            <span className="text-sm text-muted-foreground">
+                              {destination.country}
+                            </span>
+                          </div>
+                        </CommandItem>
+                      ))}
+                    </div>
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+
+          {/* Selected Destinations Display */}
+          {selectedDestinations.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-2">
+              {selectedDestinations.map((destination) => (
+                <Badge
+                  key={destination.id}
+                  variant="secondary"
+                  className="flex items-center gap-1"
+                >
+                  <MapPin className="h-3 w-3" />
+                  {destination.city}, {destination.country}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const currentIds = form.getValues("destinationIds") || [];
+                      form.setValue(
+                        "destinationIds",
+                        currentIds.filter((id) => id !== destination.id)
+                      );
+                    }}
+                    className="ml-1 hover:bg-destructive hover:text-destructive-foreground rounded-full p-0.5"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="tagIds">Etiquetas</Label>
-          <select
-            id="tagIds"
-            multiple
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent h-28"
-            {...form.register("tagIds")}
-          >
-            {tags.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.name} ({t.type})
-              </option>
-            ))}
-          </select>
-          <p className="text-xs text-muted-foreground">
-            Mantén presionado Ctrl (Cmd en Mac) para seleccionar múltiples
-            etiquetas
-          </p>
+          <Label>Etiquetas</Label>
+          <Popover open={tagsOpen} onOpenChange={setTagsOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                aria-expanded={tagsOpen}
+                className="w-full justify-between"
+              >
+                <div className="flex items-center gap-2">
+                  <Tag className="h-4 w-4" />
+                  <span>
+                    {selectedTags.length > 0
+                      ? `${selectedTags.length} etiqueta${selectedTags.length !== 1 ? "s" : ""} seleccionada${selectedTags.length !== 1 ? "s" : ""}`
+                      : "Seleccionar etiquetas..."}
+                  </span>
+                </div>
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-full p-0" align="start">
+              <Command>
+                <CommandInput placeholder="Buscar etiquetas..." />
+                <CommandList>
+                  <CommandEmpty>No se encontraron etiquetas.</CommandEmpty>
+                  <CommandGroup>
+                    <div
+                      className="max-h-64 overflow-y-auto"
+                      onWheel={(e) => {
+                        e.stopPropagation();
+                        const target = e.currentTarget;
+                        const scrollTop = target.scrollTop;
+                        const scrollHeight = target.scrollHeight;
+                        const clientHeight = target.clientHeight;
+
+                        if (
+                          e.deltaY > 0 &&
+                          scrollTop + clientHeight >= scrollHeight
+                        ) {
+                          e.preventDefault();
+                        } else if (e.deltaY < 0 && scrollTop <= 0) {
+                          e.preventDefault();
+                        }
+                      }}
+                    >
+                      {tags.map((tag) => (
+                        <CommandItem
+                          key={tag.id}
+                          value={`${tag.name} ${tag.type}`}
+                          onSelect={() => {
+                            const currentIds = form.getValues("tagIds") || [];
+                            const isSelected = currentIds.includes(tag.id);
+
+                            if (isSelected) {
+                              form.setValue(
+                                "tagIds",
+                                currentIds.filter((id) => id !== tag.id)
+                              );
+                            } else {
+                              form.setValue("tagIds", [...currentIds, tag.id]);
+                            }
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              selectedTagIds.includes(tag.id)
+                                ? "opacity-100"
+                                : "opacity-0"
+                            )}
+                          />
+                          <div className="flex flex-col">
+                            <span className="font-medium">{tag.name}</span>
+                            <span className="text-sm text-muted-foreground">
+                              {tag.type}
+                            </span>
+                          </div>
+                        </CommandItem>
+                      ))}
+                    </div>
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+
+          {/* Selected Tags Display */}
+          {selectedTags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-2">
+              {selectedTags.map((tag) => (
+                <Badge
+                  key={tag.id}
+                  variant="secondary"
+                  className="flex items-center gap-1"
+                >
+                  <Tag className="h-3 w-3" />
+                  {tag.name}
+                  <span className="text-xs text-muted-foreground">
+                    ({tag.type})
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const currentIds = form.getValues("tagIds") || [];
+                      form.setValue(
+                        "tagIds",
+                        currentIds.filter((id) => id !== tag.id)
+                      );
+                    }}
+                    className="ml-1 hover:bg-destructive hover:text-destructive-foreground rounded-full p-0.5"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -304,20 +608,100 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="status">Estado</Label>
-          <select
-            id="status"
-            value={form.watch("status")}
-            onChange={(e) =>
-              form.setValue("status", e.target.value as "DRAFT" | "PUBLISHED")
-            }
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="DRAFT">Borrador</option>
-            <option value="PUBLISHED">Publicado</option>
-          </select>
+          <Label>Estado</Label>
+          <Popover open={statusOpen} onOpenChange={setStatusOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                aria-expanded={statusOpen}
+                className="w-full justify-between"
+              >
+                <div className="flex items-center gap-2">
+                  <div
+                    className={cn(
+                      "w-2 h-2 rounded-full",
+                      form.watch("status") === "PUBLISHED"
+                        ? "bg-green-500"
+                        : "bg-yellow-500"
+                    )}
+                  />
+                  <span className="text-sm">
+                    {form.watch("status") === "PUBLISHED"
+                      ? "Publicado"
+                      : "Borrador"}
+                  </span>
+                </div>
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-full p-0" align="start">
+              <Command>
+                <CommandInput placeholder="Buscar estado..." />
+                <CommandList>
+                  <CommandEmpty>No se encontraron estados.</CommandEmpty>
+                  <CommandGroup>
+                    <CommandItem
+                      value="DRAFT"
+                      onSelect={() => {
+                        form.setValue("status", "DRAFT");
+                        setStatusOpen(false);
+                      }}
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          form.watch("status") === "DRAFT"
+                            ? "opacity-100"
+                            : "opacity-0"
+                        )}
+                      />
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-yellow-500" />
+                        <span>Borrador</span>
+                      </div>
+                    </CommandItem>
+                    <CommandItem
+                      value="PUBLISHED"
+                      onSelect={() => {
+                        form.setValue("status", "PUBLISHED");
+                        setStatusOpen(false);
+                      }}
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          form.watch("status") === "PUBLISHED"
+                            ? "opacity-100"
+                            : "opacity-0"
+                        )}
+                      />
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-green-500" />
+                        <span>Publicado</span>
+                      </div>
+                    </CommandItem>
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
+
+      <AmenitiesInput
+        label="Incluye"
+        value={form.watch("inclusions") || []}
+        onChange={(value) => form.setValue("inclusions", value)}
+        placeholder="Ej: Hotel, Transporte, Guía, Comidas..."
+      />
+
+      <AmenitiesInput
+        label="No Incluye"
+        value={form.watch("exclusions") || []}
+        onChange={(value) => form.setValue("exclusions", value)}
+        placeholder="Ej: Vuelos, Propinas, Gastos personales..."
+      />
 
       <div className="flex items-center justify-between pt-4 border-t">
         <div className="flex items-center gap-2">

@@ -12,7 +12,6 @@ interface Destination {
   city: string;
   country: string;
   heroImageUrl?: string;
-  displayTag?: string;
   description?: string;
 }
 
@@ -23,28 +22,17 @@ interface TopDestinationsProps {
 export default function TopDestinations({
   destinations,
 }: TopDestinationsProps) {
-  const destinosTopDestinations = destinations.filter(
-    (d) => d.displayTag === "destinos-top"
-  );
-
-  const displayDestinations =
-    destinosTopDestinations.length > 0 ? destinosTopDestinations : destinations;
-
   return (
     <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 md:py-14">
       <div className="flex items-end justify-between gap-4 mb-4 sm:mb-6">
         <div>
           <AnimatedShinyText>
             <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight">
-              {destinosTopDestinations.length > 0
-                ? "Destinos Top"
-                : "Destinos Destacados"}
+              Destinos Destacados
             </h2>
           </AnimatedShinyText>
           <p className="text-xs sm:text-sm text-muted-foreground">
-            {destinosTopDestinations.length > 0
-              ? `${destinosTopDestinations.length} destinos especialmente seleccionados`
-              : "Inspírate con nuestra selección"}
+            Inspírate con nuestra selección
           </p>
         </div>
         <div className="hidden sm:block">
@@ -54,7 +42,7 @@ export default function TopDestinations({
         </div>
       </div>
 
-      {displayDestinations.length === 0 ? (
+      {destinations.length === 0 ? (
         <div className="text-center py-8 sm:py-12 bg-muted/30 rounded-xl">
           <div className="text-muted-foreground mb-4">
             <MapPin className="h-8 w-8 sm:h-12 sm:w-12 mx-auto mb-3 opacity-50" />
@@ -68,7 +56,7 @@ export default function TopDestinations({
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {displayDestinations.map((d) => (
+          {destinations.map((d) => (
             <Card
               key={d.id}
               className="overflow-hidden rounded-xl border-border/60 hover:border-primary/40 transition-all duration-300 hover:shadow-lg"
@@ -96,13 +84,8 @@ export default function TopDestinations({
                   <div className="absolute top-2 sm:top-3 left-2 sm:left-3 z-10 flex gap-1 sm:gap-2">
                     <div className="inline-flex items-center rounded-full bg-background/90 backdrop-blur-sm px-2 sm:px-3 py-1 text-xs font-medium text-foreground shadow-sm">
                       <MapPin className="h-3 w-3 mr-1" />
-                      {d.displayTag === "destinos-top" ? "Top" : "Destino"}
+                      Destino
                     </div>
-                    {d.displayTag && d.displayTag !== "destinos-top" && (
-                      <div className="inline-flex items-center rounded-full bg-primary/90 backdrop-blur-sm px-2 sm:px-3 py-1 text-xs font-medium text-primary-foreground shadow-sm">
-                        {d.displayTag}
-                      </div>
-                    )}
                   </div>
                 </div>
 

@@ -8,7 +8,6 @@ export const DestinationCreateSchema = z.object({
   description: z.string().optional(),
   heroImageUrl: z.string().url().optional(),
   isFeatured: z.boolean().optional(),
-  displayTag: z.string().optional(),
   tagIds: z.array(z.string()).optional(),
 });
 

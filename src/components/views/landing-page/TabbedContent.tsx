@@ -18,6 +18,8 @@ type TabItem = {
     href: string;
     price?: string;
     location?: string;
+    amenities?: string[];
+    exclusions?: string[];
   }>;
 };
 
@@ -38,13 +40,16 @@ export default function TabbedContent({ tabs, activeTab }: TabbedContentProps) {
 
   return (
     <section className="py-8">
-      <div className="container mx-auto px-4">
-        <h2 className="text-foreground text-[22px] font-bold leading-tight tracking-[-0.015em] pb-3">
+      <div
+        className="container mx-auto"
+        style={{ paddingLeft: "12vw", paddingRight: "12vw" }}
+      >
+        <h2 className="text-foreground text-[22px] font-bold leading-tight tracking-[-0.015em] pb-3 text-center">
           Paquetes Pre-Diseñados
         </h2>
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-border px-2 sm:px-4 gap-4 sm:gap-8 overflow-x-auto scrollbar-hide">
+        <div className="flex border-b border-border px-2 sm:px-4 gap-4 sm:gap-8 overflow-x-auto scrollbar-hide justify-center">
           {tabs.map((tab) => (
             <button
               key={tab.id}
@@ -83,7 +88,8 @@ export default function TabbedContent({ tabs, activeTab }: TabbedContentProps) {
                   href={item.href}
                   price={item.price}
                   location={item.location}
-                  amenities={["Vista", "Estacionamiento", "Wi-Fi"]}
+                  amenities={item.amenities || []}
+                  exclusions={item.exclusions || []}
                 />
               </div>
             ))}

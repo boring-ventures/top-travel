@@ -73,12 +73,16 @@ export default async function TagsPage() {
   );
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-b from-background via-background to-secondary/20">
+    <div className="flex flex-col min-h-screen">
       <Header />
 
-      <main className="flex-grow">
+      <main className="flex-grow relative">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-grid-black/[0.02] dark:bg-grid-white/[0.02] -z-10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-secondary/20 -z-10" />
+
         {/* Hero Section */}
-        <section className="relative bg-gradient-to-r from-green-600 to-teal-600 text-white py-16">
+        <section className="relative bg-gradient-to-r from-green-600 to-teal-600 text-white py-16 pt-20 sm:pt-24">
           <div className="absolute inset-0 bg-black/20" />
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-3xl mx-auto text-center">
@@ -100,7 +104,9 @@ export default async function TagsPage() {
               <div key={type} className="space-y-4">
                 <div className="flex items-center gap-3">
                   {getTypeIcon(type)}
-                  <h2 className="text-2xl font-bold">{getTypeLabel(type)}</h2>
+                  <h2 className="text-2xl font-bold text-foreground">
+                    {getTypeLabel(type)}
+                  </h2>
                   <Badge className={getTypeColor(type)}>
                     {typeTags.length} etiqueta{typeTags.length !== 1 ? "s" : ""}
                   </Badge>
@@ -110,12 +116,14 @@ export default async function TagsPage() {
                   {typeTags.map((tag) => (
                     <Card
                       key={tag.id}
-                      className="p-6 hover:shadow-lg transition-shadow"
+                      className="p-6 hover:shadow-lg transition-shadow bg-card/50 backdrop-blur-sm border-0"
                     >
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center gap-2">
                           {getTypeIcon(tag.type)}
-                          <h3 className="font-semibold text-lg">{tag.name}</h3>
+                          <h3 className="font-semibold text-lg text-foreground">
+                            {tag.name}
+                          </h3>
                         </div>
                         <Badge className={getTypeColor(tag.type)}>
                           {getTypeLabel(tag.type)}
@@ -163,8 +171,8 @@ export default async function TagsPage() {
 
           {/* Quick Actions */}
           <div className="mt-12">
-            <Card className="p-6 bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950">
-              <h3 className="text-xl font-semibold mb-4">
+            <Card className="p-6 bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-950/50 dark:to-teal-950/50 border-0">
+              <h3 className="text-xl font-semibold mb-4 text-foreground">
                 Explorar más contenido
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -215,4 +223,3 @@ export const metadata = pageMeta({
     "Descubre destinos, temas y experiencias organizadas por categorías. Navega por nuestras etiquetas para encontrar el contenido que más te interesa.",
   urlPath: "/tags",
 });
-

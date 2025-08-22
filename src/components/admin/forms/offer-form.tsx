@@ -11,12 +11,28 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { ImageUpload } from "@/components/ui/image-upload";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { OfferDateRangePicker } from "./offer-date-range-picker";
 import { useState, useEffect } from "react";
 import { uploadOfferImage } from "@/lib/supabase/storage";
 import { DateRange } from "react-day-picker";
 import { z } from "zod";
 import { useToast } from "@/components/ui/use-toast";
+import { useQuery } from "@tanstack/react-query";
+import { Check, ChevronsUpDown, Tag } from "lucide-react";
+import { cn } from "@/lib/utils";
 import {
   ContentStatusSchema,
   NonEmptyStringSchema,
@@ -48,9 +64,24 @@ interface OfferFormProps {
   initialValues?: Partial<OfferUpdateInput & { id: string }>;
 }
 
+// Custom hook to fetch tags
+const useTags = () => {
+  return useQuery({
+    queryKey: ["tags"],
+    queryFn: async () => {
+      const res = await fetch("/api/tags");
+      if (!res.ok) throw new Error("Failed to fetch tags");
+      return res.json();
+    },
+  });
+};
+
 export function OfferForm({ onSuccess, initialValues }: OfferFormProps) {
   const [submitting, setSubmitting] = useState(false);
+  const [statusOpen, setStatusOpen] = useState(false);
+  const [displayTagOpen, setDisplayTagOpen] = useState(false);
   const { toast } = useToast();
+  const { data: tags, isLoading: tagsLoading } = useTags();
 
   console.log("OfferForm rendered with initialValues:", initialValues);
 
@@ -182,18 +213,84 @@ export function OfferForm({ onSuccess, initialValues }: OfferFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="status">Estado</Label>
-          <select
-            id="status"
-            value={form.watch("status")}
-            onChange={(e) =>
-              form.setValue("status", e.target.value as "DRAFT" | "PUBLISHED")
-            }
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="DRAFT">Borrador</option>
-            <option value="PUBLISHED">Publicado</option>
-          </select>
+          <Label>Estado</Label>
+          <Popover open={statusOpen} onOpenChange={setStatusOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                aria-expanded={statusOpen}
+                className="w-full justify-between"
+              >
+                <div className="flex items-center gap-2">
+                  <div
+                    className={cn(
+                      "w-2 h-2 rounded-full",
+                      form.watch("status") === "PUBLISHED"
+                        ? "bg-green-500"
+                        : "bg-yellow-500"
+                    )}
+                  />
+                  <span className="text-sm">
+                    {form.watch("status") === "PUBLISHED"
+                      ? "Publicado"
+                      : "Borrador"}
+                  </span>
+                </div>
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-full p-0" align="start">
+              <Command>
+                <CommandInput placeholder="Buscar estado..." />
+                <CommandList>
+                  <CommandEmpty>No se encontraron estados.</CommandEmpty>
+                  <CommandGroup>
+                    <CommandItem
+                      value="DRAFT"
+                      onSelect={() => {
+                        form.setValue("status", "DRAFT");
+                        setStatusOpen(false);
+                      }}
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          form.watch("status") === "DRAFT"
+                            ? "opacity-100"
+                            : "opacity-0"
+                        )}
+                      />
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-yellow-500" />
+                        <span>Borrador</span>
+                      </div>
+                    </CommandItem>
+                    <CommandItem
+                      value="PUBLISHED"
+                      onSelect={() => {
+                        form.setValue("status", "PUBLISHED");
+                        setStatusOpen(false);
+                      }}
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          form.watch("status") === "PUBLISHED"
+                            ? "opacity-100"
+                            : "opacity-0"
+                        )}
+                      />
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-green-500" />
+                        <span>Publicado</span>
+                      </div>
+                    </CommandItem>
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
 
@@ -208,13 +305,81 @@ export function OfferForm({ onSuccess, initialValues }: OfferFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="displayTag">Etiqueta de Visualización</Label>
-        <Input
-          id="displayTag"
-          {...form.register("displayTag")}
-          placeholder="Ej: destinos-top, ofertas-verano"
-          className="w-full"
-        />
+        <Label>Etiqueta de Visualización</Label>
+        <Popover open={displayTagOpen} onOpenChange={setDisplayTagOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={displayTagOpen}
+              className="w-full justify-between"
+            >
+              <div className="flex items-center gap-2">
+                <Tag className="h-4 w-4" />
+                <span className="text-sm">
+                  {form.watch("displayTag") || "Seleccionar etiqueta"}
+                </span>
+              </div>
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-full p-0" align="start">
+            <Command>
+              <CommandInput placeholder="Buscar etiquetas..." />
+              <CommandList>
+                <CommandEmpty>No se encontraron etiquetas.</CommandEmpty>
+                <CommandGroup>
+                  <CommandItem
+                    value=""
+                    onSelect={() => {
+                      form.setValue("displayTag", "");
+                      setDisplayTagOpen(false);
+                    }}
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        !form.watch("displayTag") ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                    Sin etiqueta
+                  </CommandItem>
+                  {tagsLoading ? (
+                    <CommandItem value="loading" disabled>
+                      Cargando etiquetas...
+                    </CommandItem>
+                  ) : (
+                    tags?.map((tag: any) => (
+                      <CommandItem
+                        key={tag.id}
+                        value={tag.name}
+                        onSelect={() => {
+                          form.setValue("displayTag", tag.name);
+                          setDisplayTagOpen(false);
+                        }}
+                      >
+                        <Check
+                          className={cn(
+                            "mr-2 h-4 w-4",
+                            form.watch("displayTag") === tag.name
+                              ? "opacity-100"
+                              : "opacity-0"
+                          )}
+                        />
+                        <div className="flex flex-col">
+                          <span className="font-medium">{tag.name}</span>
+                          <span className="text-sm text-muted-foreground">
+                            {tag.type}
+                          </span>
+                        </div>
+                      </CommandItem>
+                    ))
+                  )}
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
         <p className="text-xs text-muted-foreground">
           Etiqueta para mostrar en secciones específicas de la página principal
         </p>

@@ -14,13 +14,14 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const session = await auth();
     const isSuperadmin = session?.user?.role === "SUPERADMIN";
-    const status = searchParams.get("status") || undefined;
+    
+    // Enhanced filter parameters
+    const search = searchParams.get("search") || "";
+    const status = searchParams.get("status");
     const featuredParam = searchParams.get("featured");
-    const isFeatured =
-      featuredParam == null ? undefined : featuredParam === "true";
-    const activeParam = searchParams.get("active");
-    const isActiveOnly = activeParam === "true";
-
+    const dateFilter = searchParams.get("dateFilter");
+    const displayTag = searchParams.get("displayTag");
+    
     const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
     const pageSize = Math.min(
       50,
@@ -29,23 +30,65 @@ export async function GET(request: Request) {
     const skip = (page - 1) * pageSize;
 
     const now = new Date();
-    const where: any = {
-      status: isSuperadmin ? status : "PUBLISHED",
-      isFeatured,
-      ...(isActiveOnly
-        ? {
-            OR: [
-              { startAt: null, endAt: null },
-              {
-                AND: [
-                  { startAt: { lte: now } },
-                  { OR: [{ endAt: null }, { endAt: { gte: now } }] },
-                ],
-              },
-            ],
-          }
-        : {}),
-    };
+    const where: any = {};
+
+    // Status filter
+    if (status && status !== "all") {
+      where.status = isSuperadmin ? status : "PUBLISHED";
+    } else if (!isSuperadmin) {
+      where.status = "PUBLISHED";
+    }
+
+    // Featured filter
+    if (featuredParam && featuredParam !== "all") {
+      where.isFeatured = featuredParam === "true";
+    }
+
+    // Display tag filter
+    if (displayTag && displayTag !== "all") {
+      where.displayTag = displayTag;
+    }
+
+    // Date filter
+    if (dateFilter && dateFilter !== "all") {
+      switch (dateFilter) {
+        case "active":
+          where.OR = [
+            { startAt: null, endAt: null },
+            {
+              AND: [
+                { startAt: { lte: now } },
+                { OR: [{ endAt: null }, { endAt: { gte: now } }] },
+              ],
+            },
+          ];
+          break;
+        case "upcoming":
+          where.startAt = { gt: now };
+          break;
+        case "expired":
+          where.AND = [
+            { endAt: { not: null } },
+            { endAt: { lt: now } },
+          ];
+          break;
+        case "no-date":
+          where.AND = [
+            { startAt: null },
+            { endAt: null },
+          ];
+          break;
+      }
+    }
+
+    // Search filter
+    if (search.trim()) {
+      where.OR = [
+        { title: { contains: search, mode: "insensitive" } },
+        { subtitle: { contains: search, mode: "insensitive" } },
+        { displayTag: { contains: search, mode: "insensitive" } },
+      ];
+    }
 
     const [items, total] = await Promise.all([
       prisma.offer.findMany({
@@ -57,7 +100,24 @@ export async function GET(request: Request) {
       prisma.offer.count({ where }),
     ]);
 
-    return NextResponse.json({ items, total, page, pageSize });
+    // Get unique display tags for filter dropdown
+    const displayTags = await prisma.offer.findMany({
+      where: {
+        displayTag: { not: null },
+      },
+      select: {
+        displayTag: true,
+      },
+      distinct: ["displayTag"],
+    });
+
+    return NextResponse.json({ 
+      items, 
+      total, 
+      page, 
+      pageSize,
+      displayTags: displayTags.map(tag => tag.displayTag).filter(Boolean)
+    });
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to fetch offers" },

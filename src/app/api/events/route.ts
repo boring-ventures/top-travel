@@ -64,7 +64,23 @@ export async function POST(request: Request) {
     const session = await auth();
     ensureSuperadmin(session?.user);
     const json = await request.json();
+
+    // Debug: Log the received data
+    console.log("API POST /events - Received data:", json);
+    console.log(
+      "API POST /events - heroImageUrl in received data:",
+      json.heroImageUrl
+    );
+
     const parsed = EventCreateSchema.parse(json);
+
+    // Debug: Log the parsed data
+    console.log("API POST /events - Parsed data:", parsed);
+    console.log(
+      "API POST /events - heroImageUrl in parsed data:",
+      parsed.heroImageUrl
+    );
+
     const created = await prisma.event.create({
       data: {
         ...parsed,
@@ -72,8 +88,17 @@ export async function POST(request: Request) {
         gallery: sanitizeRichJson(parsed.gallery),
       },
     });
+
+    // Debug: Log the created event
+    console.log("API POST /events - Created event:", created);
+    console.log(
+      "API POST /events - heroImageUrl in created event:",
+      created.heroImageUrl
+    );
+
     return NextResponse.json(created, { status: 201 });
   } catch (error: any) {
+    console.error("API POST /events - Error:", error);
     const status = error?.status ?? 400;
     return NextResponse.json(
       { error: error?.message ?? "Failed to create event" },

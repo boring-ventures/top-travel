@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -11,19 +12,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { ImageUpload } from "@/components/ui/image-upload";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { useToast } from "@/components/ui/use-toast";
-import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
 import { uploadDestinationImage } from "@/lib/supabase/storage";
+import { Check, ChevronsUpDown, X, Tag, Star } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type DestinationFormProps = {
   onSuccess?: () => void;
@@ -35,7 +42,22 @@ export function DestinationForm({
   initialValues,
 }: DestinationFormProps) {
   const [submitting, setSubmitting] = useState(false);
+  const [tags, setTags] = useState<any[]>([]);
+  const [tagsOpen, setTagsOpen] = useState(false);
   const { toast } = useToast();
+
+  // Fetch tags data
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await fetch("/api/tags");
+        const data = await response.json();
+        setTags(data ?? []);
+      } catch {
+        // no-op
+      }
+    })();
+  }, []);
 
   const form = useForm<DestinationCreateInput>({
     resolver: zodResolver(DestinationCreateSchema),
@@ -46,13 +68,18 @@ export function DestinationForm({
       description: "",
       heroImageUrl: "",
       isFeatured: false,
-      displayTag: "",
       tagIds: [],
     },
+    mode: "onChange",
   });
 
   useEffect(() => {
     if (initialValues) {
+      // Extract tagIds from destinationTags relationship
+      const tagIds =
+        (initialValues as any).destinationTags?.map((dt: any) => dt.tagId) ||
+        [];
+
       form.reset({
         slug: (initialValues as any).slug ?? "",
         country: (initialValues as any).country ?? "",
@@ -60,11 +87,14 @@ export function DestinationForm({
         description: (initialValues as any).description ?? "",
         heroImageUrl: (initialValues as any).heroImageUrl ?? "",
         isFeatured: Boolean((initialValues as any).isFeatured) ?? false,
-        tagIds: (initialValues as any).tagIds ?? [],
+        tagIds: tagIds,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialValues?.id]);
+
+  const selectedTagIds = form.watch("tagIds") || [];
+  const selectedTags = tags.filter((t) => selectedTagIds.includes(t.id));
 
   const handleSubmit = form.handleSubmit(async (values) => {
     setSubmitting(true);
@@ -83,6 +113,9 @@ export function DestinationForm({
         }
       });
 
+      // Debug: Log the data being sent
+      console.log("Submitting destination data:", apiData);
+
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
@@ -91,8 +124,12 @@ export function DestinationForm({
 
       if (!res.ok) {
         const error = await res.json();
+        console.error("API Error:", error);
         throw new Error(error.error || "Error al guardar el destino");
       }
+
+      const result = await res.json();
+      console.log("API Response:", result);
 
       toast({
         title: isEdit ? "Destino actualizado" : "Destino creado",
@@ -104,6 +141,7 @@ export function DestinationForm({
       onSuccess?.();
       if (!isEdit) form.reset();
     } catch (error: any) {
+      console.error("Form submission error:", error);
       toast({
         title: "Error",
         description: error.message || "Error al guardar el destino",
@@ -115,138 +153,241 @@ export function DestinationForm({
   });
 
   return (
-    <Form {...form}>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <FormField
-            control={form.control}
-            name="slug"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Slug</FormLabel>
-                <FormControl>
-                  <Input placeholder="ciudad-pais" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="slug">Slug *</Label>
+          <Input
+            id="slug"
+            {...form.register("slug")}
+            placeholder="ciudad-pais"
+            className="w-full"
           />
-          <FormField
-            control={form.control}
-            name="country"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>País</FormLabel>
-                <FormControl>
-                  <Input placeholder="Nombre del país" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="city"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Ciudad</FormLabel>
-                <FormControl>
-                  <Input placeholder="Nombre de la ciudad" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {form.formState.errors.slug && (
+            <p className="text-sm text-red-600">
+              {form.formState.errors.slug.message}
+            </p>
+          )}
         </div>
 
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Descripción</FormLabel>
-              <FormControl>
-                <Textarea
-                  rows={3}
-                  placeholder="Descripción breve del destino"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+        <div className="space-y-2">
+          <Label htmlFor="country">País *</Label>
+          <Input
+            id="country"
+            {...form.register("country")}
+            placeholder="Nombre del país"
+            className="w-full"
+          />
+          {form.formState.errors.country && (
+            <p className="text-sm text-red-600">
+              {form.formState.errors.country.message}
+            </p>
           )}
-        />
+        </div>
 
-        <FormField
-          control={form.control}
-          name="heroImageUrl"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Imagen Principal</FormLabel>
-              <FormControl>
-                <ImageUpload
-                  value={field.value}
-                  onChange={field.onChange}
-                  onUpload={async (file) => {
-                    const slug = form.watch("slug") || "temp";
-                    return uploadDestinationImage(file, slug);
+        <div className="space-y-2">
+          <Label htmlFor="city">Ciudad *</Label>
+          <Input
+            id="city"
+            {...form.register("city")}
+            placeholder="Nombre de la ciudad"
+            className="w-full"
+          />
+          {form.formState.errors.city && (
+            <p className="text-sm text-red-600">
+              {form.formState.errors.city.message}
+            </p>
+          )}
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="description">Descripción</Label>
+        <Textarea
+          id="description"
+          {...form.register("description")}
+          rows={3}
+          placeholder="Descripción breve del destino"
+          className="w-full"
+        />
+        {form.formState.errors.description && (
+          <p className="text-sm text-red-600">
+            {form.formState.errors.description.message}
+          </p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label>Imagen Principal</Label>
+        <ImageUpload
+          value={form.watch("heroImageUrl")}
+          onChange={(url) => form.setValue("heroImageUrl", url)}
+          onUpload={async (file) => {
+            const slug = form.watch("slug") || "temp";
+            return uploadDestinationImage(file, slug);
+          }}
+          placeholder="Imagen Principal del Destino"
+          aspectRatio={3 / 2}
+        />
+        {form.formState.errors.heroImageUrl && (
+          <p className="text-sm text-red-600">
+            {form.formState.errors.heroImageUrl.message}
+          </p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label>Etiquetas</Label>
+        <Popover open={tagsOpen} onOpenChange={setTagsOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={tagsOpen}
+              className="w-full justify-between"
+            >
+              <div className="flex items-center gap-2">
+                <Tag className="h-4 w-4" />
+                <span>
+                  {selectedTags.length > 0
+                    ? `${selectedTags.length} etiqueta${selectedTags.length !== 1 ? "s" : ""} seleccionada${selectedTags.length !== 1 ? "s" : ""}`
+                    : "Seleccionar etiquetas..."}
+                </span>
+              </div>
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-full p-0" align="start">
+            <Command>
+              <CommandInput placeholder="Buscar etiquetas..." />
+              <CommandList>
+                <CommandEmpty>No se encontraron etiquetas.</CommandEmpty>
+                <CommandGroup>
+                  <div
+                    className="max-h-64 overflow-y-auto"
+                    onWheel={(e) => {
+                      e.stopPropagation();
+                      const target = e.currentTarget;
+                      const scrollTop = target.scrollTop;
+                      const scrollHeight = target.scrollHeight;
+                      const clientHeight = target.clientHeight;
+
+                      if (
+                        e.deltaY > 0 &&
+                        scrollTop + clientHeight >= scrollHeight
+                      ) {
+                        e.preventDefault();
+                      } else if (e.deltaY < 0 && scrollTop <= 0) {
+                        e.preventDefault();
+                      }
+                    }}
+                  >
+                    {tags.map((tag) => (
+                      <CommandItem
+                        key={tag.id}
+                        value={`${tag.name} ${tag.type}`}
+                        onSelect={() => {
+                          const currentIds = form.getValues("tagIds") || [];
+                          const isSelected = currentIds.includes(tag.id);
+
+                          if (isSelected) {
+                            form.setValue(
+                              "tagIds",
+                              currentIds.filter((id) => id !== tag.id)
+                            );
+                          } else {
+                            form.setValue("tagIds", [...currentIds, tag.id]);
+                          }
+                        }}
+                      >
+                        <Check
+                          className={cn(
+                            "mr-2 h-4 w-4",
+                            selectedTagIds.includes(tag.id)
+                              ? "opacity-100"
+                              : "opacity-0"
+                          )}
+                        />
+                        <div className="flex flex-col">
+                          <span className="font-medium">{tag.name}</span>
+                          <span className="text-sm text-muted-foreground">
+                            {tag.type}
+                          </span>
+                        </div>
+                      </CommandItem>
+                    ))}
+                  </div>
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
+
+        {/* Selected Tags Display */}
+        {selectedTags.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-2">
+            {selectedTags.map((tag) => (
+              <Badge
+                key={tag.id}
+                variant="secondary"
+                className="flex items-center gap-1"
+              >
+                <Tag className="h-3 w-3" />
+                {tag.name}
+                <span className="text-xs text-muted-foreground">
+                  ({tag.type})
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const currentIds = form.getValues("tagIds") || [];
+                    form.setValue(
+                      "tagIds",
+                      currentIds.filter((id) => id !== tag.id)
+                    );
                   }}
-                  placeholder="Imagen Principal del Destino"
-                  aspectRatio={3 / 2}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  className="ml-1 hover:bg-destructive hover:text-destructive-foreground rounded-full p-0.5"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </Badge>
+            ))}
+          </div>
+        )}
+      </div>
 
-        <FormField
-          control={form.control}
-          name="displayTag"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Etiqueta de Visualización</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Ej: destinos-top, europa, sudamerica"
-                  {...field}
-                />
-              </FormControl>
-              <p className="text-xs text-muted-foreground">
-                Etiqueta para mostrar en secciones específicas de la página principal
-              </p>
-              <FormMessage />
-            </FormItem>
-          )}
+      <div className="flex items-center space-x-2">
+        <input
+          type="checkbox"
+          id="isFeatured"
+          {...form.register("isFeatured")}
+          className="rounded border-gray-300"
         />
+        <Label
+          htmlFor="isFeatured"
+          className="text-sm font-medium flex items-center gap-2"
+        >
+          <Star className="h-4 w-4" />
+          Destino destacado
+        </Label>
+      </div>
 
-        <div className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            id="isFeatured"
-            {...form.register("isFeatured")}
-            className="rounded border-gray-300"
-          />
-          <Label htmlFor="isFeatured" className="text-sm font-normal">
-            Destino destacado
-          </Label>
+      <div className="flex items-center justify-between pt-4 border-t">
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">Estado:</span>
+          <Badge variant="outline">
+            {form.watch("isFeatured") ? "Destacado" : "Normal"}
+          </Badge>
         </div>
 
-        <div className="flex justify-end gap-3 pt-4">
-          <Button type="submit" disabled={submitting} className="min-w-[120px]">
-            {submitting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {initialValues?.id ? "Actualizando..." : "Creando..."}
-              </>
-            ) : initialValues?.id ? (
-              "Actualizar Destino"
-            ) : (
-              "Crear Destino"
-            )}
-          </Button>
-        </div>
-      </form>
-    </Form>
+        <Button type="submit" disabled={submitting} className="min-w-[120px]">
+          {submitting
+            ? "Guardando..."
+            : initialValues?.id
+              ? "Actualizar Destino"
+              : "Crear Destino"}
+        </Button>
+      </div>
+    </form>
   );
 }

@@ -31,7 +31,7 @@ export default function PromotionalCard({
   return (
     <div className="relative flex flex-col bg-card rounded-lg shadow-lg overflow-hidden h-full">
       {/* Image Section with Overlay */}
-      <div className="relative aspect-[4/3] overflow-hidden">
+      <div className="relative aspect-[4/4] overflow-hidden">
         <Image src={imageUrl} alt={title} fill className="object-cover" />
 
         {/* Dark overlay for text readability */}

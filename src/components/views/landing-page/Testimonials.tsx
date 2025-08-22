@@ -60,7 +60,10 @@ export default function Testimonials({ items }: TestimonialsProps) {
   const duplicatedItems = [...items, ...items, ...items];
   return (
     <section className="py-12 sm:py-16 bg-gradient-to-b from-secondary/10 to-background">
-      <div className="container mx-auto px-4">
+      <div
+        className="container mx-auto"
+        style={{ paddingLeft: "12vw", paddingRight: "12vw" }}
+      >
         <div className="text-center mb-8 sm:mb-12">
           <h2 className="text-foreground text-2xl sm:text-3xl font-bold leading-tight tracking-[-0.015em] mb-3 sm:mb-4">
             Testimonios de Clientes

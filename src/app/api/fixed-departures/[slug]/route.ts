@@ -10,6 +10,9 @@ export async function GET(_req: Request, { params }: Params) {
     const { slug } = await params;
     const item = await prisma.fixedDeparture.findUnique({
       where: { slug },
+      include: {
+        destination: true,
+      },
     });
     if (!item)
       return NextResponse.json({ error: "Not found" }, { status: 404 });

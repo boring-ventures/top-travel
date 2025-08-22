@@ -41,6 +41,9 @@ export async function GET(request: Request) {
     const [items, total] = await Promise.all([
       prisma.fixedDeparture.findMany({
         where,
+        include: {
+          destination: true,
+        },
         orderBy: { startDate: "asc" },
         skip,
         take: pageSize,

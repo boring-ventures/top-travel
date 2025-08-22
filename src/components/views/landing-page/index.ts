@@ -17,6 +17,7 @@ export { default as PersistentWhatsAppCTA } from "./PersistentWhatsAppCTA";
 export { default as CustomizablePackages } from "./CustomizablePackages";
 export { default as TabbedContent } from "./TabbedContent";
 export { default as SpecialDepartments } from "./SpecialDepartments";
+export { default as FeaturedDestinations } from "./FeaturedDestinations";
 
 // Card components
 export { default as TravelCard } from "./TravelCard";
@@ -29,4 +30,5 @@ export { default as About } from "./About";
 export { default as Partners } from "./Partners";
 export { default as Testimonials } from "./Testimonials";
 export { default as CTA } from "./CTA";
+export { default as Tags } from "./Tags";
 export { AuthHeader } from "./auth-header";

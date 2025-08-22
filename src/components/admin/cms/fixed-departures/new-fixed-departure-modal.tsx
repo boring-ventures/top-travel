@@ -11,6 +11,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -25,10 +38,14 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
-import { Loader2, Plus } from "lucide-react";
+import { Loader2, Plus, Check, ChevronsUpDown } from "lucide-react";
+import { ImageUpload } from "@/components/ui/image-upload";
+import { AmenitiesInput } from "@/components/ui/amenities-input";
+import { uploadFixedDepartureImage } from "@/lib/supabase/storage";
 import { FixedDepartureDateRangePicker } from "@/components/admin/forms/fixed-departure-date-range-picker";
 import { DateRange } from "react-day-picker";
 import { z } from "zod";
+import { cn } from "@/lib/utils";
 import {
   ContentStatusSchema,
   NonEmptyStringSchema,
@@ -40,6 +57,9 @@ const FixedDepartureFormSchema = z.object({
   slug: SlugSchema,
   title: NonEmptyStringSchema,
   destinationId: z.string(),
+  heroImageUrl: z.string().optional(),
+  amenities: z.array(z.string()).default([]),
+  exclusions: z.array(z.string()).default([]),
   dateRange: z
     .object({
       from: z.date().optional(),
@@ -64,6 +84,7 @@ export function NewFixedDepartureModal({
 }: NewFixedDepartureModalProps) {
   const [submitting, setSubmitting] = useState(false);
   const [destinations, setDestinations] = useState<any[]>([]);
+  const [statusOpen, setStatusOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -87,6 +108,9 @@ export function NewFixedDepartureModal({
       slug: "",
       title: "",
       destinationId: "",
+      heroImageUrl: "",
+      amenities: [],
+      exclusions: [],
       dateRange: undefined,
       detailsJson: undefined,
       seatsInfo: "",
@@ -211,11 +235,122 @@ export function NewFixedDepartureModal({
             </div>
           </div>
 
-          <FixedDepartureDateRangePicker
-            control={form.control}
-            name="dateRange"
-            label="Período del Viaje"
-            placeholder="Seleccionar período del viaje"
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FixedDepartureDateRangePicker
+              control={form.control}
+              name="dateRange"
+              label="Período del Viaje"
+              placeholder="Seleccionar período del viaje"
+            />
+
+            <div className="space-y-2">
+              <Label htmlFor="status">Estado</Label>
+              <Popover open={statusOpen} onOpenChange={setStatusOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={statusOpen}
+                    className="w-full justify-between"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={cn(
+                          "w-2 h-2 rounded-full",
+                          form.watch("status") === "DRAFT"
+                            ? "bg-yellow-500"
+                            : "bg-green-500"
+                        )}
+                      />
+                      <span className="text-sm">
+                        {form.watch("status") === "PUBLISHED"
+                          ? "Publicado"
+                          : "Borrador"}
+                      </span>
+                    </div>
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0" align="start">
+                  <Command>
+                    <CommandInput placeholder="Buscar estado..." />
+                    <CommandList>
+                      <CommandEmpty>No se encontraron estados.</CommandEmpty>
+                      <CommandGroup>
+                        <CommandItem
+                          value="DRAFT"
+                          onSelect={() => {
+                            form.setValue("status", "DRAFT");
+                            setStatusOpen(false);
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              form.watch("status") === "DRAFT"
+                                ? "opacity-100"
+                                : "opacity-0"
+                            )}
+                          />
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-yellow-500" />
+                            <span>Borrador</span>
+                          </div>
+                        </CommandItem>
+                        <CommandItem
+                          value="PUBLISHED"
+                          onSelect={() => {
+                            form.setValue("status", "PUBLISHED");
+                            setStatusOpen(false);
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              form.watch("status") === "PUBLISHED"
+                                ? "opacity-100"
+                                : "opacity-0"
+                            )}
+                          />
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-green-500" />
+                            <span>Publicado</span>
+                          </div>
+                        </CommandItem>
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Imagen Principal</Label>
+            <ImageUpload
+              value={form.watch("heroImageUrl")}
+              onChange={(url) => form.setValue("heroImageUrl", url)}
+              onUpload={async (file) => {
+                const slug = form.watch("slug") || "temp";
+                return uploadFixedDepartureImage(file, slug);
+              }}
+              placeholder="Imagen Principal de la Salida Fija"
+              aspectRatio={16 / 9}
+            />
+          </div>
+
+          <AmenitiesInput
+            label="Incluye"
+            value={form.watch("amenities") || []}
+            onChange={(value) => form.setValue("amenities", value)}
+            placeholder="Ej: Hotel, Transporte, Guía, Comidas..."
+          />
+
+          <AmenitiesInput
+            label="No Incluye"
+            value={form.watch("exclusions") || []}
+            onChange={(value) => form.setValue("exclusions", value)}
+            placeholder="Ej: Vuelos, Propinas, Gastos personales..."
           />
 
           <div className="space-y-2">
@@ -225,24 +360,6 @@ export function NewFixedDepartureModal({
               {...form.register("seatsInfo")}
               placeholder="Ej: 20 asientos disponibles"
             />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="status">Estado</Label>
-            <Select
-              value={form.watch("status")}
-              onValueChange={(value: string) =>
-                form.setValue("status", value as "DRAFT" | "PUBLISHED")
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar estado" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="DRAFT">Borrador</SelectItem>
-                <SelectItem value="PUBLISHED">Publicado</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
 
           <div className="flex justify-end gap-3 pt-4">

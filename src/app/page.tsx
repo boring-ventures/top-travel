@@ -5,13 +5,14 @@ import {
   CustomizablePackages,
   TabbedContent,
   SpecialDepartments,
+  FeaturedDestinations,
   FeaturedOffers,
   About,
   Testimonials,
   Footer,
   PersistentWhatsAppCTA,
+  Tags,
 } from "@/components/views/landing-page";
-import TagCloud from "@/components/views/landing-page/TagCloud";
 import prisma from "@/lib/prisma";
 import { filterValidImageUrls } from "@/lib/utils";
 import { getWhatsAppTemplateByUsage } from "@/lib/whatsapp-utils";
@@ -141,6 +142,7 @@ const DEFAULT_DATA = {
 export default async function Home() {
   let offers: any[] = [];
   let topDestinations: any[] = [];
+  let featuredDestinations: any[] = [];
   let featuredEvents: any[] = [];
   let departments: any[] = [];
   let fixedDepartures: any[] = [];
@@ -173,7 +175,15 @@ export default async function Home() {
         },
       }),
       prisma.destination.findMany({
-        where: { isFeatured: true },
+        where: {
+          destinationTags: {
+            some: {
+              tag: {
+                slug: "top-destinations",
+              },
+            },
+          },
+        },
         take: 6,
         select: {
           id: true,
@@ -181,7 +191,19 @@ export default async function Home() {
           city: true,
           country: true,
           heroImageUrl: true,
-          displayTag: true,
+        },
+      }),
+      prisma.destination.findMany({
+        where: {
+          isFeatured: true,
+        },
+        take: 6,
+        select: {
+          id: true,
+          slug: true,
+          city: true,
+          country: true,
+          heroImageUrl: true,
         },
       }),
       prisma.event.findMany({
@@ -194,6 +216,9 @@ export default async function Home() {
           title: true,
           locationCity: true,
           locationCountry: true,
+          heroImageUrl: true,
+          amenities: true,
+          exclusions: true,
           startDate: true,
           endDate: true,
         },
@@ -215,6 +240,9 @@ export default async function Home() {
           id: true,
           slug: true,
           title: true,
+          heroImageUrl: true,
+          amenities: true,
+          exclusions: true,
           startDate: true,
           endDate: true,
         },
@@ -247,12 +275,26 @@ export default async function Home() {
     [
       offers,
       topDestinations,
+      featuredDestinations,
       featuredEvents,
       departments,
       fixedDepartures,
       testimonials,
       tags,
     ] = results as any;
+
+    // Convert Decimal objects to numbers for client components
+    offers = offers.map((offer) => ({
+      ...offer,
+      package: offer.package
+        ? {
+            ...offer.package,
+            fromPrice: offer.package.fromPrice
+              ? Number(offer.package.fromPrice)
+              : undefined,
+          }
+        : undefined,
+    }));
 
     // Fetch WhatsApp templates for different usage types
     whatsappTemplates = {
@@ -324,10 +366,12 @@ export default async function Home() {
         id: event.id,
         title: event.title,
         description: `${event.locationCity}, ${event.locationCountry}`,
-        imageUrl: FALLBACK_IMAGES.events,
+        imageUrl: getValidImageUrl(event.heroImageUrl, FALLBACK_IMAGES.events),
         href: `/events/${event.slug}`,
         price: "$150/persona",
         location: `${event.locationCity}, ${event.locationCountry}`,
+        amenities: event.amenities || [],
+        exclusions: event.exclusions || [],
       })),
     },
     {
@@ -356,10 +400,12 @@ export default async function Home() {
         id: dep.id,
         title: dep.title,
         description: "Viajes programados con fechas fijas y precios especiales",
-        imageUrl: FALLBACK_IMAGES.mountains,
+        imageUrl: getValidImageUrl(dep.heroImageUrl, FALLBACK_IMAGES.mountains),
         href: `/fixed-departures/${dep.slug}`,
         price: "$1200/persona",
         location: "Bolivia",
+        amenities: dep.amenities || [],
+        exclusions: dep.exclusions || [],
       })),
     },
     {
@@ -404,63 +450,23 @@ export default async function Home() {
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-background via-background to-secondary/20">
       <Header />
 
-      <main className="flex-grow relative pt-16 sm:pt-20">
+      <main className="flex-grow relative">
         <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-transparent -z-10" />
 
         <Hero items={heroItems} featuredOffer={offers[0]} />
-        <CustomizablePackages />
+        {/* <CustomizablePackages /> */}
         <TabbedContent tabs={tabbedContent} />
-
-        {/* Popular Tags Section */}
-        {tags.length > 0 && (
-          <section className="py-16 bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950">
-            <div className="container mx-auto px-4">
-              <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold mb-4">
-                  Explorar por Etiquetas
-                </h2>
-                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                  Descubre contenido organizado por categorías. Haz clic en
-                  cualquier etiqueta para ver todo el contenido relacionado.
-                </p>
-              </div>
-              <TagCloud
-                tags={tags}
-                showCounts={true}
-                maxTags={12}
-                className="justify-center"
-              />
-              <div className="text-center mt-8">
-                <a
-                  href="/tags"
-                  className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
-                >
-                  Ver todas las etiquetas
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </a>
-              </div>
-            </div>
-          </section>
+        {featuredDestinations && featuredDestinations.length > 0 && (
+          <FeaturedDestinations destinations={featuredDestinations} />
         )}
-
         <SpecialDepartments departments={specialDepartments} />
         <FeaturedOffers
           offers={offers}
           whatsappTemplate={whatsappTemplates.offers}
         />
+        <Tags tags={tags} />
+
         <About />
         <Testimonials items={testimonials} />
       </main>

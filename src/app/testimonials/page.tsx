@@ -24,7 +24,11 @@ export default async function TestimonialsPage() {
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-background via-background to-secondary/20">
       <Header />
 
-      <main className="flex-grow">
+      <main className="flex-grow relative pt-16 sm:pt-20">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-grid-black/[0.02] dark:bg-grid-white/[0.02] -z-10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-transparent -z-10" />
+
         {/* Hero Section */}
         <section className="relative bg-gradient-to-r from-pink-600 to-rose-600 text-white py-16">
           <div className="absolute inset-0 bg-black/20" />
@@ -57,22 +61,24 @@ export default async function TestimonialsPage() {
         {/* Stats Section */}
         <section className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="p-6 text-center">
-              <div className="text-3xl font-bold text-pink-600 mb-2">
+            <Card className="p-6 text-center bg-card/50 backdrop-blur-sm border-0">
+              <div className="text-3xl font-bold text-pink-600 dark:text-pink-400 mb-2">
                 {testimonials.length}
               </div>
               <div className="text-sm text-muted-foreground">Testimonios</div>
             </Card>
-            <Card className="p-6 text-center">
-              <div className="text-3xl font-bold text-pink-600 mb-2">
+            <Card className="p-6 text-center bg-card/50 backdrop-blur-sm border-0">
+              <div className="text-3xl font-bold text-pink-600 dark:text-pink-400 mb-2">
                 {averageRating.toFixed(1)}
               </div>
               <div className="text-sm text-muted-foreground">
                 Calificación Promedio
               </div>
             </Card>
-            <Card className="p-6 text-center">
-              <div className="text-3xl font-bold text-pink-600 mb-2">100%</div>
+            <Card className="p-6 text-center bg-card/50 backdrop-blur-sm border-0">
+              <div className="text-3xl font-bold text-pink-600 dark:text-pink-400 mb-2">
+                100%
+              </div>
               <div className="text-sm text-muted-foreground">
                 Clientes Satisfechos
               </div>
@@ -86,10 +92,10 @@ export default async function TestimonialsPage() {
             <div className="text-center py-16">
               <div className="text-muted-foreground mb-4">
                 <Heart className="h-16 w-16 mx-auto mb-4 opacity-50" />
-                <h3 className="text-xl font-semibold mb-2">
+                <h3 className="text-xl font-semibold mb-2 text-foreground">
                   No hay testimonios aún
                 </h3>
-                <p className="text-sm">
+                <p className="text-sm text-muted-foreground">
                   Sé el primero en compartir tu experiencia
                 </p>
               </div>
@@ -97,7 +103,7 @@ export default async function TestimonialsPage() {
           ) : (
             <>
               <div className="flex items-center justify-between mb-8">
-                <h2 className="text-2xl font-semibold">
+                <h2 className="text-2xl font-semibold text-foreground">
                   Experiencias de Nuestros Clientes
                 </h2>
                 <Badge variant="secondary" className="flex items-center gap-1">
@@ -110,11 +116,11 @@ export default async function TestimonialsPage() {
                 {testimonials.map((t) => (
                   <Card
                     key={t.id}
-                    className="p-6 hover:shadow-lg transition-all duration-300"
+                    className="p-6 hover:shadow-lg transition-all duration-300 bg-card/50 backdrop-blur-sm border-0"
                   >
                     <div className="flex items-start gap-4">
-                      <div className="p-3 bg-pink-100 rounded-full">
-                        <Quote className="h-6 w-6 text-pink-600" />
+                      <div className="p-3 bg-pink-100 dark:bg-pink-900/20 rounded-full">
+                        <Quote className="h-6 w-6 text-pink-600 dark:text-pink-400" />
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-3">
@@ -122,7 +128,7 @@ export default async function TestimonialsPage() {
                             {Array.from({ length: 5 }).map((_, i) => (
                               <Star
                                 key={i}
-                                className={`h-4 w-4 ${i < (t.rating || 5) ? "text-yellow-400 fill-current" : "text-gray-300"}`}
+                                className={`h-4 w-4 ${i < (t.rating || 5) ? "text-yellow-400 fill-current" : "text-gray-300 dark:text-gray-600"}`}
                               />
                             ))}
                           </div>
@@ -137,7 +143,7 @@ export default async function TestimonialsPage() {
 
                         <div className="flex items-center justify-between">
                           <div>
-                            <div className="font-semibold text-sm">
+                            <div className="font-semibold text-sm text-foreground">
                               {t.authorName}
                             </div>
                             {t.location && (
@@ -164,9 +170,9 @@ export default async function TestimonialsPage() {
 
         {/* CTA Section */}
         <section className="container mx-auto px-4 pb-16">
-          <Card className="p-8 text-center bg-gradient-to-r from-pink-50 to-rose-50">
+          <Card className="p-8 text-center bg-gradient-to-r from-pink-50 to-rose-50 dark:from-pink-950/50 dark:to-rose-950/50 border-0">
             <div className="max-w-2xl mx-auto">
-              <h2 className="text-2xl font-bold mb-4">
+              <h2 className="text-2xl font-bold mb-4 text-foreground">
                 ¿Listo para crear tu propia historia?
               </h2>
               <p className="text-muted-foreground mb-6">
