@@ -124,7 +124,7 @@ export function WhatsAppTemplateForm({
             className={errors.name ? "border-red-500" : ""}
           />
           {errors.name && (
-            <p className="text-sm text-red-600">{errors.name.message}</p>
+            <p className="text-sm text-corporate-red">{errors.name.message}</p>
           )}
         </div>
 
@@ -137,10 +137,13 @@ export function WhatsAppTemplateForm({
             className={errors.phoneNumber ? "border-red-500" : ""}
           />
           {errors.phoneNumber && (
-            <p className="text-sm text-red-600">{errors.phoneNumber.message}</p>
+            <p className="text-sm text-corporate-red">
+              {errors.phoneNumber.message}
+            </p>
           )}
           <p className="text-xs text-muted-foreground">
-            Número de WhatsApp que recibirá los mensajes para este tipo de contenido
+            Número de WhatsApp que recibirá los mensajes para este tipo de
+            contenido
           </p>
         </div>
 
@@ -148,7 +151,9 @@ export function WhatsAppTemplateForm({
           <Label htmlFor="usageType">Tipo de Uso *</Label>
           <Select
             value={watch("usageType") || "GENERAL"}
-            onValueChange={(value) => setValue("usageType", value as TemplateUsageType)}
+            onValueChange={(value) =>
+              setValue("usageType", value as TemplateUsageType)
+            }
           >
             <SelectTrigger className={errors.usageType ? "border-red-500" : ""}>
               <SelectValue placeholder="Selecciona el tipo de uso" />
@@ -163,7 +168,9 @@ export function WhatsAppTemplateForm({
             </SelectContent>
           </Select>
           {errors.usageType && (
-            <p className="text-sm text-red-600">{errors.usageType.message}</p>
+            <p className="text-sm text-corporate-red">
+              {errors.usageType.message}
+            </p>
           )}
           <p className="text-xs text-muted-foreground">
             Define para qué tipo de contenido se usará esta plantilla
@@ -180,7 +187,7 @@ export function WhatsAppTemplateForm({
             className={errors.templateBody ? "border-red-500" : ""}
           />
           {errors.templateBody && (
-            <p className="text-sm text-red-600">
+            <p className="text-sm text-corporate-red">
               {errors.templateBody.message}
             </p>
           )}

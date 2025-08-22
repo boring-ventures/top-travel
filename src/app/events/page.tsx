@@ -58,11 +58,27 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
       : {}),
   };
 
+  // Debug: Log the where clause and count total published events
+  console.log("Events where clause:", JSON.stringify(where, null, 2));
+
+  // Get total count of published events for debugging
+  const totalPublishedEvents = await prisma.event.count({
+    where: { status: "PUBLISHED" },
+  });
+  console.log("Total published events in database:", totalPublishedEvents);
+
   const events = await prisma.event.findMany({
     where,
     orderBy: { startDate: "asc" },
-    take: 50,
+    take: 100, // Increased limit to ensure we get all events
   });
+
+  // Debug: Log the events being returned
+  console.log("Events returned:", events.length);
+  console.log(
+    "Events titles:",
+    events.map((e) => e.title)
+  );
 
   // Get unique countries and cities for filters
   const allEvents = await prisma.event.findMany({

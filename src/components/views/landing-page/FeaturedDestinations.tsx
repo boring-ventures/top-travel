@@ -90,11 +90,11 @@ export default function FeaturedDestinations({
       <div className="flex items-end justify-between gap-4 mb-6 sm:mb-8">
         <div>
           <AnimatedShinyText>
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight text-foreground">
               Destinos Destacados
             </h2>
           </AnimatedShinyText>
-          <p className="text-xs sm:text-sm text-muted-foreground">
+          <p className="text-xs sm:text-sm text-foreground/80">
             Explora los destinos más populares de Bolivia
           </p>
         </div>

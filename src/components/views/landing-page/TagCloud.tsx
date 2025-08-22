@@ -34,11 +34,11 @@ const getTypeIcon = (type: string) => {
 const getTypeColor = (type: string) => {
   switch (type) {
     case "REGION":
-      return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800";
+      return "bg-blue-lighter text-corporate-blue dark:bg-blue-dark dark:text-blue-light hover:bg-blue-light dark:hover:bg-blue-darker";
     case "THEME":
       return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 hover:bg-green-200 dark:hover:bg-green-800";
     case "DEPARTMENT":
-      return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 hover:bg-purple-200 dark:hover:bg-purple-800";
+      return "bg-red-lighter text-corporate-red dark:bg-red-dark dark:text-red-light hover:bg-red-light dark:hover:bg-red-darker";
     default:
       return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800";
   }
@@ -73,4 +73,3 @@ export default function TagCloud({
     </div>
   );
 }
-

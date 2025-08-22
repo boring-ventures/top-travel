@@ -8,73 +8,109 @@ body {
 
 @layer base {
   :root {
+    /* Corporate Color Palette */
+    /* Primary Colors */
+    --corporate-blue: 210 57% 27%; /* Your blue: RGB(30,73,110) */
+    --corporate-red: 10 51% 48%; /* Your red: RGB(187,80,60) */
+
+    /* Blue Variations */
+    --blue-light: 210 57% 85%;
+    --blue-lighter: 210 57% 95%;
+    --blue-dark: 210 57% 20%;
+    --blue-darker: 210 57% 15%;
+
+    /* Red Variations */
+    --red-light: 10 51% 85%;
+    --red-lighter: 10 51% 95%;
+    --red-dark: 10 51% 35%;
+    --red-darker: 10 51% 25%;
+
+    /* Neutral Grays (complementary to corporate colors) */
+    --gray-50: 210 20% 98%;
+    --gray-100: 210 20% 96%;
+    --gray-200: 210 20% 90%;
+    --gray-300: 210 20% 80%;
+    --gray-400: 210 20% 65%;
+    --gray-500: 210 20% 45%;
+    --gray-600: 210 20% 35%;
+    --gray-700: 210 20% 25%;
+    --gray-800: 210 20% 15%;
+    --gray-900: 210 20% 8%;
+
+    /* Light Mode Colors */
     --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
+    --foreground: var(--gray-900);
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
+    --card-foreground: var(--gray-900);
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
+    --popover-foreground: var(--gray-900);
+    --primary: var(--corporate-blue);
     --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
+    --secondary: var(--blue-lighter);
+    --secondary-foreground: var(--corporate-blue);
+    --muted: var(--gray-100);
+    --muted-foreground: var(--gray-500);
+    --accent: var(--red-lighter);
+    --accent-foreground: var(--corporate-red);
+    --destructive: var(--corporate-red);
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --border: var(--gray-200);
+    --input: var(--gray-200);
+    --ring: var(--corporate-blue);
+    --chart-1: var(--corporate-red);
+    --chart-2: var(--corporate-blue);
+    --chart-3: 210 57% 40%;
+    --chart-4: 10 51% 65%;
+    --chart-5: 210 57% 60%;
     --radius: 0.5rem;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-background: var(--gray-50);
+    --sidebar-foreground: var(--gray-700);
+    --sidebar-primary: var(--corporate-blue);
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: var(--blue-lighter);
+    --sidebar-accent-foreground: var(--corporate-blue);
+    --sidebar-border: var(--gray-200);
+    --sidebar-ring: var(--corporate-blue);
   }
+
   .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
+    /* Dark Mode Colors - Improved for better contrast */
+    --background: var(--gray-900);
+    --foreground: var(--gray-50);
+    --card: var(--gray-800);
+    --card-foreground: var(--gray-50);
+    --popover: var(--gray-800);
+    --popover-foreground: var(--gray-50);
+    --primary: var(--corporate-blue);
+    --primary-foreground: 0 0% 98%;
+    --secondary: var(--gray-800);
+    --secondary-foreground: var(--gray-50);
+    --muted: var(--gray-800);
+    --muted-foreground: var(
+      --gray-200
+    ); /* Improved for better readability in dark mode */
+    --accent: var(--gray-700);
+    --accent-foreground: var(--gray-50);
+    --destructive: var(--corporate-red);
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: var(--gray-700);
+    --input: var(--gray-700);
+    --ring: var(--corporate-blue);
+    --chart-1: var(--corporate-red);
+    --chart-2: var(--corporate-blue);
+    --chart-3: 210 57% 50%;
+    --chart-4: 10 51% 55%;
+    --chart-5: 210 57% 65%;
+    --sidebar-background: var(--gray-800);
+    --sidebar-foreground: var(
+      --gray-200
+    ); /* Improved for better readability in dark mode */
+    --sidebar-primary: var(--corporate-blue);
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: var(--gray-700);
+    --sidebar-accent-foreground: var(--gray-50);
+    --sidebar-border: var(--gray-700);
+    --sidebar-ring: var(--corporate-blue);
   }
 }
 
@@ -120,4 +156,131 @@ body {
     -webkit-backdrop-filter: blur(40px);
     backdrop-filter: blur(40px);
   }
+}
+
+/* Sign-in page animations */
+@keyframes fadeSlideIn {
+  to {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateY(0px);
+  }
+}
+
+@keyframes slideRightIn {
+  to {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateX(0px);
+  }
+}
+
+@keyframes testimonialIn {
+  to {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateY(0px) scale(1);
+  }
+}
+
+/* Animation classes */
+.animate-element {
+  opacity: 0;
+  filter: blur(4px);
+  transform: translateY(20px);
+  animation: fadeSlideIn 0.6s ease-out forwards;
+}
+
+.animate-slide-right {
+  opacity: 0;
+  filter: blur(4px);
+  transform: translateX(20px);
+  animation: slideRightIn 0.6s ease-out forwards;
+}
+
+.animate-testimonial {
+  opacity: 0;
+  filter: blur(4px);
+  transform: translateY(20px) scale(0.95);
+  animation: testimonialIn 0.6s ease-out forwards;
+}
+
+/* Delay classes */
+.animate-delay-100 {
+  animation-delay: 0.1s;
+}
+.animate-delay-200 {
+  animation-delay: 0.2s;
+}
+.animate-delay-300 {
+  animation-delay: 0.3s;
+}
+.animate-delay-400 {
+  animation-delay: 0.4s;
+}
+.animate-delay-500 {
+  animation-delay: 0.5s;
+}
+.animate-delay-600 {
+  animation-delay: 0.6s;
+}
+.animate-delay-700 {
+  animation-delay: 0.7s;
+}
+.animate-delay-800 {
+  animation-delay: 0.8s;
+}
+.animate-delay-900 {
+  animation-delay: 0.9s;
+}
+.animate-delay-1000 {
+  animation-delay: 1s;
+}
+.animate-delay-1200 {
+  animation-delay: 1.2s;
+}
+.animate-delay-1400 {
+  animation-delay: 1.4s;
+}
+
+/* Custom checkbox styles */
+.custom-checkbox {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid hsl(var(--border));
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.custom-checkbox:checked {
+  background: hsl(var(--primary));
+  border-color: hsl(var(--primary));
+}
+
+.custom-checkbox:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.custom-checkbox:focus {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* Line clamp utility for text truncation */
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

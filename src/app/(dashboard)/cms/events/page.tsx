@@ -22,14 +22,14 @@ import {
 import { Eye, Edit, Trash2, Plus } from "lucide-react";
 
 async function fetchEvents() {
-  const res = await fetch(`/api/events?page=1&pageSize=20`);
+  const res = await fetch(`/api/events?page=1&pageSize=100`); // Increased from 20 to 100
   if (!res.ok) throw new Error("Error al cargar los eventos");
   return res.json();
 }
 
 export default function CmsEventsList() {
   const { data, isLoading, error } = useQuery({
-    queryKey: ["cms", "events", { page: 1, pageSize: 20 }],
+    queryKey: ["cms", "events", { page: 1, pageSize: 100 }], // Updated to match the new pageSize
     queryFn: fetchEvents,
   });
   const items = data?.items ?? [];
@@ -142,9 +142,13 @@ export default function CmsEventsList() {
                     </td>
                     <td className="px-3 py-2">
                       <div className="text-sm">
-                        {e.venue && <div className="font-medium">{e.venue}</div>}
+                        {e.venue && (
+                          <div className="font-medium">{e.venue}</div>
+                        )}
                         <div className="text-muted-foreground">
-                          {[e.locationCity, e.locationCountry].filter(Boolean).join(", ") || "—"}
+                          {[e.locationCity, e.locationCountry]
+                            .filter(Boolean)
+                            .join(", ") || "—"}
                         </div>
                       </div>
                     </td>
@@ -154,14 +158,15 @@ export default function CmsEventsList() {
                           {new Date(e.startDate).toLocaleDateString("es-ES", {
                             day: "2-digit",
                             month: "short",
-                            year: "numeric"
+                            year: "numeric",
                           })}
                         </div>
                         {e.startDate !== e.endDate && (
                           <div className="text-muted-foreground">
-                            hasta {new Date(e.endDate).toLocaleDateString("es-ES", {
+                            hasta{" "}
+                            {new Date(e.endDate).toLocaleDateString("es-ES", {
                               day: "2-digit",
-                              month: "short"
+                              month: "short",
                             })}
                           </div>
                         )}
@@ -170,7 +175,8 @@ export default function CmsEventsList() {
                     <td className="px-3 py-2">
                       {e.fromPrice ? (
                         <span className="text-sm font-medium">
-                          {e.currency === 'USD' ? '$' : 'Bs. '}{e.fromPrice}
+                          {e.currency === "USD" ? "$" : "Bs. "}
+                          {e.fromPrice}
                         </span>
                       ) : (
                         <span className="text-muted-foreground text-sm">—</span>

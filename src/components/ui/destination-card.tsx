@@ -58,11 +58,11 @@ export function DestinationCard({
           <h3 className="font-semibold text-lg mb-1 group-hover:text-green-600 transition-colors">
             {destination.city}
           </h3>
-          <p className="text-sm text-muted-foreground mb-2">
+          <p className="text-sm text-foreground/80 mb-2">
             {destination.country}
           </p>
           {showDescription && destination.description && (
-            <p className="text-sm text-muted-foreground line-clamp-2">
+            <p className="text-sm text-foreground/70 line-clamp-2">
               {destination.description}
             </p>
           )}
