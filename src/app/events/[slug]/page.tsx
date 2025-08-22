@@ -12,7 +12,6 @@ import {
   Clock,
   Users,
   ArrowLeft,
-  Star,
   Share2,
 } from "lucide-react";
 import Link from "next/link";
@@ -91,12 +90,6 @@ export default async function EventDetailPage({ params }: Params) {
               >
                 Evento
               </Badge>
-              {evt.isFeatured && (
-                <Badge className="bg-yellow-500 text-white border-yellow-500">
-                  <Star className="h-3 w-3 mr-1" />
-                  Destacado
-                </Badge>
-              )}
             </div>
 
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
@@ -271,15 +264,6 @@ export default async function EventDetailPage({ params }: Params) {
                         : `${Math.ceil((new Date(evt.endDate).getTime() - new Date(evt.startDate).getTime()) / (1000 * 60 * 60 * 24))} días`}
                     </span>
                   </div>
-                  {evt.isFeatured && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Estado:</span>
-                      <Badge className="bg-yellow-500 text-white text-xs">
-                        <Star className="h-3 w-3 mr-1" />
-                        Destacado
-                      </Badge>
-                    </div>
-                  )}
                 </div>
               </Card>
             </div>

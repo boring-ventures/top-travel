@@ -101,7 +101,7 @@ export default async function FixedDepartureDetailPage({ params }: Params) {
                 <Plane className="h-3 w-3 mr-1" />
                 Salida Fija
               </Badge>
-              {item.isFeatured && (
+              {item.destination?.isFeatured && (
                 <Badge className="bg-yellow-500 text-white border-yellow-500">
                   <Star className="h-3 w-3 mr-1" />
                   Destacado
@@ -294,7 +294,7 @@ export default async function FixedDepartureDetailPage({ params }: Params) {
                     <span className="text-muted-foreground">Destino:</span>
                     <span>{item.destination?.city}</span>
                   </div>
-                  {item.isFeatured && (
+                  {item.destination?.isFeatured && (
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Estado:</span>
                       <Badge className="bg-yellow-500 text-white text-xs">
