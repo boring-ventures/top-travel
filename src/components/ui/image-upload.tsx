@@ -162,27 +162,27 @@ export function ImageUpload({
         {displayImage && (
           <Card
             className={cn(
-              "border-2 border-dashed border-blue-300 rounded-lg p-4 text-center cursor-pointer transition-colors hover:border-blue-400 bg-blue-50",
+              "border-2 border-dashed border-corporate-blue rounded-lg p-4 text-center cursor-pointer transition-colors hover:border-blue-dark bg-blue-lighter",
               disabled && "opacity-50 cursor-not-allowed"
             )}
             onClick={handleClick}
           >
             <div className="space-y-1">
-              <ImageIcon className="mx-auto h-8 w-8 text-blue-400" />
-              <div className="text-sm text-blue-600">
+              <ImageIcon className="mx-auto h-8 w-8 text-corporate-blue" />
+              <div className="text-sm text-corporate-blue">
                 <span className="font-medium">Click to replace image</span>
               </div>
-              <p className="text-xs text-blue-500">
+              <p className="text-xs text-corporate-blue">
                 Select a new image to replace the current one
               </p>
             </div>
           </Card>
         )}
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-corporate-red">{error}</p>}
 
         {isUploading && (
-          <div className="flex items-center space-x-2 text-sm text-blue-600">
+          <div className="flex items-center space-x-2 text-sm text-corporate-blue">
             <Upload className="h-4 w-4 animate-pulse" />
             <span>Uploading...</span>
           </div>

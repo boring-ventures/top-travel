@@ -82,7 +82,7 @@ export default function FeaturedOffers({
       <div className="flex items-end justify-between gap-4 mb-4 sm:mb-6">
         <div>
           <AnimatedShinyText>
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight text-foreground">
               Ofertas destacadas
             </h2>
           </AnimatedShinyText>

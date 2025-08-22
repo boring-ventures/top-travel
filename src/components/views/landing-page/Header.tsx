@@ -2,17 +2,16 @@
 
 import Link from "next/link";
 import React from "react";
-import { Menu, X, Globe2 } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { AuthHeader } from "./auth-header";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 const navItems = [
   { href: "/destinations", label: "Destinos" },
   { href: "/packages", label: "Paquetes" },
-  { href: "/tags", label: "Etiquetas" },
   { href: "/events", label: "Eventos" },
-  { href: "/fixed-departures", label: "Salidas Fijas" },
   { href: "/weddings", label: "Bodas" },
   { href: "/quinceanera", label: "Quinceañeras" },
   { href: "/about", label: "Nosotros" },
@@ -69,21 +68,46 @@ export default function Header() {
                 aria-label="home"
                 className="flex items-center gap-2"
               >
-                <Globe2
+                <Image
+                  src="/logos/iso_blue.svg"
+                  alt="Logo"
+                  width={48}
+                  height={38}
                   className={cn(
-                    "h-5 w-5 text-white transition-colors duration-300 ease-out",
-                    isScrolled && "h-5 w-5 sm:h-4 sm:w-4 text-primary"
+                    "transition-all duration-300 ease-out dark:hidden",
+                    isScrolled && "w-10 h-8"
                   )}
-                  aria-hidden="true"
                 />
-                <span
+                <Image
+                  src="/logos/iso_white.svg"
+                  alt="Logo"
+                  width={48}
+                  height={38}
                   className={cn(
-                    "text-sm sm:text-base font-bold tracking-tight text-white transition-colors duration-300 ease-out",
-                    isScrolled && "text-sm sm:text-sm text-primary"
+                    "transition-all duration-300 ease-out hidden dark:block",
+                    isScrolled && "w-10 h-8"
                   )}
-                >
-                  GABYTOPTRAVEL
-                </span>
+                />
+                <Image
+                  src="/logos/name_blue.svg"
+                  alt="GABYTOPTRAVEL"
+                  width={80}
+                  height={24}
+                  className={cn(
+                    "transition-all duration-300 ease-out dark:hidden",
+                    isScrolled && "w-20 h-8"
+                  )}
+                />
+                <Image
+                  src="/logos/name_white.svg"
+                  alt="GABYTOPTRAVEL"
+                  width={80}
+                  height={24}
+                  className={cn(
+                    "transition-all duration-300 ease-out hidden dark:block",
+                    isScrolled && "w-20 h-8"
+                  )}
+                />
               </Link>
               <button
                 onClick={() => setMenuState((v) => !v)}
@@ -113,7 +137,7 @@ export default function Header() {
                       className={cn(
                         "block duration-150",
                         isScrolled
-                          ? "text-primary/90 hover:text-primary"
+                          ? "text-foreground/90 hover:text-foreground"
                           : "text-white/90 hover:text-white"
                       )}
                     >
@@ -136,7 +160,7 @@ export default function Header() {
                         className={cn(
                           "block duration-150",
                           isScrolled
-                            ? "text-primary/90 hover:text-primary"
+                            ? "text-foreground/90 hover:text-foreground"
                             : "text-white/90 hover:text-white"
                         )}
                       >

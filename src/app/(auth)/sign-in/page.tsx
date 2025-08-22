@@ -1,61 +1,83 @@
-import type { Metadata } from "next";
-import { Card } from "@/components/ui/card";
-import AuthLayout from "@/components/auth/auth-layout";
-import { UserAuthForm } from "@/components/auth/sign-in/components/user-auth-form";
-import Link from "next/link";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Sign In",
-  description: "Sign in to your account",
-};
+import { SignInPage, Testimonial } from "@/components/ui/sign-in";
+import { useAuth } from "@/providers/auth-provider";
+import { useRouter } from "next/navigation";
+import { toast } from "@/components/ui/use-toast";
 
-export default function SignInPage() {
+// Sample testimonials for the travel theme
+const sampleTestimonials: Testimonial[] = [
+  {
+    avatarSrc:
+      "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
+    name: "Sarah Chen",
+    handle: "@sarahadventures",
+    text: "Amazing travel experiences! The platform made planning our honeymoon so easy and memorable.",
+  },
+  {
+    avatarSrc:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+    name: "Marcus Johnson",
+    handle: "@marcusexplorer",
+    text: "This service has transformed how we travel. Clean design, powerful features, and excellent support.",
+  },
+  {
+    avatarSrc:
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
+    name: "Emma Rodriguez",
+    handle: "@emmatravels",
+    text: "I've tried many travel platforms, but this one stands out. Intuitive, reliable, and genuinely helpful.",
+  },
+];
+
+export default function SignInPageWrapper() {
+  const { signIn } = useAuth();
+  const router = useRouter();
+
+  const handleSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    try {
+      const normalizedEmail = email.trim().toLowerCase();
+      await signIn(normalizedEmail, password);
+      toast({
+        title: "Success",
+        description: "You have been signed in.",
+      });
+      router.push("/dashboard");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Invalid email or password.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleResetPassword = () => {
+    router.push("/forgot-password");
+  };
+
+  const handleCreateAccount = () => {
+    router.push("/sign-up");
+  };
+
   return (
-    <AuthLayout>
-      <Card className="p-6">
-        <div className="flex flex-col space-y-2 text-left">
-          <h1 className="text-2xl font-semibold tracking-tight">Login</h1>
-          <p className="text-sm text-muted-foreground">
-            Enter your email and password below <br />
-            to log into your account.{" "}
-            <Link
-              href="/sign-up"
-              className="underline underline-offset-4 hover:text-primary"
-            >
-              Don&apos;t have an account?
-            </Link>
-          </p>
-        </div>
-        <UserAuthForm />
-        <div className="mt-4 text-center text-sm">
-          <p className="text-muted-foreground">
-            Prefer to sign in without a password?{" "}
-            <Link
-              href="/magic-link"
-              className="underline underline-offset-4 hover:text-primary"
-            >
-              Sign in with a magic link
-            </Link>
-          </p>
-        </div>
-        <p className="mt-4 px-8 text-center text-sm text-muted-foreground">
-          By clicking login, you agree to our{" "}
-          <Link
-            href="/terms"
-            className="underline underline-offset-4 hover:text-primary"
-          >
-            Terms of Service
-          </Link>{" "}
-          and{" "}
-          <Link
-            href="/privacy"
-            className="underline underline-offset-4 hover:text-primary"
-          >
-            Privacy Policy
-          </Link>
-          .
-        </p>
-      </Card>
-    </AuthLayout>
+    <SignInPage
+      title={
+        <span className="font-light text-foreground tracking-tighter">
+          Welcome to Top Travel
+        </span>
+      }
+      description="Sign in to your account and continue your journey with us"
+      heroImageSrc="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=2160&q=80"
+      testimonials={sampleTestimonials}
+      onSignIn={handleSignIn}
+      onResetPassword={handleResetPassword}
+      onCreateAccount={handleCreateAccount}
+    />
   );
 }

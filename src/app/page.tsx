@@ -362,7 +362,7 @@ export default async function Home() {
       id: "events",
       label: "Conciertos & Eventos",
       href: "/events",
-      items: featuredEvents.slice(0, 3).map((event) => ({
+      items: featuredEvents.slice(0, 6).map((event) => ({
         id: event.id,
         title: event.title,
         description: `${event.locationCity}, ${event.locationCountry}`,
@@ -377,8 +377,8 @@ export default async function Home() {
     {
       id: "destinations",
       label: "Destinos Top",
-      href: "/destinations",
-      items: topDestinations.slice(0, 3).map((dest) => ({
+      href: "/tags/top-destinations",
+      items: topDestinations.slice(0, 6).map((dest) => ({
         id: dest.id,
         title: `${dest.city}, ${dest.country}`,
         description:
@@ -396,7 +396,7 @@ export default async function Home() {
       id: "fixed-departures",
       label: "Salidas Fijas",
       href: "/fixed-departures",
-      items: fixedDepartures.slice(0, 3).map((dep) => ({
+      items: fixedDepartures.slice(0, 6).map((dep) => ({
         id: dep.id,
         title: dep.title,
         description: "Viajes programados con fechas fijas y precios especiales",
@@ -412,7 +412,7 @@ export default async function Home() {
       id: "south-america",
       label: "Destinos Sudamericanos",
       href: "/destinations",
-      items: topDestinations.slice(0, 3).map((dest) => ({
+      items: topDestinations.slice(0, 6).map((dest) => ({
         id: dest.id,
         title: `${dest.city}, ${dest.country}`,
         description: "Descubre Sudamérica con nuestras rutas exclusivas",

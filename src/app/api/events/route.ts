@@ -22,8 +22,8 @@ export async function GET(request: Request) {
     const to = searchParams.get("to");
     const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
     const pageSize = Math.min(
-      50,
-      Math.max(1, parseInt(searchParams.get("pageSize") || "10", 10))
+      100, // Increased from 50 to 100
+      Math.max(1, parseInt(searchParams.get("pageSize") || "50", 10)) // Changed default from 10 to 50
     );
     const skip = (page - 1) * pageSize;
 

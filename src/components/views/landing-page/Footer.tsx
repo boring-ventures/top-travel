@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { FacebookIcon, TwitterIcon, InstagramIcon, Globe2 } from "lucide-react";
+import { FacebookIcon, TwitterIcon, InstagramIcon } from "lucide-react";
 import { ShineBorder } from "@/components/magicui/shine-border";
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -10,10 +11,34 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <Globe2 className="h-7 w-7 text-primary" aria-hidden="true" />
-              <span className="text-xl font-bold text-primary">
-                GABYTOPTRAVEL
-              </span>
+              <Image
+                src="/logos/iso_blue.svg"
+                alt="Logo"
+                width={32}
+                height={32}
+                className="dark:hidden"
+              />
+              <Image
+                src="/logos/iso_white.svg"
+                alt="Logo"
+                width={32}
+                height={32}
+                className="hidden dark:block"
+              />
+              <Image
+                src="/logos/name_blue.svg"
+                alt="GABYTOPTRAVEL"
+                width={100}
+                height={28}
+                className="dark:hidden"
+              />
+              <Image
+                src="/logos/name_white.svg"
+                alt="GABYTOPTRAVEL"
+                width={100}
+                height={28}
+                className="hidden dark:block"
+              />
             </div>
             <p className="text-sm text-foreground/80">
               Viajes premium, atención personalizada y logística sin estrés.

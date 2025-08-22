@@ -82,7 +82,7 @@ export function PasswordStrengthIndicator({
       : requirements.filter((req) => req.met).length;
 
   let strength: PasswordStrength = "weak";
-  let strengthColor = "bg-red-500";
+  let strengthColor = "bg-corporate-red";
   let strengthWidth = "20%";
 
   if (metRequirementsCount === 5) {
@@ -91,7 +91,7 @@ export function PasswordStrengthIndicator({
     strengthWidth = "100%";
   } else if (metRequirementsCount === 4) {
     strength = "strong";
-    strengthColor = "bg-blue-500";
+    strengthColor = "bg-corporate-blue";
     strengthWidth = "75%";
   } else if (metRequirementsCount === 3) {
     strength = "medium";
@@ -99,7 +99,7 @@ export function PasswordStrengthIndicator({
     strengthWidth = "50%";
   } else if (metRequirementsCount === 2) {
     strength = "weak";
-    strengthColor = "bg-orange-500";
+    strengthColor = "bg-corporate-red";
     strengthWidth = "25%";
   }
 
