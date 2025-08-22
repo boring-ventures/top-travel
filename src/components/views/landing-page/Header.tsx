@@ -6,6 +6,7 @@ import { Menu, X } from "lucide-react";
 import { AuthHeader } from "./auth-header";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { TextLogo } from "@/components/ui/text-logo";
 import Image from "next/image";
 
 const navItems = [
@@ -88,25 +89,10 @@ export default function Header() {
                     isScrolled && "w-10 h-8"
                   )}
                 />
-                <Image
-                  src="/logos/name_blue.svg"
-                  alt="GABYTOPTRAVEL"
-                  width={80}
-                  height={24}
-                  className={cn(
-                    "transition-all duration-300 ease-out dark:hidden",
-                    isScrolled && "w-20 h-8"
-                  )}
-                />
-                <Image
-                  src="/logos/name_white.svg"
-                  alt="GABYTOPTRAVEL"
-                  width={80}
-                  height={24}
-                  className={cn(
-                    "transition-all duration-300 ease-out hidden dark:block",
-                    isScrolled && "w-20 h-8"
-                  )}
+                <TextLogo
+                  variant="light"
+                  size={isScrolled ? "md" : "lg"}
+                  className="transition-all duration-300 ease-out"
                 />
               </Link>
               <button
