@@ -10,7 +10,15 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { Eye, Loader2, Calendar, DollarSign, MapPin, Tag } from "lucide-react";
+import {
+  Eye,
+  Loader2,
+  Calendar,
+  DollarSign,
+  MapPin,
+  Tag,
+  Image,
+} from "lucide-react";
 
 interface ViewPackageModalProps {
   packageSlug: string;
@@ -147,19 +155,48 @@ export function ViewPackageModal({ packageSlug }: ViewPackageModalProps) {
                     </div>
                   </div>
                 )}
+              </div>
 
-                {packageData.heroImageUrl && (
-                  <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
-                    <MapPin className="h-4 w-4 text-gray-500" />
-                    <div>
-                      <p className="text-sm font-medium">Imagen</p>
-                      <p className="text-sm text-gray-600 truncate">
-                        {packageData.heroImageUrl}
-                      </p>
+              {/* Hero Image */}
+              {packageData.heroImageUrl && (
+                <div className="pt-4 border-t">
+                  <div className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
+                    <Image className="h-4 w-4" />
+                    Imagen Principal
+                  </div>
+                  <div className="relative">
+                    <img
+                      src={packageData.heroImageUrl}
+                      alt={packageData.title}
+                      className="w-full h-48 object-cover rounded-md"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = "none";
+                        target.nextElementSibling?.classList.remove("hidden");
+                      }}
+                      onLoad={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.nextElementSibling?.classList.add("hidden");
+                      }}
+                    />
+                    <div className="w-full h-48 bg-muted rounded-md flex items-center justify-center text-sm text-muted-foreground">
+                      <div className="text-center">
+                        <Image className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                        <div>Cargando imagen...</div>
+                      </div>
+                    </div>
+                    <div className="hidden w-full h-48 bg-muted rounded-md flex items-center justify-center text-sm text-muted-foreground">
+                      <div className="text-center">
+                        <Image className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                        <div>Error al cargar la imagen</div>
+                        <div className="text-xs mt-1 break-all">
+                          {packageData.heroImageUrl}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
 
               {/* Inclusions & Exclusions */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

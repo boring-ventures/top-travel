@@ -12,7 +12,18 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
-import { Loader2, Eye, Calendar, MapPin, User, DollarSign, Image, Package, X } from "lucide-react";
+import {
+  Loader2,
+  Eye,
+  Calendar,
+  MapPin,
+  User,
+  DollarSign,
+  Image,
+  Package,
+  X,
+  Tag,
+} from "lucide-react";
 
 interface ViewEventModalProps {
   open: boolean;
@@ -123,7 +134,8 @@ export function ViewEventModal({
                             Precio
                           </div>
                           <div className="text-sm font-medium">
-                            {event.currency === 'USD' ? '$' : 'Bs. '}{event.fromPrice}
+                            {event.currency === "USD" ? "$" : "Bs. "}
+                            {event.fromPrice}
                           </div>
                         </div>
                       </div>
@@ -173,6 +185,22 @@ export function ViewEventModal({
                   </div>
                 </div>
 
+                {event.tags && event.tags.length > 0 && (
+                  <div className="pt-4 border-t">
+                    <div className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
+                      <Tag className="h-4 w-4" />
+                      Etiquetas
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {event.tags.map((tag: any) => (
+                        <Badge key={tag.id} variant="outline">
+                          {tag.name}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {event.heroImageUrl && (
                   <div className="pt-4 border-t">
                     <div className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
@@ -184,7 +212,31 @@ export function ViewEventModal({
                         src={event.heroImageUrl}
                         alt={event.title}
                         className="w-full h-48 object-cover rounded-md"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = "none";
+                          target.nextElementSibling?.classList.remove("hidden");
+                        }}
+                        onLoad={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.nextElementSibling?.classList.add("hidden");
+                        }}
                       />
+                      <div className="w-full h-48 bg-muted rounded-md flex items-center justify-center text-sm text-muted-foreground">
+                        <div className="text-center">
+                          <Image className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                          <div>Cargando imagen...</div>
+                        </div>
+                      </div>
+                      <div className="hidden w-full h-48 bg-muted rounded-md flex items-center justify-center text-sm text-muted-foreground">
+                        <div className="text-center">
+                          <Image className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                          <div>Error al cargar la imagen</div>
+                          <div className="text-xs mt-1 break-all">
+                            {event.heroImageUrl}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -212,11 +264,13 @@ export function ViewEventModal({
                       No Incluye
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      {event.exclusions.map((exclusion: string, index: number) => (
-                        <Badge key={index} variant="outline">
-                          {exclusion}
-                        </Badge>
-                      ))}
+                      {event.exclusions.map(
+                        (exclusion: string, index: number) => (
+                          <Badge key={index} variant="outline">
+                            {exclusion}
+                          </Badge>
+                        )
+                      )}
                     </div>
                   </div>
                 )}
@@ -234,10 +288,47 @@ export function ViewEventModal({
                   </div>
                 )}
 
-                {event.gallery && (
+                {event.gallery &&
+                  Array.isArray(event.gallery) &&
+                  event.gallery.length > 0 && (
+                    <div className="pt-4 border-t">
+                      <div className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
+                        <Image className="h-4 w-4" />
+                        Galería
+                      </div>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        {event.gallery.map(
+                          (imageUrl: string, index: number) => (
+                            <div key={index} className="relative">
+                              <img
+                                src={imageUrl}
+                                alt={`${event.title} - Imagen ${index + 1}`}
+                                className="w-full h-32 object-cover rounded-md"
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.style.display = "none";
+                                  target.nextElementSibling?.classList.remove(
+                                    "hidden"
+                                  );
+                                }}
+                              />
+                              <div className="hidden w-full h-32 bg-muted rounded-md flex items-center justify-center text-xs text-muted-foreground">
+                                <div className="text-center">
+                                  <Image className="h-4 w-4 mx-auto mb-1 opacity-50" />
+                                  <div>Error</div>
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                {event.gallery && !Array.isArray(event.gallery) && (
                   <div className="pt-4 border-t">
                     <div className="text-sm font-medium text-muted-foreground mb-2">
-                      Galería
+                      Galería (JSON)
                     </div>
                     <div className="text-sm bg-muted p-3 rounded-md">
                       <pre className="whitespace-pre-wrap text-xs">

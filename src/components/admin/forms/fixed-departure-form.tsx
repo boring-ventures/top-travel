@@ -9,6 +9,7 @@ import {
 } from "@/lib/validations/fixed-departure";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { AmenitiesInput } from "@/components/ui/amenities-input";
@@ -53,6 +54,7 @@ type FixedDepartureFormInput = z.infer<typeof FixedDepartureFormSchema>;
 export function FixedDepartureForm({ onSuccess }: { onSuccess?: () => void }) {
   const [submitting, setSubmitting] = useState(false);
   const [destinations, setDestinations] = useState<any[]>([]);
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -82,12 +84,30 @@ export function FixedDepartureForm({ onSuccess }: { onSuccess?: () => void }) {
   const handleSubmit = form.handleSubmit(async (values) => {
     setSubmitting(true);
     try {
+      let finalHeroImageUrl = values.heroImageUrl;
+
+      // Upload image if a new file was selected
+      if (selectedImageFile) {
+        console.log("Uploading selected image file...");
+        const slug = values.slug || "temp";
+        finalHeroImageUrl = await uploadFixedDepartureImage(
+          selectedImageFile,
+          slug
+        );
+        console.log("Image uploaded successfully:", finalHeroImageUrl);
+      }
+
       // Convert dateRange to startDate and endDate for API compatibility
       const apiData: any = {
         ...values,
-        startDate: values.dateRange?.from,
-        endDate: values.dateRange?.to,
+        heroImageUrl: finalHeroImageUrl,
+        startDate:
+          values.dateRange?.from?.toISOString() || new Date().toISOString(),
+        endDate:
+          values.dateRange?.to?.toISOString() || new Date().toISOString(),
       };
+
+      // Remove the dateRange field as it's not part of the API schema
       delete apiData.dateRange;
 
       // Clean up empty strings to avoid validation issues
@@ -180,10 +200,8 @@ export function FixedDepartureForm({ onSuccess }: { onSuccess?: () => void }) {
         <ImageUpload
           value={form.watch("heroImageUrl")}
           onChange={(url) => form.setValue("heroImageUrl", url)}
-          onUpload={async (file) => {
-            const slug = form.watch("slug") || "temp";
-            return uploadFixedDepartureImage(file, slug);
-          }}
+          onFileSelect={(file) => setSelectedImageFile(file)}
+          deferred={true}
           placeholder="Imagen Principal de la Salida Fija"
           aspectRatio={16 / 9}
         />

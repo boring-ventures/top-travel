@@ -29,20 +29,17 @@ export interface SearchFilters {
   status: string;
   featured: string;
   dateFilter: string;
-  displayTag: string;
 }
 
 interface EnhancedSearchProps {
   onFiltersChange: (filters: SearchFilters) => void;
   placeholder?: string;
-  displayTags?: string[];
   className?: string;
 }
 
 export const EnhancedSearch = ({
   onFiltersChange,
   placeholder = "Buscar...",
-  displayTags = [],
   className,
 }: EnhancedSearchProps) => {
   const [filters, setFilters] = useState<SearchFilters>({
@@ -50,7 +47,6 @@ export const EnhancedSearch = ({
     status: "all",
     featured: "all",
     dateFilter: "all",
-    displayTag: "all",
   });
 
   const [isOpen, setIsOpen] = useState(false);
@@ -67,7 +63,6 @@ export const EnhancedSearch = ({
     filters.status,
     filters.featured,
     filters.dateFilter,
-    filters.displayTag,
     onFiltersChange,
   ]);
 
@@ -81,7 +76,6 @@ export const EnhancedSearch = ({
       status: "all",
       featured: "all",
       dateFilter: "all",
-      displayTag: "all",
     });
   };
 
@@ -89,14 +83,12 @@ export const EnhancedSearch = ({
     filters.status !== "all" ||
     filters.featured !== "all" ||
     filters.dateFilter !== "all" ||
-    filters.displayTag !== "all" ||
     filters.search !== "";
 
   const activeFiltersCount = [
     filters.status !== "all",
     filters.featured !== "all",
     filters.dateFilter !== "all",
-    filters.displayTag !== "all",
     filters.search !== "",
   ].filter(Boolean).length;
 
@@ -211,33 +203,6 @@ export const EnhancedSearch = ({
                     </SelectContent>
                   </Select>
                 </div>
-
-                {/* Display Tag Filter */}
-                {displayTags.length > 0 && (
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">
-                      Etiqueta de visualización
-                    </label>
-                    <Select
-                      value={filters.displayTag}
-                      onValueChange={(value) =>
-                        handleFilterChange("displayTag", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Seleccionar etiqueta" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">Todas las etiquetas</SelectItem>
-                        {displayTags.map((tag) => (
-                          <SelectItem key={tag} value={tag}>
-                            {tag}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
               </div>
             </PopoverContent>
           </Popover>
@@ -323,31 +288,6 @@ export const EnhancedSearch = ({
                 </SelectContent>
               </Select>
             </div>
-
-            {/* Display Tag Filter */}
-            <div className="space-y-2 w-full">
-              <label className="text-sm font-medium">
-                Etiqueta de visualización
-              </label>
-              <Select
-                value={filters.displayTag}
-                onValueChange={(value) =>
-                  handleFilterChange("displayTag", value)
-                }
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Seleccionar etiqueta" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas las etiquetas</SelectItem>
-                  {displayTags.map((tag) => (
-                    <SelectItem key={tag} value={tag}>
-                      {tag}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
           </div>
         </div>
       )}
@@ -413,19 +353,6 @@ export const EnhancedSearch = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => handleFilterChange("dateFilter", "all")}
-                className="h-auto p-0 hover:bg-transparent"
-              >
-                <X className="h-3 w-3" />
-              </Button>
-            </Badge>
-          )}
-          {filters.displayTag !== "all" && (
-            <Badge variant="secondary" className="flex items-center gap-1">
-              Etiqueta: {filters.displayTag}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleFilterChange("displayTag", "all")}
                 className="h-auto p-0 hover:bg-transparent"
               >
                 <X className="h-3 w-3" />

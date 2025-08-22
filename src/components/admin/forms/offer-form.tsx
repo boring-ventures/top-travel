@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { ImageUpload } from "@/components/ui/image-upload";
+import { TagsInput } from "@/components/ui/tags-input";
 import {
   Command,
   CommandEmpty,
@@ -31,7 +32,7 @@ import { DateRange } from "react-day-picker";
 import { z } from "zod";
 import { useToast } from "@/components/ui/use-toast";
 import { useQuery } from "@tanstack/react-query";
-import { Check, ChevronsUpDown, Tag } from "lucide-react";
+import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   ContentStatusSchema,
@@ -45,7 +46,6 @@ const OfferFormSchema = z.object({
   subtitle: z.string().optional(),
   bannerImageUrl: z.string().optional(),
   isFeatured: z.boolean().optional(),
-  displayTag: z.string().optional(),
   dateRange: z
     .object({
       from: z.date().optional(),
@@ -55,6 +55,7 @@ const OfferFormSchema = z.object({
   status: ContentStatusSchema.default("DRAFT"),
   packageId: z.string().optional(),
   externalUrl: z.string().optional(),
+  tagIds: z.array(z.string()).optional(),
 });
 
 type OfferFormInput = z.infer<typeof OfferFormSchema>;
@@ -79,7 +80,7 @@ const useTags = () => {
 export function OfferForm({ onSuccess, initialValues }: OfferFormProps) {
   const [submitting, setSubmitting] = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
-  const [displayTagOpen, setDisplayTagOpen] = useState(false);
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   const { toast } = useToast();
   const { data: tags, isLoading: tagsLoading } = useTags();
 
@@ -87,7 +88,12 @@ export function OfferForm({ onSuccess, initialValues }: OfferFormProps) {
 
   const form = useForm<OfferFormInput>({
     resolver: zodResolver(OfferFormSchema),
-    defaultValues: { title: "", isFeatured: false, status: "DRAFT" },
+    defaultValues: {
+      title: "",
+      isFeatured: false,
+      status: "DRAFT",
+      tagIds: [],
+    },
     mode: "onChange", // Enable real-time validation
   });
 
@@ -110,11 +116,11 @@ export function OfferForm({ onSuccess, initialValues }: OfferFormProps) {
         subtitle: (initialValues as any).subtitle ?? "",
         bannerImageUrl: (initialValues as any).bannerImageUrl ?? "",
         isFeatured: Boolean((initialValues as any).isFeatured) ?? false,
-        displayTag: (initialValues as any).displayTag ?? "",
         status: (initialValues as any).status ?? "DRAFT",
         dateRange,
         packageId: (initialValues as any).packageId ?? "",
         externalUrl: (initialValues as any).externalUrl ?? "",
+        tagIds: (initialValues as any).tagIds ?? [],
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -123,11 +129,22 @@ export function OfferForm({ onSuccess, initialValues }: OfferFormProps) {
   const handleSubmit = form.handleSubmit(async (values) => {
     console.log("=== FORM SUBMISSION START ===");
     console.log("Form submitted with values:", values);
-    console.log("Form is valid:", form.formState.isValid);
-    console.log("Form errors:", form.formState.errors);
-    console.log("Initial values:", initialValues);
+    console.log("Selected image file:", selectedImageFile);
     setSubmitting(true);
     try {
+      let finalBannerImageUrl = values.bannerImageUrl;
+
+      // Upload image if a new file was selected
+      if (selectedImageFile) {
+        console.log("Uploading selected image file...");
+        const offerId = (initialValues as any)?.id || "temp";
+        finalBannerImageUrl = await uploadOfferImage(
+          selectedImageFile,
+          offerId
+        );
+        console.log("Image uploaded successfully:", finalBannerImageUrl);
+      }
+
       const isEdit = Boolean((initialValues as any)?.id);
       const url = isEdit
         ? `/api/offers/${(initialValues as any).id}`
@@ -137,6 +154,7 @@ export function OfferForm({ onSuccess, initialValues }: OfferFormProps) {
       // Convert dateRange to startAt and endAt for API compatibility
       const apiData: any = {
         ...values,
+        bannerImageUrl: finalBannerImageUrl,
         startAt: values.dateRange?.from,
         endAt: values.dateRange?.to,
       };
@@ -159,7 +177,6 @@ export function OfferForm({ onSuccess, initialValues }: OfferFormProps) {
       });
 
       console.log("API response status:", res.status);
-      console.log("API response headers:", res.headers);
 
       if (!res.ok) {
         const errorData = await res.json();
@@ -170,6 +187,9 @@ export function OfferForm({ onSuccess, initialValues }: OfferFormProps) {
       const result = await res.json();
       console.log("API success:", result);
       console.log("=== FORM SUBMISSION END ===");
+
+      // Clear the selected file after successful submission
+      setSelectedImageFile(null);
 
       toast({
         title: isEdit ? "Oferta actualizada" : "Oferta creada",
@@ -304,96 +324,20 @@ export function OfferForm({ onSuccess, initialValues }: OfferFormProps) {
         />
       </div>
 
-      <div className="space-y-2">
-        <Label>Etiqueta de Visualización</Label>
-        <Popover open={displayTagOpen} onOpenChange={setDisplayTagOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              role="combobox"
-              aria-expanded={displayTagOpen}
-              className="w-full justify-between"
-            >
-              <div className="flex items-center gap-2">
-                <Tag className="h-4 w-4" />
-                <span className="text-sm">
-                  {form.watch("displayTag") || "Seleccionar etiqueta"}
-                </span>
-              </div>
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-full p-0" align="start">
-            <Command>
-              <CommandInput placeholder="Buscar etiquetas..." />
-              <CommandList>
-                <CommandEmpty>No se encontraron etiquetas.</CommandEmpty>
-                <CommandGroup>
-                  <CommandItem
-                    value=""
-                    onSelect={() => {
-                      form.setValue("displayTag", "");
-                      setDisplayTagOpen(false);
-                    }}
-                  >
-                    <Check
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        !form.watch("displayTag") ? "opacity-100" : "opacity-0"
-                      )}
-                    />
-                    Sin etiqueta
-                  </CommandItem>
-                  {tagsLoading ? (
-                    <CommandItem value="loading" disabled>
-                      Cargando etiquetas...
-                    </CommandItem>
-                  ) : (
-                    tags?.map((tag: any) => (
-                      <CommandItem
-                        key={tag.id}
-                        value={tag.name}
-                        onSelect={() => {
-                          form.setValue("displayTag", tag.name);
-                          setDisplayTagOpen(false);
-                        }}
-                      >
-                        <Check
-                          className={cn(
-                            "mr-2 h-4 w-4",
-                            form.watch("displayTag") === tag.name
-                              ? "opacity-100"
-                              : "opacity-0"
-                          )}
-                        />
-                        <div className="flex flex-col">
-                          <span className="font-medium">{tag.name}</span>
-                          <span className="text-sm text-muted-foreground">
-                            {tag.type}
-                          </span>
-                        </div>
-                      </CommandItem>
-                    ))
-                  )}
-                </CommandGroup>
-              </CommandList>
-            </Command>
-          </PopoverContent>
-        </Popover>
-        <p className="text-xs text-muted-foreground">
-          Etiqueta para mostrar en secciones específicas de la página principal
-        </p>
-      </div>
+      <TagsInput
+        value={form.watch("tagIds") || []}
+        onChange={(value) => form.setValue("tagIds", value)}
+        label="Etiquetas"
+        placeholder="Seleccionar etiquetas..."
+      />
 
       <div className="space-y-2">
         <Label htmlFor="bannerImageUrl">Imagen de Banner</Label>
         <ImageUpload
           value={form.watch("bannerImageUrl")}
           onChange={(url) => form.setValue("bannerImageUrl", url)}
-          onUpload={async (file) => {
-            const offerId = (initialValues as any)?.id || "temp";
-            return uploadOfferImage(file, offerId);
-          }}
+          onFileSelect={(file) => setSelectedImageFile(file)}
+          deferred={true}
           placeholder="Imagen de Banner de la Oferta"
           aspectRatio={2 / 1}
         />

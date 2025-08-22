@@ -113,3 +113,40 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const bucket = searchParams.get("bucket");
+    const path = searchParams.get("path");
+
+    if (!bucket || !path) {
+      return NextResponse.json(
+        { error: "Bucket and path are required" },
+        { status: 400 }
+      );
+    }
+
+    // Delete from Supabase Storage
+    const { error: deleteError } = await supabase.storage
+      .from(bucket)
+      .remove([path]);
+
+    if (deleteError) {
+      throw new Error(`Delete failed: ${deleteError.message}`);
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Image deleted successfully",
+    });
+  } catch (error) {
+    console.error("Image delete error:", error);
+    return NextResponse.json(
+      {
+        error: error instanceof Error ? error.message : "Delete failed",
+      },
+      { status: 500 }
+    );
+  }
+}

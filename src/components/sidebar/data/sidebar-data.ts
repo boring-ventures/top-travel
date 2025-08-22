@@ -70,13 +70,11 @@ export const sidebarData: SidebarData = {
         },
         { title: "Destinos", url: "/cms/destinations", icon: MapPin },
         { title: "Etiquetas", url: "/cms/tags", icon: Tags },
-        { title: "Departamentos", url: "/cms/departments", icon: Building2 },
         {
           title: "Testimonios",
           url: "/cms/testimonials",
           icon: MessageSquare,
         },
-        { title: "Páginas", url: "/cms/pages", icon: FileText },
         {
           title: "Plantillas WhatsApp",
           url: "/cms/whatsapp-templates",

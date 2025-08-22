@@ -47,10 +47,25 @@ export async function GET(request: Request) {
         orderBy: { startDate: "asc" },
         skip,
         take: pageSize,
+        include: {
+          eventTags: {
+            include: {
+              tag: true,
+            },
+          },
+        },
       }),
       prisma.event.count({ where }),
     ]);
-    return NextResponse.json({ items, total, page, pageSize });
+
+    // Transform items to include tagIds for frontend compatibility
+    const transformedItems = items.map((item) => ({
+      ...item,
+      tagIds: item.eventTags.map((et) => et.tag.id),
+      tags: item.eventTags.map((et) => et.tag),
+    }));
+
+    return NextResponse.json({ items: transformedItems, total, page, pageSize });
   } catch {
     return NextResponse.json(
       { error: "Failed to fetch events" },
@@ -81,11 +96,25 @@ export async function POST(request: Request) {
       parsed.heroImageUrl
     );
 
+    const { tagIds, ...eventData } = parsed;
+
     const created = await prisma.event.create({
       data: {
-        ...parsed,
-        detailsJson: sanitizeRichJson(parsed.detailsJson),
-        gallery: sanitizeRichJson(parsed.gallery),
+        ...eventData,
+        detailsJson: sanitizeRichJson(eventData.detailsJson),
+        gallery: sanitizeRichJson(eventData.gallery),
+        eventTags: tagIds && tagIds.length > 0 ? {
+          create: tagIds.map((tagId) => ({
+            tagId,
+          })),
+        } : undefined,
+      },
+      include: {
+        eventTags: {
+          include: {
+            tag: true,
+          },
+        },
       },
     });
 
@@ -96,7 +125,14 @@ export async function POST(request: Request) {
       created.heroImageUrl
     );
 
-    return NextResponse.json(created, { status: 201 });
+    // Transform response to include tagIds for frontend compatibility
+    const transformedEvent = {
+      ...created,
+      tagIds: created.eventTags.map((et) => et.tag.id),
+      tags: created.eventTags.map((et) => et.tag),
+    };
+
+    return NextResponse.json(transformedEvent, { status: 201 });
   } catch (error: any) {
     console.error("API POST /events - Error:", error);
     const status = error?.status ?? 400;

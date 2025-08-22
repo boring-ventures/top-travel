@@ -1,15 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   DepartmentCreateInput,
   DepartmentCreateSchema,
+  DepartmentUpdateSchema,
   DepartmentUpdateInput,
 } from "@/lib/validations/department";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { ImageUpload } from "@/components/ui/image-upload";
 import {
   Form,
@@ -26,84 +29,89 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
 import { uploadDepartmentImage } from "@/lib/supabase/storage";
+import { Loader2 } from "lucide-react";
 
-type DepartmentFormProps = {
+interface DepartmentFormProps {
   onSuccess?: () => void;
-  // If provided, the form works in edit mode and PATCHes to /api/departments/[type]
-  initialValues?: Partial<DepartmentUpdateInput & { type: string }>;
-  disableType?: boolean;
-};
+  initialValues?: Partial<DepartmentUpdateInput & { id: string }>;
+}
 
 export function DepartmentForm({
   onSuccess,
   initialValues,
-  disableType,
 }: DepartmentFormProps) {
   const [submitting, setSubmitting] = useState(false);
-  const { toast } = useToast();
-  const form = useForm<DepartmentCreateInput>({
-    resolver: zodResolver(DepartmentCreateSchema),
-    defaultValues: {
-      type: "WEDDINGS",
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+
+  const isEditing = !!initialValues;
+  const schema = isEditing ? DepartmentUpdateSchema : DepartmentCreateSchema;
+
+  const form = useForm<DepartmentCreateInput | DepartmentUpdateInput>({
+    resolver: zodResolver(schema),
+    defaultValues: initialValues || {
+      type: undefined,
       title: "",
       intro: "",
-      heroImageUrl: "",
+      heroImageUrl: undefined,
     },
   });
 
-  useEffect(() => {
-    if (initialValues) {
-      form.reset({
-        type: (initialValues as any).type ?? "WEDDINGS",
-        title: (initialValues as any).title ?? "",
-        intro: (initialValues as any).intro ?? "",
-        heroImageUrl: (initialValues as any).heroImageUrl ?? "",
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialValues?.type]);
+  const disableType = isEditing;
 
   const handleSubmit = form.handleSubmit(async (values) => {
     setSubmitting(true);
     try {
-      const isEdit = Boolean(initialValues?.type);
-      const url = isEdit
-        ? `/api/departments/${initialValues?.type}`
+      let finalHeroImageUrl = values.heroImageUrl;
+
+      // Upload image if a new file was selected
+      if (selectedImageFile) {
+        console.log("Uploading selected image file...");
+        const departmentType = values.type || "temp";
+        finalHeroImageUrl = await uploadDepartmentImage(
+          selectedImageFile,
+          departmentType
+        );
+        console.log("Image uploaded successfully:", finalHeroImageUrl);
+      }
+
+      const url = isEditing
+        ? `/api/departments/${initialValues.id}`
         : "/api/departments";
-      const method = isEdit ? "PATCH" : "POST";
+      const method = isEditing ? "PATCH" : "POST";
+
+      // Clean up empty strings to avoid validation issues
+      const apiData: any = {
+        ...values,
+        heroImageUrl: finalHeroImageUrl || undefined,
+      };
+      Object.keys(apiData).forEach((key) => {
+        if (apiData[key] === "" || apiData[key] === null) {
+          delete apiData[key];
+        }
+      });
+
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify(apiData),
       });
 
       if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error || `Failed to save (${res.status})`);
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to save");
       }
 
-      toast({
-        title: "Success",
-        description: isEdit
-          ? "Department updated successfully"
-          : "Department created successfully",
-      });
+      const result = await res.json();
+
+      // Clear the selected file after successful submission
+      setSelectedImageFile(null);
+
       onSuccess?.();
-      if (!isEdit) {
-        form.reset();
-      }
+      if (!isEditing) form.reset();
     } catch (error) {
       console.error("Form submission error:", error);
-      toast({
-        title: "Error",
-        description:
-          error instanceof Error ? error.message : "Failed to save department",
-        variant: "destructive",
-      });
+      throw error;
     } finally {
       setSubmitting(false);
     }
@@ -187,10 +195,8 @@ export function DepartmentForm({
                 <ImageUpload
                   value={field.value}
                   onChange={field.onChange}
-                  onUpload={async (file) => {
-                    const departmentType = form.watch("type") || "temp";
-                    return uploadDepartmentImage(file, departmentType);
-                  }}
+                  onFileSelect={(file) => setSelectedImageFile(file)}
+                  deferred={true}
                   placeholder="Imagen Principal del Departamento"
                   aspectRatio={3 / 2}
                 />

@@ -6,7 +6,7 @@ export const DestinationCreateSchema = z.object({
   country: NonEmptyStringSchema,
   city: NonEmptyStringSchema,
   description: z.string().optional(),
-  heroImageUrl: z.string().url().optional(),
+  heroImageUrl: z.string().optional(),
   isFeatured: z.boolean().optional(),
   tagIds: z.array(z.string()).optional(),
 });

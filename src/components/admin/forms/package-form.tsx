@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -46,6 +46,7 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
   const [tagsOpen, setTagsOpen] = useState(false);
   const [currencyOpen, setCurrencyOpen] = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   const { toast } = useToast();
 
   console.log("PackageForm rendered with initialValues:", initialValues);
@@ -102,26 +103,33 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
           (initialValues as any).packageTags?.map((t: any) => t.tag.id) ?? [],
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialValues?.id]);
+  }, [initialValues, form]);
 
   const selectedDestinationIds = form.watch("destinationIds") || [];
-  const selectedTagIds = form.watch("tagIds") || [];
-
   const selectedDestinations = destinations.filter((d) =>
     selectedDestinationIds.includes(d.id)
   );
+
+  const selectedTagIds = form.watch("tagIds") || [];
   const selectedTags = tags.filter((t) => selectedTagIds.includes(t.id));
 
   const handleSubmit = form.handleSubmit(async (values) => {
     console.log("=== PACKAGE FORM SUBMISSION START ===");
     console.log("Form submitted with values:", values);
-    console.log("Form is valid:", form.formState.isValid);
-    console.log("Form errors:", form.formState.errors);
-    console.log("Initial values:", initialValues);
+    console.log("Selected image file:", selectedImageFile);
     setSubmitting(true);
 
     try {
+      let finalHeroImageUrl = values.heroImageUrl;
+
+      // Upload image if a new file was selected
+      if (selectedImageFile) {
+        console.log("Uploading selected image file...");
+        const slug = values.slug || "temp";
+        finalHeroImageUrl = await uploadPackageImage(selectedImageFile, slug);
+        console.log("Image uploaded successfully:", finalHeroImageUrl);
+      }
+
       const isEdit = Boolean((initialValues as any)?.id);
       const url = isEdit
         ? `/api/packages/${(initialValues as any).slug}`
@@ -129,7 +137,10 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
       const method = isEdit ? "PATCH" : "POST";
 
       // Clean up empty strings to avoid validation issues
-      const apiData: any = { ...values };
+      const apiData: any = {
+        ...values,
+        heroImageUrl: finalHeroImageUrl,
+      };
       Object.keys(apiData).forEach((key) => {
         if (apiData[key] === "") {
           delete apiData[key];
@@ -146,7 +157,6 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
       });
 
       console.log("API response status:", res.status);
-      console.log("API response headers:", res.headers);
 
       if (!res.ok) {
         const errorData = await res.json();
@@ -157,6 +167,9 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
       const result = await res.json();
       console.log("API success:", result);
       console.log("=== PACKAGE FORM SUBMISSION END ===");
+
+      // Clear the selected file after successful submission
+      setSelectedImageFile(null);
 
       toast({
         title: isEdit ? "Paquete actualizado" : "Paquete creado",
@@ -231,10 +244,8 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
         <ImageUpload
           value={form.watch("heroImageUrl")}
           onChange={(url) => form.setValue("heroImageUrl", url)}
-          onUpload={async (file) => {
-            const slug = form.watch("slug") || "temp";
-            return uploadPackageImage(file, slug);
-          }}
+          onFileSelect={(file) => setSelectedImageFile(file)}
+          deferred={true}
           placeholder="Imagen Principal del Paquete"
           aspectRatio={3 / 2}
         />

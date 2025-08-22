@@ -99,6 +99,8 @@ model Tag {
   // Relations
   packageTags    PackageTag[]
   destinationTags DestinationTag[]
+  offerTags      OfferTag[]
+  eventTags      EventTag[]
 
   @@index([type])
 }
@@ -193,8 +195,24 @@ model Event {
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 
+  // Relations
+  eventTags EventTag[]
+
   @@index([startDate, endDate])
   @@index([status])
+}
+
+// Explicit M:N between Event and Tag
+model EventTag {
+  eventId String
+  tagId   String
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  tag   Tag   @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([eventId, tagId])
+  @@map("event_tags")
+  @@index([tagId])
 }
 
 // Fixed departures (date-bound trips) referencing a Destination
@@ -231,12 +249,14 @@ model Offer {
   startAt        DateTime?
   endAt          DateTime?
   status         ContentStatus @default(DRAFT)
-  displayTag     String?       // Tag to use for home page sections (e.g., "destinos-top", "ofertas-verano")
 
   // Either tie to a package or use externalUrl
   packageId  String?
   package    Package?   @relation(fields: [packageId], references: [id])
   externalUrl String?
+
+  // Relations
+  offerTags  OfferTag[]
 
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
@@ -244,7 +264,19 @@ model Offer {
   @@index([isFeatured])
   @@index([status])
   @@index([startAt, endAt])
-  @@index([displayTag])
+}
+
+// Explicit M:N between Offer and Tag
+model OfferTag {
+  offerId String
+  tagId   String
+
+  offer Offer @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  tag   Tag   @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([offerId, tagId])
+  @@map("offer_tags")
+  @@index([tagId])
 }
 
 // Department landing pages: Weddings, Quinceañera

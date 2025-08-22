@@ -161,7 +161,6 @@ export default async function Home() {
           title: true,
           subtitle: true,
           bannerImageUrl: true,
-          displayTag: true,
           externalUrl: true,
           package: {
             select: {

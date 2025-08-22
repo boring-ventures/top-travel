@@ -87,13 +87,13 @@ export default function TabbedContent({ tabs, activeTab }: TabbedContentProps) {
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-border px-2 sm:px-4 gap-4 sm:gap-8 overflow-x-auto scrollbar-hide justify-center">
+        <div className="flex border-b border-border px-2 sm:px-4 gap-2 sm:gap-4 md:gap-8 overflow-x-auto scrollbar-hide justify-start sm:justify-center">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setCurrentTab(tab.id)}
               className={cn(
-                "flex flex-col items-center justify-center border-b-[3px] pb-[13px] pt-4 transition-colors whitespace-nowrap",
+                "flex flex-col items-center justify-center border-b-[3px] pb-[13px] pt-4 transition-colors whitespace-nowrap min-w-fit",
                 currentTab === tab.id
                   ? "border-b-primary text-foreground"
                   : "border-b-transparent text-muted-foreground hover:text-foreground"
@@ -101,7 +101,7 @@ export default function TabbedContent({ tabs, activeTab }: TabbedContentProps) {
             >
               <p
                 className={cn(
-                  "text-sm font-bold leading-normal tracking-[0.015em]",
+                  "text-xs sm:text-sm font-bold leading-normal tracking-[0.015em]",
                   currentTab === tab.id
                     ? "text-foreground"
                     : "text-muted-foreground"
@@ -147,7 +147,10 @@ export default function TabbedContent({ tabs, activeTab }: TabbedContentProps) {
           >
             <div className="flex items-stretch p-2 sm:p-4 gap-3 sm:gap-4">
               {currentTabData?.items.map((item) => (
-                <div key={item.id} className="w-72 sm:w-80 flex-shrink-0">
+                <div
+                  key={item.id}
+                  className="w-64 sm:w-72 md:w-80 flex-shrink-0"
+                >
                   <TravelCard
                     id={item.id}
                     title={item.title}
