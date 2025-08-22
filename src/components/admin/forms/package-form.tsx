@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ImageUpload } from "@/components/ui/image-upload";
+import { AmenitiesInput } from "@/components/ui/amenities-input";
 import {
   Command,
   CommandEmpty,
@@ -687,6 +688,20 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
           </Popover>
         </div>
       </div>
+
+      <AmenitiesInput
+        label="Incluye"
+        value={form.watch("inclusions") || []}
+        onChange={(value) => form.setValue("inclusions", value)}
+        placeholder="Ej: Hotel, Transporte, Guía, Comidas..."
+      />
+
+      <AmenitiesInput
+        label="No Incluye"
+        value={form.watch("exclusions") || []}
+        onChange={(value) => form.setValue("exclusions", value)}
+        placeholder="Ej: Vuelos, Propinas, Gastos personales..."
+      />
 
       <div className="flex items-center justify-between pt-4 border-t">
         <div className="flex items-center gap-2">

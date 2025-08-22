@@ -31,7 +31,7 @@ export function DestinationCard({
       className={`group overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 ${className || ""}`}
     >
       <Link href={`/destinations/${destination.slug}`} className="block">
-        <div className="relative w-full h-48 overflow-hidden">
+        <div className="relative w-full h-64 overflow-hidden">
           {destination.heroImageUrl ? (
             <Image
               src={destination.heroImageUrl}
@@ -71,4 +71,3 @@ export function DestinationCard({
     </Card>
   );
 }
-

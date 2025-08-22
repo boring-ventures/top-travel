@@ -94,12 +94,6 @@ export default async function PackageDetailPage({ params }: Params) {
                 <Package className="h-3 w-3 mr-1" />
                 {pkgWithNumbers.isCustom ? "Paquete Personalizado" : "Paquete"}
               </Badge>
-              {pkgWithNumbers.isFeatured && (
-                <Badge className="bg-yellow-500 text-white border-yellow-500">
-                  <Star className="h-3 w-3 mr-1" />
-                  Destacado
-                </Badge>
-              )}
             </div>
 
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
@@ -359,15 +353,6 @@ export default async function PackageDetailPage({ params }: Params) {
                         {pkgWithNumbers.currency ?? "USD"}{" "}
                         {pkgWithNumbers.fromPrice.toString()}
                       </span>
-                    </div>
-                  )}
-                  {pkgWithNumbers.isFeatured && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Estado:</span>
-                      <Badge className="bg-yellow-500 text-white text-xs">
-                        <Star className="h-3 w-3 mr-1" />
-                        Destacado
-                      </Badge>
                     </div>
                   )}
                 </div>

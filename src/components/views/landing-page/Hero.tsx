@@ -181,7 +181,7 @@ export default function Hero({ items = [], featuredOffer }: HeroProps) {
             <BlurFade delay={0.08}>
               <div
                 ref={searchContainerRef}
-                className="relative w-full z-[100]"
+                className="relative w-full z-[1000]"
                 style={{ isolation: "isolate" }}
               >
                 <form
@@ -212,16 +212,6 @@ export default function Hero({ items = [], featuredOffer }: HeroProps) {
                     </div>
                   </div>
                 </form>
-
-                {/* Search Results Dropdown - Positioned inside container */}
-                <div className="absolute top-full left-0 right-0 z-[999999] mt-1">
-                  <SearchResults
-                    results={searchResults}
-                    isLoading={isSearchLoading}
-                    isVisible={showSearchResults}
-                    onResultClick={handleResultClick}
-                  />
-                </div>
               </div>
             </BlurFade>
 
@@ -239,7 +229,7 @@ export default function Hero({ items = [], featuredOffer }: HeroProps) {
                   }
                   className="block group w-full"
                 >
-                  <div className="bg-background/95 backdrop-blur-sm border border-border/50 rounded-xl p-4 sm:p-6 hover:bg-background/98 transition-all duration-300 hover:shadow-lg w-full">
+                  <div className="bg-background/95 backdrop-blur-sm border border-border/50 rounded-xl p-4 sm:p-6 hover:bg-background/98 transition-all duration-300 hover:shadow-lg w-full relative z-0">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
@@ -281,6 +271,30 @@ export default function Hero({ items = [], featuredOffer }: HeroProps) {
                   </div>
                 </Link>
               </BlurFade>
+            )}
+
+            {/* Search Results Dropdown - Positioned at the end to appear above everything */}
+            {showSearchResults && (
+              <div
+                className="absolute top-0 left-0 right-0 z-[999999] mt-1"
+                style={{ top: "calc(50vh + 100px)" }}
+              >
+                <div
+                  className="container mx-auto"
+                  style={{ paddingLeft: "12vw", paddingRight: "12vw" }}
+                >
+                  <div className="bg-background/95 backdrop-blur-sm border border-border rounded-lg shadow-xl max-h-80 overflow-y-auto">
+                    <SearchResults
+                      results={searchResults.slice(0, 5)} // Limit to 5 results
+                      isLoading={isSearchLoading}
+                      isVisible={showSearchResults}
+                      onResultClick={handleResultClick}
+                      totalResults={searchResults.length}
+                      searchQuery={searchQuery}
+                    />
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         </div>

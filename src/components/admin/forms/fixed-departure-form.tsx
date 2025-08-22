@@ -10,6 +10,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ImageUpload } from "@/components/ui/image-upload";
+import { AmenitiesInput } from "@/components/ui/amenities-input";
 import {
   Select,
   SelectContent,
@@ -25,12 +27,16 @@ import {
   NonEmptyStringSchema,
   SlugSchema,
 } from "@/lib/validations/common";
+import { uploadFixedDepartureImage } from "@/lib/supabase/storage";
 
 // Custom schema for the form that includes dateRange
 const FixedDepartureFormSchema = z.object({
   slug: SlugSchema,
   title: NonEmptyStringSchema,
   destinationId: z.string(),
+  heroImageUrl: z.string().optional(),
+  amenities: z.array(z.string()).default([]),
+  exclusions: z.array(z.string()).default([]),
   dateRange: z
     .object({
       from: z.date().optional(),
@@ -63,6 +69,9 @@ export function FixedDepartureForm({ onSuccess }: { onSuccess?: () => void }) {
       slug: "",
       title: "",
       destinationId: "",
+      heroImageUrl: "",
+      amenities: [],
+      exclusions: [],
       dateRange: undefined,
       detailsJson: undefined,
       seatsInfo: "",
@@ -164,6 +173,34 @@ export function FixedDepartureForm({ onSuccess }: { onSuccess?: () => void }) {
         name="dateRange"
         label="Período del Viaje"
         placeholder="Seleccionar período del viaje"
+      />
+
+      <div className="space-y-2">
+        <Label>Imagen Principal</Label>
+        <ImageUpload
+          value={form.watch("heroImageUrl")}
+          onChange={(url) => form.setValue("heroImageUrl", url)}
+          onUpload={async (file) => {
+            const slug = form.watch("slug") || "temp";
+            return uploadFixedDepartureImage(file, slug);
+          }}
+          placeholder="Imagen Principal de la Salida Fija"
+          aspectRatio={16 / 9}
+        />
+      </div>
+
+      <AmenitiesInput
+        label="Incluye"
+        value={form.watch("amenities") || []}
+        onChange={(value) => form.setValue("amenities", value)}
+        placeholder="Ej: Hotel, Transporte, Guía, Comidas..."
+      />
+
+      <AmenitiesInput
+        label="No Incluye"
+        value={form.watch("exclusions") || []}
+        onChange={(value) => form.setValue("exclusions", value)}
+        placeholder="Ej: Vuelos, Propinas, Gastos personales..."
       />
 
       <div className="space-y-2">

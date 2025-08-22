@@ -27,21 +27,21 @@ export default async function AboutPage() {
   const hasContent = page && page.status === "PUBLISHED" && page.sectionsJson;
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-b from-background via-background to-secondary/20">
+    <div className="flex flex-col min-h-screen">
       <Header />
 
-      <main className="flex-grow relative pt-16 sm:pt-20">
+      <main className="flex-grow relative">
         {/* Background Pattern */}
         <div className="absolute inset-0 bg-grid-black/[0.02] dark:bg-grid-white/[0.02] -z-10" />
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-transparent -z-10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-secondary/20 -z-10" />
 
         {/* Enhanced Hero Section */}
-        <section className="relative overflow-hidden">
+        <section className="relative overflow-hidden pt-20 sm:pt-24">
           <div className="absolute inset-0 bg-gradient-to-br from-orange-600 via-red-600 to-rose-700" />
           <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.05%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
 
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 relative z-10">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 relative z-10">
             <div className="max-w-4xl mx-auto text-center">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
                 Sobre GabyTop Travel

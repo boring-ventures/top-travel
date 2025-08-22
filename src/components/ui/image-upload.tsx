@@ -51,6 +51,12 @@ export function ImageUpload({
       return;
     }
 
+    // Validate file size
+    if (file.size > maxSize * 1024 * 1024) {
+      setError(`File size must be less than ${maxSize}MB`);
+      return;
+    }
+
     setError(null);
     setIsUploading(true);
 
@@ -60,9 +66,17 @@ export function ImageUpload({
       setPreview(previewUrl);
 
       // Upload file
+      console.log("ImageUpload: Starting upload for file:", file.name);
       const uploadedUrl = await onUpload(file);
+      console.log("ImageUpload: Upload completed, received URL:", uploadedUrl);
+      console.log("ImageUpload: URL type:", typeof uploadedUrl);
+      console.log("ImageUpload: URL === '':", uploadedUrl === "");
+      console.log("ImageUpload: URL === undefined:", uploadedUrl === undefined);
+
       onChange(uploadedUrl);
+      console.log("ImageUpload: onChange called with URL:", uploadedUrl);
     } catch (err) {
+      console.error("ImageUpload: Upload error:", err);
       setError(err instanceof Error ? err.message : "Upload failed");
       setPreview(null);
     } finally {

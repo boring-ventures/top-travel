@@ -34,6 +34,8 @@ interface SearchResultsProps {
   isLoading: boolean;
   isVisible: boolean;
   onResultClick: () => void;
+  totalResults?: number;
+  searchQuery?: string;
 }
 
 const getTypeIcon = (type: SearchResult["type"]) => {
@@ -85,11 +87,13 @@ export function SearchResults({
   isLoading,
   isVisible,
   onResultClick,
+  totalResults,
+  searchQuery,
 }: SearchResultsProps) {
   if (!isVisible) return null;
 
   return (
-    <div className="mt-2 bg-background/95 backdrop-blur-sm border border-border rounded-lg shadow-xl max-h-96 overflow-y-auto">
+    <div className="py-2">
       {isLoading ? (
         <div className="p-4 text-center text-muted-foreground">
           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto mb-2"></div>
@@ -180,6 +184,19 @@ export function SearchResults({
               </div>
             </Link>
           ))}
+
+          {/* Show more results link */}
+          {totalResults && totalResults > results.length && searchQuery && (
+            <div className="px-4 py-3 border-t border-border/50">
+              <Link
+                href={`/packages?search=${encodeURIComponent(searchQuery)}`}
+                onClick={onResultClick}
+                className="block text-center text-sm text-primary hover:text-primary/80 font-medium transition-colors"
+              >
+                Ver {totalResults - results.length} resultados más
+              </Link>
+            </div>
+          )}
         </div>
       )}
     </div>

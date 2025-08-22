@@ -83,16 +83,16 @@ export default async function FixedDeparturesPage({
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-b from-background via-background to-secondary/20">
+    <div className="flex flex-col min-h-screen">
       <Header />
 
-      <main className="flex-grow relative pt-16 sm:pt-20">
+      <main className="flex-grow relative">
         {/* Background Pattern */}
         <div className="absolute inset-0 bg-grid-black/[0.02] dark:bg-grid-white/[0.02] -z-10" />
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-transparent -z-10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-secondary/20 -z-10" />
 
         {/* Hero Section */}
-        <section className="relative bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-16">
+        <section className="relative bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-16 pt-20 sm:pt-24">
           <div className="absolute inset-0 bg-black/20" />
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-3xl mx-auto text-center">
@@ -253,6 +253,26 @@ export default async function FixedDeparturesPage({
                                 </span>
                               </div>
                             )}
+                            {(f as any)?.amenities &&
+                              (f as any).amenities.length > 0 && (
+                                <div className="flex flex-wrap gap-1">
+                                  {(f as any).amenities
+                                    .slice(0, 2)
+                                    .map((amenity: string, index: number) => (
+                                      <span
+                                        key={index}
+                                        className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded"
+                                      >
+                                        {amenity}
+                                      </span>
+                                    ))}
+                                  {(f as any).amenities.length > 2 && (
+                                    <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
+                                      +{(f as any).amenities.length - 2}
+                                    </span>
+                                  )}
+                                </div>
+                              )}
                           </div>
                         </div>
                       </Link>

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -11,7 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
-import { Loader2, Eye, Calendar, MapPin, User } from "lucide-react";
+import { Loader2, Eye, Calendar, MapPin, User, DollarSign, Image, Package, X } from "lucide-react";
 
 interface ViewEventModalProps {
   open: boolean;
@@ -56,7 +57,7 @@ export function ViewEventModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader className="pb-6">
           <DialogTitle className="text-xl font-semibold flex items-center gap-2">
             <Eye className="h-5 w-5" />
@@ -76,6 +77,9 @@ export function ViewEventModal({
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">{event.title}</CardTitle>
+                <div className="text-sm text-muted-foreground">
+                  Slug: {event.slug}
+                </div>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -110,6 +114,20 @@ export function ViewEventModal({
                         )}
                       </div>
                     </div>
+
+                    {event.fromPrice && (
+                      <div className="flex items-start gap-3">
+                        <DollarSign className="h-5 w-5 text-muted-foreground mt-0.5" />
+                        <div>
+                          <div className="text-sm font-medium text-muted-foreground">
+                            Precio
+                          </div>
+                          <div className="text-sm font-medium">
+                            {event.currency === 'USD' ? '$' : 'Bs. '}{event.fromPrice}
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-4">
@@ -155,6 +173,54 @@ export function ViewEventModal({
                   </div>
                 </div>
 
+                {event.heroImageUrl && (
+                  <div className="pt-4 border-t">
+                    <div className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
+                      <Image className="h-4 w-4" />
+                      Imagen Principal
+                    </div>
+                    <div className="relative">
+                      <img
+                        src={event.heroImageUrl}
+                        alt={event.title}
+                        className="w-full h-48 object-cover rounded-md"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {event.amenities && event.amenities.length > 0 && (
+                  <div className="pt-4 border-t">
+                    <div className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
+                      <Package className="h-4 w-4" />
+                      Incluye
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {event.amenities.map((amenity: string, index: number) => (
+                        <Badge key={index} variant="secondary">
+                          {amenity}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {event.exclusions && event.exclusions.length > 0 && (
+                  <div className="pt-4 border-t">
+                    <div className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
+                      <X className="h-4 w-4" />
+                      No Incluye
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {event.exclusions.map((exclusion: string, index: number) => (
+                        <Badge key={index} variant="outline">
+                          {exclusion}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {event.detailsJson && (
                   <div className="pt-4 border-t">
                     <div className="text-sm font-medium text-muted-foreground mb-2">
@@ -163,6 +229,19 @@ export function ViewEventModal({
                     <div className="text-sm bg-muted p-3 rounded-md">
                       <pre className="whitespace-pre-wrap text-xs">
                         {JSON.stringify(event.detailsJson, null, 2)}
+                      </pre>
+                    </div>
+                  </div>
+                )}
+
+                {event.gallery && (
+                  <div className="pt-4 border-t">
+                    <div className="text-sm font-medium text-muted-foreground mb-2">
+                      Galería
+                    </div>
+                    <div className="text-sm bg-muted p-3 rounded-md">
+                      <pre className="whitespace-pre-wrap text-xs">
+                        {JSON.stringify(event.gallery, null, 2)}
                       </pre>
                     </div>
                   </div>

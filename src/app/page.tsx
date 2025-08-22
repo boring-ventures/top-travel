@@ -5,6 +5,7 @@ import {
   CustomizablePackages,
   TabbedContent,
   SpecialDepartments,
+  FeaturedDestinations,
   FeaturedOffers,
   About,
   Testimonials,
@@ -141,6 +142,7 @@ const DEFAULT_DATA = {
 export default async function Home() {
   let offers: any[] = [];
   let topDestinations: any[] = [];
+  let featuredDestinations: any[] = [];
   let featuredEvents: any[] = [];
   let departments: any[] = [];
   let fixedDepartures: any[] = [];
@@ -173,7 +175,28 @@ export default async function Home() {
         },
       }),
       prisma.destination.findMany({
-        where: { isFeatured: true },
+        where: {
+          destinationTags: {
+            some: {
+              tag: {
+                slug: "top-destinations",
+              },
+            },
+          },
+        },
+        take: 6,
+        select: {
+          id: true,
+          slug: true,
+          city: true,
+          country: true,
+          heroImageUrl: true,
+        },
+      }),
+      prisma.destination.findMany({
+        where: {
+          isFeatured: true,
+        },
         take: 6,
         select: {
           id: true,
@@ -193,6 +216,9 @@ export default async function Home() {
           title: true,
           locationCity: true,
           locationCountry: true,
+          heroImageUrl: true,
+          amenities: true,
+          exclusions: true,
           startDate: true,
           endDate: true,
         },
@@ -214,6 +240,9 @@ export default async function Home() {
           id: true,
           slug: true,
           title: true,
+          heroImageUrl: true,
+          amenities: true,
+          exclusions: true,
           startDate: true,
           endDate: true,
         },
@@ -246,6 +275,7 @@ export default async function Home() {
     [
       offers,
       topDestinations,
+      featuredDestinations,
       featuredEvents,
       departments,
       fixedDepartures,
@@ -336,10 +366,12 @@ export default async function Home() {
         id: event.id,
         title: event.title,
         description: `${event.locationCity}, ${event.locationCountry}`,
-        imageUrl: FALLBACK_IMAGES.events,
+        imageUrl: getValidImageUrl(event.heroImageUrl, FALLBACK_IMAGES.events),
         href: `/events/${event.slug}`,
         price: "$150/persona",
         location: `${event.locationCity}, ${event.locationCountry}`,
+        amenities: event.amenities || [],
+        exclusions: event.exclusions || [],
       })),
     },
     {
@@ -368,10 +400,12 @@ export default async function Home() {
         id: dep.id,
         title: dep.title,
         description: "Viajes programados con fechas fijas y precios especiales",
-        imageUrl: FALLBACK_IMAGES.mountains,
+        imageUrl: getValidImageUrl(dep.heroImageUrl, FALLBACK_IMAGES.mountains),
         href: `/fixed-departures/${dep.slug}`,
         price: "$1200/persona",
         location: "Bolivia",
+        amenities: dep.amenities || [],
+        exclusions: dep.exclusions || [],
       })),
     },
     {
@@ -423,14 +457,16 @@ export default async function Home() {
         <Hero items={heroItems} featuredOffer={offers[0]} />
         {/* <CustomizablePackages /> */}
         <TabbedContent tabs={tabbedContent} />
-
-        <Tags tags={tags} />
-
+        {featuredDestinations && featuredDestinations.length > 0 && (
+          <FeaturedDestinations destinations={featuredDestinations} />
+        )}
         <SpecialDepartments departments={specialDepartments} />
         <FeaturedOffers
           offers={offers}
           whatsappTemplate={whatsappTemplates.offers}
         />
+        <Tags tags={tags} />
+
         <About />
         <Testimonials items={testimonials} />
       </main>

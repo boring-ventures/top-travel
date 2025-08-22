@@ -16,6 +16,13 @@ export const EventCreateSchema = z.object({
   venue: z.string().optional(),
   startDate: ISODateSchema,
   endDate: ISODateSchema,
+  heroImageUrl: z
+    .string()
+    .optional()
+    .or(z.literal(""))
+    .transform((val) => (val === "" ? undefined : val)),
+  amenities: z.array(z.string()).default([]),
+  exclusions: z.array(z.string()).default([]),
   detailsJson: z.any().optional(),
   gallery: z.any().optional(),
   fromPrice: z.coerce.number().positive().optional(),
