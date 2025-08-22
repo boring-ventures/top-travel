@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { AmenitiesInput } from "@/components/ui/amenities-input";
+import { TagsInput } from "@/components/ui/tags-input";
 import {
   Command,
   CommandEmpty,
@@ -52,6 +53,7 @@ const EventFormSchema = EventUpdateSchema.extend({
       to: z.date().optional(),
     })
     .optional(),
+  tagIds: z.array(z.string()).optional(),
 }).omit({ startDate: true, endDate: true });
 
 type EventFormInput = z.infer<typeof EventFormSchema>;
@@ -92,6 +94,7 @@ export function EditEventModal({
       gallery: undefined,
       dateRange: undefined,
       status: "DRAFT",
+      tagIds: [],
     },
   });
 
@@ -131,6 +134,7 @@ export function EditEventModal({
             gallery: data.gallery,
             dateRange,
             status: data.status,
+            tagIds: data.tags?.map((tag: any) => tag.id) || [],
           });
         })
         .catch((error) => {
@@ -157,6 +161,7 @@ export function EditEventModal({
         ...values,
         startDate: values.dateRange?.from?.toISOString(),
         endDate: values.dateRange?.to?.toISOString(),
+        tagIds: values.tagIds,
       };
 
       // Remove the dateRange field as it's not part of the API schema
@@ -436,6 +441,13 @@ export function EditEventModal({
                 </Popover>
               </div>
             </div>
+
+            <TagsInput
+              value={form.watch("tagIds") || []}
+              onChange={(value) => form.setValue("tagIds", value)}
+              label="Etiquetas"
+              placeholder="Seleccionar etiquetas..."
+            />
 
             <div className="space-y-2">
               <Label>Imagen Principal</Label>

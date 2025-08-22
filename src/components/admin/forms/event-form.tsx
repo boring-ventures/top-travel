@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { AmenitiesInput } from "@/components/ui/amenities-input";
+import { TagsInput } from "@/components/ui/tags-input";
 import {
   Select,
   SelectContent,
@@ -30,12 +31,14 @@ const EventFormSchema = EventCreateSchema.extend({
       to: z.date().optional(),
     })
     .optional(),
+  tagIds: z.array(z.string()).optional(),
 }).omit({ startDate: true, endDate: true });
 
 type EventFormInput = z.infer<typeof EventFormSchema>;
 
 export function EventForm({ onSuccess }: { onSuccess?: () => void }) {
   const [submitting, setSubmitting] = useState(false);
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   const form = useForm<EventFormInput>({
     resolver: zodResolver(EventFormSchema),
     defaultValues: {
@@ -54,15 +57,27 @@ export function EventForm({ onSuccess }: { onSuccess?: () => void }) {
       gallery: undefined,
       dateRange: undefined,
       status: "DRAFT",
+      tagIds: [],
     },
   });
 
   const handleSubmit = form.handleSubmit(async (values) => {
     setSubmitting(true);
     try {
+      let finalHeroImageUrl = values.heroImageUrl;
+
+      // Upload image if a new file was selected
+      if (selectedImageFile) {
+        console.log("Uploading selected image file...");
+        const slug = values.slug || "temp";
+        finalHeroImageUrl = await uploadEventImage(selectedImageFile, slug);
+        console.log("Image uploaded successfully:", finalHeroImageUrl);
+      }
+
       // Convert dateRange to startDate and endDate for API compatibility
       const apiData: EventCreateInput = {
         ...values,
+        heroImageUrl: finalHeroImageUrl,
         startDate:
           values.dateRange?.from?.toISOString() || new Date().toISOString(),
         endDate:
@@ -82,19 +97,9 @@ export function EventForm({ onSuccess }: { onSuccess?: () => void }) {
         }
       });
 
-      // Explicitly ensure heroImageUrl is included
-      apiData.heroImageUrl = values.heroImageUrl;
-
       // Debug: Log the data being sent
       console.log("Sending event data:", apiData);
       console.log("heroImageUrl in apiData:", apiData.heroImageUrl);
-      console.log("heroImageUrl type:", typeof apiData.heroImageUrl);
-      console.log(
-        "heroImageUrl === undefined:",
-        apiData.heroImageUrl === undefined
-      );
-      console.log("heroImageUrl === null:", apiData.heroImageUrl === null);
-      console.log("heroImageUrl === '':", apiData.heroImageUrl === "");
 
       const res = await fetch("/api/events", {
         method: "POST",
@@ -104,17 +109,19 @@ export function EventForm({ onSuccess }: { onSuccess?: () => void }) {
 
       if (!res.ok) {
         const errorData = await res.json();
-        console.error("API Error:", errorData);
-        throw new Error(errorData.error || "Error al guardar el evento");
+        throw new Error(errorData.error || "Failed to create event");
       }
 
       const result = await res.json();
-      console.log("Event created successfully:", result);
 
+      // Clear the selected file after successful submission
+      setSelectedImageFile(null);
+
+      console.log("Event created successfully:", result);
       onSuccess?.();
       form.reset();
     } catch (error) {
-      console.error("Form submission error:", error);
+      console.error("Error creating event:", error);
       throw error;
     } finally {
       setSubmitting(false);
@@ -234,40 +241,27 @@ export function EventForm({ onSuccess }: { onSuccess?: () => void }) {
         placeholder="Seleccionar período del evento"
       />
 
+      <TagsInput
+        value={form.watch("tagIds") || []}
+        onChange={(value) => form.setValue("tagIds", value)}
+        label="Etiquetas"
+        placeholder="Seleccionar etiquetas..."
+      />
+
       <div className="space-y-2">
         <Label>Imagen Principal</Label>
         <ImageUpload
           value={form.watch("heroImageUrl")}
           onChange={(url) => {
-            console.log("ImageUpload onChange called with URL:", url);
-            console.log("URL type:", typeof url);
-            console.log("URL === '':", url === "");
-            console.log("URL === undefined:", url === undefined);
-
             // Convert empty string to undefined
             const finalUrl = url === "" ? undefined : url;
-            console.log("Final URL to set:", finalUrl);
-
             form.setValue("heroImageUrl", finalUrl);
-            console.log(
-              "Form heroImageUrl after setValue:",
-              form.watch("heroImageUrl")
-            );
           }}
-          onUpload={async (file) => {
-            console.log("ImageUpload onUpload called with file:", file);
-            const slug = form.watch("slug") || "temp";
-            console.log("Using slug for upload:", slug);
-            const result = await uploadEventImage(file, slug);
-            console.log("Upload result:", result);
-            return result;
-          }}
+          onFileSelect={(file) => setSelectedImageFile(file)}
+          deferred={true}
           placeholder="Imagen Principal del Evento"
           aspectRatio={16 / 9}
         />
-        <div className="text-xs text-muted-foreground">
-          Current heroImageUrl: {form.watch("heroImageUrl") || "None"}
-        </div>
       </div>
 
       <AmenitiesInput

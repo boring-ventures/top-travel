@@ -36,44 +36,42 @@ const baseNavGroups: NavGroupProps[] = [
     title: "General",
     items: [
       {
-        title: "Dashboard",
+        title: "Panel Principal",
         url: "/dashboard",
         icon: LayoutDashboard,
       },
-      { title: "Offers", url: "/cms/offers", icon: Tag },
-      { title: "Packages", url: "/cms/packages", icon: Package },
-      { title: "Events", url: "/cms/events", icon: CalendarDays },
+      { title: "Ofertas", url: "/cms/offers", icon: Tag },
+      { title: "Paquetes", url: "/cms/packages", icon: Package },
+      { title: "Eventos", url: "/cms/events", icon: CalendarDays },
       {
-        title: "Fixed Departures",
+        title: "Salidas Fijas",
         url: "/cms/fixed-departures",
         icon: PlaneTakeoff,
       },
-      { title: "Destinations", url: "/cms/destinations", icon: MapPin },
-      { title: "Tags", url: "/cms/tags", icon: Tags },
-      { title: "Departments", url: "/cms/departments", icon: Building2 },
+      { title: "Destinos", url: "/cms/destinations", icon: MapPin },
+      { title: "Etiquetas", url: "/cms/tags", icon: Tags },
       {
-        title: "Testimonials",
+        title: "Testimonios",
         url: "/cms/testimonials",
         icon: MessageSquare,
       },
-      { title: "Pages", url: "/cms/pages", icon: FileText },
       {
-        title: "WhatsApp Templates",
+        title: "Plantillas WhatsApp",
         url: "/cms/whatsapp-templates",
         icon: MessageSquareText,
       },
     ],
   },
   {
-    title: "Other",
+    title: "Otros",
     items: [
       {
-        title: "Settings",
+        title: "Configuración",
         icon: Settings,
         url: "/settings",
       },
       {
-        title: "Help Center",
+        title: "Centro de Ayuda",
         url: "/help-center",
         icon: HelpCircle,
       },
@@ -82,10 +80,10 @@ const baseNavGroups: NavGroupProps[] = [
 ];
 
 const adminNavGroup: NavGroupProps = {
-  title: "Administration",
+  title: "Administración",
   items: [
     {
-      title: "Admin Panel",
+      title: "Panel de Administración",
       url: "/admin",
       icon: Shield,
     },

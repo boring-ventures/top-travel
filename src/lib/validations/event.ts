@@ -28,6 +28,7 @@ export const EventCreateSchema = z.object({
   fromPrice: z.coerce.number().positive().optional(),
   currency: CurrencySchema.optional(),
   status: ContentStatusSchema.default("DRAFT"),
+  tagIds: z.array(z.string()).optional(),
 });
 
 export const EventUpdateSchema = EventCreateSchema.partial();

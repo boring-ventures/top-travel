@@ -11,29 +11,34 @@ import { cn } from "@/lib/utils";
 interface ImageUploadProps {
   value?: string;
   onChange: (url: string) => void;
-  onUpload: (file: File) => Promise<string>;
+  onUpload?: (file: File) => Promise<string>; // Made optional for deferred uploads
+  onFileSelect?: (file: File) => void; // New prop for deferred uploads
   placeholder?: string;
   className?: string;
   disabled?: boolean;
   accept?: string;
   maxSize?: number; // in MB
   aspectRatio?: number; // width/height
+  deferred?: boolean; // New prop to enable deferred uploads
 }
 
 export function ImageUpload({
   value,
   onChange,
   onUpload,
+  onFileSelect,
   placeholder = "Upload an image",
   className,
   disabled = false,
   accept = "image/*",
   maxSize = 5, // 5MB default
   aspectRatio,
+  deferred = false, // Default to immediate upload for backward compatibility
 }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Use value prop as the display image (for existing images)
@@ -58,35 +63,44 @@ export function ImageUpload({
     }
 
     setError(null);
-    setIsUploading(true);
+    setSelectedFile(file);
 
-    try {
-      // Create preview
-      const previewUrl = URL.createObjectURL(file);
-      setPreview(previewUrl);
+    // Create preview
+    const previewUrl = URL.createObjectURL(file);
+    setPreview(previewUrl);
 
-      // Upload file
-      console.log("ImageUpload: Starting upload for file:", file.name);
-      const uploadedUrl = await onUpload(file);
-      console.log("ImageUpload: Upload completed, received URL:", uploadedUrl);
-      console.log("ImageUpload: URL type:", typeof uploadedUrl);
-      console.log("ImageUpload: URL === '':", uploadedUrl === "");
-      console.log("ImageUpload: URL === undefined:", uploadedUrl === undefined);
-
-      onChange(uploadedUrl);
-      console.log("ImageUpload: onChange called with URL:", uploadedUrl);
-    } catch (err) {
-      console.error("ImageUpload: Upload error:", err);
-      setError(err instanceof Error ? err.message : "Upload failed");
-      setPreview(null);
-    } finally {
-      setIsUploading(false);
+    if (deferred) {
+      // For deferred uploads, just notify parent component
+      onFileSelect?.(file);
+      // Don't call onChange yet - wait for form submission
+    } else {
+      // For immediate uploads, upload right away
+      setIsUploading(true);
+      try {
+        console.log("ImageUpload: Starting upload for file:", file.name);
+        const uploadedUrl = await onUpload!(file);
+        console.log(
+          "ImageUpload: Upload completed, received URL:",
+          uploadedUrl
+        );
+        onChange(uploadedUrl);
+      } catch (err) {
+        console.error("ImageUpload: Upload error:", err);
+        setError(err instanceof Error ? err.message : "Upload failed");
+        setPreview(null);
+        setSelectedFile(null);
+      } finally {
+        setIsUploading(false);
+      }
     }
   };
 
   const handleRemove = () => {
     setPreview(null);
-    onChange("");
+    setSelectedFile(null);
+    if (!deferred) {
+      onChange("");
+    }
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -97,6 +111,18 @@ export function ImageUpload({
       fileInputRef.current.click();
     }
   };
+
+  // Method to get the selected file (for deferred uploads)
+  const getSelectedFile = () => selectedFile;
+
+  // Expose the method via ref or callback
+  React.useImperativeHandle(
+    React.useRef(),
+    () => ({
+      getSelectedFile,
+    }),
+    [selectedFile]
+  );
 
   return (
     <div className={cn("space-y-4", className)}>
@@ -185,6 +211,13 @@ export function ImageUpload({
           <div className="flex items-center space-x-2 text-sm text-corporate-blue">
             <Upload className="h-4 w-4 animate-pulse" />
             <span>Uploading...</span>
+          </div>
+        )}
+
+        {deferred && selectedFile && !isUploading && (
+          <div className="flex items-center space-x-2 text-sm text-corporate-blue">
+            <ImageIcon className="h-4 w-4" />
+            <span>Image selected - will upload when form is submitted</span>
           </div>
         )}
       </div>

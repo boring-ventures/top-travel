@@ -26,7 +26,6 @@ async function fetchOffers(filters: SearchFilters) {
     ...(filters.status !== "all" && { status: filters.status }),
     ...(filters.featured !== "all" && { featured: filters.featured }),
     ...(filters.dateFilter !== "all" && { dateFilter: filters.dateFilter }),
-    ...(filters.displayTag !== "all" && { displayTag: filters.displayTag }),
   });
 
   const res = await fetch(`/api/offers?${params}`);
@@ -40,7 +39,6 @@ export default function CmsOffersList() {
     status: "all",
     featured: "all",
     dateFilter: "all",
-    displayTag: "all",
   });
 
   const { data, isLoading, error, refetch } = useQuery({
@@ -49,7 +47,6 @@ export default function CmsOffersList() {
   });
 
   const items = data?.items ?? [];
-  const displayTags = data?.displayTags ?? [];
 
   const handleSuccess = () => {
     refetch();
@@ -69,7 +66,6 @@ export default function CmsOffersList() {
         <EnhancedSearch
           placeholder="Buscar ofertas..."
           onFiltersChange={handleFiltersChange}
-          displayTags={displayTags}
         />
       </ListHeader>
       {error ? (
@@ -85,8 +81,7 @@ export default function CmsOffersList() {
                   filters.search ||
                   filters.status !== "all" ||
                   filters.featured !== "all" ||
-                  filters.dateFilter !== "all" ||
-                  filters.displayTag !== "all"
+                  filters.dateFilter !== "all"
                     ? "No se encontraron ofertas"
                     : "Aún no hay ofertas"
                 }
@@ -94,8 +89,7 @@ export default function CmsOffersList() {
                   filters.search ||
                   filters.status !== "all" ||
                   filters.featured !== "all" ||
-                  filters.dateFilter !== "all" ||
-                  filters.displayTag !== "all"
+                  filters.dateFilter !== "all"
                     ? "Intenta con otros filtros."
                     : "Crea tu primera oferta."
                 }
@@ -108,7 +102,7 @@ export default function CmsOffersList() {
             <thead className="bg-neutral-50 dark:bg-neutral-900">
               <tr>
                 <th className="px-3 py-2 text-left">Título</th>
-                <th className="px-3 py-2 text-left">Etiqueta</th>
+                <th className="px-3 py-2 text-left">Etiquetas</th>
                 <th className="px-3 py-2 text-left">Destacada</th>
                 <th className="px-3 py-2 text-left">Estado</th>
                 <th className="px-3 py-2 text-left">Inicio</th>
@@ -123,10 +117,18 @@ export default function CmsOffersList() {
                     <span className="font-medium">{o.title}</span>
                   </td>
                   <td className="px-3 py-2">
-                    {o.displayTag ? (
-                      <Badge variant="outline" className="text-xs">
-                        {o.displayTag}
-                      </Badge>
+                    {o.tags && o.tags.length > 0 ? (
+                      <div className="flex flex-wrap gap-1">
+                        {o.tags.map((tag: any) => (
+                          <Badge
+                            key={tag.id}
+                            variant="outline"
+                            className="text-xs"
+                          >
+                            {tag.name}
+                          </Badge>
+                        ))}
+                      </div>
                     ) : (
                       <span className="text-muted-foreground">-</span>
                     )}

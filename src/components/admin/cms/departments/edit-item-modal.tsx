@@ -121,7 +121,6 @@ export function EditItemModal({
             ) : (
               <DepartmentForm
                 initialValues={department}
-                disableType
                 onSuccess={handleSuccess}
               />
             )

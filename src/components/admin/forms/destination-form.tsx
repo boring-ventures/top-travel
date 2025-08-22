@@ -44,6 +44,7 @@ export function DestinationForm({
   const [submitting, setSubmitting] = useState(false);
   const [tags, setTags] = useState<any[]>([]);
   const [tagsOpen, setTagsOpen] = useState(false);
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   const { toast } = useToast();
 
   // Fetch tags data
@@ -66,7 +67,7 @@ export function DestinationForm({
       country: "",
       city: "",
       description: "",
-      heroImageUrl: "",
+      heroImageUrl: undefined,
       isFeatured: false,
       tagIds: [],
     },
@@ -85,7 +86,7 @@ export function DestinationForm({
         country: (initialValues as any).country ?? "",
         city: (initialValues as any).city ?? "",
         description: (initialValues as any).description ?? "",
-        heroImageUrl: (initialValues as any).heroImageUrl ?? "",
+        heroImageUrl: (initialValues as any).heroImageUrl ?? undefined,
         isFeatured: Boolean((initialValues as any).isFeatured) ?? false,
         tagIds: tagIds,
       });
@@ -99,6 +100,19 @@ export function DestinationForm({
   const handleSubmit = form.handleSubmit(async (values) => {
     setSubmitting(true);
     try {
+      let finalHeroImageUrl = values.heroImageUrl;
+
+      // Upload image if a new file was selected
+      if (selectedImageFile) {
+        console.log("Uploading selected image file...");
+        const slug = values.slug || "temp";
+        finalHeroImageUrl = await uploadDestinationImage(
+          selectedImageFile,
+          slug
+        );
+        console.log("Image uploaded successfully:", finalHeroImageUrl);
+      }
+
       const isEdit = Boolean((initialValues as any)?.id);
       const url = isEdit
         ? `/api/destinations/${(initialValues as any).id}`
@@ -106,45 +120,50 @@ export function DestinationForm({
       const method = isEdit ? "PATCH" : "POST";
 
       // Clean up empty strings to avoid validation issues
-      const apiData = { ...values };
+      const apiData: any = {
+        ...values,
+        heroImageUrl: finalHeroImageUrl || undefined,
+      };
       Object.keys(apiData).forEach((key) => {
-        if (apiData[key as keyof typeof apiData] === "") {
-          delete apiData[key as keyof typeof apiData];
+        if (apiData[key] === "" || apiData[key] === null) {
+          delete apiData[key];
         }
       });
-
-      // Debug: Log the data being sent
-      console.log("Submitting destination data:", apiData);
 
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(apiData),
       });
 
       if (!res.ok) {
-        const error = await res.json();
-        console.error("API Error:", error);
-        throw new Error(error.error || "Error al guardar el destino");
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to save");
       }
 
       const result = await res.json();
-      console.log("API Response:", result);
+
+      // Clear the selected file after successful submission
+      setSelectedImageFile(null);
 
       toast({
         title: isEdit ? "Destino actualizado" : "Destino creado",
         description: isEdit
-          ? "El destino se ha actualizado exitosamente."
-          : "El destino se ha creado exitosamente.",
+          ? "El destino se ha actualizado correctamente."
+          : "El destino se ha creado correctamente.",
       });
 
       onSuccess?.();
       if (!isEdit) form.reset();
-    } catch (error: any) {
+    } catch (error) {
       console.error("Form submission error:", error);
       toast({
         title: "Error",
-        description: error.message || "Error al guardar el destino",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Error al guardar el destino",
         variant: "destructive",
       });
     } finally {
@@ -222,10 +241,8 @@ export function DestinationForm({
         <ImageUpload
           value={form.watch("heroImageUrl")}
           onChange={(url) => form.setValue("heroImageUrl", url)}
-          onUpload={async (file) => {
-            const slug = form.watch("slug") || "temp";
-            return uploadDestinationImage(file, slug);
-          }}
+          onFileSelect={(file) => setSelectedImageFile(file)}
+          deferred={true}
           placeholder="Imagen Principal del Destino"
           aspectRatio={3 / 2}
         />

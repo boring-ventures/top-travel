@@ -5,7 +5,7 @@ export const DepartmentCreateSchema = z.object({
   type: DepartmentTypeSchema,
   title: NonEmptyStringSchema,
   intro: z.string().optional(),
-  heroImageUrl: z.string().url().optional(),
+  heroImageUrl: z.string().optional(),
   themeJson: z.any().optional(),
   featuredItemRefs: z.any().optional(),
 });

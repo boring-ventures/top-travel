@@ -2,18 +2,18 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  LayoutDashboard, 
-  MapPin, 
-  Package, 
-  Calendar, 
-  Plane, 
-  Tag, 
+import {
+  LayoutDashboard,
+  MapPin,
+  Package,
+  Calendar,
+  Plane,
+  Tag,
   MessageSquare,
   Star,
   Users,
   FileText,
-  Gift
+  Gift,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -22,7 +22,7 @@ const navigation = [
     name: "Panel Principal",
     href: "/cms",
     icon: LayoutDashboard,
-    description: "Vista general del CMS"
+    description: "Vista general del CMS",
   },
   {
     name: "Contenido",
@@ -31,33 +31,33 @@ const navigation = [
         name: "Destinos",
         href: "/cms/destinations",
         icon: MapPin,
-        description: "Gestionar ciudades y países"
+        description: "Gestionar ciudades y países",
       },
       {
         name: "Paquetes",
         href: "/cms/packages",
         icon: Package,
-        description: "Paquetes turísticos"
+        description: "Paquetes turísticos",
       },
       {
         name: "Eventos",
         href: "/cms/events",
         icon: Calendar,
-        description: "Conciertos y eventos"
+        description: "Conciertos y eventos",
       },
       {
         name: "Salidas Fijas",
         href: "/cms/fixed-departures",
         icon: Plane,
-        description: "Viajes con fechas fijas"
+        description: "Viajes con fechas fijas",
       },
       {
         name: "Ofertas",
         href: "/cms/offers",
         icon: Gift,
-        description: "Promociones y ofertas especiales"
-      }
-    ]
+        description: "Promociones y ofertas especiales",
+      },
+    ],
   },
   {
     name: "Organización",
@@ -66,15 +66,9 @@ const navigation = [
         name: "Etiquetas",
         href: "/cms/tags",
         icon: Tag,
-        description: "Taxonomía y categorización"
+        description: "Taxonomía y categorización",
       },
-      {
-        name: "Departamentos",
-        href: "/cms/departments",
-        icon: Users,
-        description: "Bodas y Quinceañeras"
-      }
-    ]
+    ],
   },
   {
     name: "Interacción",
@@ -83,27 +77,16 @@ const navigation = [
         name: "Testimonios",
         href: "/cms/testimonials",
         icon: Star,
-        description: "Reseñas de clientes"
+        description: "Reseñas de clientes",
       },
       {
         name: "WhatsApp Templates",
         href: "/cms/whatsapp-templates",
         icon: MessageSquare,
-        description: "Plantillas de mensajes"
-      }
-    ]
+        description: "Plantillas de mensajes",
+      },
+    ],
   },
-  {
-    name: "Sistema",
-    items: [
-      {
-        name: "Páginas",
-        href: "/cms/pages",
-        icon: FileText,
-        description: "Páginas estáticas"
-      }
-    ]
-  }
 ];
 
 export function CmsNavigation() {
@@ -146,12 +129,14 @@ export function CmsNavigation() {
                     <item.icon className="h-4 w-4" />
                     <div className="flex-1">
                       <div className="font-medium">{item.name}</div>
-                      <div className={cn(
-                        "text-xs",
-                        pathname === item.href
-                          ? "text-primary-foreground/70"
-                          : "text-muted-foreground"
-                      )}>
+                      <div
+                        className={cn(
+                          "text-xs",
+                          pathname === item.href
+                            ? "text-primary-foreground/70"
+                            : "text-muted-foreground"
+                        )}
+                      >
                         {item.description}
                       </div>
                     </div>

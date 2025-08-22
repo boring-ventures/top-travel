@@ -8,10 +8,27 @@ type Params = { params: Promise<{ id: string }> };
 export async function GET(_req: Request, { params }: Params) {
   try {
     const { id } = await params;
-    const item = await prisma.offer.findUnique({ where: { id } });
+    const item = await prisma.offer.findUnique({ 
+      where: { id },
+      include: {
+        offerTags: {
+          include: {
+            tag: true,
+          },
+        },
+      },
+    });
     if (!item)
       return NextResponse.json({ error: "Not found" }, { status: 404 });
-    return NextResponse.json(item);
+    
+    // Transform response to include tagIds for frontend compatibility
+    const transformedItem = {
+      ...item,
+      tagIds: item.offerTags.map((ot) => ot.tag.id),
+      tags: item.offerTags.map((ot) => ot.tag),
+    };
+    
+    return NextResponse.json(transformedItem);
   } catch {
     return NextResponse.json(
       { error: "Failed to fetch offer" },
@@ -47,12 +64,57 @@ export async function PATCH(request: Request, { params }: Params) {
     const parsed = OfferUpdateSchema.parse(json);
     console.log("Parsed data:", parsed);
 
-    const updated = await prisma.offer.update({
-      where: { id },
-      data: parsed,
+    const { tagIds, ...offerData } = parsed;
+
+    // Use a transaction to handle tag relationships
+    const updated = await prisma.$transaction(async (tx) => {
+      // Update the offer
+      const offer = await tx.offer.update({
+        where: { id },
+        data: offerData,
+      });
+
+      // Handle tag relationships
+      if (tagIds !== undefined) {
+        // Delete existing tag relationships
+        await tx.offerTag.deleteMany({
+          where: { offerId: id },
+        });
+
+        // Create new tag relationships if tagIds are provided
+        if (tagIds && tagIds.length > 0) {
+          await tx.offerTag.createMany({
+            data: tagIds.map((tagId) => ({
+              offerId: id,
+              tagId,
+            })),
+          });
+        }
+      }
+
+      // Return the updated offer with tags
+      return tx.offer.findUnique({
+        where: { id },
+        include: {
+          offerTags: {
+            include: {
+              tag: true,
+            },
+          },
+        },
+      });
     });
+
     console.log("Updated offer:", updated);
-    return NextResponse.json(updated);
+    
+    // Transform response to include tagIds for frontend compatibility
+    const transformedOffer = {
+      ...updated,
+      tagIds: updated?.offerTags.map((ot) => ot.tag.id) || [],
+      tags: updated?.offerTags.map((ot) => ot.tag) || [],
+    };
+    
+    return NextResponse.json(transformedOffer);
   } catch (error: any) {
     console.error("Error updating offer:", error);
     console.error("Error details:", {

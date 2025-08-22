@@ -14,14 +14,13 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const session = await auth();
     const isSuperadmin = session?.user?.role === "SUPERADMIN";
-    
+
     // Enhanced filter parameters
     const search = searchParams.get("search") || "";
     const status = searchParams.get("status");
     const featuredParam = searchParams.get("featured");
     const dateFilter = searchParams.get("dateFilter");
-    const displayTag = searchParams.get("displayTag");
-    
+
     const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
     const pageSize = Math.min(
       50,
@@ -44,11 +43,6 @@ export async function GET(request: Request) {
       where.isFeatured = featuredParam === "true";
     }
 
-    // Display tag filter
-    if (displayTag && displayTag !== "all") {
-      where.displayTag = displayTag;
-    }
-
     // Date filter
     if (dateFilter && dateFilter !== "all") {
       switch (dateFilter) {
@@ -67,16 +61,10 @@ export async function GET(request: Request) {
           where.startAt = { gt: now };
           break;
         case "expired":
-          where.AND = [
-            { endAt: { not: null } },
-            { endAt: { lt: now } },
-          ];
+          where.AND = [{ endAt: { not: null } }, { endAt: { lt: now } }];
           break;
         case "no-date":
-          where.AND = [
-            { startAt: null },
-            { endAt: null },
-          ];
+          where.AND = [{ startAt: null }, { endAt: null }];
           break;
       }
     }
@@ -86,7 +74,6 @@ export async function GET(request: Request) {
       where.OR = [
         { title: { contains: search, mode: "insensitive" } },
         { subtitle: { contains: search, mode: "insensitive" } },
-        { displayTag: { contains: search, mode: "insensitive" } },
       ];
     }
 
@@ -96,27 +83,29 @@ export async function GET(request: Request) {
         orderBy: { createdAt: "desc" },
         skip,
         take: pageSize,
+        include: {
+          offerTags: {
+            include: {
+              tag: true,
+            },
+          },
+        },
       }),
       prisma.offer.count({ where }),
     ]);
 
-    // Get unique display tags for filter dropdown
-    const displayTags = await prisma.offer.findMany({
-      where: {
-        displayTag: { not: null },
-      },
-      select: {
-        displayTag: true,
-      },
-      distinct: ["displayTag"],
-    });
+    // Transform items to include tagIds for frontend compatibility
+    const transformedItems = items.map((item) => ({
+      ...item,
+      tagIds: item.offerTags.map((ot) => ot.tag.id),
+      tags: item.offerTags.map((ot) => ot.tag),
+    }));
 
-    return NextResponse.json({ 
-      items, 
-      total, 
-      page, 
+    return NextResponse.json({
+      items: transformedItems,
+      total,
+      page,
       pageSize,
-      displayTags: displayTags.map(tag => tag.displayTag).filter(Boolean)
     });
   } catch (error) {
     return NextResponse.json(
@@ -134,21 +123,46 @@ export async function POST(request: Request) {
     const json = await request.json();
     const parsed = OfferCreateSchema.parse(json);
 
+    const { tagIds, ...offerData } = parsed;
+
     const created = await prisma.offer.create({
       data: {
-        title: parsed.title,
-        subtitle: parsed.subtitle,
-        bannerImageUrl: parsed.bannerImageUrl,
-        isFeatured: parsed.isFeatured ?? false,
-        displayTag: parsed.displayTag,
-        startAt: parsed.startAt ? new Date(parsed.startAt) : undefined,
-        endAt: parsed.endAt ? new Date(parsed.endAt) : undefined,
-        status: parsed.status,
-        packageId: parsed.packageId,
-        externalUrl: parsed.externalUrl,
+        ...offerData,
+        title: offerData.title,
+        subtitle: offerData.subtitle,
+        bannerImageUrl: offerData.bannerImageUrl,
+        isFeatured: offerData.isFeatured ?? false,
+        startAt: offerData.startAt ? new Date(offerData.startAt) : undefined,
+        endAt: offerData.endAt ? new Date(offerData.endAt) : undefined,
+        status: offerData.status,
+        packageId: offerData.packageId,
+        externalUrl: offerData.externalUrl,
+        offerTags:
+          tagIds && tagIds.length > 0
+            ? {
+                create: tagIds.map((tagId) => ({
+                  tagId,
+                })),
+              }
+            : undefined,
+      },
+      include: {
+        offerTags: {
+          include: {
+            tag: true,
+          },
+        },
       },
     });
-    return NextResponse.json(created, { status: 201 });
+
+    // Transform response to include tagIds for frontend compatibility
+    const transformedOffer = {
+      ...created,
+      tagIds: created.offerTags.map((ot) => ot.tag.id),
+      tags: created.offerTags.map((ot) => ot.tag),
+    };
+
+    return NextResponse.json(transformedOffer, { status: 201 });
   } catch (error: any) {
     const status = error?.status ?? 400;
     return NextResponse.json(
