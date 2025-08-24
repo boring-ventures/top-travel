@@ -25,6 +25,9 @@ import {
   Building2,
   FileText,
   MessageSquareText,
+  Heart,
+  Crown,
+  BookOpen,
 } from "lucide-react";
 import type { SidebarData } from "../types";
 
@@ -79,6 +82,26 @@ export const sidebarData: SidebarData = {
           title: "Plantillas WhatsApp",
           url: "/cms/whatsapp-templates",
           icon: MessageSquareText,
+        },
+      ],
+    },
+    {
+      title: "Bodas y Quinceañeras",
+      items: [
+        {
+          title: "Destinos de Bodas",
+          url: "/cms/wedding-destinations",
+          icon: Heart,
+        },
+        {
+          title: "Destinos de Quinceañeras",
+          url: "/cms/quinceanera-destinations",
+          icon: Crown,
+        },
+        {
+          title: "Blog Posts",
+          url: "/cms/blog-posts",
+          icon: BookOpen,
         },
       ],
     },

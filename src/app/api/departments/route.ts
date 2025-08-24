@@ -41,7 +41,8 @@ export async function POST(request: Request) {
       data: {
         ...parsed,
         themeJson: sanitizeRichJson(parsed.themeJson as any),
-        featuredItemRefs: sanitizeRichJson((parsed as any).featuredItemRefs),
+        servicesJson: sanitizeRichJson(parsed.servicesJson as any),
+        contactInfoJson: sanitizeRichJson(parsed.contactInfoJson as any),
       },
     });
     return NextResponse.json(created, { status: 201 });
