@@ -287,10 +287,68 @@ model Department {
   intro        String?
   heroImageUrl String?
   themeJson    Json?
-  featuredItemRefs Json?
-
+  
+  // New fields for services and contact info
+  servicesJson Json?           // Array of service objects with title, description, icon
+  contactInfoJson Json?        // Contact information (emails, phones, locations)
+  
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
+}
+
+// Wedding destinations with specialized content
+model WeddingDestination {
+  id            String        @id @default(cuid())
+  slug          String        @unique
+  name          String        // e.g., "París"
+  title         String        // e.g., "Bodas en París"
+  description   String?
+  heroImageUrl  String?
+  gallery       Json?         // Array of image URLs
+  isFeatured    Boolean       @default(false)
+  
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  @@index([isFeatured])
+}
+
+// Quinceanera destinations with specialized content
+model QuinceaneraDestination {
+  id            String        @id @default(cuid())
+  slug          String        @unique
+  name          String        // e.g., "París"
+  title         String        // e.g., "Quinceañeras en París"
+  description   String?
+  heroImageUrl  String?
+  gallery       Json?         // Array of image URLs
+  isFeatured    Boolean       @default(false)
+  
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  @@index([isFeatured])
+}
+
+// Blog posts for different departments
+model BlogPost {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  title       String
+  excerpt     String?       // Short introduction
+  content     String        // Full blog content
+  heroImageUrl String?
+  author      String?
+  publishedAt DateTime?
+  status      ContentStatus @default(DRAFT)
+  type        DepartmentType // WEDDINGS or QUINCEANERA
+  
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  
+  @@index([status])
+  @@index([publishedAt])
+  @@index([type])
 }
 
 model Testimonial {
@@ -306,17 +364,7 @@ model Testimonial {
   @@index([status])
 }
 
-model Page {
-  id           String        @id @default(cuid())
-  slug         String        @unique
-  title        String
-  sectionsJson Json?
-  status       ContentStatus @default(DRAFT)
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
 
-  @@index([status])
-}
 
 // Template usage types for different content categories
 enum TemplateUsageType {
