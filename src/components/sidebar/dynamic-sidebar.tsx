@@ -28,6 +28,9 @@ import {
   HelpCircle,
   Shield,
   Command,
+  Heart,
+  Crown,
+  BookOpen,
 } from "lucide-react";
 import type { NavGroupProps } from "./types";
 
@@ -59,6 +62,26 @@ const baseNavGroups: NavGroupProps[] = [
         title: "Plantillas WhatsApp",
         url: "/cms/whatsapp-templates",
         icon: MessageSquareText,
+      },
+    ],
+  },
+  {
+    title: "Bodas y Quinceañeras",
+    items: [
+      {
+        title: "Destinos de Bodas",
+        url: "/cms/wedding-destinations",
+        icon: Heart,
+      },
+      {
+        title: "Destinos de Quinceañeras",
+        url: "/cms/quinceanera-destinations",
+        icon: Crown,
+      },
+      {
+        title: "Blog Posts",
+        url: "/cms/blog-posts",
+        icon: BookOpen,
       },
     ],
   },

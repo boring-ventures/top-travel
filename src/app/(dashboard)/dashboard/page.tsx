@@ -28,6 +28,9 @@ import {
   Clock,
   CheckCircle,
   AlertCircle,
+  Heart,
+  Crown,
+  BookOpen,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -83,8 +86,10 @@ export default async function DashboardPage() {
     totalFixedDepartures,
     totalOffers,
     totalTestimonials,
-    totalPages,
     totalWhatsAppTemplates,
+    totalWeddingDestinations,
+    totalQuinceaneraDestinations,
+    totalBlogPosts,
     recentPackages,
     recentDestinations,
     recentEvents,
@@ -98,8 +103,10 @@ export default async function DashboardPage() {
     prisma.fixedDeparture.count(),
     prisma.offer.count(),
     prisma.testimonial.count(),
-    prisma.page.count(),
     prisma.whatsAppTemplate.count(),
+    prisma.weddingDestination.count(),
+    prisma.quinceaneraDestination.count(),
+    prisma.blogPost.count(),
 
     // Recent packages
     prisma.package.findMany({
@@ -315,17 +322,6 @@ export default async function DashboardPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Páginas</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalPages}</div>
-            <p className="text-xs text-muted-foreground">Páginas del sitio</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Plantillas WhatsApp
             </CardTitle>
@@ -336,6 +332,49 @@ export default async function DashboardPage() {
             <p className="text-xs text-muted-foreground">
               Plantillas configuradas
             </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Destinos de Bodas
+            </CardTitle>
+            <Heart className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalWeddingDestinations}</div>
+            <p className="text-xs text-muted-foreground">
+              Destinos especializados
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Destinos de Quinceañeras
+            </CardTitle>
+            <Crown className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {totalQuinceaneraDestinations}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Destinos especializados
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Blog Posts</CardTitle>
+            <BookOpen className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalBlogPosts}</div>
+            <p className="text-xs text-muted-foreground">Posts publicados</p>
           </CardContent>
         </Card>
       </div>
@@ -439,6 +478,36 @@ export default async function DashboardPage() {
                 <Link href="/cms/fixed-departures/new">
                   <PlaneTakeoff className="mr-2 h-4 w-4" />
                   Nueva Salida Fija
+                </Link>
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                asChild
+              >
+                <Link href="/cms/wedding-destinations">
+                  <Heart className="mr-2 h-4 w-4" />
+                  Gestionar Bodas
+                </Link>
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                asChild
+              >
+                <Link href="/cms/quinceanera-destinations">
+                  <Crown className="mr-2 h-4 w-4" />
+                  Gestionar Quinceañeras
+                </Link>
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                asChild
+              >
+                <Link href="/cms/blog-posts">
+                  <BookOpen className="mr-2 h-4 w-4" />
+                  Gestionar Blog
                 </Link>
               </Button>
             </div>

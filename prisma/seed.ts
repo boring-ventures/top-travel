@@ -911,12 +911,55 @@ async function main() {
     },
   });
 
-  // Departments
+  // Departments with enhanced data
   await prisma.department.upsert({
     where: { type: "WEDDINGS" },
     update: {
       heroImageUrl:
         "https://images.unsplash.com/photo-1529156069898-49953e39b3ac",
+      servicesJson: [
+        {
+          title: "Planificación Completa",
+          description:
+            "Manejamos cada detalle de tu boda desde la selección del lugar hasta el catering",
+          icon: "Calendar",
+          order: 1,
+        },
+        {
+          title: "Coordinación de Eventos",
+          description:
+            "Coordinamos todos los eventos relacionados con tu celebración",
+          icon: "Users",
+          order: 2,
+        },
+        {
+          title: "Servicios de Catering",
+          description: "Catering gourmet personalizado para tu evento especial",
+          icon: "Utensils",
+          order: 3,
+        },
+      ],
+      contactInfoJson: {
+        emails: ["bodas@toptravel.com", "info@toptravel.com"],
+        phones: [
+          {
+            number: "+591 2 1234567",
+            label: "Oficina Principal",
+          },
+          {
+            number: "+591 700 12345",
+            label: "WhatsApp",
+          },
+        ],
+        locations: [
+          {
+            address: "Av. 16 de Julio 1234",
+            city: "La Paz",
+            country: "Bolivia",
+            label: "Oficina Principal",
+          },
+        ],
+      },
     },
     create: {
       type: "WEDDINGS",
@@ -929,12 +972,98 @@ async function main() {
         primaryColor: "#9b87f5",
         accentColor: "#f5a3b3",
       },
+      servicesJson: [
+        {
+          title: "Planificación Completa",
+          description:
+            "Manejamos cada detalle de tu boda desde la selección del lugar hasta el catering",
+          icon: "Calendar",
+          order: 1,
+        },
+        {
+          title: "Coordinación de Eventos",
+          description:
+            "Coordinamos todos los eventos relacionados con tu celebración",
+          icon: "Users",
+          order: 2,
+        },
+        {
+          title: "Servicios de Catering",
+          description: "Catering gourmet personalizado para tu evento especial",
+          icon: "Utensils",
+          order: 3,
+        },
+      ],
+      contactInfoJson: {
+        emails: ["bodas@toptravel.com", "info@toptravel.com"],
+        phones: [
+          {
+            number: "+591 2 1234567",
+            label: "Oficina Principal",
+          },
+          {
+            number: "+591 700 12345",
+            label: "WhatsApp",
+          },
+        ],
+        locations: [
+          {
+            address: "Av. 16 de Julio 1234",
+            city: "La Paz",
+            country: "Bolivia",
+            label: "Oficina Principal",
+          },
+        ],
+      },
     },
   });
   await prisma.department.upsert({
     where: { type: "QUINCEANERA" },
     update: {
       heroImageUrl: "https://images.unsplash.com/photo-1542326237-94b1c5a538d7",
+      servicesJson: [
+        {
+          title: "Planificación de Tour",
+          description:
+            "Creamos itinerarios personalizados para toda la familia",
+          icon: "Map",
+          order: 1,
+        },
+        {
+          title: "Celebración Especial",
+          description:
+            "Organizamos la celebración de quinceañera en el destino",
+          icon: "Crown",
+          order: 2,
+        },
+        {
+          title: "Logística Completa",
+          description: "Manejamos vuelos, hoteles, traslados y actividades",
+          icon: "Plane",
+          order: 3,
+        },
+      ],
+      contactInfoJson: {
+        emails: ["quinceanera@toptravel.com", "info@toptravel.com"],
+        phones: [
+          {
+            number: "+591 2 1234567",
+            label: "Oficina Principal",
+          },
+          {
+            number: "+591 700 12345",
+            label: "WhatsApp",
+          },
+        ],
+        locations: [
+          {
+            address: "Av. 16 de Julio 1234",
+            city: "La Paz",
+            country: "Bolivia",
+            label: "Oficina Principal",
+          },
+        ],
+      },
     },
     create: {
       type: "QUINCEANERA",
@@ -944,6 +1073,49 @@ async function main() {
       themeJson: {
         primaryColor: "#f59eb6",
         accentColor: "#9b87f5",
+      },
+      servicesJson: [
+        {
+          title: "Planificación de Tour",
+          description:
+            "Creamos itinerarios personalizados para toda la familia",
+          icon: "Map",
+          order: 1,
+        },
+        {
+          title: "Celebración Especial",
+          description:
+            "Organizamos la celebración de quinceañera en el destino",
+          icon: "Crown",
+          order: 2,
+        },
+        {
+          title: "Logística Completa",
+          description: "Manejamos vuelos, hoteles, traslados y actividades",
+          icon: "Plane",
+          order: 3,
+        },
+      ],
+      contactInfoJson: {
+        emails: ["quinceanera@toptravel.com", "info@toptravel.com"],
+        phones: [
+          {
+            number: "+591 2 1234567",
+            label: "Oficina Principal",
+          },
+          {
+            number: "+591 700 12345",
+            label: "WhatsApp",
+          },
+        ],
+        locations: [
+          {
+            address: "Av. 16 de Julio 1234",
+            city: "La Paz",
+            country: "Bolivia",
+            label: "Oficina Principal",
+          },
+        ],
       },
     },
   });
@@ -997,6 +1169,125 @@ async function main() {
       },
     ],
     skipDuplicates: true,
+  });
+
+  // Wedding Destinations
+  await prisma.weddingDestination.upsert({
+    where: { slug: "bodas-paris" },
+    update: {},
+    create: {
+      slug: "bodas-paris",
+      name: "París",
+      title: "Bodas en París",
+      description:
+        "La Ciudad del Amor es el lugar perfecto para tu boda de ensueño. Desde la Torre Eiffel hasta el Palacio de Versalles, cada rincón de París ofrece un escenario mágico para tu celebración.",
+      heroImageUrl:
+        "https://images.unsplash.com/photo-1502602898536-47ad22581b52",
+      gallery: [
+        "https://images.unsplash.com/photo-1502602898536-47ad22581b52",
+        "https://images.unsplash.com/photo-1499856871958-5b9627545d1a",
+        "https://images.unsplash.com/photo-1511739001486-6bfe10ce785f",
+      ],
+      isFeatured: true,
+    },
+  });
+
+  await prisma.weddingDestination.upsert({
+    where: { slug: "bodas-bali" },
+    update: {},
+    create: {
+      slug: "bodas-bali",
+      name: "Bali",
+      title: "Bodas en Bali",
+      description:
+        "Celebra tu boda en el paraíso tropical de Bali. Playas de arena blanca, templos ancestrales y resorts de lujo crean el ambiente perfecto para una boda exótica y romántica.",
+      heroImageUrl:
+        "https://images.unsplash.com/photo-1537953773345-d172ccf13cf1",
+      gallery: [
+        "https://images.unsplash.com/photo-1537953773345-d172ccf13cf1",
+        "https://images.unsplash.com/photo-1544551763-46a013bb70d5",
+        "https://images.unsplash.com/photo-1544551763-77ef2d0cfc6c",
+      ],
+      isFeatured: true,
+    },
+  });
+
+  // Quinceanera Destinations
+  await prisma.quinceaneraDestination.upsert({
+    where: { slug: "quinceanera-paris" },
+    update: {},
+    create: {
+      slug: "quinceanera-paris",
+      name: "París",
+      title: "Quinceañeras en París",
+      description:
+        "Haz que su quinceañera sea inolvidable en la Ciudad de las Luces. Disneyland Paris, la Torre Eiffel y los Campos Elíseos crearán recuerdos mágicos para toda la familia.",
+      heroImageUrl:
+        "https://images.unsplash.com/photo-1502602898536-47ad22581b52",
+      gallery: [
+        "https://images.unsplash.com/photo-1502602898536-47ad22581b52",
+        "https://images.unsplash.com/photo-1499856871958-5b9627545d1a",
+        "https://images.unsplash.com/photo-1511739001486-6bfe10ce785f",
+      ],
+      isFeatured: true,
+    },
+  });
+
+  await prisma.quinceaneraDestination.upsert({
+    where: { slug: "quinceanera-miami" },
+    update: {},
+    create: {
+      slug: "quinceanera-miami",
+      name: "Miami",
+      title: "Quinceañeras en Miami",
+      description:
+        "Celebra su quinceañera en la vibrante ciudad de Miami. Playas, centros comerciales de lujo y la vida nocturna crean la combinación perfecta para una celebración moderna y emocionante.",
+      heroImageUrl: "https://images.unsplash.com/photo-1545420331-221ea6b0d3f0",
+      gallery: [
+        "https://images.unsplash.com/photo-1545420331-221ea6b0d3f0",
+        "https://images.unsplash.com/photo-1519046904884-53103b34b206",
+        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+      ],
+      isFeatured: true,
+    },
+  });
+
+  // Blog Posts
+  await prisma.blogPost.upsert({
+    where: { slug: "planificando-boda-paris" },
+    update: {},
+    create: {
+      slug: "planificando-boda-paris",
+      title: "Planificando tu Boda de Ensueño en París",
+      excerpt:
+        "Descubre los secretos para organizar la boda perfecta en la Ciudad del Amor. Desde la selección del lugar hasta los detalles finales.",
+      content:
+        "París, la Ciudad del Amor, es el destino por excelencia para bodas románticas y elegantes. En este artículo te guiamos a través de todo lo que necesitas saber para planificar tu boda de ensueño en la capital francesa.\n\n## Selección del Lugar\n\nParís ofrece una amplia variedad de opciones para celebrar tu boda:\n\n- **Torre Eiffel**: Para bodas icónicas con vistas espectaculares\n- **Palacio de Versalles**: Para celebraciones reales y elegantes\n- **Hoteles de lujo**: Como el Ritz o el Plaza Athénée\n- **Jardines históricos**: Como los Jardines de Luxemburgo\n\n## Temporadas Recomendadas\n\nLa primavera (abril-junio) y el otoño (septiembre-octubre) son las mejores épocas para bodas en París, con temperaturas agradables y menos turistas.\n\n## Documentación Necesaria\n\nPara casarte en Francia necesitarás:\n- Certificado de nacimiento\n- Certificado de soltería\n- Pasaporte válido\n- Traducción oficial de documentos\n\n## Presupuesto Estimado\n\nUna boda en París puede costar entre $15,000 y $50,000 USD, dependiendo del lugar y servicios elegidos.",
+      heroImageUrl:
+        "https://images.unsplash.com/photo-1529156069898-49953e39b3ac",
+      author: "Equipo Top Travel",
+      publishedAt: new Date("2024-01-15"),
+      status: "PUBLISHED",
+      type: "WEDDINGS",
+    },
+  });
+
+  await prisma.blogPost.upsert({
+    where: { slug: "quinceanera-miami-guia" },
+    update: {},
+    create: {
+      slug: "quinceanera-miami-guia",
+      title: "Guía Completa para Quinceañeras en Miami",
+      excerpt:
+        "Todo lo que necesitas saber para planificar la quinceañera perfecta en Miami. Desde actividades hasta los mejores lugares para celebrar.",
+      content:
+        "Miami es uno de los destinos más populares para celebrar quinceañeras, y no es difícil entender por qué. Esta vibrante ciudad ofrece una combinación perfecta de playas, entretenimiento y cultura latina.\n\n## Actividades Imperdibles\n\n### 1. South Beach\nLas playas de Miami Beach son perfectas para sesiones de fotos y actividades acuáticas.\n\n### 2. Bayside Marketplace\nCentro comercial con tiendas, restaurantes y paseos en barco.\n\n### 3. Wynwood Walls\nPara fotos artísticas en el famoso distrito de arte callejero.\n\n### 4. Dolphin Mall\nUno de los centros comerciales más grandes de Miami con outlets.\n\n## Lugares para la Celebración\n\n- **Hoteles de lujo**: Fontainebleau, W South Beach\n- **Restaurantes**: Versace Mansion, Zuma\n- **Yates privados**: Para celebraciones únicas en el mar\n\n## Itinerario Sugerido\n\n**Día 1**: Llegada y check-in en el hotel\n**Día 2**: South Beach y sesión de fotos\n**Día 3**: Shopping en Dolphin Mall\n**Día 4**: Celebración principal\n**Día 5**: Wynwood y despedida\n\n## Presupuesto Estimado\n\nUna quinceañera en Miami puede costar entre $8,000 y $25,000 USD, incluyendo vuelos, hotel, actividades y celebración.",
+      heroImageUrl: "https://images.unsplash.com/photo-1542326237-94b1c5a538d7",
+      author: "Equipo Top Travel",
+      publishedAt: new Date("2024-01-20"),
+      status: "PUBLISHED",
+      type: "QUINCEANERA",
+    },
   });
 
   console.log("Seed data created.");

@@ -1,18 +1,23 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { DepartmentCreateSchema } from "@/lib/validations/department";
+import { BlogPostCreateSchema } from "@/lib/validations/blog-post";
 import { auth, ensureSuperadmin } from "@/lib/auth";
-import { sanitizeRichJson } from "@/lib/sanitize";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const items = await prisma.department.findMany({
+    const { searchParams } = new URL(request.url);
+    const type = searchParams.get("type");
+
+    const where = type ? { type: type as "WEDDINGS" | "QUINCEANERA" } : {};
+
+    const items = await prisma.blogPost.findMany({
+      where,
       orderBy: { createdAt: "desc" },
     });
     return NextResponse.json(items);
   } catch {
     return NextResponse.json(
-      { error: "Failed to fetch departments" },
+      { error: "Failed to fetch blog posts" },
       { status: 500 }
     );
   }
@@ -23,36 +28,34 @@ export async function POST(request: Request) {
     const session = await auth();
     ensureSuperadmin(session?.user);
     const json = await request.json();
-    const parsed = DepartmentCreateSchema.parse(json);
+    const parsed = BlogPostCreateSchema.parse(json);
 
-    // Check if department with this type already exists
-    const existing = await prisma.department.findUnique({
-      where: { type: parsed.type },
+    // Check if blog post with this slug already exists
+    const existing = await prisma.blogPost.findUnique({
+      where: { slug: parsed.slug },
     });
 
     if (existing) {
       return NextResponse.json(
-        { error: `Department with type '${parsed.type}' already exists` },
+        { error: `Blog post with slug '${parsed.slug}' already exists` },
         { status: 409 }
       );
     }
 
-    const created = await prisma.department.create({
+    const created = await prisma.blogPost.create({
       data: {
         ...parsed,
-        themeJson: sanitizeRichJson(parsed.themeJson as any),
-        servicesJson: sanitizeRichJson(parsed.servicesJson as any),
-        contactInfoJson: sanitizeRichJson(parsed.contactInfoJson as any),
+        publishedAt: parsed.publishedAt ? new Date(parsed.publishedAt) : null,
       },
     });
     return NextResponse.json(created, { status: 201 });
   } catch (error: any) {
-    console.error("Department creation error:", error);
+    console.error("Blog post creation error:", error);
 
     // Handle Prisma unique constraint errors
     if (error.code === "P2002") {
       return NextResponse.json(
-        { error: "A department with this type already exists" },
+        { error: "A blog post with this slug already exists" },
         { status: 409 }
       );
     }
@@ -67,7 +70,7 @@ export async function POST(request: Request) {
 
     const status = error?.status ?? 400;
     return NextResponse.json(
-      { error: error?.message ?? "Failed to create department" },
+      { error: error?.message ?? "Failed to create blog post" },
       { status }
     );
   }

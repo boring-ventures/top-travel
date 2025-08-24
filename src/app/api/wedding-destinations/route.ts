@@ -1,18 +1,18 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { DepartmentCreateSchema } from "@/lib/validations/department";
+import { WeddingDestinationCreateSchema } from "@/lib/validations/wedding-destination";
 import { auth, ensureSuperadmin } from "@/lib/auth";
 import { sanitizeRichJson } from "@/lib/sanitize";
 
 export async function GET() {
   try {
-    const items = await prisma.department.findMany({
+    const items = await prisma.weddingDestination.findMany({
       orderBy: { createdAt: "desc" },
     });
     return NextResponse.json(items);
   } catch {
     return NextResponse.json(
-      { error: "Failed to fetch departments" },
+      { error: "Failed to fetch wedding destinations" },
       { status: 500 }
     );
   }
@@ -23,36 +23,36 @@ export async function POST(request: Request) {
     const session = await auth();
     ensureSuperadmin(session?.user);
     const json = await request.json();
-    const parsed = DepartmentCreateSchema.parse(json);
+    const parsed = WeddingDestinationCreateSchema.parse(json);
 
-    // Check if department with this type already exists
-    const existing = await prisma.department.findUnique({
-      where: { type: parsed.type },
+    // Check if destination with this slug already exists
+    const existing = await prisma.weddingDestination.findUnique({
+      where: { slug: parsed.slug },
     });
 
     if (existing) {
       return NextResponse.json(
-        { error: `Department with type '${parsed.type}' already exists` },
+        {
+          error: `Wedding destination with slug '${parsed.slug}' already exists`,
+        },
         { status: 409 }
       );
     }
 
-    const created = await prisma.department.create({
+    const created = await prisma.weddingDestination.create({
       data: {
         ...parsed,
-        themeJson: sanitizeRichJson(parsed.themeJson as any),
-        servicesJson: sanitizeRichJson(parsed.servicesJson as any),
-        contactInfoJson: sanitizeRichJson(parsed.contactInfoJson as any),
+        gallery: sanitizeRichJson(parsed.gallery),
       },
     });
     return NextResponse.json(created, { status: 201 });
   } catch (error: any) {
-    console.error("Department creation error:", error);
+    console.error("Wedding destination creation error:", error);
 
     // Handle Prisma unique constraint errors
     if (error.code === "P2002") {
       return NextResponse.json(
-        { error: "A department with this type already exists" },
+        { error: "A wedding destination with this slug already exists" },
         { status: 409 }
       );
     }
@@ -67,7 +67,7 @@ export async function POST(request: Request) {
 
     const status = error?.status ?? 400;
     return NextResponse.json(
-      { error: error?.message ?? "Failed to create department" },
+      { error: error?.message ?? "Failed to create wedding destination" },
       { status }
     );
   }
