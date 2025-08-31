@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { BlogPostCreateSchema } from "@/lib/validations/blog-post";
-import type { BlogPostCreate } from "@/lib/validations/blog-post";
+import { blogPostSchema, BlogPostInput } from "@/lib/validations/blog-post";
+import { DepartmentType } from "@prisma/client";
 import {
   Dialog,
   DialogContent,
@@ -13,13 +13,20 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
-import { api } from "@/lib/api";
+import { useCreateBlogPost } from "@/hooks/use-blog-posts";
 
 interface CreateBlogPostModalProps {
   open: boolean;
@@ -32,11 +39,11 @@ export function CreateBlogPostModal({
   onOpenChange,
   onSuccess,
 }: CreateBlogPostModalProps) {
-  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const createPostMutation = useCreateBlogPost();
 
-  const form = useForm<BlogPostCreate>({
-    resolver: zodResolver(BlogPostCreateSchema),
+  const form = useForm<BlogPostInput>({
+    resolver: zodResolver(blogPostSchema),
     defaultValues: {
       slug: "",
       title: "",
@@ -45,14 +52,13 @@ export function CreateBlogPostModal({
       heroImageUrl: "",
       author: "",
       status: "DRAFT",
-      type: "WEDDINGS",
+      type: DepartmentType.WEDDINGS,
     },
   });
 
-  const onSubmit = async (data: BlogPostCreate) => {
-    setIsLoading(true);
+  const onSubmit = async (data: BlogPostInput) => {
     try {
-      await api.post("/api/blog-posts", data);
+      await createPostMutation.mutateAsync(data);
       toast({
         title: "Post creado",
         description: "El blog post ha sido creado exitosamente.",
@@ -62,12 +68,9 @@ export function CreateBlogPostModal({
     } catch (error: any) {
       toast({
         title: "Error",
-        description:
-          error.response?.data?.error || "No se pudo crear el blog post.",
+        description: "No se pudo crear el blog post.",
         variant: "destructive",
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -168,15 +171,41 @@ export function CreateBlogPostModal({
             )}
           </div>
 
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="status"
-              checked={form.watch("status") === "PUBLISHED"}
-              onCheckedChange={(checked) =>
-                form.setValue("status", checked ? "PUBLISHED" : "DRAFT")
-              }
-            />
-            <Label htmlFor="status">Publicar inmediatamente</Label>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="type">Tipo de Blog *</Label>
+              <Select
+                value={form.watch("type")}
+                onValueChange={(value: DepartmentType) =>
+                  form.setValue("type", value)
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecciona el tipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={DepartmentType.WEDDINGS}>Bodas</SelectItem>
+                  <SelectItem value={DepartmentType.QUINCEANERA}>
+                    Quinceañeras
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              {form.formState.errors.type && (
+                <p className="text-sm text-destructive">
+                  {form.formState.errors.type.message}
+                </p>
+              )}
+            </div>
+            <div className="flex items-center space-x-2 pt-6">
+              <Switch
+                id="status"
+                checked={form.watch("status") === "PUBLISHED"}
+                onCheckedChange={(checked) =>
+                  form.setValue("status", checked ? "PUBLISHED" : "DRAFT")
+                }
+              />
+              <Label htmlFor="status">Publicar inmediatamente</Label>
+            </div>
           </div>
 
           <DialogFooter>
@@ -184,12 +213,12 @@ export function CreateBlogPostModal({
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              disabled={isLoading}
+              disabled={createPostMutation.isPending}
             >
               Cancelar
             </Button>
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Creando..." : "Crear Post"}
+            <Button type="submit" disabled={createPostMutation.isPending}>
+              {createPostMutation.isPending ? "Creando..." : "Crear Post"}
             </Button>
           </DialogFooter>
         </form>

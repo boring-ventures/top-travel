@@ -15,6 +15,7 @@ const navItems = [
   { href: "/events", label: "Eventos" },
   { href: "/weddings", label: "Bodas" },
   { href: "/quinceanera", label: "Quinceañeras" },
+  { href: "/blog", label: "Blog" },
   { href: "/about", label: "Nosotros" },
   { href: "/contact", label: "Contacto" },
 ];

@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { Plus, Search, Edit, Trash2, Eye } from "lucide-react";
+import { Plus, Search, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -22,25 +21,11 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { api } from "@/lib/api";
+import { BlogPost } from "@prisma/client";
+import { useBlogPosts, useDeleteBlogPost } from "@/hooks/use-blog-posts";
 import { EditBlogPostModal } from "./edit-blog-post-modal";
 import { DeleteBlogPostDialog } from "./delete-blog-post-dialog";
 import { CreateBlogPostModal } from "./create-blog-post-modal";
-
-interface BlogPost {
-  id: string;
-  slug: string;
-  title: string;
-  content: string;
-  excerpt?: string;
-  heroImageUrl?: string;
-  author?: string;
-  publishedAt?: string;
-  status: "DRAFT" | "PUBLISHED";
-  type: "WEDDINGS" | "QUINCEANERA";
-  createdAt: string;
-  updatedAt: string;
-}
 
 export function BlogPostsTable() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -49,17 +34,10 @@ export function BlogPostsTable() {
   const [deletingPost, setDeletingPost] = useState<BlogPost | null>(null);
   const { toast } = useToast();
 
-  const {
-    data: posts = [],
-    isLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ["blog-posts"],
-    queryFn: async () => {
-      const response = await api.get("/api/blog-posts");
-      return response.data as BlogPost[];
-    },
-  });
+  const { data: blogPostsData, isLoading } = useBlogPosts();
+  const deletePostMutation = useDeleteBlogPost();
+
+  const posts = blogPostsData?.posts || [];
 
   const filteredPosts = posts.filter(
     (post) =>
@@ -69,12 +47,11 @@ export function BlogPostsTable() {
 
   const handleDelete = async (post: BlogPost) => {
     try {
-      await api.delete(`/api/blog-posts/${post.slug}`);
+      await deletePostMutation.mutateAsync(post.id);
       toast({
         title: "Post eliminado",
         description: "El blog post ha sido eliminado exitosamente.",
       });
-      refetch();
       setDeletingPost(null);
     } catch (error) {
       toast({
@@ -198,7 +175,6 @@ export function BlogPostsTable() {
         onOpenChange={setIsCreateModalOpen}
         onSuccess={() => {
           setIsCreateModalOpen(false);
-          refetch();
         }}
       />
 
@@ -209,7 +185,6 @@ export function BlogPostsTable() {
           onOpenChange={(open) => !open && setEditingPost(null)}
           onSuccess={() => {
             setEditingPost(null);
-            refetch();
           }}
         />
       )}

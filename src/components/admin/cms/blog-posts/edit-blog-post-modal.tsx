@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { BlogPostUpdateSchema } from "@/lib/validations/blog-post";
-import type { BlogPostUpdate } from "@/lib/validations/blog-post";
+import { blogPostSchema, BlogPostInput } from "@/lib/validations/blog-post";
+import { BlogPost, DepartmentType } from "@prisma/client";
 import {
   Dialog,
   DialogContent,
@@ -13,28 +13,20 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
-import { api } from "@/lib/api";
-
-interface BlogPost {
-  id: string;
-  slug: string;
-  title: string;
-  content: string;
-  excerpt?: string;
-  heroImageUrl?: string;
-  author?: string;
-  publishedAt?: string;
-  status: "DRAFT" | "PUBLISHED";
-  type: "WEDDINGS" | "QUINCEANERA";
-  createdAt: string;
-  updatedAt: string;
-}
+import { useUpdateBlogPost } from "@/hooks/use-blog-posts";
 
 interface EditBlogPostModalProps {
   post: BlogPost;
@@ -49,11 +41,11 @@ export function EditBlogPostModal({
   onOpenChange,
   onSuccess,
 }: EditBlogPostModalProps) {
-  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const updatePostMutation = useUpdateBlogPost();
 
-  const form = useForm<BlogPostUpdate>({
-    resolver: zodResolver(BlogPostUpdateSchema),
+  const form = useForm<BlogPostInput>({
+    resolver: zodResolver(blogPostSchema),
     defaultValues: {
       slug: post.slug,
       title: post.title,
@@ -81,10 +73,9 @@ export function EditBlogPostModal({
     }
   }, [open, post, form]);
 
-  const onSubmit = async (data: BlogPostUpdate) => {
-    setIsLoading(true);
+  const onSubmit = async (data: BlogPostInput) => {
     try {
-      await api.put(`/api/blog-posts/${post.slug}`, data);
+      await updatePostMutation.mutateAsync({ id: post.id, ...data });
       toast({
         title: "Post actualizado",
         description: "El blog post ha sido actualizado exitosamente.",
@@ -93,12 +84,9 @@ export function EditBlogPostModal({
     } catch (error: any) {
       toast({
         title: "Error",
-        description:
-          error.response?.data?.error || "No se pudo actualizar el blog post.",
+        description: "No se pudo actualizar el blog post.",
         variant: "destructive",
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -199,15 +187,41 @@ export function EditBlogPostModal({
             )}
           </div>
 
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="status"
-              checked={form.watch("status") === "PUBLISHED"}
-              onCheckedChange={(checked) =>
-                form.setValue("status", checked ? "PUBLISHED" : "DRAFT")
-              }
-            />
-            <Label htmlFor="status">Publicado</Label>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="type">Tipo de Blog *</Label>
+              <Select
+                value={form.watch("type")}
+                onValueChange={(value: DepartmentType) =>
+                  form.setValue("type", value)
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecciona el tipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={DepartmentType.WEDDINGS}>Bodas</SelectItem>
+                  <SelectItem value={DepartmentType.QUINCEANERA}>
+                    Quinceañeras
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              {form.formState.errors.type && (
+                <p className="text-sm text-destructive">
+                  {form.formState.errors.type.message}
+                </p>
+              )}
+            </div>
+            <div className="flex items-center space-x-2 pt-6">
+              <Switch
+                id="status"
+                checked={form.watch("status") === "PUBLISHED"}
+                onCheckedChange={(checked) =>
+                  form.setValue("status", checked ? "PUBLISHED" : "DRAFT")
+                }
+              />
+              <Label htmlFor="status">Publicado</Label>
+            </div>
           </div>
 
           <DialogFooter>
@@ -215,12 +229,14 @@ export function EditBlogPostModal({
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              disabled={isLoading}
+              disabled={updatePostMutation.isPending}
             >
               Cancelar
             </Button>
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Actualizando..." : "Actualizar Post"}
+            <Button type="submit" disabled={updatePostMutation.isPending}>
+              {updatePostMutation.isPending
+                ? "Actualizando..."
+                : "Actualizar Post"}
             </Button>
           </DialogFooter>
         </form>
