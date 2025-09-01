@@ -221,6 +221,22 @@ export async function uploadPageImage(
   });
 }
 
+export async function uploadBlogPostImage(
+  file: File,
+  blogPostSlug: string,
+  blogType: "weddings" | "quinceaneras",
+  quality: number = 80
+): Promise<string> {
+  return uploadImageToStorage(file, {
+    bucket: "pages",
+    folder: blogType,
+    quality,
+    width: 1200,
+    height: 800,
+    fit: "cover",
+  });
+}
+
 export async function cleanupOrphanedImages(): Promise<{
   deleted: string[];
   errors: string[];

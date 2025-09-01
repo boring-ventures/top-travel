@@ -27,7 +27,7 @@ export default function ContactPage() {
 
       <main className="flex-grow relative">
         {/* Background Pattern */}
-        <div className="absolute inset-0 bg-grid-black/[0.02] dark:bg-grid-white/[0.02] -z-10" />
+        <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-secondary/20 -z-10" />
 
         {/* Enhanced Hero Section */}
@@ -86,8 +86,8 @@ export default function ContactPage() {
                   <ShineBorder className="rounded-xl w-full" borderWidth={1}>
                     <Card className="p-6 sm:p-8 bg-transparent border-0 hover:shadow-xl transition-all duration-300">
                       <div className="flex items-start gap-4 sm:gap-6">
-                        <div className="p-3 sm:p-4 bg-green-100 dark:bg-green-900/20 rounded-xl">
-                          <MessageCircle className="h-6 w-6 sm:h-8 sm:w-8 text-green-600 dark:text-green-400" />
+                        <div className="p-3 sm:p-4 bg-green-100 rounded-xl">
+                          <MessageCircle className="h-6 w-6 sm:h-8 sm:w-8 text-green-600" />
                         </div>
                         <div className="flex-1">
                           <h3 className="font-bold text-lg sm:text-xl mb-3 text-foreground">
@@ -112,8 +112,8 @@ export default function ContactPage() {
                   <ShineBorder className="rounded-xl w-full" borderWidth={1}>
                     <Card className="p-6 sm:p-8 bg-transparent border-0 hover:shadow-xl transition-all duration-300">
                       <div className="flex items-start gap-4 sm:gap-6">
-                        <div className="p-3 sm:p-4 bg-blue-100 dark:bg-blue-900/20 rounded-xl">
-                          <MapPin className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 dark:text-blue-400" />
+                        <div className="p-3 sm:p-4 bg-blue-100 rounded-xl">
+                          <MapPin className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600" />
                         </div>
                         <div className="flex-1">
                           <h3 className="font-bold text-lg sm:text-xl mb-3 text-foreground">
@@ -171,8 +171,8 @@ export default function ContactPage() {
                   <ShineBorder className="rounded-xl w-full" borderWidth={1}>
                     <Card className="p-6 sm:p-8 bg-transparent border-0 hover:shadow-xl transition-all duration-300">
                       <div className="flex items-start gap-4 sm:gap-6">
-                        <div className="p-3 sm:p-4 bg-orange-100 dark:bg-orange-900/20 rounded-xl">
-                          <Clock className="h-6 w-6 sm:h-8 sm:w-8 text-orange-600 dark:text-orange-400" />
+                        <div className="p-3 sm:p-4 bg-orange-100 rounded-xl">
+                          <Clock className="h-6 w-6 sm:h-8 sm:w-8 text-orange-600" />
                         </div>
                         <div className="flex-1">
                           <h3 className="font-bold text-lg sm:text-xl mb-3 text-foreground">
@@ -279,8 +279,8 @@ export default function ContactPage() {
                 <ShineBorder className="rounded-xl w-full" borderWidth={1}>
                   <Card className="p-6 sm:p-8 bg-transparent border-0 shadow-lg">
                     <div className="flex items-center mb-6">
-                      <div className="p-2 bg-indigo-100 dark:bg-indigo-900/20 rounded-full">
-                        <Sparkles className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+                      <div className="p-2 bg-indigo-100 rounded-full">
+                        <Sparkles className="h-6 w-6 text-indigo-600" />
                       </div>
                       <h4 className="font-bold text-xl ml-3 text-foreground">
                         ¿Por qué elegirnos?
@@ -296,7 +296,7 @@ export default function ContactPage() {
                         "Logística sin estrés",
                       ].map((benefit, index) => (
                         <div key={index} className="flex items-center gap-3">
-                          <div className="w-2 h-2 bg-indigo-600 dark:bg-indigo-400 rounded-full flex-shrink-0"></div>
+                          <div className="w-2 h-2 bg-indigo-600 rounded-full flex-shrink-0"></div>
                           <span className="font-medium text-foreground">
                             {benefit}
                           </span>

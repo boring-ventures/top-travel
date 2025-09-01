@@ -14,6 +14,7 @@ import {
   Users,
   FileText,
   Gift,
+  Building2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -27,6 +28,12 @@ const navigation = [
   {
     name: "Contenido",
     items: [
+      {
+        name: "Departamentos",
+        href: "/cms/departments",
+        icon: Building2,
+        description: "Páginas de bodas y quinceañeras",
+      },
       {
         name: "Destinos",
         href: "/cms/destinations",

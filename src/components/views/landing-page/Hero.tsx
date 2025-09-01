@@ -254,7 +254,7 @@ export default function Hero({ items = [], featuredOffer }: HeroProps) {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
                           {featuredOffer.displayTag && (
-                            <span className="bg-corporate-red/10 text-corporate-red dark:bg-corporate-red/20 dark:text-corporate-red text-xs font-medium px-2 py-1 rounded-full">
+                            <span className="bg-corporate-red/10 text-corporate-red text-xs font-medium px-2 py-1 rounded-full">
                               {featuredOffer.displayTag}
                             </span>
                           )}

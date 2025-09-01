@@ -34,13 +34,13 @@ const getTypeIcon = (type: string) => {
 const getTypeColor = (type: string) => {
   switch (type) {
     case "REGION":
-      return "bg-blue-lighter text-corporate-blue dark:bg-blue-dark dark:text-blue-light hover:bg-blue-light dark:hover:bg-blue-darker";
+      return "bg-blue-lighter text-corporate-blue hover:bg-blue-light";
     case "THEME":
-      return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 hover:bg-green-200 dark:hover:bg-green-800";
+      return "bg-green-100 text-green-800 hover:bg-green-200";
     case "DEPARTMENT":
-      return "bg-red-lighter text-corporate-red dark:bg-red-dark dark:text-red-light hover:bg-red-light dark:hover:bg-red-darker";
+      return "bg-red-lighter text-corporate-red hover:bg-red-light";
     default:
-      return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800";
+      return "bg-gray-100 text-gray-800 hover:bg-gray-200";
   }
 };
 

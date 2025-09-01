@@ -18,6 +18,9 @@ export { default as CustomizablePackages } from "./CustomizablePackages";
 export { default as TabbedContent } from "./TabbedContent";
 export { default as SpecialDepartments } from "./SpecialDepartments";
 export { default as FeaturedDestinations } from "./FeaturedDestinations";
+export { default as WeddingDestinations } from "./WeddingDestinations";
+export { default as Services } from "./Services";
+export { default as ContactInfo } from "./ContactInfo";
 
 // Card components
 export { default as TravelCard } from "./TravelCard";

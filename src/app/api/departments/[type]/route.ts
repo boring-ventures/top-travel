@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { DepartmentUpdateSchema } from "@/lib/validations/department";
 import { auth, ensureSuperadmin } from "@/lib/auth";
+import { sanitizeRichJson } from "@/lib/sanitize";
 
 type Params = { params: Promise<{ type: "WEDDINGS" | "QUINCEANERA" }> };
 
@@ -35,9 +36,30 @@ export async function PATCH(request: Request, { params }: Params) {
     const { type } = await params;
     const json = await request.json();
     const parsed = DepartmentUpdateSchema.parse(json);
+
+    // Sanitize JSON fields
+    const updateData: any = { ...parsed };
+    if (updateData.heroContentJson) {
+      updateData.heroContentJson = sanitizeRichJson(updateData.heroContentJson);
+    }
+    if (updateData.packagesJson) {
+      updateData.packagesJson = sanitizeRichJson(updateData.packagesJson);
+    }
+    if (updateData.servicesJson) {
+      updateData.servicesJson = sanitizeRichJson(updateData.servicesJson);
+    }
+    if (updateData.contactInfoJson) {
+      updateData.contactInfoJson = sanitizeRichJson(updateData.contactInfoJson);
+    }
+    if (updateData.additionalContentJson) {
+      updateData.additionalContentJson = sanitizeRichJson(
+        updateData.additionalContentJson
+      );
+    }
+
     const updated = await prisma.department.update({
       where: { type },
-      data: parsed,
+      data: updateData,
     });
     return NextResponse.json(updated);
   } catch (error: any) {

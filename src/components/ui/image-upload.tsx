@@ -77,15 +77,9 @@ export function ImageUpload({
       // For immediate uploads, upload right away
       setIsUploading(true);
       try {
-        console.log("ImageUpload: Starting upload for file:", file.name);
         const uploadedUrl = await onUpload!(file);
-        console.log(
-          "ImageUpload: Upload completed, received URL:",
-          uploadedUrl
-        );
         onChange(uploadedUrl);
       } catch (err) {
-        console.error("ImageUpload: Upload error:", err);
         setError(err instanceof Error ? err.message : "Upload failed");
         setPreview(null);
         setSelectedFile(null);

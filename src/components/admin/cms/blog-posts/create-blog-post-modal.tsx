@@ -27,6 +27,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
 import { useCreateBlogPost } from "@/hooks/use-blog-posts";
+import { ImageUpload } from "@/components/ui/image-upload";
+import { uploadBlogPostImage } from "@/lib/supabase/storage";
 
 interface CreateBlogPostModalProps {
   open: boolean;
@@ -41,6 +43,7 @@ export function CreateBlogPostModal({
 }: CreateBlogPostModalProps) {
   const { toast } = useToast();
   const createPostMutation = useCreateBlogPost();
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
   const form = useForm<BlogPostInput>({
     resolver: zodResolver(blogPostSchema),
@@ -58,12 +61,30 @@ export function CreateBlogPostModal({
 
   const onSubmit = async (data: BlogPostInput) => {
     try {
-      await createPostMutation.mutateAsync(data);
+      let heroImageUrl = data.heroImageUrl;
+
+      // Upload image if one was selected
+      if (selectedImage) {
+        const blogType =
+          data.type === DepartmentType.WEDDINGS ? "weddings" : "quinceaneras";
+        heroImageUrl = await uploadBlogPostImage(
+          selectedImage,
+          data.slug,
+          blogType
+        );
+      }
+
+      await createPostMutation.mutateAsync({
+        ...data,
+        heroImageUrl,
+      });
+
       toast({
         title: "Post creado",
         description: "El blog post ha sido creado exitosamente.",
       });
       form.reset();
+      setSelectedImage(null);
       onSuccess();
     } catch (error: any) {
       toast({
@@ -76,152 +97,160 @@ export function CreateBlogPostModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px]">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-[700px] max-h-[90vh] flex flex-col">
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle>Crear Nuevo Blog Post</DialogTitle>
           <DialogDescription>
             Completa la información para crear un nuevo blog post.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+        <div className="flex-1 overflow-y-auto pr-2">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="slug">Slug *</Label>
+                <Input
+                  id="slug"
+                  {...form.register("slug")}
+                  placeholder="mi-primer-post"
+                />
+                {form.formState.errors.slug && (
+                  <p className="text-sm text-destructive">
+                    {form.formState.errors.slug.message}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="author">Autor</Label>
+                <Input
+                  id="author"
+                  {...form.register("author")}
+                  placeholder="Tu nombre"
+                />
+                {form.formState.errors.author && (
+                  <p className="text-sm text-destructive">
+                    {form.formState.errors.author.message}
+                  </p>
+                )}
+              </div>
+            </div>
+
             <div className="space-y-2">
-              <Label htmlFor="slug">Slug *</Label>
+              <Label htmlFor="title">Título *</Label>
               <Input
-                id="slug"
-                {...form.register("slug")}
-                placeholder="mi-primer-post"
+                id="title"
+                {...form.register("title")}
+                placeholder="Título del blog post"
               />
-              {form.formState.errors.slug && (
+              {form.formState.errors.title && (
                 <p className="text-sm text-destructive">
-                  {form.formState.errors.slug.message}
+                  {form.formState.errors.title.message}
                 </p>
               )}
             </div>
+
             <div className="space-y-2">
-              <Label htmlFor="author">Autor</Label>
-              <Input
-                id="author"
-                {...form.register("author")}
-                placeholder="Tu nombre"
+              <Label htmlFor="excerpt">Resumen</Label>
+              <Textarea
+                id="excerpt"
+                {...form.register("excerpt")}
+                placeholder="Breve descripción del post..."
+                rows={2}
               />
-              {form.formState.errors.author && (
+              {form.formState.errors.excerpt && (
                 <p className="text-sm text-destructive">
-                  {form.formState.errors.author.message}
+                  {form.formState.errors.excerpt.message}
                 </p>
               )}
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="title">Título *</Label>
-            <Input
-              id="title"
-              {...form.register("title")}
-              placeholder="Título del blog post"
-            />
-            {form.formState.errors.title && (
-              <p className="text-sm text-destructive">
-                {form.formState.errors.title.message}
-              </p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="excerpt">Resumen</Label>
-            <Textarea
-              id="excerpt"
-              {...form.register("excerpt")}
-              placeholder="Breve descripción del post..."
-              rows={2}
-            />
-            {form.formState.errors.excerpt && (
-              <p className="text-sm text-destructive">
-                {form.formState.errors.excerpt.message}
-              </p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="content">Contenido *</Label>
-            <Textarea
-              id="content"
-              {...form.register("content")}
-              placeholder="Contenido del blog post..."
-              rows={8}
-            />
-            {form.formState.errors.content && (
-              <p className="text-sm text-destructive">
-                {form.formState.errors.content.message}
-              </p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="heroImageUrl">URL de Imagen Destacada</Label>
-            <Input
-              id="heroImageUrl"
-              {...form.register("heroImageUrl")}
-              placeholder="https://example.com/image.jpg"
-            />
-            {form.formState.errors.heroImageUrl && (
-              <p className="text-sm text-destructive">
-                {form.formState.errors.heroImageUrl.message}
-              </p>
-            )}
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="type">Tipo de Blog *</Label>
-              <Select
-                value={form.watch("type")}
-                onValueChange={(value: DepartmentType) =>
-                  form.setValue("type", value)
-                }
+              <Label htmlFor="content">Contenido *</Label>
+              <Textarea
+                id="content"
+                {...form.register("content")}
+                placeholder="Contenido del blog post..."
+                rows={8}
+              />
+              {form.formState.errors.content && (
+                <p className="text-sm text-destructive">
+                  {form.formState.errors.content.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label>Imagen Destacada</Label>
+              <ImageUpload
+                value={form.watch("heroImageUrl")}
+                onChange={(url) => form.setValue("heroImageUrl", url)}
+                onFileSelect={(file) => setSelectedImage(file)}
+                placeholder="Subir imagen destacada"
+                deferred={true}
+                maxSize={5}
+                aspectRatio={1200 / 800}
+              />
+              {form.formState.errors.heroImageUrl && (
+                <p className="text-sm text-destructive">
+                  {form.formState.errors.heroImageUrl.message}
+                </p>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="type">Tipo de Blog *</Label>
+                <Select
+                  value={form.watch("type")}
+                  onValueChange={(value: DepartmentType) =>
+                    form.setValue("type", value)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona el tipo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={DepartmentType.WEDDINGS}>
+                      Bodas
+                    </SelectItem>
+                    <SelectItem value={DepartmentType.QUINCEANERA}>
+                      Quinceañeras
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                {form.formState.errors.type && (
+                  <p className="text-sm text-destructive">
+                    {form.formState.errors.type.message}
+                  </p>
+                )}
+              </div>
+              <div className="flex items-center space-x-2 pt-6">
+                <Switch
+                  id="status"
+                  checked={form.watch("status") === "PUBLISHED"}
+                  onCheckedChange={(checked) =>
+                    form.setValue("status", checked ? "PUBLISHED" : "DRAFT")
+                  }
+                />
+                <Label htmlFor="status">Publicar inmediatamente</Label>
+              </div>
+            </div>
+
+            <DialogFooter className="flex-shrink-0 mt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                disabled={createPostMutation.isPending}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecciona el tipo" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={DepartmentType.WEDDINGS}>Bodas</SelectItem>
-                  <SelectItem value={DepartmentType.QUINCEANERA}>
-                    Quinceañeras
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-              {form.formState.errors.type && (
-                <p className="text-sm text-destructive">
-                  {form.formState.errors.type.message}
-                </p>
-              )}
-            </div>
-            <div className="flex items-center space-x-2 pt-6">
-              <Switch
-                id="status"
-                checked={form.watch("status") === "PUBLISHED"}
-                onCheckedChange={(checked) =>
-                  form.setValue("status", checked ? "PUBLISHED" : "DRAFT")
-                }
-              />
-              <Label htmlFor="status">Publicar inmediatamente</Label>
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={createPostMutation.isPending}
-            >
-              Cancelar
-            </Button>
-            <Button type="submit" disabled={createPostMutation.isPending}>
-              {createPostMutation.isPending ? "Creando..." : "Crear Post"}
-            </Button>
-          </DialogFooter>
-        </form>
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={createPostMutation.isPending}>
+                {createPostMutation.isPending ? "Creando..." : "Crear Post"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </div>
       </DialogContent>
     </Dialog>
   );

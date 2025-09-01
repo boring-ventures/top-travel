@@ -22,9 +22,11 @@ import {
   Calendar,
 } from "lucide-react";
 import { ShineBorder } from "@/components/magicui/shine-border";
+import { BlogPostsSectionServer } from "@/components/views/landing-page/BlogPostsSectionServer";
+import { DepartmentType } from "@prisma/client";
 
 export default async function QuinceaneraPage() {
-  const [dept, destinations, testimonials] = await Promise.all([
+  const [dept, destinations, testimonials, blogPosts] = await Promise.all([
     prisma.department.findUnique({ where: { type: "QUINCEANERA" } }),
     prisma.destination.findMany({
       where: { isFeatured: true },
@@ -49,6 +51,24 @@ export default async function QuinceaneraPage() {
         content: true,
       },
     }),
+    prisma.blogPost.findMany({
+      where: {
+        status: "PUBLISHED",
+        type: "QUINCEANERA",
+      },
+      orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+      take: 3,
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        excerpt: true,
+        heroImageUrl: true,
+        author: true,
+        publishedAt: true,
+        type: true,
+      },
+    }),
   ]);
 
   const primary = (dept?.themeJson as any)?.primaryColor ?? "#ee2b8d";
@@ -58,13 +78,19 @@ export default async function QuinceaneraPage() {
     "https://images.unsplash.com/photo-1640827013600-1f5411ec366b?w=1200&h=800&fit=crop&crop=center";
   const heroSrc = hero || fallbackHero;
 
+  // Extract CMS content with fallbacks
+  const heroContent = (dept?.heroContentJson as any) || {};
+  const services = (dept?.servicesJson as any) || [];
+  const contactInfo = (dept?.contactInfoJson as any) || {};
+  const additionalContent = (dept?.additionalContentJson as any) || {};
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
 
       <main className="flex-grow relative">
         {/* Background Pattern */}
-        <div className="absolute inset-0 bg-grid-black/[0.02] dark:bg-grid-white/[0.02] -z-10" />
+        <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-secondary/20 -z-10" />
 
         {/* Enhanced Hero */}
@@ -94,15 +120,14 @@ export default async function QuinceaneraPage() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 relative z-10">
             <div className="mx-auto max-w-4xl text-center">
               <h1 className="text-white text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight mb-6 drop-shadow-lg">
-                Celebra su Quinceañera
+                {heroContent.title || "Celebra su Quinceañera"}
                 <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-300">
-                  con un Tour de Ensueño
+                  {heroContent.subtitle || "con un Tour de Ensueño"}
                 </span>
               </h1>
               <p className="mt-4 sm:mt-6 text-white/90 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed drop-shadow-md">
-                Creamos recorridos inolvidables a medida: destinos increíbles,
-                detalles personalizados y logística completa para que disfruten
-                sin preocupaciones.
+                {heroContent.description ||
+                  "Creamos recorridos inolvidables a medida: destinos increíbles, detalles personalizados y logística completa para que disfruten sin preocupaciones."}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8">
                 <div className="flex items-center gap-2 text-white/80 drop-shadow-sm">
@@ -120,9 +145,14 @@ export default async function QuinceaneraPage() {
               </div>
               <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
                 <WhatsAppCTA
-                  template="Hola, quiero planificar un tour de Quinceañera — {url}"
+                  template={
+                    heroContent.primaryCTA?.whatsappTemplate ||
+                    "Hola, quiero planificar un tour de Quinceañera — {url}"
+                  }
                   variables={{ url: "" }}
-                  label="Planifica su tour ahora"
+                  label={
+                    heroContent.primaryCTA?.text || "Planifica su tour ahora"
+                  }
                   size="lg"
                   className="rounded-full h-14 px-8 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white border-0 text-lg font-semibold"
                 />
@@ -131,7 +161,11 @@ export default async function QuinceaneraPage() {
                   variant="secondary"
                   className="rounded-full h-14 px-8 text-lg font-semibold"
                 >
-                  <Link href="/destinations">Ver destinos</Link>
+                  <Link
+                    href={heroContent.secondaryCTA?.href || "/destinations"}
+                  >
+                    {heroContent.secondaryCTA?.text || "Ver destinos"}
+                  </Link>
                 </Button>
               </div>
             </div>
@@ -150,71 +184,78 @@ export default async function QuinceaneraPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-            <ShineBorder className="rounded-xl w-full" borderWidth={1}>
-              <Card className="p-6 sm:p-8 bg-transparent border-0 hover:shadow-xl transition-all duration-300">
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-blue-100 dark:bg-blue-900/20 rounded-xl">
-                    <Users
-                      className="h-6 w-6 text-blue-600 dark:text-blue-400"
-                      aria-hidden="true"
-                    />
-                  </div>
-                  <div>
-                    <div className="font-bold text-lg mb-2 text-foreground">
-                      Planificación experta
-                    </div>
-                    <div className="text-muted-foreground leading-relaxed">
-                      Coordinamos vuelos, hoteles, actividades y celebraciones
-                      para una experiencia sin estrés.
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            </ShineBorder>
+            {(services.length > 0
+              ? services
+              : [
+                  {
+                    title: "Planificación experta",
+                    description:
+                      "Coordinamos vuelos, hoteles, actividades y celebraciones para una experiencia sin estrés.",
+                    icon: "Users",
+                  },
+                  {
+                    title: "Toque personalizado",
+                    description:
+                      "Diseñamos el tour según sus gustos e intereses para un recuerdo verdaderamente único.",
+                    icon: "Heart",
+                  },
+                  {
+                    title: "Seguridad y soporte 24/7",
+                    description:
+                      "Acompañamiento permanente y estándares de seguridad en cada detalle del viaje.",
+                    icon: "ShieldCheck",
+                  },
+                ]
+            ).map((service: any, index: number) => {
+              // Map icon names to actual icons
+              const getIcon = (iconName: string) => {
+                switch (iconName) {
+                  case "Users":
+                    return Users;
+                  case "Heart":
+                    return Heart;
+                  case "ShieldCheck":
+                    return ShieldCheck;
+                  default:
+                    return Users;
+                }
+              };
 
-            <ShineBorder className="rounded-xl w-full" borderWidth={1}>
-              <Card className="p-6 sm:p-8 bg-transparent border-0 hover:shadow-xl transition-all duration-300">
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-pink-100 dark:bg-pink-900/20 rounded-xl">
-                    <Heart
-                      className="h-6 w-6 text-pink-600 dark:text-pink-400"
-                      aria-hidden="true"
-                    />
-                  </div>
-                  <div>
-                    <div className="font-bold text-lg mb-2 text-foreground">
-                      Toque personalizado
-                    </div>
-                    <div className="text-muted-foreground leading-relaxed">
-                      Diseñamos el tour según sus gustos e intereses para un
-                      recuerdo verdaderamente único.
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            </ShineBorder>
+              const IconComponent = getIcon(service.icon);
+              const colors = [
+                { bg: "bg-blue-100", text: "text-blue-600" },
+                { bg: "bg-pink-100", text: "text-pink-600" },
+                { bg: "bg-green-100", text: "text-green-600" },
+              ];
+              const color = colors[index % colors.length];
 
-            <ShineBorder className="rounded-xl w-full" borderWidth={1}>
-              <Card className="p-6 sm:p-8 bg-transparent border-0 hover:shadow-xl transition-all duration-300">
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-green-100 dark:bg-green-900/20 rounded-xl">
-                    <ShieldCheck
-                      className="h-6 w-6 text-green-600 dark:text-green-400"
-                      aria-hidden="true"
-                    />
-                  </div>
-                  <div>
-                    <div className="font-bold text-lg mb-2 text-foreground">
-                      Seguridad y soporte 24/7
+              return (
+                <ShineBorder
+                  key={index}
+                  className="rounded-xl w-full"
+                  borderWidth={1}
+                >
+                  <Card className="p-6 sm:p-8 bg-transparent border-0 hover:shadow-xl transition-all duration-300">
+                    <div className="flex items-start gap-4">
+                      <div className={`p-3 ${color.bg} rounded-xl`}>
+                        <IconComponent
+                          className={`h-6 w-6 ${color.text}`}
+                          aria-hidden="true"
+                        />
+                      </div>
+                      <div>
+                        <div className="font-bold text-lg mb-2 text-foreground">
+                          {service.title}
+                        </div>
+                        <div className="text-muted-foreground leading-relaxed">
+                          {service.description}
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-muted-foreground leading-relaxed">
-                      Acompañamiento permanente y estándares de seguridad en
-                      cada detalle del viaje.
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            </ShineBorder>
+                  </Card>
+                </ShineBorder>
+              );
+            })}
           </div>
         </section>
 
@@ -264,7 +305,7 @@ export default async function QuinceaneraPage() {
                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                           />
                         ) : (
-                          <div className="h-full w-full bg-gradient-to-br from-pink-100 to-purple-100 dark:from-pink-900/20 dark:to-purple-900/20 flex items-center justify-center">
+                          <div className="h-full w-full bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center">
                             <MapPin className="h-12 w-12 text-muted-foreground" />
                           </div>
                         )}
@@ -357,122 +398,98 @@ export default async function QuinceaneraPage() {
         </section>
 
         {/* Sample itinerary */}
-        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4 text-foreground">
-              Itinerario sugerido: Quinceañera en París
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Un ejemplo de cómo puede ser su experiencia perfecta
-            </p>
-          </div>
+        {additionalContent?.sampleItinerary?.days?.length > 0 && (
+          <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4 text-foreground">
+                {additionalContent.sampleItinerary.title ||
+                  "Itinerario sugerido: Quinceañera en París"}
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                {additionalContent.sampleItinerary.description ||
+                  "Un ejemplo de cómo puede ser su experiencia perfecta"}
+              </p>
+            </div>
 
-          <ShineBorder className="rounded-2xl w-full" borderWidth={1}>
-            <Card className="p-8 sm:p-12 bg-transparent border-0 shadow-xl">
-              <div className="grid grid-cols-[32px_1fr] gap-x-6 gap-y-8">
-                {/* Día 1 */}
-                <div className="flex flex-col items-center pt-3">
-                  <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-full">
-                    <Plane
-                      className="h-5 w-5 text-blue-600 dark:text-blue-400"
-                      aria-hidden="true"
-                    />
-                  </div>
-                  <div className="w-px bg-border grow mt-2" />
-                </div>
-                <div className="py-3">
-                  <p className="text-lg font-bold mb-2 text-foreground">
-                    Día 1: Llegada a París y cena especial con vista a la Torre
-                    Eiffel
-                  </p>
-                  <p className="text-muted-foreground leading-relaxed">
-                    Bienvenida a la Ciudad de las Luces. Check-in y cena de
-                    celebración.
-                  </p>
-                </div>
+            <ShineBorder className="rounded-2xl w-full" borderWidth={1}>
+              <Card className="p-8 sm:p-12 bg-transparent border-0 shadow-xl">
+                <div className="grid grid-cols-[32px_1fr] gap-x-6 gap-y-8">
+                  {additionalContent.sampleItinerary.days.map(
+                    (day: any, index: number) => {
+                      // Map icon names to actual icons
+                      const getIcon = (iconName: string) => {
+                        switch (iconName) {
+                          case "Plane":
+                            return Plane;
+                          case "Archive":
+                            return Archive;
+                          case "ShoppingBag":
+                            return ShoppingBag;
+                          case "Castle":
+                            return Castle;
+                          case "Building2":
+                            return Building2;
+                          default:
+                            return Plane;
+                        }
+                      };
 
-                {/* Día 2 */}
-                <div className="flex flex-col items-center">
-                  <div className="w-px bg-border h-4" />
-                  <div className="p-2 bg-purple-100 dark:bg-purple-900/20 rounded-full">
-                    <Archive
-                      className="h-5 w-5 text-purple-600 dark:text-purple-400"
-                      aria-hidden="true"
-                    />
-                  </div>
-                  <div className="w-px bg-border grow mt-2" />
-                </div>
-                <div className="py-3">
-                  <p className="text-lg font-bold mb-2 text-foreground">
-                    Día 2: Museo del Louvre y crucero por el Sena
-                  </p>
-                  <p className="text-muted-foreground leading-relaxed">
-                    Arte y vistas románticas en el corazón de París.
-                  </p>
-                </div>
+                      const IconComponent = getIcon(day.icon);
+                      const colors = [
+                        { bg: "bg-blue-100", text: "text-blue-600" },
+                        { bg: "bg-purple-100", text: "text-purple-600" },
+                        { bg: "bg-pink-100", text: "text-pink-600" },
+                        { bg: "bg-yellow-100", text: "text-yellow-600" },
+                        { bg: "bg-green-100", text: "text-green-600" },
+                      ];
+                      const color = colors[index % colors.length];
+                      const isLast =
+                        index ===
+                        additionalContent.sampleItinerary.days.length - 1;
 
-                {/* Día 3 */}
-                <div className="flex flex-col items-center">
-                  <div className="w-px bg-border h-4" />
-                  <div className="p-2 bg-pink-100 dark:bg-pink-900/20 rounded-full">
-                    <ShoppingBag
-                      className="h-5 w-5 text-pink-600 dark:text-pink-400"
-                      aria-hidden="true"
-                    />
-                  </div>
-                  <div className="w-px bg-border grow mt-2" />
+                      return (
+                        <div key={index} className="contents">
+                          <div
+                            className={`flex flex-col items-center ${isLast ? "pb-3" : ""} ${index > 0 ? "" : "pt-3"}`}
+                          >
+                            {index > 0 && (
+                              <div className="w-px bg-border h-4" />
+                            )}
+                            <div className={`p-2 ${color.bg} rounded-full`}>
+                              <IconComponent
+                                className={`h-5 w-5 ${color.text}`}
+                                aria-hidden="true"
+                              />
+                            </div>
+                            {!isLast && (
+                              <div className="w-px bg-border grow mt-2" />
+                            )}
+                          </div>
+                          <div className="py-3">
+                            <p className="text-lg font-bold mb-2 text-foreground">
+                              {day.title}
+                            </p>
+                            <p className="text-muted-foreground leading-relaxed">
+                              {day.description}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    }
+                  )}
                 </div>
-                <div className="py-3">
-                  <p className="text-lg font-bold mb-2 text-foreground">
-                    Día 3: Palacio de Versalles y compras parisinas
-                  </p>
-                  <p className="text-muted-foreground leading-relaxed">
-                    Historia, glamour y vitrinas icónicas.
-                  </p>
-                </div>
+              </Card>
+            </ShineBorder>
+          </section>
+        )}
 
-                {/* Día 4 */}
-                <div className="flex flex-col items-center">
-                  <div className="w-px bg-border h-4" />
-                  <div className="p-2 bg-yellow-100 dark:bg-yellow-900/20 rounded-full">
-                    <Castle
-                      className="h-5 w-5 text-yellow-600 dark:text-yellow-400"
-                      aria-hidden="true"
-                    />
-                  </div>
-                  <div className="w-px bg-border grow mt-2" />
-                </div>
-                <div className="py-3">
-                  <p className="text-lg font-bold mb-2 text-foreground">
-                    Día 4: Disneyland Paris
-                  </p>
-                  <p className="text-muted-foreground leading-relaxed">
-                    Diversión y momentos mágicos para toda la familia.
-                  </p>
-                </div>
-
-                {/* Día 5 */}
-                <div className="flex flex-col items-center pb-3">
-                  <div className="w-px bg-border h-4" />
-                  <div className="p-2 bg-green-100 dark:bg-green-900/20 rounded-full">
-                    <Plane
-                      className="h-5 w-5 text-green-600 dark:text-green-400"
-                      aria-hidden="true"
-                    />
-                  </div>
-                </div>
-                <div className="py-3">
-                  <p className="text-lg font-bold mb-2 text-foreground">
-                    Día 5: Regreso
-                  </p>
-                  <p className="text-muted-foreground leading-relaxed">
-                    Vuelve a casa con recuerdos que durarán toda la vida.
-                  </p>
-                </div>
-              </div>
-            </Card>
-          </ShineBorder>
-        </section>
+        {/* Blog Posts Section */}
+        <BlogPostsSectionServer
+          posts={blogPosts}
+          title="Guía para tu Quinceañera"
+          description="Todo lo que necesitas saber para planificar la celebración perfecta de los 15 años"
+          type={DepartmentType.QUINCEANERA}
+        />
 
         {/* Final CTA */}
         <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">

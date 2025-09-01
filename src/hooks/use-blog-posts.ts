@@ -3,6 +3,7 @@ import { BlogPost, DepartmentType, ContentStatus } from "@prisma/client";
 import {
   BlogPostInput,
   BlogPostUpdateInput,
+  BlogPostUpdateWithIdInput,
   BlogPostFilter,
 } from "@/lib/validations/blog-post";
 
@@ -66,9 +67,9 @@ const createBlogPost = async (data: BlogPostInput): Promise<BlogPost> => {
 const updateBlogPost = async ({
   id,
   ...data
-}: BlogPostUpdateInput): Promise<BlogPost> => {
+}: BlogPostUpdateWithIdInput): Promise<BlogPost> => {
   const response = await fetch(`/api/blog-posts/${id}`, {
-    method: "PUT",
+    method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
@@ -149,21 +150,19 @@ export const useDeleteBlogPost = () => {
 
 // Utility hooks for filtered data
 export const useWeddingBlogPosts = (
-  filters: Omit<BlogPostFilter, "type"> = {}
+  filters: Omit<BlogPostFilter, "type"> = { page: 1, limit: 10 }
 ) => {
   return useBlogPosts({ ...filters, type: DepartmentType.WEDDINGS });
 };
 
 export const useQuinceaneraBlogPosts = (
-  filters: Omit<BlogPostFilter, "type"> = {}
+  filters: Omit<BlogPostFilter, "type"> = { page: 1, limit: 10 }
 ) => {
   return useBlogPosts({ ...filters, type: DepartmentType.QUINCEANERA });
 };
 
 export const usePublishedBlogPosts = (
-  filters: Omit<BlogPostFilter, "status"> = {}
+  filters: Omit<BlogPostFilter, "status"> = { page: 1, limit: 10 }
 ) => {
   return useBlogPosts({ ...filters, status: ContentStatus.PUBLISHED });
 };
-
-

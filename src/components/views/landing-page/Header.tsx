@@ -51,10 +51,10 @@ export default function Header() {
         <div
           className={cn(
             "w-full backdrop-blur-xl border border-border/10",
-            "bg-white/10 dark:bg-black/10 transition-all duration-300 ease-out",
+            "bg-white/10 transition-all duration-300 ease-out",
             !isScrolled && "px-4 sm:px-6 lg:px-8 xl:px-12",
             isScrolled &&
-              "bg-white/60 dark:bg-black/60 rounded-xl border backdrop-blur-2xl shadow-lg mx-auto w-full max-w-[95vw] lg:max-w-[700px] xl:max-w-[800px] 2xl:max-w-[900px] px-6 sm:px-8 lg:px-10 xl:px-12 mt-4"
+              "bg-white/60 rounded-xl border backdrop-blur-2xl shadow-lg mx-auto w-full max-w-[95vw] lg:max-w-[700px] xl:max-w-[800px] 2xl:max-w-[900px] px-6 sm:px-8 lg:px-10 xl:px-12 mt-4"
           )}
         >
           <div
@@ -76,22 +76,13 @@ export default function Header() {
                   width={48}
                   height={38}
                   className={cn(
-                    "transition-all duration-300 ease-out dark:hidden",
+                    "transition-all duration-300 ease-out",
                     isScrolled && "w-12 h-9.5"
                   )}
                 />
-                <Image
-                  src="/logos/iso_white.svg"
-                  alt="Logo"
-                  width={48}
-                  height={38}
-                  className={cn(
-                    "transition-all duration-300 ease-out hidden dark:block",
-                    isScrolled && "w-12 h-9.5"
-                  )}
-                />
+
                 <TextLogo
-                  variant="light"
+                  variant={isScrolled ? "dark" : "light"}
                   size={isScrolled ? "md" : "lg"}
                   className="transition-all duration-300 ease-out"
                 />
@@ -101,7 +92,7 @@ export default function Header() {
                 aria-label={menuState ? "Cerrar menú" : "Abrir menú"}
                 className={cn(
                   "relative z-20 -m-2.5 -mr-3 block cursor-pointer p-2.5 lg:hidden",
-                  isScrolled ? "text-primary dark:text-white" : "text-white"
+                  isScrolled ? "text-primary" : "text-white"
                 )}
               >
                 <Menu className="group-data-[state=active]:scale-0 group-data-[state=active]:opacity-0 m-auto size-6 duration-200" />
@@ -136,7 +127,7 @@ export default function Header() {
             </div>
 
             {/* Right: auth / CTAs */}
-            <div className="bg-background/80 backdrop-blur-xl group-data-[state=active]:block lg:group-data-[state=active]:flex mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border p-6 shadow-2xl shadow-zinc-300/20 md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:shadow-none">
+            <div className="bg-background/80 backdrop-blur-xl group-data-[state=active]:block lg:group-data-[state=active]:flex mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border p-6 shadow-2xl shadow-zinc-300/20 md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none">
               {/* Mobile nav list when open */}
               <div className="lg:hidden">
                 <ul className="space-y-6 text-base">

@@ -25,7 +25,7 @@ export function TextLogo({
   };
 
   const variantClasses = {
-    light: "text-white",
+    light: "text-corporate-blue",
     dark: "text-primary",
   };
 

@@ -25,7 +25,7 @@ export default async function AboutPage() {
 
       <main className="flex-grow relative">
         {/* Background Pattern */}
-        <div className="absolute inset-0 bg-grid-black/[0.02] dark:bg-grid-white/[0.02] -z-10" />
+        <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-secondary/20 -z-10" />
 
         {/* Enhanced Hero Section */}
@@ -88,8 +88,8 @@ export default async function AboutPage() {
                   <Card className="p-8 text-center bg-transparent border-0 hover:shadow-xl transition-all duration-300 h-full flex flex-col">
                     <div className="mb-6">
                       <div className="flex items-center justify-center mb-4">
-                        <div className="p-3 bg-orange-100 dark:bg-orange-900/20 rounded-full">
-                          <Globe className="h-8 w-8 text-orange-600 dark:text-orange-400" />
+                        <div className="p-3 bg-orange-100 rounded-full">
+                          <Globe className="h-8 w-8 text-orange-600" />
                         </div>
                       </div>
                       <h3 className="text-2xl font-bold mb-4 text-foreground">
@@ -108,8 +108,8 @@ export default async function AboutPage() {
                   <Card className="p-8 text-center bg-transparent border-0 hover:shadow-xl transition-all duration-300 h-full flex flex-col">
                     <div className="mb-6">
                       <div className="flex items-center justify-center mb-4">
-                        <div className="p-3 bg-red-100 dark:bg-red-900/20 rounded-full">
-                          <Heart className="h-8 w-8 text-red-600 dark:text-red-400" />
+                        <div className="p-3 bg-red-100 rounded-full">
+                          <Heart className="h-8 w-8 text-red-600" />
                         </div>
                       </div>
                       <h3 className="text-2xl font-bold mb-4 text-foreground">
@@ -133,8 +133,8 @@ export default async function AboutPage() {
                   <ShineBorder className="rounded-xl w-full" borderWidth={1}>
                     <Card className="p-8 bg-transparent border-0 hover:shadow-xl transition-all duration-300">
                       <div className="flex items-center justify-center mb-4">
-                        <div className="p-2 bg-yellow-100 dark:bg-yellow-900/20 rounded-full">
-                          <Award className="h-8 w-8 text-yellow-600 dark:text-yellow-400" />
+                        <div className="p-2 bg-yellow-100 rounded-full">
+                          <Award className="h-8 w-8 text-yellow-600" />
                         </div>
                       </div>
                       <h3 className="text-xl font-bold mb-4 text-foreground">
@@ -149,8 +149,8 @@ export default async function AboutPage() {
                   <ShineBorder className="rounded-xl w-full" borderWidth={1}>
                     <Card className="p-8 bg-transparent border-0 hover:shadow-xl transition-all duration-300">
                       <div className="flex items-center justify-center mb-4">
-                        <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-full">
-                          <Users className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+                        <div className="p-2 bg-blue-100 rounded-full">
+                          <Users className="h-8 w-8 text-blue-600" />
                         </div>
                       </div>
                       <h3 className="text-xl font-bold mb-4 text-foreground">
@@ -165,8 +165,8 @@ export default async function AboutPage() {
                   <ShineBorder className="rounded-xl w-full" borderWidth={1}>
                     <Card className="p-8 bg-transparent border-0 hover:shadow-xl transition-all duration-300">
                       <div className="flex items-center justify-center mb-4">
-                        <div className="p-2 bg-purple-100 dark:bg-purple-900/20 rounded-full">
-                          <Sparkles className="h-8 w-8 text-purple-600 dark:text-purple-400" />
+                        <div className="p-2 bg-purple-100 rounded-full">
+                          <Sparkles className="h-8 w-8 text-purple-600" />
                         </div>
                       </div>
                       <h3 className="text-xl font-bold mb-4 text-foreground">
@@ -211,8 +211,8 @@ export default async function AboutPage() {
                     >
                       <Card className="p-8 bg-transparent border-0 hover:shadow-xl transition-all duration-300">
                         <div className="flex items-center justify-center mb-4">
-                          <div className="p-2 bg-green-100 dark:bg-green-900/20 rounded-full">
-                            <Building2 className="h-8 w-8 text-green-600 dark:text-green-400" />
+                          <div className="p-2 bg-green-100 rounded-full">
+                            <Building2 className="h-8 w-8 text-green-600" />
                           </div>
                         </div>
                         <h3 className="text-xl font-bold mb-2 text-foreground">

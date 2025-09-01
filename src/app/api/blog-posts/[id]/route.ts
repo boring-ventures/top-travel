@@ -1,26 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { blogPostSchema } from "@/lib/validations/blog-post";
+import prisma from "@/lib/prisma";
+import { blogPostUpdateSchema } from "@/lib/validations/blog-post";
+import { auth, ensureSuperadmin } from "@/lib/auth";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+type Params = { params: Promise<{ id: string }> };
+
+export async function GET(_req: NextRequest, { params }: Params) {
   try {
-    const { id } = params;
-
-    const blogPost = await prisma.blogPost.findUnique({
+    const { id } = await params;
+    const post = await prisma.blogPost.findUnique({
       where: { id },
     });
 
-    if (!blogPost) {
+    if (!post) {
       return NextResponse.json(
         { error: "Blog post not found" },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(blogPost);
+    return NextResponse.json(post);
   } catch (error) {
     console.error("Error fetching blog post:", error);
     return NextResponse.json(
@@ -30,77 +29,56 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(request: NextRequest, { params }: Params) {
   try {
-    const { id } = params;
-    const body = await request.json();
-    const validatedData = blogPostSchema.parse(body);
+    const session = await auth();
+    ensureSuperadmin(session?.user);
 
-    const existingPost = await prisma.blogPost.findUnique({
+    const { id } = await params;
+    const json = await request.json();
+    const updateData = blogPostUpdateSchema.parse(json);
+
+    // Handle publishedAt logic
+    const dataToUpdate = {
+      ...updateData,
+      ...(updateData.status === "PUBLISHED" && !updateData.publishedAt
+        ? { publishedAt: new Date() }
+        : updateData.status === "DRAFT"
+          ? { publishedAt: null }
+          : {}),
+    };
+
+    const updated = await prisma.blogPost.update({
       where: { id },
+      data: dataToUpdate,
     });
 
-    if (!existingPost) {
-      return NextResponse.json(
-        { error: "Blog post not found" },
-        { status: 404 }
-      );
-    }
-
-    const blogPost = await prisma.blogPost.update({
-      where: { id },
-      data: {
-        ...validatedData,
-        publishedAt:
-          validatedData.status === "PUBLISHED" && !existingPost.publishedAt
-            ? new Date()
-            : existingPost.publishedAt,
-      },
-    });
-
-    return NextResponse.json(blogPost);
-  } catch (error) {
+    return NextResponse.json(updated);
+  } catch (error: any) {
     console.error("Error updating blog post:", error);
+    const status = error?.status ?? 400;
     return NextResponse.json(
-      { error: "Failed to update blog post" },
-      { status: 500 }
+      { error: error?.message ?? "Failed to update blog post" },
+      { status }
     );
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(_req: NextRequest, { params }: Params) {
   try {
-    const { id } = params;
+    const session = await auth();
+    ensureSuperadmin(session?.user);
 
-    const existingPost = await prisma.blogPost.findUnique({
-      where: { id },
-    });
+    const { id } = await params;
+    await prisma.blogPost.delete({ where: { id } });
 
-    if (!existingPost) {
-      return NextResponse.json(
-        { error: "Blog post not found" },
-        { status: 404 }
-      );
-    }
-
-    await prisma.blogPost.delete({
-      where: { id },
-    });
-
-    return NextResponse.json({ message: "Blog post deleted successfully" });
-  } catch (error) {
+    return NextResponse.json({ ok: true });
+  } catch (error: any) {
     console.error("Error deleting blog post:", error);
+    const status = error?.status ?? 400;
     return NextResponse.json(
-      { error: "Failed to delete blog post" },
-      { status: 500 }
+      { error: error?.message ?? "Failed to delete blog post" },
+      { status }
     );
   }
 }
-
-

@@ -30,38 +30,32 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
 export function ThemeProvider({
   children,
-  defaultTheme = "system",
+  defaultTheme = "light",
   storageKey = "ui-theme",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(defaultTheme);
+  const [theme, setTheme] = useState<Theme>("light");
 
   useEffect(() => {
-    const stored = localStorage.getItem(storageKey);
-    if (stored) setTheme(stored as Theme);
+    // Force light mode - ignore stored preferences
+    setTheme("light");
+    localStorage.setItem(storageKey, "light");
   }, [storageKey]);
 
   useEffect(() => {
     const root = window.document.documentElement;
     root.classList.remove("light", "dark");
-
-    if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
-        ? "dark"
-        : "light";
-      root.classList.add(systemTheme);
-    } else {
-      root.classList.add(theme);
-    }
-
-    localStorage.setItem(storageKey, theme);
+    
+    // Always force light mode
+    root.classList.add("light");
+    localStorage.setItem(storageKey, "light");
   }, [theme, storageKey]);
 
   const value = {
-    theme,
+    theme: "light" as Theme,
     setTheme: (theme: Theme) => {
-      setTheme(theme);
+      // Force light mode - ignore theme changes
+      setTheme("light");
     },
   };
 

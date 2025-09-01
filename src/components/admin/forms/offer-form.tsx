@@ -84,8 +84,6 @@ export function OfferForm({ onSuccess, initialValues }: OfferFormProps) {
   const { toast } = useToast();
   const { data: tags, isLoading: tagsLoading } = useTags();
 
-  console.log("OfferForm rendered with initialValues:", initialValues);
-
   const form = useForm<OfferFormInput>({
     resolver: zodResolver(OfferFormSchema),
     defaultValues: {
@@ -127,22 +125,17 @@ export function OfferForm({ onSuccess, initialValues }: OfferFormProps) {
   }, [initialValues?.id]);
 
   const handleSubmit = form.handleSubmit(async (values) => {
-    console.log("=== FORM SUBMISSION START ===");
-    console.log("Form submitted with values:", values);
-    console.log("Selected image file:", selectedImageFile);
     setSubmitting(true);
     try {
       let finalBannerImageUrl = values.bannerImageUrl;
 
       // Upload image if a new file was selected
       if (selectedImageFile) {
-        console.log("Uploading selected image file...");
         const offerId = (initialValues as any)?.id || "temp";
         finalBannerImageUrl = await uploadOfferImage(
           selectedImageFile,
           offerId
         );
-        console.log("Image uploaded successfully:", finalBannerImageUrl);
       }
 
       const isEdit = Boolean((initialValues as any)?.id);
@@ -167,8 +160,6 @@ export function OfferForm({ onSuccess, initialValues }: OfferFormProps) {
         }
       });
 
-      console.log("Sending API request:", { url, method, apiData });
-
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
@@ -176,17 +167,12 @@ export function OfferForm({ onSuccess, initialValues }: OfferFormProps) {
         body: JSON.stringify(apiData),
       });
 
-      console.log("API response status:", res.status);
-
       if (!res.ok) {
         const errorData = await res.json();
-        console.error("API error:", errorData);
         throw new Error(errorData.error || "Failed to save");
       }
 
       const result = await res.json();
-      console.log("API success:", result);
-      console.log("=== FORM SUBMISSION END ===");
 
       // Clear the selected file after successful submission
       setSelectedImageFile(null);
@@ -201,7 +187,6 @@ export function OfferForm({ onSuccess, initialValues }: OfferFormProps) {
       onSuccess?.();
       if (!isEdit) form.reset();
     } catch (error) {
-      console.error("=== FORM SUBMISSION ERROR ===");
       console.error("Form submission error:", error);
       toast({
         title: "Error",

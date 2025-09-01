@@ -1,33 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { slug: string } }
-) {
+type Params = { params: Promise<{ slug: string }> };
+
+export async function GET(_req: NextRequest, { params }: Params) {
   try {
-    const { slug } = params;
-
-    const blogPost = await prisma.blogPost.findUnique({
+    const { slug } = await params;
+    const post = await prisma.blogPost.findUnique({
       where: { slug },
     });
 
-    if (!blogPost) {
+    if (!post) {
       return NextResponse.json(
         { error: "Blog post not found" },
         { status: 404 }
       );
     }
 
-    // Only return published posts for public access
-    if (blogPost.status !== "PUBLISHED") {
-      return NextResponse.json(
-        { error: "Blog post not found" },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json(blogPost);
+    return NextResponse.json(post);
   } catch (error) {
     console.error("Error fetching blog post by slug:", error);
     return NextResponse.json(
@@ -36,5 +26,3 @@ export async function GET(
     );
   }
 }
-
-

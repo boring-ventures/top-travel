@@ -18,21 +18,20 @@ export const blogPostSchema = z.object({
     .max(500, "Excerpt must be less than 500 characters")
     .optional(),
   content: z.string().min(1, "Content is required"),
-  heroImageUrl: z
-    .string()
-    .url("Must be a valid URL")
-    .optional()
-    .or(z.literal("")),
+  heroImageUrl: z.string().optional().or(z.literal("")),
   author: z
     .string()
     .max(100, "Author name must be less than 100 characters")
     .optional(),
+  publishedAt: z.date().optional().nullable(),
   status: z.nativeEnum(ContentStatus),
   type: z.nativeEnum(DepartmentType),
 });
 
-export const blogPostUpdateSchema = blogPostSchema.partial().extend({
-  id: z.string().cuid(),
+export const blogPostUpdateSchema = blogPostSchema.partial();
+
+export const blogPostUpdateWithIdSchema = blogPostUpdateSchema.extend({
+  id: z.string().min(1, "ID is required"),
 });
 
 export const blogPostFilterSchema = z.object({
@@ -44,4 +43,7 @@ export const blogPostFilterSchema = z.object({
 
 export type BlogPostInput = z.infer<typeof blogPostSchema>;
 export type BlogPostUpdateInput = z.infer<typeof blogPostUpdateSchema>;
+export type BlogPostUpdateWithIdInput = z.infer<
+  typeof blogPostUpdateWithIdSchema
+>;
 export type BlogPostFilter = z.infer<typeof blogPostFilterSchema>;

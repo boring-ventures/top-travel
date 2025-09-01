@@ -15,6 +15,8 @@ export default function BlogPage() {
     "ALL"
   );
   const { data: blogData, isLoading } = usePublishedBlogPosts({
+    page: 1,
+    limit: 20, // Show more posts on the main blog page
     ...(selectedType !== "ALL" && { type: selectedType }),
   });
 
@@ -157,5 +159,3 @@ export default function BlogPage() {
     </div>
   );
 }
-
-
