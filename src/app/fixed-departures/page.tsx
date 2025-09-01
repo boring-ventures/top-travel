@@ -88,7 +88,7 @@ export default async function FixedDeparturesPage({
 
       <main className="flex-grow relative">
         {/* Background Pattern */}
-        <div className="absolute inset-0 bg-grid-black/[0.02] dark:bg-grid-white/[0.02] -z-10" />
+        <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-secondary/20 -z-10" />
 
         {/* Hero Section */}
@@ -198,7 +198,7 @@ export default async function FixedDeparturesPage({
                               className="object-cover group-hover:scale-105 transition-transform duration-300"
                             />
                           ) : (
-                            <div className="h-full w-full bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/20 dark:to-teal-900/20 flex items-center justify-center">
+                            <div className="h-full w-full bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center">
                               <Plane className="h-12 w-12 text-muted-foreground" />
                             </div>
                           )}

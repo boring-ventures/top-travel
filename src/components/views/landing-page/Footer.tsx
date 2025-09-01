@@ -17,14 +17,6 @@ export default function Footer() {
                 alt="Logo"
                 width={40}
                 height={40}
-                className="dark:hidden"
-              />
-              <Image
-                src="/logos/iso_white.svg"
-                alt="Logo"
-                width={40}
-                height={40}
-                className="hidden dark:block"
               />
               <TextLogo variant="light" size="lg" />
             </div>

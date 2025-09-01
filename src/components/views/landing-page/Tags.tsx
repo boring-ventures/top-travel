@@ -11,7 +11,7 @@ export default function Tags({ tags, className = "" }: TagsProps) {
 
   return (
     <section
-      className={`py-16 bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950 ${className}`}
+      className={`py-16 bg-gradient-to-r from-green-50 to-teal-50 ${className}`}
     >
       <div
         className="container mx-auto"

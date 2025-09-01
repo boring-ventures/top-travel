@@ -36,7 +36,7 @@ const TestimonialCard = ({
   delay: string;
 }) => (
   <div
-    className={`animate-testimonial ${delay} flex items-start gap-3 rounded-3xl bg-card/40 dark:bg-zinc-800/40 backdrop-blur-xl border border-white/10 p-4 max-w-xs`}
+    className={`animate-testimonial ${delay} flex items-start gap-3 rounded-3xl bg-card/40 backdrop-blur-xl border border-white/10 p-4 max-w-xs`}
   >
     <img
       src={testimonial.avatarSrc}

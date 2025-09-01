@@ -69,7 +69,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider defaultTheme="system" storageKey="app-theme">
+        <ThemeProvider defaultTheme="light" storageKey="app-theme">
           <AuthProvider>
             <QueryProvider>
               <UtmProvider />

@@ -37,13 +37,13 @@ export default async function TagsPage() {
   const getTypeColor = (type: string) => {
     switch (type) {
       case "REGION":
-        return "bg-blue-lighter text-corporate-blue dark:bg-blue-dark dark:text-blue-light";
+        return "bg-blue-lighter text-corporate-blue";
       case "THEME":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
+        return "bg-green-100 text-green-800";
       case "DEPARTMENT":
-        return "bg-red-lighter text-corporate-red dark:bg-red-dark dark:text-red-light";
+        return "bg-red-lighter text-corporate-red";
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200";
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -78,7 +78,7 @@ export default async function TagsPage() {
 
       <main className="flex-grow relative">
         {/* Background Pattern */}
-        <div className="absolute inset-0 bg-grid-black/[0.02] dark:bg-grid-white/[0.02] -z-10" />
+        <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-secondary/20 -z-10" />
 
         {/* Hero Section */}
@@ -171,7 +171,7 @@ export default async function TagsPage() {
 
           {/* Quick Actions */}
           <div className="mt-12">
-            <Card className="p-6 bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-950/50 dark:to-teal-950/50 border-0">
+            <Card className="p-6 bg-gradient-to-r from-green-50 to-teal-50 border-0">
               <h3 className="text-xl font-semibold mb-4 text-foreground">
                 Explorar más contenido
               </h3>

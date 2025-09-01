@@ -23,7 +23,7 @@ export default async function VisionPage() {
 
       <main className="flex-grow relative">
         {/* Background Pattern */}
-        <div className="absolute inset-0 bg-grid-black/[0.02] dark:bg-grid-white/[0.02] -z-10" />
+        <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-secondary/20 -z-10" />
 
         {/* Enhanced Hero Section */}
@@ -86,8 +86,8 @@ export default async function VisionPage() {
                   <Card className="p-8 text-center bg-transparent border-0 hover:shadow-xl transition-all duration-300 h-full flex flex-col">
                     <div className="mb-6">
                       <div className="flex items-center justify-center mb-4">
-                        <div className="p-3 bg-blue-100 dark:bg-blue-900/20 rounded-full">
-                          <TrendingUp className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+                        <div className="p-3 bg-blue-100 rounded-full">
+                          <TrendingUp className="h-8 w-8 text-blue-600" />
                         </div>
                       </div>
                       <h3 className="text-2xl font-bold mb-4 text-foreground">
@@ -106,8 +106,8 @@ export default async function VisionPage() {
                   <Card className="p-8 text-center bg-transparent border-0 hover:shadow-xl transition-all duration-300 h-full flex flex-col">
                     <div className="mb-6">
                       <div className="flex items-center justify-center mb-4">
-                        <div className="p-3 bg-purple-100 dark:bg-purple-900/20 rounded-full">
-                          <Lightbulb className="h-8 w-8 text-purple-600 dark:text-purple-400" />
+                        <div className="p-3 bg-purple-100 rounded-full">
+                          <Lightbulb className="h-8 w-8 text-purple-600" />
                         </div>
                       </div>
                       <h3 className="text-2xl font-bold mb-4 text-foreground">
@@ -125,8 +125,8 @@ export default async function VisionPage() {
                   <Card className="p-8 text-center bg-transparent border-0 hover:shadow-xl transition-all duration-300 h-full flex flex-col">
                     <div className="mb-6">
                       <div className="flex items-center justify-center mb-4">
-                        <div className="p-3 bg-green-100 dark:bg-green-900/20 rounded-full">
-                          <Globe className="h-8 w-8 text-green-600 dark:text-green-400" />
+                        <div className="p-3 bg-green-100 rounded-full">
+                          <Globe className="h-8 w-8 text-green-600" />
                         </div>
                       </div>
                       <h3 className="text-2xl font-bold mb-4 text-foreground">
@@ -150,8 +150,8 @@ export default async function VisionPage() {
                   <ShineBorder className="rounded-xl w-full" borderWidth={1}>
                     <Card className="p-8 bg-transparent border-0 hover:shadow-xl transition-all duration-300">
                       <div className="flex items-center justify-center mb-4">
-                        <div className="p-2 bg-orange-100 dark:bg-orange-900/20 rounded-full">
-                          <Star className="h-8 w-8 text-orange-600 dark:text-orange-400" />
+                        <div className="p-2 bg-orange-100 rounded-full">
+                          <Star className="h-8 w-8 text-orange-600" />
                         </div>
                       </div>
                       <h3 className="text-xl font-bold mb-4 text-foreground">
@@ -167,8 +167,8 @@ export default async function VisionPage() {
                   <ShineBorder className="rounded-xl w-full" borderWidth={1}>
                     <Card className="p-8 bg-transparent border-0 hover:shadow-xl transition-all duration-300">
                       <div className="flex items-center justify-center mb-4">
-                        <div className="p-2 bg-red-100 dark:bg-red-900/20 rounded-full">
-                          <Compass className="h-8 w-8 text-red-600 dark:text-red-400" />
+                        <div className="p-2 bg-red-100 rounded-full">
+                          <Compass className="h-8 w-8 text-red-600" />
                         </div>
                       </div>
                       <h3 className="text-xl font-bold mb-4 text-foreground">
@@ -192,8 +192,8 @@ export default async function VisionPage() {
                   <ShineBorder className="rounded-xl w-full" borderWidth={1}>
                     <Card className="p-8 bg-transparent border-0 hover:shadow-xl transition-all duration-300">
                       <div className="flex items-center justify-center mb-4">
-                        <div className="p-2 bg-cyan-100 dark:bg-cyan-900/20 rounded-full">
-                          <Eye className="h-8 w-8 text-cyan-600 dark:text-cyan-400" />
+                        <div className="p-2 bg-cyan-100 rounded-full">
+                          <Eye className="h-8 w-8 text-cyan-600" />
                         </div>
                       </div>
                       <h3 className="text-xl font-bold mb-4 text-foreground">
@@ -208,8 +208,8 @@ export default async function VisionPage() {
                   <ShineBorder className="rounded-xl w-full" borderWidth={1}>
                     <Card className="p-8 bg-transparent border-0 hover:shadow-xl transition-all duration-300">
                       <div className="flex items-center justify-center mb-4">
-                        <div className="p-2 bg-indigo-100 dark:bg-indigo-900/20 rounded-full">
-                          <Sparkles className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
+                        <div className="p-2 bg-indigo-100 rounded-full">
+                          <Sparkles className="h-8 w-8 text-indigo-600" />
                         </div>
                       </div>
                       <h3 className="text-xl font-bold mb-4 text-foreground">
@@ -224,8 +224,8 @@ export default async function VisionPage() {
                   <ShineBorder className="rounded-xl w-full" borderWidth={1}>
                     <Card className="p-8 bg-transparent border-0 hover:shadow-xl transition-all duration-300">
                       <div className="flex items-center justify-center mb-4">
-                        <div className="p-2 bg-emerald-100 dark:bg-emerald-900/20 rounded-full">
-                          <Target className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
+                        <div className="p-2 bg-emerald-100 rounded-full">
+                          <Target className="h-8 w-8 text-emerald-600" />
                         </div>
                       </div>
                       <h3 className="text-xl font-bold mb-4 text-foreground">

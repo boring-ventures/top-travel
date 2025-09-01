@@ -11,20 +11,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-interface BlogPost {
-  id: string;
-  slug: string;
-  title: string;
-  content: string;
-  excerpt?: string;
-  heroImageUrl?: string;
-  author?: string;
-  publishedAt?: string;
-  status: "DRAFT" | "PUBLISHED";
-  type: "WEDDINGS" | "QUINCEANERA";
-  createdAt: string;
-  updatedAt: string;
-}
+import { BlogPost } from "@prisma/client";
 
 interface DeleteBlogPostDialogProps {
   post: BlogPost;

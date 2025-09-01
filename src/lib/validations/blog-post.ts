@@ -1,18 +1,49 @@
 import { z } from "zod";
+import { DepartmentType, ContentStatus } from "@prisma/client";
 
-export const BlogPostCreateSchema = z.object({
-  slug: z.string().min(1, "Slug is required"),
-  title: z.string().min(1, "Title is required"),
-  excerpt: z.string().optional(),
+export const blogPostSchema = z.object({
+  slug: z
+    .string()
+    .min(1, "Slug is required")
+    .regex(
+      /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+      "Slug must be lowercase with hyphens only"
+    ),
+  title: z
+    .string()
+    .min(1, "Title is required")
+    .max(200, "Title must be less than 200 characters"),
+  excerpt: z
+    .string()
+    .max(500, "Excerpt must be less than 500 characters")
+    .optional(),
   content: z.string().min(1, "Content is required"),
-  heroImageUrl: z.string().url().optional().or(z.literal("")),
-  author: z.string().optional(),
-  publishedAt: z.string().datetime().optional(),
-  status: z.enum(["DRAFT", "PUBLISHED"]).default("DRAFT"),
-  type: z.enum(["WEDDINGS", "QUINCEANERA"]),
+  heroImageUrl: z.string().optional().or(z.literal("")),
+  author: z
+    .string()
+    .max(100, "Author name must be less than 100 characters")
+    .optional(),
+  publishedAt: z.date().optional().nullable(),
+  status: z.nativeEnum(ContentStatus),
+  type: z.nativeEnum(DepartmentType),
 });
 
-export const BlogPostUpdateSchema = BlogPostCreateSchema.partial();
+export const blogPostUpdateSchema = blogPostSchema.partial();
 
-export type BlogPostCreate = z.infer<typeof BlogPostCreateSchema>;
-export type BlogPostUpdate = z.infer<typeof BlogPostUpdateSchema>;
+export const blogPostUpdateWithIdSchema = blogPostUpdateSchema.extend({
+  id: z.string().min(1, "ID is required"),
+});
+
+export const blogPostFilterSchema = z.object({
+  type: z.nativeEnum(DepartmentType).optional(),
+  status: z.nativeEnum(ContentStatus).optional(),
+  page: z.coerce.number().min(1).default(1),
+  limit: z.coerce.number().min(1).max(50).default(10),
+});
+
+export type BlogPostInput = z.infer<typeof blogPostSchema>;
+export type BlogPostUpdateInput = z.infer<typeof blogPostUpdateSchema>;
+export type BlogPostUpdateWithIdInput = z.infer<
+  typeof blogPostUpdateWithIdSchema
+>;
+export type BlogPostFilter = z.infer<typeof blogPostFilterSchema>;

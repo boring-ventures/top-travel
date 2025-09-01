@@ -49,8 +49,6 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   const { toast } = useToast();
 
-  console.log("PackageForm rendered with initialValues:", initialValues);
-
   useEffect(() => {
     (async () => {
       try {
@@ -114,9 +112,6 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
   const selectedTags = tags.filter((t) => selectedTagIds.includes(t.id));
 
   const handleSubmit = form.handleSubmit(async (values) => {
-    console.log("=== PACKAGE FORM SUBMISSION START ===");
-    console.log("Form submitted with values:", values);
-    console.log("Selected image file:", selectedImageFile);
     setSubmitting(true);
 
     try {
@@ -124,10 +119,8 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
 
       // Upload image if a new file was selected
       if (selectedImageFile) {
-        console.log("Uploading selected image file...");
         const slug = values.slug || "temp";
         finalHeroImageUrl = await uploadPackageImage(selectedImageFile, slug);
-        console.log("Image uploaded successfully:", finalHeroImageUrl);
       }
 
       const isEdit = Boolean((initialValues as any)?.id);
@@ -147,8 +140,6 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
         }
       });
 
-      console.log("Sending API request:", { url, method, apiData });
-
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
@@ -156,17 +147,12 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
         body: JSON.stringify(apiData),
       });
 
-      console.log("API response status:", res.status);
-
       if (!res.ok) {
         const errorData = await res.json();
-        console.error("API error:", errorData);
         throw new Error(errorData.error || "Failed to save");
       }
 
       const result = await res.json();
-      console.log("API success:", result);
-      console.log("=== PACKAGE FORM SUBMISSION END ===");
 
       // Clear the selected file after successful submission
       setSelectedImageFile(null);
@@ -181,8 +167,6 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
       onSuccess?.();
       if (!isEdit) form.reset();
     } catch (error) {
-      console.error("=== PACKAGE FORM SUBMISSION ERROR ===");
-      console.error("Form submission error:", error);
       toast({
         title: "Error",
         description:
@@ -727,11 +711,7 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
             type="button"
             variant="outline"
             onClick={() => {
-              console.log("Debug button clicked");
-              console.log("Current form values:", form.getValues());
-              console.log("Form is valid:", form.formState.isValid);
-              console.log("Form errors:", form.formState.errors);
-              console.log("Form touched fields:", form.formState.touchedFields);
+              // Debug form state (logs removed for production)
             }}
           >
             Debug Form

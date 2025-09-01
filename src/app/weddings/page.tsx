@@ -16,9 +16,11 @@ import {
   Building2,
 } from "lucide-react";
 import { ShineBorder } from "@/components/magicui/shine-border";
+import { BlogPostsSectionServer } from "@/components/views/landing-page/BlogPostsSectionServer";
+import { DepartmentType } from "@prisma/client";
 
 export default async function WeddingsPage() {
-  const [dept, destinations, testimonials] = await Promise.all([
+  const [dept, destinations, testimonials, blogPosts] = await Promise.all([
     prisma.department.findUnique({ where: { type: "WEDDINGS" } }),
     prisma.destination.findMany({
       where: { isFeatured: true },
@@ -43,11 +45,35 @@ export default async function WeddingsPage() {
         content: true,
       },
     }),
+    prisma.blogPost.findMany({
+      where: {
+        status: "PUBLISHED",
+        type: "WEDDINGS",
+      },
+      orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+      take: 3,
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        excerpt: true,
+        heroImageUrl: true,
+        author: true,
+        publishedAt: true,
+        type: true,
+      },
+    }),
   ]);
 
   const primary = (dept?.themeJson as any)?.primaryColor ?? "#ee2b8d";
   const accent = (dept?.themeJson as any)?.accentColor ?? "#fcf8fa";
   const hero = dept?.heroImageUrl;
+
+  // Extract CMS content with fallbacks
+  const heroContent = (dept as any)?.heroContentJson || {};
+  const packages = (dept as any)?.packagesJson || [];
+  const services = (dept?.servicesJson as any) || [];
+  const contactInfo = (dept?.contactInfoJson as any) || {};
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -55,7 +81,7 @@ export default async function WeddingsPage() {
 
       <main className="flex-grow relative">
         {/* Background Pattern */}
-        <div className="absolute inset-0 bg-grid-black/[0.02] dark:bg-grid-white/[0.02] -z-10" />
+        <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-secondary/20 -z-10" />
 
         {/* Enhanced Hero */}
@@ -85,14 +111,14 @@ export default async function WeddingsPage() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 relative z-10">
             <div className="mx-auto max-w-4xl text-center">
               <h1 className="text-white text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight mb-6 drop-shadow-lg">
-                Tu Boda de Destino
+                {heroContent.title || "Tu Boda de Destino"}
                 <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-300">
-                  Perfectamente Planificada
+                  {heroContent.subtitle || "Perfectamente Planificada"}
                 </span>
               </h1>
               <p className="mt-4 sm:mt-6 text-white/90 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed drop-shadow-md">
-                Déjanos manejar cada detalle, desde la selección del lugar hasta
-                el catering, para que puedas enfocarte en celebrar tu amor.
+                {heroContent.description ||
+                  "Déjanos manejar cada detalle, desde la selección del lugar hasta el catering, para que puedas enfocarte en celebrar tu amor."}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8">
                 <div className="flex items-center gap-2 text-white/80 drop-shadow-sm">
@@ -108,9 +134,14 @@ export default async function WeddingsPage() {
               </div>
               <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
                 <WhatsAppCTA
-                  template="Hola! Me gustaría planificar mi boda de destino — {url}"
+                  template={
+                    heroContent.primaryCTA?.whatsappTemplate ||
+                    "Hola! Me gustaría planificar mi boda de destino — {url}"
+                  }
                   variables={{ url: "" }}
-                  label="Comenzar Planificación"
+                  label={
+                    heroContent.primaryCTA?.text || "Comenzar Planificación"
+                  }
                   size="lg"
                   className="rounded-full h-14 px-8 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white border-0 text-lg font-semibold"
                 />
@@ -119,7 +150,11 @@ export default async function WeddingsPage() {
                   variant="secondary"
                   className="rounded-full h-14 px-8 text-lg font-semibold"
                 >
-                  <Link href="/destinations">Explorar Destinos</Link>
+                  <Link
+                    href={heroContent.secondaryCTA?.href || "/destinations"}
+                  >
+                    {heroContent.secondaryCTA?.text || "Explorar Destinos"}
+                  </Link>
                 </Button>
               </div>
             </div>
@@ -172,7 +207,7 @@ export default async function WeddingsPage() {
                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                           />
                         ) : (
-                          <div className="h-full w-full bg-gradient-to-br from-pink-100 to-rose-100 dark:from-pink-900/20 dark:to-rose-900/20 flex items-center justify-center">
+                          <div className="h-full w-full bg-gradient-to-br from-pink-100 to-rose-100 flex items-center justify-center">
                             <MapPin className="h-12 w-12 text-muted-foreground" />
                           </div>
                         )}
@@ -208,83 +243,93 @@ export default async function WeddingsPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {[
-              {
-                name: "Básico",
-                price: "$5,000",
-                features: [
-                  "Selección de lugar",
-                  "Catering básico",
-                  "Fotografía",
-                ],
-                color: "from-blue-500 to-blue-600",
-              },
-              {
-                name: "Premium",
-                price: "$10,000",
-                features: [
-                  "Lugar premium",
-                  "Catering gourmet",
-                  "Fotografía y videografía",
-                  "Entretenimiento",
-                ],
-                color: "from-purple-500 to-purple-600",
-              },
-              {
-                name: "Lujo",
-                price: "$20,000",
-                features: [
-                  "Lugar exclusivo",
-                  "Catering de lujo",
-                  "Fotografía y videografía",
-                  "Entretenimiento",
-                  "Servicio de conserjería personalizado",
-                ],
-                color: "from-pink-500 to-pink-600",
-              },
-            ].map((p) => (
-              <ShineBorder
-                key={p.name}
-                className="rounded-xl w-full"
-                borderWidth={1}
-              >
-                <Card className="p-8 flex flex-col gap-6 bg-transparent border-0 hover:shadow-xl transition-all duration-300 h-full">
-                  <div className="flex flex-col gap-2">
-                    <h3 className="text-xl font-bold text-foreground">
-                      {p.name}
-                    </h3>
-                    <p className="flex items-baseline gap-1">
-                      <span
-                        className="text-4xl font-extrabold"
-                        style={{ color: primary }}
-                      >
-                        {p.price}
-                      </span>
-                      <span className="text-sm font-semibold text-foreground">
-                        por boda
-                      </span>
-                    </p>
-                  </div>
-                  <Button
-                    variant="secondary"
-                    className={`h-12 rounded-xl bg-gradient-to-r ${p.color} hover:opacity-90 text-white border-0`}
-                  >
-                    Seleccionar Plan
-                  </Button>
-                  <div className="flex flex-col gap-3 flex-1">
-                    {p.features.map((f) => (
-                      <div key={f} className="text-sm flex items-start gap-3">
-                        <Check
-                          className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5"
-                          aria-hidden="true"
-                        />
-                        <span className="text-foreground">{f}</span>
-                      </div>
-                    ))}
-                  </div>
-                </Card>
-              </ShineBorder>
-            ))}
+            {(packages.length > 0
+              ? packages
+              : [
+                  {
+                    name: "Básico",
+                    price: "$5,000",
+                    features: [
+                      "Selección de lugar",
+                      "Catering básico",
+                      "Fotografía",
+                    ],
+                    color: "from-blue-500 to-blue-600",
+                  },
+                  {
+                    name: "Premium",
+                    price: "$10,000",
+                    features: [
+                      "Lugar premium",
+                      "Catering gourmet",
+                      "Fotografía y videografía",
+                      "Entretenimiento",
+                    ],
+                    color: "from-purple-500 to-purple-600",
+                  },
+                  {
+                    name: "Lujo",
+                    price: "$20,000",
+                    features: [
+                      "Lugar exclusivo",
+                      "Catering de lujo",
+                      "Fotografía y videografía",
+                      "Entretenimiento",
+                      "Servicio de conserjería personalizado",
+                    ],
+                    color: "from-pink-500 to-pink-600",
+                  },
+                ]
+            ).map(
+              (p: {
+                name: string;
+                price: string;
+                features: string[];
+                color: string;
+              }) => (
+                <ShineBorder
+                  key={p.name}
+                  className="rounded-xl w-full"
+                  borderWidth={1}
+                >
+                  <Card className="p-8 flex flex-col gap-6 bg-transparent border-0 hover:shadow-xl transition-all duration-300 h-full">
+                    <div className="flex flex-col gap-2">
+                      <h3 className="text-xl font-bold text-foreground">
+                        {p.name}
+                      </h3>
+                      <p className="flex items-baseline gap-1">
+                        <span
+                          className="text-4xl font-extrabold"
+                          style={{ color: primary }}
+                        >
+                          {p.price}
+                        </span>
+                        <span className="text-sm font-semibold text-foreground">
+                          por boda
+                        </span>
+                      </p>
+                    </div>
+                    <Button
+                      variant="secondary"
+                      className={`h-12 rounded-xl bg-gradient-to-r ${p.color} hover:opacity-90 text-white border-0`}
+                    >
+                      Seleccionar Plan
+                    </Button>
+                    <div className="flex flex-col gap-3 flex-1">
+                      {p.features.map((f: string) => (
+                        <div key={f} className="text-sm flex items-start gap-3">
+                          <Check
+                            className="h-5 w-5 text-green-600 mt-0.5"
+                            aria-hidden="true"
+                          />
+                          <span className="text-foreground">{f}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+                </ShineBorder>
+              )
+            )}
           </div>
         </section>
 
@@ -359,13 +404,21 @@ export default async function WeddingsPage() {
           </div>
         </section>
 
+        {/* Blog Posts Section */}
+        <BlogPostsSectionServer
+          posts={blogPosts}
+          title="Consejos para tu Boda"
+          description="Descubre ideas, tendencias y consejos para hacer de tu boda un día perfecto"
+          type={DepartmentType.WEDDINGS}
+        />
+
         {/* Final CTA */}
         <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
           <ShineBorder className="rounded-2xl w-full" borderWidth={1}>
-            <Card className="p-12 sm:p-16 text-center bg-gradient-to-r from-pink-50 to-rose-50 dark:from-pink-950/50 dark:to-rose-950/50 border-0 shadow-xl">
+            <Card className="p-12 sm:p-16 text-center bg-gradient-to-r from-pink-50 to-rose-50 border-0 shadow-xl">
               <div className="flex items-center justify-center mb-6">
                 <ShineBorder className="rounded-full p-3" borderWidth={1}>
-                  <Heart className="h-8 w-8 text-pink-600 dark:text-pink-400" />
+                  <Heart className="h-8 w-8 text-pink-600" />
                 </ShineBorder>
               </div>
               <h3 className="text-3xl sm:text-4xl font-bold tracking-tight mb-6 text-foreground">

@@ -288,9 +288,12 @@ model Department {
   heroImageUrl String?
   themeJson    Json?
   
-  // New fields for services and contact info
+  // Page content fields
+  heroContentJson Json?        // Hero section content (title, subtitle, description, CTAs)
+  packagesJson Json?           // Packages/pricing content
   servicesJson Json?           // Array of service objects with title, description, icon
   contactInfoJson Json?        // Contact information (emails, phones, locations)
+  additionalContentJson Json?  // Additional page-specific content (like sample itineraries)
   
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt

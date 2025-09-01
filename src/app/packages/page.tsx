@@ -102,7 +102,7 @@ export default async function PackagesPage({
 
       <main className="flex-grow relative">
         {/* Background Pattern */}
-        <div className="absolute inset-0 bg-grid-black/[0.02] dark:bg-grid-white/[0.02] -z-10" />
+        <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-secondary/20 -z-10" />
 
         {/* Enhanced Hero Section */}
@@ -275,7 +275,7 @@ export default async function PackagesPage({
                             className="object-cover group-hover:scale-110 transition-transform duration-700"
                           />
                         ) : (
-                          <div className="h-full w-full bg-gradient-to-br from-green-100 to-teal-100 dark:from-green-900/20 dark:to-teal-900/20 flex items-center justify-center">
+                          <div className="h-full w-full bg-gradient-to-br from-green-100 to-teal-100 flex items-center justify-center">
                             <Package className="h-16 w-16 text-muted-foreground" />
                           </div>
                         )}

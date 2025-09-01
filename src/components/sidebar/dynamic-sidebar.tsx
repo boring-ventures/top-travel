@@ -69,6 +69,11 @@ const baseNavGroups: NavGroupProps[] = [
     title: "Bodas y Quinceañeras",
     items: [
       {
+        title: "Contenido de Páginas",
+        url: "/cms/departments",
+        icon: Building2,
+      },
+      {
         title: "Destinos de Bodas",
         url: "/cms/wedding-destinations",
         icon: Heart,

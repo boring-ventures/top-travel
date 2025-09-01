@@ -2,13 +2,13 @@
 import {
   Header,
   Hero,
-  CustomizablePackages,
   TabbedContent,
   SpecialDepartments,
-  FeaturedDestinations,
+  WeddingDestinations,
   FeaturedOffers,
   About,
-  Testimonials,
+  Services,
+  ContactInfo,
   Footer,
   PersistentWhatsAppCTA,
   Tags,
@@ -36,8 +36,6 @@ const FALLBACK_IMAGES = {
     "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=400&q=80",
   weddings:
     "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=400&q=80",
-  testimonials:
-    "https://images.unsplash.com/photo-1494790108755-2616b612b786?auto=format&fit=crop&w=400&q=80",
 };
 
 // Default data for when database is empty
@@ -108,45 +106,15 @@ const DEFAULT_DATA = {
       bannerImageUrl: FALLBACK_IMAGES.destinations,
     },
   ],
-  testimonials: [
-    {
-      id: "1",
-      authorName: "Olivia S.",
-      content:
-        "GabyTop Travel made our wedding planning stress-free and the celebration was perfect!",
-      rating: 5,
-      location: "La Paz, Bolivia",
-      imageUrl: FALLBACK_IMAGES.testimonials,
-    },
-    {
-      id: "2",
-      authorName: "Ethan L.",
-      content:
-        "The quinceañera tour was a dream come true for my daughter. Thank you!",
-      rating: 5,
-      location: "Santa Cruz, Bolivia",
-      imageUrl: FALLBACK_IMAGES.testimonials,
-    },
-    {
-      id: "3",
-      authorName: "Sophia R.",
-      content:
-        "Our family vacation was unforgettable, thanks to the personalized service and expert recommendations.",
-      rating: 5,
-      location: "Cochabamba, Bolivia",
-      imageUrl: FALLBACK_IMAGES.testimonials,
-    },
-  ],
 };
 
 export default async function Home() {
   let offers: any[] = [];
   let topDestinations: any[] = [];
-  let featuredDestinations: any[] = [];
+  let weddingDestinations: any[] = [];
   let featuredEvents: any[] = [];
   let departments: any[] = [];
   let fixedDepartures: any[] = [];
-  let testimonials: any[] = [];
   let tags: any[] = [];
   let whatsappTemplates: any = {};
 
@@ -192,7 +160,7 @@ export default async function Home() {
           heroImageUrl: true,
         },
       }),
-      prisma.destination.findMany({
+      prisma.weddingDestination.findMany({
         where: {
           isFeatured: true,
         },
@@ -200,9 +168,11 @@ export default async function Home() {
         select: {
           id: true,
           slug: true,
-          city: true,
-          country: true,
+          name: true,
+          title: true,
+          description: true,
           heroImageUrl: true,
+          isFeatured: true,
         },
       }),
       prisma.event.findMany({
@@ -246,18 +216,6 @@ export default async function Home() {
           endDate: true,
         },
       }),
-      prisma.testimonial.findMany({
-        where: { status: "PUBLISHED" },
-        orderBy: { createdAt: "desc" },
-        take: 6,
-        select: {
-          id: true,
-          authorName: true,
-          location: true,
-          rating: true,
-          content: true,
-        },
-      }),
       prisma.tag.findMany({
         orderBy: [{ type: "asc" }, { name: "asc" }],
         include: {
@@ -274,11 +232,10 @@ export default async function Home() {
     [
       offers,
       topDestinations,
-      featuredDestinations,
+      weddingDestinations,
       featuredEvents,
       departments,
       fixedDepartures,
-      testimonials,
       tags,
     ] = results as any;
 
@@ -309,7 +266,6 @@ export default async function Home() {
   if (!offers.length) offers = DEFAULT_DATA.offers;
   if (!topDestinations.length) topDestinations = DEFAULT_DATA.destinations;
   if (!featuredEvents.length) featuredEvents = DEFAULT_DATA.events;
-  if (!testimonials.length) testimonials = DEFAULT_DATA.testimonials;
 
   // Helper function to get valid image URL
   const getValidImageUrl = (
@@ -454,11 +410,11 @@ export default async function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-transparent -z-10" />
 
         <Hero items={heroItems} featuredOffer={offers[0]} />
-        {/* <CustomizablePackages /> */}
         <TabbedContent tabs={tabbedContent} />
-        {featuredDestinations && featuredDestinations.length > 0 && (
-          <FeaturedDestinations destinations={featuredDestinations} />
-        )}
+
+        {/* Wedding Destinations Section */}
+        <WeddingDestinations destinations={weddingDestinations} />
+
         <SpecialDepartments departments={specialDepartments} />
         <FeaturedOffers
           offers={offers}
@@ -467,7 +423,12 @@ export default async function Home() {
         <Tags tags={tags} />
 
         <About />
-        <Testimonials items={testimonials} />
+
+        {/* Services Section */}
+        <Services />
+
+        {/* Contact Info Section */}
+        <ContactInfo />
       </main>
 
       <PersistentWhatsAppCTA whatsappTemplate={whatsappTemplates.general} />

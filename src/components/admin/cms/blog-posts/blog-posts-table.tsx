@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { Plus, Search, Edit, Trash2, Eye } from "lucide-react";
+import { Plus, Search, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -22,44 +21,28 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { api } from "@/lib/api";
+import { BlogPost } from "@prisma/client";
+import {
+  useBlogPosts,
+  useDeleteBlogPost,
+  useBlogPost,
+} from "@/hooks/use-blog-posts";
 import { EditBlogPostModal } from "./edit-blog-post-modal";
 import { DeleteBlogPostDialog } from "./delete-blog-post-dialog";
 import { CreateBlogPostModal } from "./create-blog-post-modal";
 
-interface BlogPost {
-  id: string;
-  slug: string;
-  title: string;
-  content: string;
-  excerpt?: string;
-  heroImageUrl?: string;
-  author?: string;
-  publishedAt?: string;
-  status: "DRAFT" | "PUBLISHED";
-  type: "WEDDINGS" | "QUINCEANERA";
-  createdAt: string;
-  updatedAt: string;
-}
-
 export function BlogPostsTable() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [deletingPost, setDeletingPost] = useState<BlogPost | null>(null);
   const { toast } = useToast();
 
-  const {
-    data: posts = [],
-    isLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ["blog-posts"],
-    queryFn: async () => {
-      const response = await api.get("/api/blog-posts");
-      return response.data as BlogPost[];
-    },
-  });
+  const { data: blogPostsData, isLoading } = useBlogPosts();
+  const { data: editingPost } = useBlogPost(editingPostId || "");
+  const deletePostMutation = useDeleteBlogPost();
+
+  const posts = blogPostsData?.posts || [];
 
   const filteredPosts = posts.filter(
     (post) =>
@@ -69,12 +52,11 @@ export function BlogPostsTable() {
 
   const handleDelete = async (post: BlogPost) => {
     try {
-      await api.delete(`/api/blog-posts/${post.slug}`);
+      await deletePostMutation.mutateAsync(post.id);
       toast({
         title: "Post eliminado",
         description: "El blog post ha sido eliminado exitosamente.",
       });
-      refetch();
       setDeletingPost(null);
     } catch (error) {
       toast({
@@ -172,7 +154,9 @@ export function BlogPostsTable() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => setEditingPost(post)}>
+                        <DropdownMenuItem
+                          onClick={() => setEditingPostId(post.id)}
+                        >
                           <Edit className="mr-2 h-4 w-4" />
                           Editar
                         </DropdownMenuItem>
@@ -198,18 +182,16 @@ export function BlogPostsTable() {
         onOpenChange={setIsCreateModalOpen}
         onSuccess={() => {
           setIsCreateModalOpen(false);
-          refetch();
         }}
       />
 
-      {editingPost && (
+      {editingPost && editingPostId && (
         <EditBlogPostModal
           post={editingPost}
-          open={!!editingPost}
-          onOpenChange={(open) => !open && setEditingPost(null)}
+          open={!!editingPostId}
+          onOpenChange={(open) => !open && setEditingPostId(null)}
           onSuccess={() => {
-            setEditingPost(null);
-            refetch();
+            setEditingPostId(null);
           }}
         />
       )}

@@ -10,7 +10,8 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
     });
     return NextResponse.json(items);
-  } catch {
+  } catch (error: any) {
+    console.error("GET /api/departments - Error:", error);
     return NextResponse.json(
       { error: "Failed to fetch departments" },
       { status: 500 }
@@ -41,8 +42,13 @@ export async function POST(request: Request) {
       data: {
         ...parsed,
         themeJson: sanitizeRichJson(parsed.themeJson as any),
+        heroContentJson: sanitizeRichJson(parsed.heroContentJson as any),
+        packagesJson: sanitizeRichJson(parsed.packagesJson as any),
         servicesJson: sanitizeRichJson(parsed.servicesJson as any),
         contactInfoJson: sanitizeRichJson(parsed.contactInfoJson as any),
+        additionalContentJson: sanitizeRichJson(
+          parsed.additionalContentJson as any
+        ),
       },
     });
     return NextResponse.json(created, { status: 201 });

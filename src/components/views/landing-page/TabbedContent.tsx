@@ -82,7 +82,7 @@ export default function TabbedContent({ tabs, activeTab }: TabbedContentProps) {
       >
         <div className="mb-6">
           <h2 className="text-foreground text-[22px] font-bold leading-tight tracking-[-0.015em] text-center">
-            Paquetes Pre-Diseñados
+            Experiencias de Viaje
           </h2>
         </div>
 

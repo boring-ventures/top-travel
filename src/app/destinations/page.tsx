@@ -79,7 +79,7 @@ export default async function DestinationsPage({
 
       <main className="flex-grow relative">
         {/* Background Pattern */}
-        <div className="absolute inset-0 bg-grid-black/[0.02] dark:bg-grid-white/[0.02] -z-10" />
+        <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-secondary/20 -z-10" />
 
         {/* Enhanced Hero Section */}
@@ -236,7 +236,7 @@ export default async function DestinationsPage({
                             className="object-cover group-hover:scale-110 transition-transform duration-700"
                           />
                         ) : (
-                          <div className="h-full w-full bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/20 dark:to-purple-900/20 flex items-center justify-center">
+                          <div className="h-full w-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
                             <MapPin className="h-16 w-16 text-muted-foreground" />
                           </div>
                         )}

@@ -25,7 +25,7 @@ export function InclusionsExclusions({
             {inclusions.map((inc, idx) => (
               <div
                 key={idx}
-                className="flex items-center gap-3 p-3 bg-green-50 dark:bg-green-950/20 rounded-lg"
+                className="flex items-center gap-3 p-3 bg-green-50 rounded-lg"
               >
                 <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
                 <span className="text-sm">{inc}</span>
@@ -46,7 +46,7 @@ export function InclusionsExclusions({
             {exclusions.map((exc, idx) => (
               <div
                 key={idx}
-                className="flex items-center gap-3 p-3 bg-red-50 dark:bg-red-950/20 rounded-lg"
+                className="flex items-center gap-3 p-3 bg-red-50 rounded-lg"
               >
                 <X className="h-4 w-4 text-red-600 flex-shrink-0" />
                 <span className="text-sm">{exc}</span>
@@ -58,4 +58,3 @@ export function InclusionsExclusions({
     </div>
   );
 }
-

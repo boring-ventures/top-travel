@@ -58,27 +58,15 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
       : {}),
   };
 
-  // Debug: Log the where clause and count total published events
-  console.log("Events where clause:", JSON.stringify(where, null, 2));
-
-  // Get total count of published events for debugging
   const totalPublishedEvents = await prisma.event.count({
     where: { status: "PUBLISHED" },
   });
-  console.log("Total published events in database:", totalPublishedEvents);
 
   const events = await prisma.event.findMany({
     where,
     orderBy: { startDate: "asc" },
     take: 100, // Increased limit to ensure we get all events
   });
-
-  // Debug: Log the events being returned
-  console.log("Events returned:", events.length);
-  console.log(
-    "Events titles:",
-    events.map((e) => e.title)
-  );
 
   // Get unique countries and cities for filters
   const allEvents = await prisma.event.findMany({
@@ -118,7 +106,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
 
       <main className="flex-grow relative">
         {/* Background Pattern */}
-        <div className="absolute inset-0 bg-grid-black/[0.02] dark:bg-grid-white/[0.02] -z-10" />
+        <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-secondary/20 -z-10" />
 
         {/* Enhanced Hero Section */}
@@ -276,7 +264,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
                               className="object-cover group-hover:scale-110 transition-transform duration-700"
                             />
                           ) : (
-                            <div className="h-full w-full bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 flex items-center justify-center">
+                            <div className="h-full w-full bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center">
                               <Music className="h-16 w-16 text-muted-foreground" />
                             </div>
                           )}
