@@ -1,15 +1,11 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useRef, useEffect } from "react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
-import { WhatsAppCTA } from "@/components/utils/whatsapp-cta";
+import { ArrowRight } from "lucide-react";
 import { isValidImageUrl } from "@/lib/utils";
-import PromotionalCard from "./PromotionalCard";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface Offer {
   id: string;
@@ -39,132 +35,108 @@ export default function FeaturedOffers({
   offers,
   whatsappTemplate,
 }: FeaturedOffersProps) {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
 
-  const checkScrollButtons = () => {
-    if (scrollContainerRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } =
-        scrollContainerRef.current;
-      setCanScrollLeft(scrollLeft > 0);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
-    }
-  };
-
-  const scrollTo = (direction: "left" | "right") => {
-    if (scrollContainerRef.current) {
-      const scrollAmount = 320; // Width of one card + gap
-      const newScrollLeft =
-        scrollContainerRef.current.scrollLeft +
-        (direction === "left" ? -scrollAmount : scrollAmount);
-      scrollContainerRef.current.scrollTo({
-        left: newScrollLeft,
-        behavior: "smooth",
-      });
-    }
-  };
-
-  // Check scroll buttons on mount and when offers change
   useEffect(() => {
-    checkScrollButtons();
-    // Add resize listener to recheck on window resize
-    const handleResize = () => checkScrollButtons();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [offers]);
+    setIsMounted(true);
+  }, []);
+
+  // Don't render until mounted to prevent hydration mismatch
+  if (!isMounted) {
+    return null;
+  }
 
   return (
-    <section
-      className="container mx-auto py-8 sm:py-10 md:py-14"
-      style={{ paddingLeft: "12vw", paddingRight: "12vw" }}
-    >
-      <div className="flex items-end justify-between gap-4 mb-4 sm:mb-6">
-        <div>
-          <AnimatedShinyText>
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight text-foreground">
-              Ofertas destacadas
-            </h2>
-          </AnimatedShinyText>
-          <p className="text-xs sm:text-sm text-muted-foreground">
-            Promociones seleccionadas del mes
-          </p>
+    <section className="py-12 w-full bg-white">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-start mb-8">
+          <div>
+            <h1 className="text-5xl font-bold mb-2">Ofertas <span className="font-light italic">Destacadas</span> del Mes</h1>
+          </div>
+          <Link className="text-black hover:text-gray-600 transition-colors duration-300 whitespace-nowrap hidden sm:flex items-center gap-2" href="/packages">
+            Ver Todos
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
         </div>
-        <Button
-          asChild
-          variant="ghost"
-          className="ml-auto sm:inline-flex hidden hover:bg-accent text-sm"
-        >
-          <Link href="/packages">Ver todas</Link>
-        </Button>
-      </div>
 
-      {offers.length === 0 ? (
-        <div className="text-sm text-muted-foreground">
-          No hay ofertas destacadas por el momento.
-        </div>
-      ) : (
-        <div className="relative group">
-          {/* Navigation Buttons */}
-          <Button
-            onClick={() => scrollTo("left")}
-            disabled={!canScrollLeft}
-            variant="outline"
-            size="icon"
-            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-background/80 backdrop-blur-sm border-border/50 hover:bg-background/90 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 disabled:opacity-0"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
+        {offers.length === 0 ? (
+          <div className="text-sm text-muted-foreground">
+            No hay ofertas destacadas por el momento.
+          </div>
+        ) : (
+          <div className="flex overflow-x-auto scrollbar-hide gap-6 pb-4">
+            {offers.map((o) => {
+              const href = o.package?.slug
+                ? `/packages/${o.package.slug}`
+                : o.externalUrl || "#";
+              const price = o.package?.fromPrice 
+                ? `Desde $${o.package.fromPrice}`
+                : "Desde $600";
 
-          <Button
-            onClick={() => scrollTo("right")}
-            disabled={!canScrollRight}
-            variant="outline"
-            size="icon"
-            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-background/80 backdrop-blur-sm border-border/50 hover:bg-background/90 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 disabled:opacity-0"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-
-          {/* Scroll Container */}
-          <div
-            ref={scrollContainerRef}
-            className="flex overflow-x-auto scrollbar-hide"
-            onScroll={checkScrollButtons}
-          >
-            <div className="flex items-stretch p-2 sm:p-4 gap-3 sm:gap-4">
-              {offers.map((o) => {
-                const href = o.package?.slug
-                  ? `/packages/${o.package.slug}`
-                  : o.externalUrl || "#";
-                const description =
-                  o.subtitle ||
-                  o.package?.summary ||
-                  "Descubre esta increíble oferta";
-
-                return (
-                  <div key={o.id} className="w-72 sm:w-80 flex-shrink-0">
-                    <PromotionalCard
-                      id={o.id}
-                      title={o.title}
-                      subtitle={o.subtitle || ""}
-                      description={description}
-                      imageUrl={
+              return (
+                <div key={o.id} className="relative overflow-hidden rounded-2xl group flex-shrink-0 w-80">
+                  <div className="relative h-80 sm:h-96">
+                    <Image
+                      src={
                         o.bannerImageUrl && isValidImageUrl(o.bannerImageUrl)
                           ? o.bannerImageUrl
                           : "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80"
                       }
-                      href={href}
-                      location="Bolivia"
-                      resortName="GabyTop Travel"
+                      alt={o.title}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-110"
                     />
+                    
+                    {/* Subtle gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                    
+                    {/* Top Glass Content */}
+                    <div className="absolute top-0 left-0 right-0 p-6">
+                      <div className="bg-black/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 inline-block">
+                        <p className="text-white text-sm font-medium">{o.subtitle || "Oferta especial"}</p>
+                      </div>
+                    </div>
+                    
+                    {/* Bottom Glass Content */}
+                    <div className="absolute bottom-0 left-0 right-0 p-6">
+                      <div className="space-y-4">
+                        <h2 className="text-white text-2xl font-bold font-serif drop-shadow-lg">
+                          {o.title}
+                        </h2>
+                        
+                        <p className="text-white text-lg font-normal drop-shadow-lg">
+                          {price}
+                        </p>
+                        
+                        <Button
+                          asChild
+                          className="w-full bg-black/30 backdrop-blur-md hover:bg-black/40 text-white font-semibold py-3 rounded-xl transition-all duration-300 border border-white/20 hover:border-white/30 flex items-center justify-center gap-2"
+                        >
+                          <Link href={href}>
+                            <span>Conoce más</span>
+                            <ArrowRight className="h-4 w-4" />
+                          </Link>
+                        </Button>
+                      </div>
+                    </div>
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              );
+            })}
           </div>
+        )}
+
+        <div className="mt-12 text-center sm:hidden">
+          <Link className="text-black hover:text-gray-600 transition-colors duration-300 inline-flex items-center gap-2" href="/packages">
+            Ver Todos
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
         </div>
-      )}
+      </div>
     </section>
   );
 }

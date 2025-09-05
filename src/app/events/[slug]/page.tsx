@@ -13,6 +13,33 @@ import {
   Users,
   ArrowLeft,
   Share2,
+  Star,
+  Heart,
+  Globe,
+  Award,
+  Camera,
+  Coffee,
+  Utensils,
+  Car,
+  Wifi,
+  Shield,
+  Compass,
+  Navigation,
+  Info,
+  Phone,
+  Mail,
+  Zap,
+  Gift,
+  Sun,
+  Moon,
+  Bed,
+  Music,
+  Mic,
+  Sparkles,
+  Trophy,
+  Palette,
+  Package,
+  Plane,
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -49,6 +76,10 @@ export default async function EventDetailPage({ params }: Params) {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-secondary/20">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-transparent -z-10" />
+      
       {/* Hero Section */}
       <section className="relative h-[60vh] min-h-[400px] w-full overflow-hidden">
         {(evt as any)?.heroImageUrl ? (
@@ -61,9 +92,9 @@ export default async function EventDetailPage({ params }: Params) {
             priority={true}
           />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-green-600 to-teal-600" />
+          <div className="absolute inset-0 bg-gradient-to-br from-black to-gray-800" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
         {/* Back Button */}
         <div className="absolute top-6 left-6 z-10">
@@ -71,7 +102,7 @@ export default async function EventDetailPage({ params }: Params) {
             asChild
             variant="secondary"
             size="sm"
-            className="backdrop-blur-sm bg-background/80"
+            className="backdrop-blur-sm bg-white/80 text-black hover:bg-white/90 border border-black/20"
           >
             <Link href="/events">
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -86,19 +117,19 @@ export default async function EventDetailPage({ params }: Params) {
             <div className="flex flex-wrap items-center gap-3 mb-4">
               <Badge
                 variant="secondary"
-                className="bg-primary/20 text-primary border-primary/30"
+                className="bg-white/20 backdrop-blur-sm text-white border-white/30"
               >
                 Evento
               </Badge>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 leading-tight text-white drop-shadow-lg">
               {evt.title}
             </h1>
 
-            <div className="flex flex-wrap items-center gap-4 text-sm sm:text-base text-muted-foreground">
+            <div className="flex flex-wrap items-center gap-4 text-sm sm:text-base text-white/90">
               <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4" />
+                <MapPin className="h-4 w-4 text-white/80" />
                 <span>
                   {evt.locationCity ?? "Ubicación por confirmar"},{" "}
                   {evt.locationCountry ?? ""}
@@ -106,7 +137,7 @@ export default async function EventDetailPage({ params }: Params) {
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
+                <Calendar className="h-4 w-4 text-white/80" />
                 <span>{formatDate(evt.startDate)}</span>
               </div>
             </div>
@@ -120,16 +151,18 @@ export default async function EventDetailPage({ params }: Params) {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
             {/* Event Details Card */}
-            <Card className="p-6 sm:p-8">
+            <Card className="p-6 sm:p-8 bg-white/90 backdrop-blur-md border border-white/30 shadow-xl hover:shadow-2xl transition-all duration-300">
               <div className="space-y-6">
                 {/* Date and Time */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                      <Calendar className="h-4 w-4" />
-                      Fecha
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="p-4 bg-black/5 rounded-xl border border-black/10 backdrop-blur-sm">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-10 h-10 bg-black/10 rounded-lg flex items-center justify-center">
+                        <Calendar className="h-5 w-5 text-black/60" />
+                      </div>
+                      <span className="font-semibold text-black/80">Fecha</span>
                     </div>
-                    <div className="text-lg">
+                    <div className="text-lg font-medium text-black/90">
                       {isSameDay ? (
                         formatDate(evt.startDate)
                       ) : (
@@ -141,30 +174,34 @@ export default async function EventDetailPage({ params }: Params) {
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                      <Clock className="h-4 w-4" />
-                      Horario
+                  <div className="p-4 bg-black/5 rounded-xl border border-black/10 backdrop-blur-sm">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-10 h-10 bg-black/10 rounded-lg flex items-center justify-center">
+                        <Clock className="h-5 w-5 text-black/60" />
+                      </div>
+                      <span className="font-semibold text-black/80">Horario</span>
                     </div>
-                    <div className="text-lg">
+                    <div className="text-lg font-medium text-black/90">
                       {formatTime(evt.startDate)} - {formatTime(evt.endDate)}
                     </div>
                   </div>
                 </div>
 
-                <Separator />
+                <Separator className="bg-gradient-to-r from-transparent via-black/20 to-transparent" />
 
                 {/* Location Details */}
-                <div className="space-y-4">
-                  <h3 className="text-xl font-semibold flex items-center gap-2">
-                    <MapPin className="h-5 w-5" />
-                    Ubicación
-                  </h3>
+                <div className="p-6 bg-black/5 rounded-xl border border-black/10 backdrop-blur-sm">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-black/10 rounded-lg flex items-center justify-center">
+                      <MapPin className="h-6 w-6 text-black/60" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-black/80">Ubicación</h3>
+                  </div>
                   <div className="space-y-2">
                     {evt.venue && (
-                      <div className="text-lg font-medium">{evt.venue}</div>
+                      <div className="text-lg font-medium text-black/90">{evt.venue}</div>
                     )}
-                    <div className="text-muted-foreground">
+                    <div className="text-black/70">
                       {evt.locationCity}, {evt.locationCountry}
                     </div>
                   </div>
@@ -173,13 +210,16 @@ export default async function EventDetailPage({ params }: Params) {
                 {/* Event Details */}
                 {evt.detailsJson && (
                   <>
-                    <Separator />
-                    <div className="space-y-4">
-                      <h3 className="text-xl font-semibold">
-                        Detalles del evento
-                      </h3>
-                      <div className="bg-muted/50 p-4 rounded-lg">
-                        <pre className="whitespace-pre-wrap text-sm">
+                    <Separator className="bg-gradient-to-r from-transparent via-black/20 to-transparent" />
+                    <div className="p-6 bg-black/5 rounded-xl border border-black/10 backdrop-blur-sm">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-12 h-12 bg-black/10 rounded-lg flex items-center justify-center">
+                          <Info className="h-6 w-6 text-black/60" />
+                        </div>
+                        <h3 className="text-xl font-semibold text-black/80">Detalles del evento</h3>
+                      </div>
+                      <div className="bg-white/60 p-4 rounded-lg border border-black/10 backdrop-blur-sm">
+                        <pre className="whitespace-pre-wrap text-sm text-black/90">
                           {JSON.stringify(evt.detailsJson, null, 2)}
                         </pre>
                       </div>
@@ -187,42 +227,22 @@ export default async function EventDetailPage({ params }: Params) {
                   </>
                 )}
 
-                {/* Artist/Event Info */}
-                {evt.artistOrEvent && (
-                  <>
-                    <Separator />
-                    <div className="space-y-4">
-                      <h3 className="text-xl font-semibold">Artista/Evento</h3>
-                      <p className="text-lg">{evt.artistOrEvent}</p>
-                    </div>
-                  </>
-                )}
               </div>
             </Card>
 
-            {/* Related Events */}
-            <Card className="p-6 sm:p-8">
-              <h3 className="text-xl font-semibold mb-4">
-                Eventos relacionados
-              </h3>
-              <div className="text-center py-8 text-muted-foreground">
-                <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Próximamente más eventos</p>
-              </div>
-            </Card>
           </div>
 
           {/* Sidebar */}
           <div className="lg:col-span-1">
             <div className="sticky top-24 space-y-6">
               {/* Contact Card */}
-              <Card className="p-6">
+              <Card className="p-6 bg-white/90 backdrop-blur-md border border-white/30 shadow-xl hover:shadow-2xl transition-all duration-300">
                 <div className="space-y-4">
                   <div className="text-center">
-                    <h3 className="text-lg font-semibold mb-2">
+                    <h3 className="text-lg font-semibold mb-2 text-gray-800">
                       ¿Te interesa este evento?
                     </h3>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-gray-600">
                       Consulta disponibilidad, precios y reserva tu lugar
                     </p>
                   </div>
@@ -241,7 +261,7 @@ export default async function EventDetailPage({ params }: Params) {
                     className="w-full"
                   />
 
-                  <Button variant="outline" size="sm" className="w-full">
+                  <Button variant="outline" size="sm" className="w-full hover:bg-gray-50 hover:border-gray-300 transition-all duration-200">
                     <Share2 className="h-4 w-4 mr-2" />
                     Compartir evento
                   </Button>
@@ -249,20 +269,35 @@ export default async function EventDetailPage({ params }: Params) {
               </Card>
 
               {/* Quick Info */}
-              <Card className="p-6">
-                <h4 className="font-semibold mb-4">Información rápida</h4>
-                <div className="space-y-3 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Tipo:</span>
-                    <span>Evento</span>
+              <Card className="p-6 bg-white/90 backdrop-blur-md border border-white/30 shadow-xl hover:shadow-2xl transition-all duration-300">
+                <h4 className="font-semibold mb-4 flex items-center gap-2 text-black/80">
+                  <div className="w-8 h-8 bg-black/10 rounded-lg flex items-center justify-center">
+                    <Info className="h-4 w-4 text-black/60" />
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Duración:</span>
-                    <span>
+                  Información rápida
+                </h4>
+                <div className="space-y-4 text-sm">
+                  <div className="p-3 bg-black/5 rounded-lg border border-black/10 backdrop-blur-sm">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4 text-black/60" />
+                        <span className="text-black/70 font-medium">Tipo:</span>
+                      </div>
+                      <span className="font-semibold text-black/90">Evento</span>
+                    </div>
+                  </div>
+                  <div className="p-3 bg-black/5 rounded-lg border border-black/10 backdrop-blur-sm">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-black/60" />
+                        <span className="text-black/70 font-medium">Duración:</span>
+                  </div>
+                      <span className="font-semibold text-black/90">
                       {isSameDay
                         ? "1 día"
                         : `${Math.ceil((new Date(evt.endDate).getTime() - new Date(evt.startDate).getTime()) / (1000 * 60 * 60 * 24))} días`}
                     </span>
+                    </div>
                   </div>
                 </div>
               </Card>

@@ -1,24 +1,24 @@
+"use client";
+
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 import {
-  MapPin,
   Users,
   Award,
   Heart,
   Globe,
-  Star,
   Sparkles,
-  Compass,
   Building2,
 } from "lucide-react";
 import Header from "@/components/views/landing-page/Header";
 import Footer from "@/components/views/landing-page/Footer";
 import WhatsAppCTA from "@/components/utils/whatsapp-cta";
-import { ShineBorder } from "@/components/magicui/shine-border";
 import Link from "next/link";
+import Image from "next/image";
 
-export default async function AboutPage() {
+export default function AboutPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -28,39 +28,32 @@ export default async function AboutPage() {
         <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-secondary/20 -z-10" />
 
-        {/* Enhanced Hero Section */}
-        <section className="relative overflow-hidden pt-20 sm:pt-24">
-          <div className="absolute inset-0 bg-gradient-to-br from-orange-600 via-red-600 to-rose-700" />
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.05%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
-
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 relative z-10">
-            <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
-                Sobre GabyTop Travel
-                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-300">
-                  Tu Agencia de Confianza
-                </span>
+        {/* Title Section */}
+        <section className="relative py-32 w-full overflow-hidden min-h-[100vh] flex items-center">
+          <div className="absolute inset-0">
+            <Image
+              src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=compress&cs=tinysrgb&w=1200&q=80"
+              alt="GabyTop Travel team"
+              fill
+              className="object-cover"
+              priority
+            />
+            <div className="absolute inset-0 bg-black/40" />
+          </div>
+          <div className="relative z-10 container mx-auto px-4">
+            <motion.div 
+              className="text-center"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+            >
+              <h1 className="text-5xl font-bold text-white mb-6 drop-shadow-lg">
+                Sobre <span className="font-light italic">GabyTop Travel</span>
               </h1>
-              <p className="text-xl sm:text-2xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed drop-shadow-md">
-                Tu agencia de viajes de confianza en Bolivia, creando
-                experiencias memorables desde 2020
+              <p className="text-xl text-white/90 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
+                Tu agencia de viajes de confianza en Bolivia, creando experiencias memorables desde 2020
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <div className="flex items-center gap-2 text-white/80 drop-shadow-sm">
-                  <Sparkles className="h-5 w-5" />
-                  <span className="text-sm font-medium">
-                    Más de 3 años de experiencia
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 text-white/80 drop-shadow-sm">
-                  <Star className="h-5 w-5" />
-                  <span className="text-sm font-medium">
-                    Miles de clientes satisfechos
-                  </span>
-                </div>
-              </div>
-            </div>
+            </motion.div>
           </div>
         </section>
 
@@ -69,124 +62,138 @@ export default async function AboutPage() {
           <div className="max-w-6xl mx-auto">
             <div className="space-y-16 sm:space-y-20">
               {/* Company Overview */}
-              <div className="text-center">
-                <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-foreground">
+              <motion.div 
+                className="text-center max-w-4xl mx-auto"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+              >
+                <h2 className="text-3xl font-bold mb-8 text-gray-900">
                   Nuestra Historia
                 </h2>
-                <p className="text-lg sm:text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-                  GabyTop Travel SRL es tu agencia de viajes de confianza en
-                  Bolivia, con oficinas en Santa Cruz, Cochabamba y La Paz.
-                  Creamos experiencias memorables: desde conciertos y eventos
-                  exclusivos hasta destinos exóticos, viajes de quinceañera y
-                  bodas de destino.
+                <p className="text-lg text-gray-600 leading-relaxed">
+                  GabyTop Travel SRL es tu agencia de viajes de confianza en Bolivia, con oficinas en Santa Cruz, Cochabamba y La Paz. Creamos experiencias memorables: desde conciertos y eventos exclusivos hasta destinos exóticos, viajes de quinceañera y bodas de destino.
                 </p>
-              </div>
+              </motion.div>
 
               {/* Vision & Mission */}
-              <div className="grid md:grid-cols-2 gap-8 sm:gap-12">
-                <ShineBorder className="rounded-2xl w-full" borderWidth={1}>
-                  <Card className="p-8 text-center bg-transparent border-0 hover:shadow-xl transition-all duration-300 h-full flex flex-col">
-                    <div className="mb-6">
-                      <div className="flex items-center justify-center mb-4">
-                        <div className="p-3 bg-orange-100 rounded-full">
-                          <Globe className="h-8 w-8 text-orange-600" />
-                        </div>
-                      </div>
-                      <h3 className="text-2xl font-bold mb-4 text-foreground">
-                        Visión
-                      </h3>
+              <motion.div 
+                className="grid md:grid-cols-2 gap-12"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
+              >
+                <motion.div 
+                  className="bg-white border border-gray-200 rounded-lg p-8 hover:shadow-lg transition-shadow duration-200"
+                  whileHover={{ 
+                    y: -5,
+                    transition: { duration: 0.3, ease: "easeOut" }
+                  }}
+                >
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="p-3 bg-gray-100 rounded-full">
+                      <Globe className="h-6 w-6 text-gray-700" />
                     </div>
-                    <p className="text-muted-foreground text-lg leading-relaxed flex-1">
-                      Ser la agencia líder en Bolivia, reconocida por innovación
-                      y presencia nacional. Socio preferido para experiencias
-                      únicas alrededor del mundo.
-                    </p>
-                  </Card>
-                </ShineBorder>
+                    <h3 className="text-2xl font-bold text-gray-900">
+                      Visión
+                    </h3>
+                  </div>
+                  <p className="text-gray-600 leading-relaxed">
+                    Ser la agencia líder en Bolivia, reconocida por innovación y presencia nacional. Socio preferido para experiencias únicas alrededor del mundo.
+                  </p>
+                </motion.div>
 
-                <ShineBorder className="rounded-2xl w-full" borderWidth={1}>
-                  <Card className="p-8 text-center bg-transparent border-0 hover:shadow-xl transition-all duration-300 h-full flex flex-col">
-                    <div className="mb-6">
-                      <div className="flex items-center justify-center mb-4">
-                        <div className="p-3 bg-red-100 rounded-full">
-                          <Heart className="h-8 w-8 text-red-600" />
-                        </div>
-                      </div>
-                      <h3 className="text-2xl font-bold mb-4 text-foreground">
-                        Misión
-                      </h3>
+                <motion.div 
+                  className="bg-white border border-gray-200 rounded-lg p-8 hover:shadow-lg transition-shadow duration-200"
+                  whileHover={{ 
+                    y: -5,
+                    transition: { duration: 0.3, ease: "easeOut" }
+                  }}
+                >
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="p-3 bg-gray-100 rounded-full">
+                      <Heart className="h-6 w-6 text-gray-700" />
                     </div>
-                    <p className="text-muted-foreground text-lg leading-relaxed flex-1">
-                      Brindar un servicio excepcional, seguro y personalizado
-                      para convertir cada viaje en un recuerdo inolvidable.
-                    </p>
-                  </Card>
-                </ShineBorder>
-              </div>
+                    <h3 className="text-2xl font-bold text-gray-900">
+                      Misión
+                    </h3>
+                  </div>
+                  <p className="text-gray-600 leading-relaxed">
+                    Brindar un servicio excepcional, seguro y personalizado para convertir cada viaje en un recuerdo inolvidable.
+                  </p>
+                </motion.div>
+              </motion.div>
 
               {/* Values */}
-              <div className="text-center">
-                <h2 className="text-3xl sm:text-4xl font-bold mb-12 text-foreground">
+              <motion.div 
+                className="text-center"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}
+              >
+                <h2 className="text-3xl font-bold text-gray-900 mb-12">
                   Nuestros Valores
                 </h2>
-                <div className="grid md:grid-cols-3 gap-8 sm:gap-12">
-                  <ShineBorder className="rounded-xl w-full" borderWidth={1}>
-                    <Card className="p-8 bg-transparent border-0 hover:shadow-xl transition-all duration-300">
+                <div className="grid md:grid-cols-3 gap-8">
+                  {[
+                    {
+                      icon: Award,
+                      title: "Excelencia",
+                      description: "Comprometidos con la calidad en cada detalle de tu experiencia"
+                    },
+                    {
+                      icon: Users,
+                      title: "Confianza",
+                      description: "Construimos relaciones duraderas basadas en la transparencia"
+                    },
+                    {
+                      icon: Sparkles,
+                      title: "Innovación",
+                      description: "Siempre buscando nuevas formas de sorprender a nuestros clientes"
+                    }
+                  ].map((value, index) => (
+                    <motion.div 
+                      key={value.title}
+                      className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow duration-200"
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ 
+                        duration: 0.6, 
+                        delay: 0.8 + (index * 0.1),
+                        ease: "easeOut" 
+                      }}
+                      whileHover={{ 
+                        y: -5,
+                        transition: { duration: 0.3, ease: "easeOut" }
+                      }}
+                    >
                       <div className="flex items-center justify-center mb-4">
-                        <div className="p-2 bg-yellow-100 rounded-full">
-                          <Award className="h-8 w-8 text-yellow-600" />
+                        <div className="p-3 bg-gray-100 rounded-full">
+                          <value.icon className="h-6 w-6 text-gray-700" />
                         </div>
                       </div>
-                      <h3 className="text-xl font-bold mb-4 text-foreground">
-                        Excelencia
+                      <h3 className="text-xl font-bold mb-4 text-gray-900">
+                        {value.title}
                       </h3>
-                      <p className="text-muted-foreground leading-relaxed">
-                        Comprometidos con la calidad en cada detalle de tu
-                        experiencia
+                      <p className="text-gray-600 leading-relaxed">
+                        {value.description}
                       </p>
-                    </Card>
-                  </ShineBorder>
-                  <ShineBorder className="rounded-xl w-full" borderWidth={1}>
-                    <Card className="p-8 bg-transparent border-0 hover:shadow-xl transition-all duration-300">
-                      <div className="flex items-center justify-center mb-4">
-                        <div className="p-2 bg-blue-100 rounded-full">
-                          <Users className="h-8 w-8 text-blue-600" />
-                        </div>
-                      </div>
-                      <h3 className="text-xl font-bold mb-4 text-foreground">
-                        Confianza
-                      </h3>
-                      <p className="text-muted-foreground leading-relaxed">
-                        Construimos relaciones duraderas basadas en la
-                        transparencia
-                      </p>
-                    </Card>
-                  </ShineBorder>
-                  <ShineBorder className="rounded-xl w-full" borderWidth={1}>
-                    <Card className="p-8 bg-transparent border-0 hover:shadow-xl transition-all duration-300">
-                      <div className="flex items-center justify-center mb-4">
-                        <div className="p-2 bg-purple-100 rounded-full">
-                          <Sparkles className="h-8 w-8 text-purple-600" />
-                        </div>
-                      </div>
-                      <h3 className="text-xl font-bold mb-4 text-foreground">
-                        Innovación
-                      </h3>
-                      <p className="text-muted-foreground leading-relaxed">
-                        Siempre buscando nuevas formas de sorprender a nuestros
-                        clientes
-                      </p>
-                    </Card>
-                  </ShineBorder>
+                    </motion.div>
+                  ))}
                 </div>
-              </div>
+              </motion.div>
 
               {/* Offices */}
-              <div className="text-center">
-                <h2 className="text-3xl sm:text-4xl font-bold mb-12 text-foreground">
+              <motion.div 
+                className="text-center"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1.0, ease: "easeOut" }}
+              >
+                <h2 className="text-3xl font-bold text-gray-900 mb-12">
                   Nuestras Oficinas
                 </h2>
-                <div className="grid md:grid-cols-3 gap-8 sm:gap-12">
+                <div className="grid md:grid-cols-3 gap-8">
                   {[
                     {
                       city: "Santa Cruz",
@@ -203,109 +210,158 @@ export default async function AboutPage() {
                       region: "Altiplano",
                       description: "Punto de conexión",
                     },
-                  ].map((office) => (
-                    <ShineBorder
-                      key={office.city}
-                      className="rounded-xl w-full"
-                      borderWidth={1}
+                  ].map((office, index) => (
+                    <motion.div 
+                      key={office.city} 
+                      className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow duration-200"
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ 
+                        duration: 0.6, 
+                        delay: 1.2 + (index * 0.1),
+                        ease: "easeOut" 
+                      }}
+                      whileHover={{ 
+                        y: -5,
+                        transition: { duration: 0.3, ease: "easeOut" }
+                      }}
                     >
-                      <Card className="p-8 bg-transparent border-0 hover:shadow-xl transition-all duration-300">
-                        <div className="flex items-center justify-center mb-4">
-                          <div className="p-2 bg-green-100 rounded-full">
-                            <Building2 className="h-8 w-8 text-green-600" />
-                          </div>
+                      <div className="flex items-center justify-center mb-4">
+                        <div className="p-3 bg-gray-100 rounded-full">
+                          <Building2 className="h-6 w-6 text-gray-700" />
                         </div>
-                        <h3 className="text-xl font-bold mb-2 text-foreground">
-                          {office.city}
-                        </h3>
-                        <p className="text-muted-foreground mb-2">
-                          {office.region}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {office.description}
-                        </p>
-                      </Card>
-                    </ShineBorder>
+                      </div>
+                      <h3 className="text-xl font-bold mb-2 text-gray-900">
+                        {office.city}
+                      </h3>
+                      <p className="text-gray-600 mb-2">
+                        {office.region}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {office.description}
+                      </p>
+                    </motion.div>
                   ))}
                 </div>
-              </div>
+              </motion.div>
 
               {/* Services */}
-              <div className="text-center">
-                <h2 className="text-3xl sm:text-4xl font-bold mb-12 text-foreground">
+              <motion.div 
+                className="text-center"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1.4, ease: "easeOut" }}
+              >
+                <h2 className="text-3xl font-bold text-gray-900 mb-12">
                   Nuestros Servicios
                 </h2>
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {[
                     {
                       name: "Conciertos & Eventos",
-                      icon: "🎵",
                       description: "Eventos exclusivos",
+                      image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=400&q=80"
                     },
                     {
                       name: "Destinos Top",
-                      icon: "🌍",
                       description: "Experiencias únicas",
+                      image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80"
                     },
                     {
                       name: "Quinceañeras",
-                      icon: "👑",
                       description: "Celebraciones especiales",
+                      image: "https://images.pexels.com/photos/33751500/pexels-photo-33751500.jpeg"
                     },
                     {
                       name: "Bodas de Destino",
-                      icon: "💒",
                       description: "Momentos inolvidables",
+                      image: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=400&q=80"
                     },
-                  ].map((service) => (
-                    <ShineBorder
-                      key={service.name}
-                      className="rounded-xl w-full"
-                      borderWidth={1}
+                  ].map((service, index) => (
+                    <motion.div 
+                      key={service.name} 
+                      className="relative overflow-hidden rounded-2xl group"
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ 
+                        duration: 0.6, 
+                        delay: 1.6 + (index * 0.1),
+                        ease: "easeOut" 
+                      }}
+                      whileHover={{ 
+                        y: -8,
+                        transition: { duration: 0.3, ease: "easeOut" }
+                      }}
                     >
-                      <Card className="p-6 text-center bg-transparent border-0 hover:shadow-xl transition-all duration-300">
-                        <div className="text-3xl mb-3">{service.icon}</div>
-                        <h3 className="font-bold text-lg mb-2 text-foreground">
-                          {service.name}
-                        </h3>
-                        <p className="text-sm text-muted-foreground">
-                          {service.description}
-                        </p>
-                      </Card>
-                    </ShineBorder>
+                      <div className="relative h-64 w-full">
+                        <Image
+                          src={service.image}
+                          alt={service.name}
+                          fill
+                          className="object-cover transition-transform duration-500 group-hover:scale-110"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                        <div className="absolute inset-0 p-6 flex flex-col justify-end">
+                          <div className="space-y-3">
+                            <h3 className="text-white text-xl font-bold drop-shadow-lg">
+                              {service.name}
+                            </h3>
+                            <p className="text-white/90 text-sm drop-shadow-lg">
+                              {service.description}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
                   ))}
                 </div>
-              </div>
+              </motion.div>
 
               {/* CTA Section */}
-              <ShineBorder className="rounded-2xl w-full" borderWidth={1}>
-                <Card className="p-12 text-center bg-transparent border-0 shadow-xl">
-                  <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-foreground">
+              <motion.div 
+                className="bg-gray-50 rounded-lg p-12 text-center"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1.8, ease: "easeOut" }}
+              >
+                <div className="max-w-3xl mx-auto">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-6">
                     ¿Listo para tu próxima aventura?
                   </h2>
-                  <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-                    Contáctanos hoy y descubre cómo podemos hacer de tu viaje
-                    una experiencia inolvidable
+                  <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+                    Contáctanos hoy y descubre cómo podemos hacer de tu viaje una experiencia inolvidable
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <WhatsAppCTA
-                      template="Hola! Quiero más información sobre GabyTop Travel."
-                      variables={{}}
-                      label="Chatear por WhatsApp"
-                      size="lg"
-                      className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white border-0"
-                    />
-                    <Button
-                      asChild
-                      variant="outline"
-                      size="lg"
-                      className="border-2"
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
                     >
-                      <Link href="/destinations">Ver Destinos</Link>
-                    </Button>
+                      <WhatsAppCTA
+                        template="Hola! Quiero más información sobre GabyTop Travel."
+                        variables={{}}
+                        label="Chatear por WhatsApp"
+                        size="lg"
+                        className="bg-black text-white hover:bg-gray-800 border-0"
+                      />
+                    </motion.div>
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Button
+                        asChild
+                        variant="outline"
+                        size="lg"
+                        className="border-2 border-gray-300 hover:border-gray-400"
+                      >
+                        <Link href="/destinations">Ver Destinos</Link>
+                      </Button>
+                    </motion.div>
                   </div>
-                </Card>
-              </ShineBorder>
+                </div>
+              </motion.div>
             </div>
           </div>
         </section>

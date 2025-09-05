@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, User, ArrowLeft } from "lucide-react";
@@ -43,9 +44,14 @@ export default function BlogPostPage() {
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="text-center">
+        <motion.div 
+          className="text-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+        >
           <h1 className="text-4xl font-bold mb-4">Cargando post...</h1>
-        </div>
+        </motion.div>
       </div>
     );
   }
@@ -53,18 +59,29 @@ export default function BlogPostPage() {
   if (error || !post) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="text-center">
+        <motion.div 
+          className="text-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+        >
           <h1 className="text-4xl font-bold mb-4">Post no encontrado</h1>
           <p className="text-muted-foreground mb-8">
             El post que buscas no existe o no está disponible.
           </p>
-          <Link href="/blog">
-            <Button>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Volver al blog
-            </Button>
-          </Link>
-        </div>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+          >
+            <Link href="/blog">
+              <Button>
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Volver al blog
+              </Button>
+            </Link>
+          </motion.div>
+        </motion.div>
       </div>
     );
   }
@@ -72,20 +89,41 @@ export default function BlogPostPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Back Button */}
-      <div className="mb-8">
-        <Link href="/blog">
-          <Button variant="ghost" size="sm">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Volver al blog
-          </Button>
-        </Link>
-      </div>
+      <motion.div 
+        className="mb-8"
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ duration: 0.2 }}
+        >
+          <Link href="/blog">
+            <Button variant="ghost" size="sm">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Volver al blog
+            </Button>
+          </Link>
+        </motion.div>
+      </motion.div>
 
       {/* Article Header */}
-      <article className="max-w-4xl mx-auto">
+      <motion.article 
+        className="max-w-4xl mx-auto"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+      >
         {/* Hero Image */}
         {post.heroImageUrl && (
-          <div className="relative h-64 md:h-96 w-full mb-8 rounded-lg overflow-hidden">
+          <motion.div 
+            className="relative h-64 md:h-96 w-full mb-8 rounded-lg overflow-hidden"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+          >
             <Image
               src={post.heroImageUrl}
               alt={post.title}
@@ -93,11 +131,16 @@ export default function BlogPostPage() {
               className="object-cover"
               priority
             />
-          </div>
+          </motion.div>
         )}
 
         {/* Meta Information */}
-        <div className="flex flex-wrap items-center gap-4 mb-6">
+        <motion.div 
+          className="flex flex-wrap items-center gap-4 mb-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
+        >
           <Badge variant="outline" className="text-sm">
             {getTypeLabel(post.type)}
           </Badge>
@@ -115,38 +158,64 @@ export default function BlogPostPage() {
               Por {post.author}
             </div>
           )}
-        </div>
+        </motion.div>
 
         {/* Title */}
-        <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+        <motion.h1 
+          className="text-4xl md:text-5xl font-bold mb-6 leading-tight"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.5, ease: "easeOut" }}
+        >
           {post.title}
-        </h1>
+        </motion.h1>
 
         {/* Excerpt */}
         {post.excerpt && (
-          <div className="text-xl text-muted-foreground mb-8 font-medium leading-relaxed">
+          <motion.div 
+            className="text-xl text-muted-foreground mb-8 font-medium leading-relaxed"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}
+          >
             {post.excerpt}
-          </div>
+          </motion.div>
         )}
 
         {/* Content */}
-        <div className="prose prose-lg max-w-none">
+        <motion.div 
+          className="prose prose-lg max-w-none"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.7, ease: "easeOut" }}
+        >
           {formatContent(post.content)}
-        </div>
+        </motion.div>
 
         {/* Footer */}
-        <div className="mt-12 pt-8 border-t">
+        <motion.div 
+          className="mt-12 pt-8 border-t"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.8, ease: "easeOut" }}
+        >
           <div className="flex items-center justify-between">
             <div className="text-sm text-muted-foreground">
               Publicado el {formatDate(post.publishedAt)}
               {post.author && ` por ${post.author}`}
             </div>
-            <Link href="/blog">
-              <Button variant="outline">Ver más posts</Button>
-            </Link>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Link href="/blog">
+                <Button variant="outline">Ver más posts</Button>
+              </Link>
+            </motion.div>
           </div>
-        </div>
-      </article>
+        </motion.div>
+      </motion.article>
     </div>
   );
 }

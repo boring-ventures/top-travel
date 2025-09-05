@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 interface TextLogoProps {
   className?: string;
   size?: "sm" | "md" | "lg";
-  variant?: "light" | "dark";
+  variant?: "light" | "dark" | "pink" | "white" | "wine" | "yellow" | "black" | "gold";
 }
 
 export function TextLogo({
@@ -27,6 +27,12 @@ export function TextLogo({
   const variantClasses = {
     light: "text-corporate-blue",
     dark: "text-primary",
+    pink: "text-rose-500",
+    white: "text-white",
+    wine: "text-wine",
+    yellow: "text-yellow-400",
+    black: "text-black",
+    gold: "text-gold",
   };
 
   return (

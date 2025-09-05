@@ -6,9 +6,8 @@ import {
   SpecialDepartments,
   WeddingDestinations,
   FeaturedOffers,
-  About,
   Services,
-  ContactInfo,
+  GlassCTA,
   Footer,
   PersistentWhatsAppCTA,
   Tags,
@@ -409,26 +408,35 @@ export default async function Home() {
         <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-transparent -z-10" />
 
-        <Hero items={heroItems} featuredOffer={offers[0]} />
+        <Hero items={heroItems} featuredOffer={offers[0]} tags={tags} />
+        
+        {/* Tabbed Content Section */}
+        <section className="py-12 w-full bg-white">
+          <div className="container mx-auto px-4">
+            <div className="text-left mb-12">
+              <h2 className="text-5xl font-bold text-gray-900 mb-4">
+                Descubre las <span className="font-light italic">Maravillas</span> del mundo
+              </h2>
+            </div>
         <TabbedContent tabs={tabbedContent} />
+          </div>
+        </section>
 
         {/* Wedding Destinations Section */}
         <WeddingDestinations destinations={weddingDestinations} />
 
-        <SpecialDepartments departments={specialDepartments} />
         <FeaturedOffers
           offers={offers}
           whatsappTemplate={whatsappTemplates.offers}
         />
         <Tags tags={tags} />
 
-        <About />
 
         {/* Services Section */}
         <Services />
 
-        {/* Contact Info Section */}
-        <ContactInfo />
+        {/* Glass CTA Section */}
+        <GlassCTA whatsappTemplate={whatsappTemplates.general} />
       </main>
 
       <PersistentWhatsAppCTA whatsappTemplate={whatsappTemplates.general} />

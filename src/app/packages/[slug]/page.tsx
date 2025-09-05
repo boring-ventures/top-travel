@@ -20,6 +20,26 @@ import {
   X,
   Heart,
   Plane,
+  Users,
+  Globe,
+  Shield,
+  Wifi,
+  Car,
+  Utensils,
+  Bed,
+  Camera,
+  Coffee,
+  Sun,
+  Moon,
+  Compass,
+  Award,
+  Info,
+  Phone,
+  Mail,
+  Map,
+  Navigation,
+  Zap,
+  Gift,
 } from "lucide-react";
 import { notFound } from "next/navigation";
 
@@ -52,6 +72,10 @@ export default async function PackageDetailPage({ params }: Params) {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-secondary/20">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-transparent -z-10" />
+      
       {/* Hero Section */}
       <section className="relative h-[60vh] min-h-[400px] w-full overflow-hidden">
         {pkgWithNumbers.heroImageUrl ? (
@@ -64,9 +88,9 @@ export default async function PackageDetailPage({ params }: Params) {
             priority={true}
           />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-green-600 to-teal-600" />
+          <div className="absolute inset-0 bg-gradient-to-br from-black to-gray-800" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
         {/* Back Button */}
         <div className="absolute top-6 left-6 z-10">
@@ -74,7 +98,7 @@ export default async function PackageDetailPage({ params }: Params) {
             asChild
             variant="secondary"
             size="sm"
-            className="backdrop-blur-sm bg-background/80"
+            className="backdrop-blur-sm bg-white/80 text-black hover:bg-white/90 border border-black/20"
           >
             <Link href="/packages">
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -89,19 +113,19 @@ export default async function PackageDetailPage({ params }: Params) {
             <div className="flex flex-wrap items-center gap-3 mb-4">
               <Badge
                 variant="secondary"
-                className="bg-green-500/20 text-green-600 border-green-500/30"
+                className="bg-white/20 backdrop-blur-sm text-white border-white/30"
               >
                 <Package className="h-3 w-3 mr-1" />
                 {pkgWithNumbers.isCustom ? "Paquete Personalizado" : "Paquete"}
               </Badge>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 leading-tight text-white drop-shadow-lg">
               {pkgWithNumbers.title}
             </h1>
 
             {pkgWithNumbers.summary && (
-              <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mb-6">
+              <p className="text-lg sm:text-xl text-white/90 max-w-3xl mb-6 drop-shadow-lg">
                 {pkgWithNumbers.summary}
               </p>
             )}
@@ -109,16 +133,16 @@ export default async function PackageDetailPage({ params }: Params) {
             {/* Price and Destinations */}
             <div className="flex flex-wrap items-center gap-4 text-sm sm:text-base">
               {pkgWithNumbers.fromPrice && (
-                <div className="flex items-center gap-2 bg-background/80 backdrop-blur-sm px-3 py-2 rounded-lg">
-                  <DollarSign className="h-4 w-4" />
-                  <span className="font-semibold">
+                <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-2 rounded-lg border border-white/20">
+                  <DollarSign className="h-4 w-4 text-white" />
+                  <span className="font-semibold text-white">
                     Desde {pkgWithNumbers.currency ?? "USD"}{" "}
                     {pkgWithNumbers.fromPrice.toString()}
                   </span>
                 </div>
               )}
               {destinations.length > 0 && (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 text-white/90">
                   <MapPin className="h-4 w-4" />
                   <span>
                     {destinations
@@ -140,80 +164,44 @@ export default async function PackageDetailPage({ params }: Params) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Package Details Card */}
-            <Card className="p-6 sm:p-8">
-              <div className="space-y-6">
-                {/* Destinations and Tags */}
+                         {/* Price Information Card */}
+             <Card className="p-6 sm:p-8 bg-white/80 backdrop-blur-sm border border-black/20 shadow-lg">
                 <div className="space-y-4">
-                  {destinations.length > 0 && (
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                        <MapPin className="h-5 w-5" />
-                        Destinos incluidos
-                      </h3>
-                      <div className="flex flex-wrap gap-2">
-                        {destinations.map((d) => (
-                          <Link
-                            key={d.id}
-                            href={`/destinations/${d.slug}`}
-                            className="rounded-lg border px-3 py-2 text-sm hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer"
-                          >
-                            {d.city}, {d.country}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {tags.length > 0 && (
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3">Etiquetas</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {tags.map((t) => (
-                          <Link
-                            key={t.id}
-                            href={`/tags/${t.slug}`}
-                            className="rounded-lg border px-3 py-2 text-sm hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer"
-                          >
-                            {t.name}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <Separator />
-
-                {/* Price Information */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold flex items-center gap-2">
-                    <DollarSign className="h-5 w-5" />
+                 <h3 className="text-lg font-semibold flex items-center gap-2 text-black/80">
+                   <DollarSign className="h-5 w-5 text-black/60" />
                     Información de precios
                   </h3>
-                  <div className="bg-muted/50 p-4 rounded-lg">
+                 <div className="bg-black/5 p-4 rounded-lg border border-black/10">
                     {pkgWithNumbers.isCustom ? (
-                      <p className="text-lg">
+                     <div className="flex items-center gap-3">
+                       <Gift className="h-6 w-6 text-black/60" />
+                       <p className="text-lg text-black/80">
                         Paquete personalizado - Consulta precios
                       </p>
+                     </div>
                     ) : (
-                      <div className="space-y-2">
+                     <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <span className="text-muted-foreground">
+                         <div className="flex items-center gap-2">
+                           <DollarSign className="h-5 w-5 text-black/60" />
+                           <span className="text-black/60">
                             Precio desde:
                           </span>
-                          <span className="text-2xl font-bold">
+                         </div>
+                         <span className="text-2xl font-bold text-black/90">
                             {pkgWithNumbers.currency ?? "USD"}{" "}
                             {pkgWithNumbers.fromPrice?.toString() ?? "—"}
                           </span>
                         </div>
-                        <p className="text-sm text-muted-foreground">
+                       <div className="flex items-start gap-2">
+                         <Info className="h-4 w-4 text-black/50 mt-0.5 flex-shrink-0" />
+                         <p className="text-sm text-black/60">
                           * Los precios pueden variar según la temporada y
                           disponibilidad
                         </p>
+                       </div>
                       </div>
                     )}
-                  </div>
                 </div>
               </div>
             </Card>
@@ -221,21 +209,37 @@ export default async function PackageDetailPage({ params }: Params) {
             {/* Inclusions */}
             {Array.isArray(pkgWithNumbers.inclusions) &&
               pkgWithNumbers.inclusions.length > 0 && (
-                <Card className="p-6 sm:p-8">
-                  <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                    <Check className="h-5 w-5 text-green-600" />
+                <Card className="p-6 sm:p-8 bg-white/80 backdrop-blur-sm border border-black/20 shadow-lg">
+                  <h3 className="text-xl font-semibold mb-4 flex items-center gap-2 text-black/80">
+                    <Check className="h-5 w-5 text-black/60" />
                     Incluye
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {pkgWithNumbers.inclusions.map((inc, idx) => (
+                    {pkgWithNumbers.inclusions.map((inc, idx) => {
+                      // Función para obtener el icono apropiado basado en el contenido
+                      const getInclusionIcon = (text: string) => {
+                        const lowerText = text.toLowerCase();
+                        if (lowerText.includes('hotel') || lowerText.includes('alojamiento')) return <Bed className="h-4 w-4 text-black/60" />;
+                        if (lowerText.includes('comida') || lowerText.includes('desayuno') || lowerText.includes('cena')) return <Utensils className="h-4 w-4 text-black/60" />;
+                        if (lowerText.includes('transporte') || lowerText.includes('vuelo') || lowerText.includes('bus')) return <Car className="h-4 w-4 text-black/60" />;
+                        if (lowerText.includes('wifi') || lowerText.includes('internet')) return <Wifi className="h-4 w-4 text-black/60" />;
+                        if (lowerText.includes('guía') || lowerText.includes('tour')) return <Compass className="h-4 w-4 text-black/60" />;
+                        if (lowerText.includes('seguro') || lowerText.includes('protección')) return <Shield className="h-4 w-4 text-black/60" />;
+                        if (lowerText.includes('foto') || lowerText.includes('cámara')) return <Camera className="h-4 w-4 text-black/60" />;
+                        if (lowerText.includes('café') || lowerText.includes('bebida')) return <Coffee className="h-4 w-4 text-black/60" />;
+                        return <Check className="h-4 w-4 text-black/60" />;
+                      };
+
+                      return (
                       <div
                         key={idx}
-                        className="flex items-center gap-3 p-3 bg-green-50 rounded-lg"
+                          className="flex items-center gap-3 p-3 bg-black/5 rounded-lg border border-black/10 hover:bg-black/10 transition-colors"
                       >
-                        <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
-                        <span className="text-sm">{inc}</span>
+                          {getInclusionIcon(inc)}
+                          <span className="text-sm text-black/80">{inc}</span>
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </Card>
               )}
@@ -243,60 +247,66 @@ export default async function PackageDetailPage({ params }: Params) {
             {/* Exclusions */}
             {Array.isArray(pkgWithNumbers.exclusions) &&
               pkgWithNumbers.exclusions.length > 0 && (
-                <Card className="p-6 sm:p-8">
-                  <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                    <X className="h-5 w-5 text-red-600" />
+                <Card className="p-6 sm:p-8 bg-white/80 backdrop-blur-sm border border-black/20 shadow-lg">
+                  <h3 className="text-xl font-semibold mb-4 flex items-center gap-2 text-black/80">
+                    <X className="h-5 w-5 text-black/60" />
                     No incluye
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {pkgWithNumbers.exclusions.map((exc, idx) => (
+                    {pkgWithNumbers.exclusions.map((exc, idx) => {
+                      // Función para obtener el icono apropiado basado en el contenido
+                      const getExclusionIcon = (text: string) => {
+                        const lowerText = text.toLowerCase();
+                        if (lowerText.includes('hotel') || lowerText.includes('alojamiento')) return <Bed className="h-4 w-4 text-black/60" />;
+                        if (lowerText.includes('comida') || lowerText.includes('desayuno') || lowerText.includes('cena')) return <Utensils className="h-4 w-4 text-black/60" />;
+                        if (lowerText.includes('transporte') || lowerText.includes('vuelo') || lowerText.includes('bus')) return <Car className="h-4 w-4 text-black/60" />;
+                        if (lowerText.includes('wifi') || lowerText.includes('internet')) return <Wifi className="h-4 w-4 text-black/60" />;
+                        if (lowerText.includes('guía') || lowerText.includes('tour')) return <Compass className="h-4 w-4 text-black/60" />;
+                        if (lowerText.includes('seguro') || lowerText.includes('protección')) return <Shield className="h-4 w-4 text-black/60" />;
+                        if (lowerText.includes('foto') || lowerText.includes('cámara')) return <Camera className="h-4 w-4 text-black/60" />;
+                        if (lowerText.includes('café') || lowerText.includes('bebida')) return <Coffee className="h-4 w-4 text-black/60" />;
+                        return <X className="h-4 w-4 text-black/60" />;
+                      };
+
+                      return (
                       <div
                         key={idx}
-                        className="flex items-center gap-3 p-3 bg-red-50 rounded-lg"
+                          className="flex items-center gap-3 p-3 bg-black/5 rounded-lg border border-black/10 hover:bg-black/10 transition-colors"
                       >
-                        <X className="h-4 w-4 text-red-600 flex-shrink-0" />
-                        <span className="text-sm">{exc}</span>
+                          {getExclusionIcon(exc)}
+                          <span className="text-sm text-black/80">{exc}</span>
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </Card>
               )}
 
             {/* Itinerary */}
             {pkg.itineraryJson && (
-              <Card className="p-6 sm:p-8">
-                <h3 className="text-xl font-semibold mb-4">Itinerario</h3>
-                <div className="bg-muted/50 p-4 rounded-lg">
-                  <pre className="whitespace-pre-wrap text-sm">
+              <Card className="p-6 sm:p-8 bg-white/80 backdrop-blur-sm border border-black/20 shadow-lg">
+                <h3 className="text-xl font-semibold mb-4 text-black/80">Itinerario</h3>
+                <div className="bg-black/5 p-4 rounded-lg border border-black/10">
+                  <pre className="whitespace-pre-wrap text-sm text-black/80">
                     {JSON.stringify(pkg.itineraryJson, null, 2)}
                   </pre>
                 </div>
               </Card>
             )}
 
-            {/* Related Packages */}
-            <Card className="p-6 sm:p-8">
-              <h3 className="text-xl font-semibold mb-4">
-                Paquetes relacionados
-              </h3>
-              <div className="text-center py-8 text-muted-foreground">
-                <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Próximamente más paquetes</p>
-              </div>
-            </Card>
           </div>
 
           {/* Sidebar */}
           <div className="lg:col-span-1">
             <div className="sticky top-24 space-y-6">
               {/* Contact Card */}
-              <Card className="p-6">
+              <Card className="p-6 bg-white/80 backdrop-blur-sm border border-black/20 shadow-lg">
                 <div className="space-y-4">
                   <div className="text-center">
-                    <h3 className="text-lg font-semibold mb-2">
+                    <h3 className="text-lg font-semibold mb-2 text-black/80">
                       ¿Te interesa este paquete?
                     </h3>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-black/60">
                       Consulta disponibilidad, precios y reserva
                     </p>
                   </div>
@@ -312,12 +322,12 @@ export default async function PackageDetailPage({ params }: Params) {
                   />
 
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="flex-1">
-                      <Heart className="h-4 w-4 mr-2" />
+                    <Button variant="outline" size="sm" className="flex-1 border-black/20 hover:bg-black/5">
+                      <Heart className="h-4 w-4 mr-2 text-black/60" />
                       Guardar
                     </Button>
-                    <Button variant="outline" size="sm" className="flex-1">
-                      <Share2 className="h-4 w-4 mr-2" />
+                    <Button variant="outline" size="sm" className="flex-1 border-black/20 hover:bg-black/5">
+                      <Share2 className="h-4 w-4 mr-2 text-black/60" />
                       Compartir
                     </Button>
                   </div>
@@ -325,31 +335,43 @@ export default async function PackageDetailPage({ params }: Params) {
               </Card>
 
               {/* Quick Info */}
-              <Card className="p-6">
-                <h4 className="font-semibold mb-4">Información rápida</h4>
+              <Card className="p-6 bg-white/80 backdrop-blur-sm border border-black/20 shadow-lg">
+                <h4 className="font-semibold mb-4 text-black/80">Información rápida</h4>
                 <div className="space-y-3 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Tipo:</span>
-                    <span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Package className="h-4 w-4 text-black/60" />
+                      <span className="text-black/60">Tipo:</span>
+                    </div>
+                    <span className="font-medium text-black/80">
                       {pkgWithNumbers.isCustom
                         ? "Personalizado"
                         : "Predefinido"}
                     </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Destinos:</span>
-                    <span>{destinations.length}</span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-black/60" />
+                      <span className="text-black/60">Destinos:</span>
+                    </div>
+                    <span className="font-medium text-black/80">{destinations.length}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Etiquetas:</span>
-                    <span>{tags.length}</span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Award className="h-4 w-4 text-black/60" />
+                      <span className="text-black/60">Etiquetas:</span>
+                    </div>
+                    <span className="font-medium text-black/80">{tags.length}</span>
                   </div>
                   {pkgWithNumbers.fromPrice && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">
-                        Precio desde:
-                      </span>
-                      <span className="font-semibold">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <DollarSign className="h-4 w-4 text-black/60" />
+                        <span className="text-black/60">
+                          Precio desde:
+                        </span>
+                      </div>
+                      <span className="font-semibold text-black/90">
                         {pkgWithNumbers.currency ?? "USD"}{" "}
                         {pkgWithNumbers.fromPrice.toString()}
                       </span>
@@ -360,26 +382,29 @@ export default async function PackageDetailPage({ params }: Params) {
 
               {/* Destinations Card */}
               {destinations.length > 0 && (
-                <Card className="p-6">
-                  <h4 className="font-semibold mb-4">Destinos incluidos</h4>
+                <Card className="p-6 bg-white/80 backdrop-blur-sm border border-black/20 shadow-lg">
+                  <h4 className="font-semibold mb-4 flex items-center gap-2 text-black/80">
+                    <Globe className="h-4 w-4 text-black/60" />
+                    Destinos incluidos
+                  </h4>
                   <div className="space-y-3">
                     {destinations.slice(0, 3).map((destination) => (
                       <div
                         key={destination.id}
-                        className="flex items-center gap-3"
+                        className="flex items-center gap-3 p-2 rounded-lg hover:bg-black/5 transition-colors"
                       >
-                        <div className="w-8 h-8 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-lg flex items-center justify-center">
-                          <MapPin className="h-4 w-4 text-blue-600" />
+                        <div className="w-8 h-8 bg-black/10 rounded-lg flex items-center justify-center">
+                          <MapPin className="h-4 w-4 text-black/60" />
                         </div>
                         <div className="flex-1">
-                          <div className="font-medium text-sm">
+                          <div className="font-medium text-sm text-black/80">
                             {destination.city}
                           </div>
-                          <div className="text-xs text-muted-foreground">
+                          <div className="text-xs text-black/60">
                             {destination.country}
                           </div>
                         </div>
-                        <Button asChild variant="ghost" size="sm">
+                        <Button asChild variant="ghost" size="sm" className="text-black/60 hover:text-black/80 hover:bg-black/5">
                           <Link href={`/destinations/${destination.slug}`}>
                             Ver
                           </Link>
@@ -391,7 +416,7 @@ export default async function PackageDetailPage({ params }: Params) {
                         asChild
                         variant="outline"
                         size="sm"
-                        className="w-full"
+                        className="w-full border-black/20 hover:bg-black/5"
                       >
                         <Link href="/destinations">Ver todos los destinos</Link>
                       </Button>
@@ -400,45 +425,6 @@ export default async function PackageDetailPage({ params }: Params) {
                 </Card>
               )}
 
-              {/* Related Links */}
-              <Card className="p-6">
-                <h4 className="font-semibold mb-4">Explorar más</h4>
-                <div className="space-y-3">
-                  <Button
-                    asChild
-                    variant="outline"
-                    size="sm"
-                    className="w-full justify-start"
-                  >
-                    <Link href="/packages">
-                      <Package className="h-4 w-4 mr-2" />
-                      Ver todos los paquetes
-                    </Link>
-                  </Button>
-                  <Button
-                    asChild
-                    variant="outline"
-                    size="sm"
-                    className="w-full justify-start"
-                  >
-                    <Link href="/destinations">
-                      <MapPin className="h-4 w-4 mr-2" />
-                      Explorar destinos
-                    </Link>
-                  </Button>
-                  <Button
-                    asChild
-                    variant="outline"
-                    size="sm"
-                    className="w-full justify-start"
-                  >
-                    <Link href="/fixed-departures">
-                      <Plane className="h-4 w-4 mr-2" />
-                      Ver salidas fijas
-                    </Link>
-                  </Button>
-                </div>
-              </Card>
             </div>
           </div>
         </div>

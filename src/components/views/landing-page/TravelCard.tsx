@@ -30,9 +30,9 @@ export default function TravelCard({
   location,
 }: TravelCardProps) {
   return (
-    <div className="group relative bg-card rounded-xl shadow-sm border border-border overflow-hidden hover:shadow-lg transition-all duration-300 h-full">
+    <div className="group relative rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 h-full">
       {/* Full Image Background */}
-      <div className="relative w-full h-full min-h-[360px]">
+      <div className="relative w-full h-full min-h-[400px]">
         <Image
           src={imageUrl}
           alt={title}
@@ -40,67 +40,47 @@ export default function TravelCard({
           className="object-cover transition-transform duration-500 group-hover:scale-110"
         />
 
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+        {/* Subtle Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
-        {/* Content Overlay */}
-        <div className="absolute inset-0 p-4 sm:p-6 flex flex-col justify-end">
-          {/* Location Badge */}
-          {location && (
-            <div className="absolute top-4 left-4 bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/30">
-              <span className="text-xs font-medium text-white flex items-center gap-1">
-                <MapPin className="h-3 w-3" />
-                {location}
-              </span>
-            </div>
-          )}
+        {/* Glass Effect Content Overlay */}
+        <div className="absolute inset-0 p-6 flex flex-col justify-between">
+          {/* Top Glass Elements */}
+          <div className="flex justify-between items-start">
+            {/* Location Badge - Glass Effect */}
+            {location && (
+              <div className="bg-black/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/20">
+                <span className="text-sm font-medium text-white flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
+                  {location}
+                </span>
+              </div>
+            )}
 
-          {/* Price Badge */}
-          {price && (
-            <div className="absolute top-4 right-4 bg-primary/90 backdrop-blur-sm px-3 py-1.5 rounded-full">
-              <span className="text-sm font-bold text-white">{price}</span>
-            </div>
-          )}
+            {/* Price Badge - Glass Effect */}
+            {price && (
+              <div className="bg-white/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/30">
+                <span className="text-sm font-bold text-white">{price}</span>
+              </div>
+            )}
+          </div>
 
-          {/* Main Content */}
-          <div className="space-y-3">
+          {/* Bottom Glass Content */}
+          <div className="space-y-4">
             {/* Title */}
-            <h3 className="text-lg sm:text-xl font-bold text-white leading-tight">
+            <h3 className="text-2xl font-bold text-white leading-tight">
               {title}
             </h3>
 
             {/* Description */}
-            <p className="text-sm text-white/90 leading-relaxed line-clamp-2">
+            <p className="text-white/90 leading-relaxed text-base">
               {description}
             </p>
 
-            {/* Amenities */}
-            {amenities.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {amenities.slice(0, 3).map((amenity, index) => (
-                  <Badge
-                    key={index}
-                    variant="secondary"
-                    className="text-xs px-2 py-1 bg-white/20 backdrop-blur-sm text-white border-white/30"
-                  >
-                    {amenity}
-                  </Badge>
-                ))}
-                {amenities.length > 3 && (
-                  <Badge
-                    variant="secondary"
-                    className="text-xs px-2 py-1 bg-white/20 backdrop-blur-sm text-white border-white/30"
-                  >
-                    +{amenities.length - 3} más
-                  </Badge>
-                )}
-              </div>
-            )}
-
-            {/* Call to Action */}
+            {/* Glass Call to Action */}
             <Button
               asChild
-              className="w-full bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white font-semibold py-2.5 rounded-lg transition-all duration-200 border border-white/30 group-hover:border-white/50"
+              className="w-full bg-black/30 backdrop-blur-md hover:bg-black/40 text-white font-semibold py-3 rounded-xl transition-all duration-300 border border-white/20 hover:border-white/30"
             >
               <Link
                 href={href}

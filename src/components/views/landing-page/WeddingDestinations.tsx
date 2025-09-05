@@ -1,11 +1,10 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { MapPin, Heart, Star } from "lucide-react";
+import { Heart, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { ShineBorder } from "@/components/magicui/shine-border";
 
 interface WeddingDestination {
   id: string;
@@ -24,74 +23,98 @@ interface WeddingDestinationsProps {
 export default function WeddingDestinations({
   destinations,
 }: WeddingDestinationsProps) {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Don't render until mounted to prevent hydration mismatch
+  if (!isMounted) {
+    return null;
+  }
+
   if (!destinations || destinations.length === 0) {
     return null;
   }
 
   return (
-    <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4 text-foreground">
-          Destinos para Bodas de Ensueño
-        </h2>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Lugares mágicos donde el amor se encuentra con la aventura
-        </p>
-      </div>
+    <section className="py-12 w-full bg-white">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-start mb-8">
+          <div>
+            <h1 className="text-5xl font-bold mb-2">Destinos para <span className="font-light italic">Bodas</span> de Ensueño</h1>
+          </div>
+          <Link className="text-black hover:text-gray-600 transition-colors duration-300 whitespace-nowrap hidden sm:flex items-center gap-2" href="/weddings">
+            Ver Todos
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-        {destinations.map((destination) => (
-          <ShineBorder
-            key={destination.id}
-            className="rounded-xl w-full"
-            borderWidth={1}
-          >
-            <Card className="flex h-full flex-col gap-4 p-4 bg-transparent border-0 hover:shadow-xl transition-all duration-300">
-              <Link href={`/weddings`} className="block flex-1">
-                <div className="relative w-full aspect-video rounded-xl overflow-hidden mb-4">
-                  {destination.heroImageUrl ? (
-                    <Image
-                      src={destination.heroImageUrl}
-                      alt={destination.title}
-                      fill
-                      className="object-cover hover:scale-105 transition-transform duration-300"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    />
-                  ) : (
-                    <div className="h-full w-full bg-gradient-to-br from-pink-100 to-rose-100 flex items-center justify-center">
-                      <Heart className="h-12 w-12 text-muted-foreground" />
-                    </div>
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
-                </div>
-                <div className="p-2">
-                  <div className="text-lg font-bold mb-2 text-foreground">
-                    {destination.title}
+        <div className="flex overflow-x-auto scrollbar-hide gap-6 pb-4">
+          {destinations.map((destination) => (
+            <div key={destination.id} className="relative overflow-hidden rounded-2xl group flex-shrink-0 w-80">
+              <div className="relative h-80 sm:h-96">
+                {destination.heroImageUrl ? (
+                  <Image
+                    src={destination.heroImageUrl}
+                    alt={destination.title}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                ) : (
+                  <div className="h-full w-full bg-gradient-to-br from-pink-100 to-rose-100 flex items-center justify-center">
+                    <Heart className="h-12 w-12 text-muted-foreground" />
                   </div>
-                  <div className="text-sm text-muted-foreground mb-3">
-                    {destination.description ||
-                      "Celebra tu amor en un entorno impresionante"}
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <MapPin className="h-4 w-4" />
-                    <span>{destination.name}</span>
+                )}
+                
+                {/* Subtle gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                
+                {/* Top Glass Content */}
+                <div className="absolute top-0 left-0 right-0 p-6">
+                  <div className="bg-black/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 inline-block">
+                    <p className="text-white text-sm font-medium">{destination.name}</p>
                   </div>
                 </div>
-              </Link>
-              <div className="mt-auto p-2">
-                <Button asChild variant="outline" className="w-full rounded-lg">
-                  <Link href={`/weddings`}>Ver Detalles</Link>
-                </Button>
+                
+                {/* Bottom Glass Content */}
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <div className="space-y-4">
+                    <h2 className="text-white text-2xl font-bold font-serif drop-shadow-lg">
+                      {destination.title}
+                    </h2>
+                    
+                    <p className="text-white text-lg font-normal drop-shadow-lg">
+                      Desde $5000
+                    </p>
+                    
+                    <Button
+                      asChild
+                      className="w-full bg-black/30 backdrop-blur-md hover:bg-black/40 text-white font-semibold py-3 rounded-xl transition-all duration-300 border border-white/20 hover:border-white/30 flex items-center justify-center gap-2"
+                    >
+                      <Link href="/weddings">
+                        <span>Conoce más</span>
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
               </div>
-            </Card>
-          </ShineBorder>
-        ))}
-      </div>
+            </div>
+          ))}
+        </div>
 
-      <div className="text-center mt-12">
-        <Button asChild variant="outline" size="lg" className="rounded-full">
-          <Link href="/weddings">Ver Todos los Destinos</Link>
-        </Button>
+        <div className="mt-12 text-center sm:hidden">
+          <Link className="text-black hover:text-gray-600 transition-colors duration-300 inline-flex items-center gap-2" href="/weddings">
+            Ver Todos
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </div>
       </div>
     </section>
   );

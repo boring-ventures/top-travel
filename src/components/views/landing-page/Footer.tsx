@@ -1,123 +1,200 @@
 import Link from "next/link";
-import { FacebookIcon, TwitterIcon, InstagramIcon } from "lucide-react";
+import { FacebookIcon, InstagramIcon, Mail, Phone, MapPin, MessageCircle, Clock, Award } from "lucide-react";
 import { ShineBorder } from "@/components/magicui/shine-border";
 import Image from "next/image";
 import { TextLogo } from "@/components/ui/text-logo";
 
 export default function Footer() {
   return (
-    <footer className="relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-secondary/60 to-secondary" />
-      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4">
-          <div>
-            <div className="flex items-center gap-2 mb-4">
+    <footer className="relative overflow-hidden bg-gray-900 text-white">
+      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Company Info */}
+          <div className="lg:col-span-1">
+            <div className="flex items-center gap-2 mb-6">
               <Image
-                src="/logos/iso_blue.svg"
-                alt="Logo"
+                src="/logos/iso_white.svg"
+                alt="GabyTop Travel Logo"
                 width={40}
                 height={40}
               />
-              <TextLogo variant="light" size="lg" />
+              <TextLogo variant="white" size="lg" />
             </div>
-            <p className="text-sm text-foreground/80">
-              Viajes premium, atención personalizada y logística sin estrés.
+            <p className="text-gray-300 mb-6 leading-relaxed">
+              Agencia de viajes líder en Bolivia, especializada en crear experiencias de viaje personalizadas e inolvidables. Más de 10 años de experiencia.
             </p>
+            <div className="flex items-center gap-2 text-sm text-gray-400">
+              <Award className="h-4 w-4" />
+              <span>Certificada por el Ministerio de Turismo</span>
+            </div>
           </div>
+
+          {/* Services */}
           <div>
-            <h4 className="text-base font-semibold mb-4">Quick Links</h4>
-            <ul className="space-y-2">
+            <h4 className="text-lg font-bold mb-6 text-white">Nuestros Servicios</h4>
+            <ul className="space-y-3">
               <li>
                 <Link
                   href="/destinations"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="text-gray-300 hover:text-white transition-colors text-sm"
                 >
-                  Destinos
+                  Destinos Top
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/packages"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  href="/weddings"
+                  className="text-gray-300 hover:text-white transition-colors text-sm"
                 >
-                  Paquetes
+                  Bodas de Destino
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/quinceanera"
+                  className="text-gray-300 hover:text-white transition-colors text-sm"
+                >
+                  Quinceañeras
                 </Link>
               </li>
               <li>
                 <Link
                   href="/events"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="text-gray-300 hover:text-white transition-colors text-sm"
                 >
-                  Eventos
+                  Conciertos & Eventos
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/fixed-departures"
+                  className="text-gray-300 hover:text-white transition-colors text-sm"
+                >
+                  Salidas Fijas
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/packages"
+                  className="text-gray-300 hover:text-white transition-colors text-sm"
+                >
+                  Paquetes Vacacionales
                 </Link>
               </li>
             </ul>
           </div>
+
+          {/* Contact Info */}
           <div>
-            <h4 className="text-base font-semibold mb-4">Legal</h4>
-            <ul className="space-y-2">
-              <li>
+            <h4 className="text-lg font-bold mb-6 text-white">Contacto</h4>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <Phone className="h-5 w-5 text-gray-400 mt-0.5 flex-shrink-0" />
+                <div>
+                  <div className="text-gray-300 text-sm font-medium">+591 700 12345</div>
+                  <div className="text-gray-400 text-xs">WhatsApp 24/7</div>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Mail className="h-5 w-5 text-gray-400 mt-0.5 flex-shrink-0" />
+                <div>
+                  <div className="text-gray-300 text-sm font-medium">info@gabytoptravel.com</div>
+                  <div className="text-gray-400 text-xs">Atención general</div>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <MapPin className="h-5 w-5 text-gray-400 mt-0.5 flex-shrink-0" />
+                <div>
+                  <div className="text-gray-300 text-sm font-medium">La Paz, Bolivia</div>
+                  <div className="text-gray-400 text-xs">Oficina principal</div>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Clock className="h-5 w-5 text-gray-400 mt-0.5 flex-shrink-0" />
+                <div>
+                  <div className="text-gray-300 text-sm font-medium">Lun - Vie: 8:00 - 18:00</div>
+                  <div className="text-gray-400 text-xs">Horario de atención</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Social & Legal */}
+          <div>
+            <h4 className="text-lg font-bold mb-6 text-white">Síguenos</h4>
+            <div className="flex gap-4 mb-6">
+              <a
+                href="https://www.facebook.com/gabytoptravel"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+                className="text-white hover:text-gray-300 transition-colors"
+              >
+                <FacebookIcon size={24} />
+              </a>
+              <a
+                href="https://www.instagram.com/gaby_top_travel/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="text-white hover:text-gray-300 transition-colors"
+              >
+                <InstagramIcon size={24} />
+              </a>
+              <a
+                href="https://wa.me/59170012345"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="WhatsApp"
+                className="text-white hover:text-gray-300 transition-colors"
+              >
+                <MessageCircle size={24} />
+              </a>
+            </div>
+            
+            <div className="space-y-3">
+              <h5 className="text-sm font-semibold text-gray-300 mb-2">Enlaces Legales</h5>
+              <div className="space-y-2">
                 <Link
                   href="/terms"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="text-gray-400 hover:text-white transition-colors text-xs block"
                 >
-                  Terms of Service
+                  Términos y Condiciones
                 </Link>
-              </li>
-              <li>
                 <Link
                   href="/privacy"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="text-gray-400 hover:text-white transition-colors text-xs block"
                 >
-                  Privacy Policy
+                  Política de Privacidad
                 </Link>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-base font-semibold mb-4">Connect</h4>
-            <div className="flex gap-4">
-              <ShineBorder className="rounded-md p-2" borderWidth={1}>
-                <a
-                  href="https://www.facebook.com/gabytoptravel"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Facebook"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                <Link
+                  href="/about"
+                  className="text-gray-400 hover:text-white transition-colors text-xs block"
                 >
-                  <FacebookIcon size={20} />
-                </a>
-              </ShineBorder>
-              {/* <ShineBorder className="rounded-md p-2" borderWidth={1}>
-                <a
-                  href="https://twitter.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Twitter"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  <TwitterIcon size={20} />
-                </a>
-              </ShineBorder> */}
-              <ShineBorder className="rounded-md p-2" borderWidth={1}>
-                <a
-                  href="https://www.instagram.com/gaby_top_travel/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Instagram"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  <InstagramIcon size={20} />
-                </a>
-              </ShineBorder>
+                  Sobre Nosotros
+                </Link>
+              </div>
             </div>
           </div>
         </div>
-        <div className="mt-8 pt-8 border-t border-border/60 text-center">
-          <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} GABYTOPTRAVEL. Todos los derechos
-            reservados.
-          </p>
+
+        {/* Bottom Section */}
+        <div className="mt-12 pt-8 border-t border-gray-700">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="text-center md:text-left">
+              <p className="text-sm text-gray-400">
+                &copy; {new Date().getFullYear()} GABYTOPTRAVEL. Todos los derechos reservados.
+              </p>
+              <p className="text-xs text-gray-500 mt-1">
+                Agencia de viajes registrada en Bolivia | Licencia de operación turística
+              </p>
+            </div>
+            <div className="flex items-center gap-2 text-xs text-gray-500">
+              <span>Hecho con</span>
+              <span className="text-red-500">♥</span>
+              <span>en Bolivia</span>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

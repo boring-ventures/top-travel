@@ -10,12 +10,33 @@ import { Separator } from "@/components/ui/separator";
 import {
   MapPin,
   ArrowLeft,
+  ArrowRight,
   Star,
   Share2,
   Package,
   Plane,
   Globe,
   Heart,
+  Users,
+  Calendar,
+  Clock,
+  Award,
+  Camera,
+  Coffee,
+  Utensils,
+  Car,
+  Wifi,
+  Shield,
+  Compass,
+  Navigation,
+  Info,
+  Phone,
+  Mail,
+  Zap,
+  Gift,
+  Sun,
+  Moon,
+  Bed,
 } from "lucide-react";
 import { notFound } from "next/navigation";
 
@@ -65,6 +86,10 @@ export default async function DestinationDetailPage({ params }: Params) {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-secondary/20">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-transparent -z-10" />
+      
       {/* Hero Section */}
       <section className="relative h-[70vh] min-h-[500px] w-full overflow-hidden">
         {dest.heroImageUrl ? (
@@ -77,9 +102,9 @@ export default async function DestinationDetailPage({ params }: Params) {
             priority={true}
           />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-indigo-600" />
+          <div className="absolute inset-0 bg-gradient-to-br from-black to-gray-800" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
         {/* Back Button */}
         <div className="absolute top-6 left-6 z-10">
@@ -87,7 +112,7 @@ export default async function DestinationDetailPage({ params }: Params) {
             asChild
             variant="secondary"
             size="sm"
-            className="backdrop-blur-sm bg-background/80"
+            className="backdrop-blur-sm bg-white/80 text-black hover:bg-white/90 border border-black/20"
           >
             <Link href="/destinations">
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -102,25 +127,25 @@ export default async function DestinationDetailPage({ params }: Params) {
             <div className="flex flex-wrap items-center gap-3 mb-4">
               <Badge
                 variant="secondary"
-                className="bg-blue-500/20 text-blue-600 border-blue-500/30"
+                className="bg-white/20 backdrop-blur-sm text-white border-white/30"
               >
                 <Globe className="h-3 w-3 mr-1" />
                 Destino
               </Badge>
               {dest.isFeatured && (
-                <Badge className="bg-yellow-500 text-white border-yellow-500">
+                <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30">
                   <Star className="h-3 w-3 mr-1" />
                   Destacado
                 </Badge>
               )}
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 leading-tight text-white drop-shadow-lg">
               {dest.city}, {dest.country}
             </h1>
 
             {dest.description && (
-              <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mb-6">
+              <p className="text-lg sm:text-xl text-white/90 max-w-3xl mb-6 drop-shadow-lg">
                 {dest.description}
               </p>
             )}
@@ -132,7 +157,7 @@ export default async function DestinationDetailPage({ params }: Params) {
                   <Link
                     key={dt.tagId}
                     href={`/tags/${dt.tag.slug}`}
-                    className="rounded-full border px-3 py-1 text-sm hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer bg-background/80 backdrop-blur-sm"
+                    className="rounded-full border border-white/30 px-3 py-1 text-sm hover:bg-white hover:text-black transition-colors cursor-pointer bg-white/20 backdrop-blur-sm text-white"
                   >
                     {dt.tag.name}
                   </Link>
@@ -148,145 +173,91 @@ export default async function DestinationDetailPage({ params }: Params) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Destination Info Card */}
-            <Card className="p-6 sm:p-8">
-              <div className="space-y-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-lg flex items-center justify-center">
-                    <MapPin className="h-6 w-6 text-blue-600" />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold">{dest.city}</h2>
-                    <p className="text-muted-foreground">{dest.country}</p>
-                  </div>
-                </div>
-
-                {dest.description && (
-                  <>
-                    <Separator />
-                    <div className="space-y-4">
-                      <h3 className="text-xl font-semibold">
-                        Sobre este destino
-                      </h3>
-                      <p className="text-lg leading-relaxed">
-                        {dest.description}
-                      </p>
-                    </div>
-                  </>
-                )}
-
-                {/* Tags Section */}
-                {dest.destinationTags.length > 0 && (
-                  <>
-                    <Separator />
-                    <div className="space-y-4">
-                      <h3 className="text-xl font-semibold">Características</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {dest.destinationTags.map((dt) => (
-                          <Link
-                            key={dt.tagId}
-                            href={`/tags/${dt.tag.slug}`}
-                            className="rounded-lg border px-3 py-2 text-sm hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer"
-                          >
-                            {dt.tag.name}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            </Card>
-
             {/* Related Packages */}
             {relatedPackages.length > 0 && (
-              <Card className="p-6 sm:p-8">
+              <Card className="p-6 sm:p-8 bg-white/80 backdrop-blur-sm border border-black/20 shadow-lg">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-2xl font-bold flex items-center gap-2">
-                    <Package className="h-6 w-6" />
+                    <Package className="h-6 w-6 text-emerald-600" />
                     Paquetes disponibles ({relatedPackages.length})
                   </h3>
-                  <Button asChild variant="outline">
-                    <Link href="/packages">Ver todos</Link>
+                  <Button asChild variant="outline" className="hover:bg-emerald-50 hover:border-emerald-300">
+                    <Link href="/packages">
+                      <Package className="h-4 w-4 mr-2 text-emerald-600" />
+                      Ver todos
+                    </Link>
                   </Button>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {relatedPackages.map((pkg) => (
-                    <Card
-                      key={pkg.id}
-                      className="group overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-                    >
+                    <div key={pkg.id} className="relative overflow-hidden rounded-2xl group">
                       <Link href={`/packages/${pkg.slug}`} className="block">
-                        <div className="relative w-full h-48 overflow-hidden">
+                        <div className="relative h-80 sm:h-96">
                           {pkg.heroImageUrl ? (
                             <Image
                               src={pkg.heroImageUrl}
                               alt={pkg.title}
                               fill
                               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                              className="object-cover group-hover:scale-105 transition-transform duration-300"
+                              className="object-cover transition-transform duration-500 group-hover:scale-110"
                             />
                           ) : (
-                            <div className="h-full w-full bg-gradient-to-br from-green-100 to-teal-100 flex items-center justify-center">
-                              <Package className="h-12 w-12 text-muted-foreground" />
-                            </div>
-                          )}
-                          <div className="absolute top-3 left-3">
-                            <Badge
-                              variant={pkg.isCustom ? "default" : "secondary"}
-                              className="text-xs"
-                            >
-                              {pkg.isCustom ? "Personalizado" : "Predefinido"}
-                            </Badge>
+                            <div className="h-full w-full bg-gradient-to-br from-emerald-100 via-teal-50 to-cyan-100 flex items-center justify-center">
+                              <div className="bg-emerald-500/20 rounded-full p-6">
+                                <Package className="h-12 w-12 text-emerald-600" />
                           </div>
-                          {pkg.fromPrice && (
-                            <div className="absolute top-3 right-3">
-                              <Badge className="bg-white/90 text-black hover:bg-white text-xs">
-                                Desde ${pkg.fromPrice.toString()}
-                              </Badge>
                             </div>
                           )}
-                        </div>
-                        <div className="p-4">
-                          <h4 className="font-semibold text-lg mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
-                            {pkg.title}
-                          </h4>
-                          {pkg.summary && (
-                            <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                              {pkg.summary}
-                            </p>
-                          )}
-                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                            <MapPin className="h-3 w-3" />
-                            <span>
+                          
+                          {/* Subtle gradient overlay */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                          
+                          {/* Top Glass Content */}
+                          <div className="absolute top-0 left-0 right-0 p-6">
+                            <div className="flex justify-between items-start">
+                              <div className="bg-black/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 inline-block">
+                                <p className="text-white text-sm font-medium">
                               {pkg.packageDestinations
                                 .slice(0, 2)
                                 .map((pd) => pd.destination.city)
                                 .join(", ")}
                               {pkg.packageDestinations.length > 2 &&
                                 ` +${pkg.packageDestinations.length - 2} más`}
-                            </span>
+                                </p>
+                              </div>
+                              <Badge
+                                className={`text-xs font-medium px-3 py-1 backdrop-blur-md ${
+                                  pkg.isCustom 
+                                    ? "bg-amber-500/80 text-white border-amber-300/50" 
+                                    : "bg-emerald-500/80 text-white border-emerald-300/50"
+                                }`}
+                              >
+                                {pkg.isCustom ? "Personalizado" : "Predefinido"}
+                              </Badge>
+                            </div>
+                          </div>
+                          
+                          {/* Bottom Glass Content */}
+                          <div className="absolute bottom-0 left-0 right-0 p-6">
+                            <div className="space-y-4">
+                              <h2 className="text-white text-2xl font-bold font-serif drop-shadow-lg">
+                                {pkg.title}
+                              </h2>
+                              
+                              <p className="text-white text-lg font-normal drop-shadow-lg">
+                                {pkg.fromPrice ? `Desde $${pkg.fromPrice.toString()}` : "Desde $600"}
+                              </p>
+                              
+                              <div className="w-full bg-black/30 backdrop-blur-md hover:bg-black/40 text-white font-semibold py-3 rounded-xl transition-all duration-300 border border-white/20 hover:border-white/30 flex items-center justify-center gap-2">
+                                <span>Conoce más</span>
+                                <ArrowRight className="h-4 w-4" />
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </Link>
-                      <div className="px-4 pb-4">
-                        <WhatsAppCTA
-                          variant="outline"
-                          size="sm"
-                          label="Consultar"
-                          template="Hola! Me interesa el paquete {title} para {city}, {country}."
-                          variables={{
-                            title: pkg.title,
-                            city: dest.city,
-                            country: dest.country,
-                          }}
-                          campaign="destination_detail"
-                          content={`${dest.slug}_${pkg.slug}`}
-                          className="w-full"
-                        />
                       </div>
-                    </Card>
                   ))}
                 </div>
               </Card>
@@ -294,14 +265,17 @@ export default async function DestinationDetailPage({ params }: Params) {
 
             {/* Related Fixed Departures */}
             {relatedFixedDepartures.length > 0 && (
-              <Card className="p-6 sm:p-8">
+              <Card className="p-6 sm:p-8 bg-white/80 backdrop-blur-sm border border-black/20 shadow-lg">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-2xl font-bold flex items-center gap-2">
-                    <Plane className="h-6 w-6" />
+                    <Plane className="h-6 w-6 text-violet-600" />
                     Salidas fijas ({relatedFixedDepartures.length})
                   </h3>
-                  <Button asChild variant="outline">
-                    <Link href="/fixed-departures">Ver todas</Link>
+                  <Button asChild variant="outline" className="hover:bg-violet-50 hover:border-violet-300">
+                    <Link href="/fixed-departures">
+                      <Plane className="h-4 w-4 mr-2 text-violet-600" />
+                      Ver todas
+                    </Link>
                   </Button>
                 </div>
 
@@ -309,18 +283,20 @@ export default async function DestinationDetailPage({ params }: Params) {
                   {relatedFixedDepartures.map((departure) => (
                     <Card
                       key={departure.id}
-                      className="p-4 hover:shadow-md transition-shadow"
+                      className="p-4 bg-white/80 backdrop-blur-sm border border-black/20 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
                     >
                       <Link
                         href={`/fixed-departures/${departure.slug}`}
                         className="block"
                       >
                         <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="font-semibold text-lg mb-1">
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-lg mb-2 group-hover:text-violet-600 transition-colors">
                               {departure.title}
                             </h4>
-                            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                            <div className="flex items-center gap-4 text-sm text-black/70">
+                              <div className="flex items-center gap-1">
+                                <Calendar className="h-4 w-4 text-indigo-600" />
                               <span>
                                 {new Date(
                                   departure.startDate
@@ -330,6 +306,9 @@ export default async function DestinationDetailPage({ params }: Params) {
                                   departure.endDate
                                 ).toLocaleDateString()}
                               </span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Clock className="h-4 w-4 text-amber-600" />
                               <span>
                                 {Math.ceil(
                                   (new Date(departure.endDate).getTime() -
@@ -340,7 +319,8 @@ export default async function DestinationDetailPage({ params }: Params) {
                               </span>
                             </div>
                           </div>
-                          <Button variant="outline" size="sm">
+                          </div>
+                          <Button variant="outline" size="sm" className="ml-4 hover:bg-violet-50 hover:border-violet-300">
                             Ver detalles
                           </Button>
                         </div>
@@ -356,13 +336,13 @@ export default async function DestinationDetailPage({ params }: Params) {
           <div className="lg:col-span-1">
             <div className="sticky top-24 space-y-6">
               {/* Contact Card */}
-              <Card className="p-6">
+              <Card className="p-6 bg-white/80 backdrop-blur-sm border border-black/20 shadow-lg">
                 <div className="space-y-4">
                   <div className="text-center">
                     <h3 className="text-lg font-semibold mb-2">
                       ¿Te interesa este destino?
                     </h3>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-black/70">
                       Consulta itinerarios personalizados y precios
                     </p>
                   </div>
@@ -391,31 +371,46 @@ export default async function DestinationDetailPage({ params }: Params) {
               </Card>
 
               {/* Quick Info */}
-              <Card className="p-6">
+              <Card className="p-6 bg-white/80 backdrop-blur-sm border border-black/20 shadow-lg">
                 <h4 className="font-semibold mb-4">Información rápida</h4>
                 <div className="space-y-3 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Ciudad:</span>
-                    <span>{dest.city}</span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-rose-600" />
+                      <span className="text-black/70">Ciudad:</span>
+                    </div>
+                    <span className="font-medium">{dest.city}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">País:</span>
-                    <span>{dest.country}</span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Globe className="h-4 w-4 text-teal-600" />
+                      <span className="text-black/70">País:</span>
+                    </div>
+                    <span className="font-medium">{dest.country}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Paquetes:</span>
-                    <span>{relatedPackages.length}</span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Package className="h-4 w-4 text-emerald-600" />
+                      <span className="text-black/70">Paquetes:</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">
+                    <span className="font-medium">{relatedPackages.length}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Plane className="h-4 w-4 text-violet-600" />
+                      <span className="text-black/70">
                       Salidas fijas:
                     </span>
-                    <span>{relatedFixedDepartures.length}</span>
+                    </div>
+                    <span className="font-medium">{relatedFixedDepartures.length}</span>
                   </div>
                   {dest.isFeatured && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Estado:</span>
-                      <Badge className="bg-yellow-500 text-white text-xs">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Star className="h-4 w-4 text-yellow-600" />
+                        <span className="text-black/70">Estado:</span>
+                      </div>
+                      <Badge className="bg-yellow-100 text-yellow-800 text-xs border border-yellow-300">
                         <Star className="h-3 w-3 mr-1" />
                         Destacado
                       </Badge>
@@ -424,45 +419,6 @@ export default async function DestinationDetailPage({ params }: Params) {
                 </div>
               </Card>
 
-              {/* Related Destinations */}
-              <Card className="p-6">
-                <h4 className="font-semibold mb-4">Destinos relacionados</h4>
-                <div className="space-y-3">
-                  <Button
-                    asChild
-                    variant="outline"
-                    size="sm"
-                    className="w-full justify-start"
-                  >
-                    <Link href="/destinations">
-                      <Globe className="h-4 w-4 mr-2" />
-                      Ver todos los destinos
-                    </Link>
-                  </Button>
-                  <Button
-                    asChild
-                    variant="outline"
-                    size="sm"
-                    className="w-full justify-start"
-                  >
-                    <Link href="/packages">
-                      <Package className="h-4 w-4 mr-2" />
-                      Explorar paquetes
-                    </Link>
-                  </Button>
-                  <Button
-                    asChild
-                    variant="outline"
-                    size="sm"
-                    className="w-full justify-start"
-                  >
-                    <Link href="/fixed-departures">
-                      <Plane className="h-4 w-4 mr-2" />
-                      Ver salidas fijas
-                    </Link>
-                  </Button>
-                </div>
-              </Card>
             </div>
           </div>
         </div>

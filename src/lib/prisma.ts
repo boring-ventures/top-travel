@@ -9,14 +9,17 @@ const globalForPrisma = global as unknown as { prisma: PrismaClient };
 const prisma =
   globalForPrisma.prisma ||
   new PrismaClient({
-    log: ["query"],
-    // Disable caching in development to debug role issues
-    ...(process.env.NODE_ENV === "development" && {
-      datasources: {
-        db: {
-          url: process.env.DATABASE_URL,
-        },
+    // Only log errors, disable query logging to improve performance
+    log: ["error"],
+    // Optimize connection pooling and performance
+    datasources: {
+      db: {
+        url: process.env.DATABASE_URL,
       },
+    },
+    // Disable query engine logging in production
+    ...(process.env.NODE_ENV === "production" && {
+      log: ["error"],
     }),
   });
 

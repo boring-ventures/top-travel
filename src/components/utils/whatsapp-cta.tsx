@@ -98,7 +98,7 @@ export function WhatsAppCTA({
     <Button
       asChild
       onClick={handleClick}
-      className={className}
+      className={`${className} bg-green-600 hover:bg-green-700 text-white border-green-600 hover:border-green-700 transition-all duration-200`}
       variant={variant}
       size={size}
     >

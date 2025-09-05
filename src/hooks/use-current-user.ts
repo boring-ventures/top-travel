@@ -58,17 +58,29 @@ export function useCurrentUser() {
   }, [supabase]);
 
   useEffect(() => {
+    let isMounted = true;
+
     const getUser = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      setUser(session?.user ?? null);
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        
+        if (!isMounted) return;
+        
+        setUser(session?.user ?? null);
 
-      if (session?.user) {
-        await fetchProfile(session.user.id);
+        if (session?.user) {
+          await fetchProfile(session.user.id);
+        }
+
+        setLoading(false);
+      } catch (error) {
+        console.error("Error getting user session:", error);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
-
-      setLoading(false);
     };
 
     getUser();
@@ -76,6 +88,8 @@ export function useCurrentUser() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (!isMounted) return;
+      
       setUser(session?.user ?? null);
 
       if (session?.user) {
@@ -87,8 +101,11 @@ export function useCurrentUser() {
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
-  }, [supabase]);
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
 
   return { user, profile, loading, isLoading: loading, refetch };
 }

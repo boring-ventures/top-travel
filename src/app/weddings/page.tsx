@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import Header from "@/components/views/landing-page/Header";
 import Footer from "@/components/views/landing-page/Footer";
+import { AnimatedHero } from "@/components/ui/animated-hero";
+import { AnimatedText } from "@/components/ui/animated-text";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { WhatsAppCTA } from "@/components/utils/whatsapp-cta";
@@ -14,13 +16,16 @@ import {
   MapPin,
   Calendar,
   Building2,
+  ArrowRight,
 } from "lucide-react";
 import { ShineBorder } from "@/components/magicui/shine-border";
-import { BlogPostsSectionServer } from "@/components/views/landing-page/BlogPostsSectionServer";
+
 import { DepartmentType } from "@prisma/client";
 
+
+
 export default async function WeddingsPage() {
-  const [dept, destinations, testimonials, blogPosts] = await Promise.all([
+  const [dept, destinations, testimonials] = await Promise.all([
     prisma.department.findUnique({ where: { type: "WEDDINGS" } }),
     prisma.destination.findMany({
       where: { isFeatured: true },
@@ -45,24 +50,6 @@ export default async function WeddingsPage() {
         content: true,
       },
     }),
-    prisma.blogPost.findMany({
-      where: {
-        status: "PUBLISHED",
-        type: "WEDDINGS",
-      },
-      orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
-      take: 3,
-      select: {
-        id: true,
-        slug: true,
-        title: true,
-        excerpt: true,
-        heroImageUrl: true,
-        author: true,
-        publishedAt: true,
-        type: true,
-      },
-    }),
   ]);
 
   const primary = (dept?.themeJson as any)?.primaryColor ?? "#ee2b8d";
@@ -76,103 +63,75 @@ export default async function WeddingsPage() {
   const contactInfo = (dept?.contactInfoJson as any) || {};
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-background via-background to-secondary/20">
       <Header />
 
       <main className="flex-grow relative">
-        {/* Background Pattern */}
         <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-secondary/20 -z-10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-transparent -z-10" />
 
-        {/* Enhanced Hero */}
-        <section
-          className="relative overflow-hidden pt-20 sm:pt-24"
-          aria-label="Weddings"
-          role="region"
-        >
-          <div className="absolute inset-0 -z-10">
-            {hero ? (
-              <Image
-                src={hero}
-                alt="Weddings"
-                fill
-                priority
-                className="object-cover"
-                sizes="100vw"
-              />
-            ) : (
-              <div className="absolute inset-0 bg-gradient-to-br from-pink-600 via-rose-600 to-red-700" />
-            )}
-            <div className="absolute inset-0 bg-black/30" />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-black/60" />
-            <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.05%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30" />
-          </div>
-
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 relative z-10">
-            <div className="mx-auto max-w-4xl text-center">
-              <h1 className="text-white text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight mb-6 drop-shadow-lg">
-                {heroContent.title || "Tu Boda de Destino"}
-                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-300">
-                  {heroContent.subtitle || "Perfectamente Planificada"}
-                </span>
-              </h1>
-              <p className="mt-4 sm:mt-6 text-white/90 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed drop-shadow-md">
-                {heroContent.description ||
-                  "Déjanos manejar cada detalle, desde la selección del lugar hasta el catering, para que puedas enfocarte en celebrar tu amor."}
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8">
-                <div className="flex items-center gap-2 text-white/80 drop-shadow-sm">
-                  <Sparkles className="h-5 w-5" />
-                  <span className="text-sm font-medium">Experiencia única</span>
-                </div>
-                <div className="flex items-center gap-2 text-white/80 drop-shadow-sm">
-                  <Star className="h-5 w-5" />
-                  <span className="text-sm font-medium">
-                    Atención personalizada
-                  </span>
-                </div>
-              </div>
-              <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-                <WhatsAppCTA
-                  template={
-                    heroContent.primaryCTA?.whatsappTemplate ||
-                    "Hola! Me gustaría planificar mi boda de destino — {url}"
-                  }
-                  variables={{ url: "" }}
-                  label={
-                    heroContent.primaryCTA?.text || "Comenzar Planificación"
-                  }
+        {/* Hero Section */}
+        <section className="h-screen">
+          <div className="h-full bg-white shadow-lg overflow-hidden lg:grid lg:grid-cols-2 lg:gap-12 items-center">
+            <div className="p-16 lg:p-24 flex flex-col justify-center h-full">
+              <div className="max-w-2xl">
+                                                <h1 className="text-5xl lg:text-7xl font-bold text-gray-900 mb-8 leading-tight">
+                  <div className="block whitespace-nowrap">Bodas de Destino</div>
+                  <div className="block">
+                    <AnimatedText words={["Soñadas", "Románticas", "Únicas", "Perfectas", "Inolvidables"]} color="text-gold" />
+                  </div>
+                </h1>
+                <p className="text-xl text-gray-600 mb-10 leading-relaxed">
+                  Di "Sí, acepto" en el paraíso. Nuestros paquetes exclusivos de bodas ofrecen experiencias inolvidables en los destinos más románticos del mundo.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button
+                    asChild
                   size="lg"
-                  className="rounded-full h-14 px-8 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white border-0 text-lg font-semibold"
-                />
+                    className="bg-gold text-white px-8 py-4 hover:bg-gold-light font-semibold text-lg transition-colors duration-200 border-0"
+                  >
+                    <Link href="/packages">
+                      Explorar Paquetes
+                    </Link>
+                  </Button>
                 <Button
                   asChild
-                  variant="secondary"
-                  className="rounded-full h-14 px-8 text-lg font-semibold"
-                >
-                  <Link
-                    href={heroContent.secondaryCTA?.href || "/destinations"}
+                    variant="outline"
+                    size="lg"
+                    className="bg-transparent text-gray-700 px-8 py-4 hover:bg-gray-50 font-semibold text-lg border-2 border-gray-300 hover:border-gray-400 transition-colors duration-200"
                   >
-                    {heroContent.secondaryCTA?.text || "Explorar Destinos"}
+                    <Link href="/contact">
+                      Contactar Planificador
                   </Link>
                 </Button>
+                </div>
               </div>
+            </div>
+            <div className="h-full relative">
+              <Image
+                alt="Couple getting married on a tropical beach"
+                src={hero || "https://images.pexels.com/photos/33715721/pexels-photo-33715721.jpeg?auto=compress&cs=tinysrgb&w=1000&h=667&fit=crop"}
+                fill
+                className="object-cover"
+                priority
+              />
             </div>
           </div>
         </section>
 
         {/* Featured Destinations */}
-        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+        <section className="py-12 w-full bg-white">
+          <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4 text-foreground">
-              Destinos Destacados
+                              <h2 className="text-5xl font-bold text-gray-900 mb-4">
+                  Destinos para <span className="font-light italic text-gold">Bodas</span> de Ensueño
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Lugares mágicos para celebrar el día más especial de tu vida
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {destinations.length === 0 ? (
               <div className="col-span-full text-center py-12">
                 <div className="text-muted-foreground">
@@ -187,62 +146,64 @@ export default async function WeddingsPage() {
               </div>
             ) : (
               destinations.map((d) => (
-                <ShineBorder
-                  key={d.id}
-                  className="rounded-xl w-full"
-                  borderWidth={1}
-                >
-                  <Card className="flex h-full flex-col gap-4 p-4 bg-transparent border-0 hover:shadow-xl transition-all duration-300">
-                    <Link
-                      href={`/destinations/${d.slug}`}
-                      className="block flex-1"
-                    >
-                      <div className="relative w-full aspect-video rounded-xl overflow-hidden mb-4">
+                  <div key={d.id} className="relative overflow-hidden rounded-lg group">
+                    <Link href={`/destinations/${d.slug}`} className="block">
+                      <div className="relative h-64 sm:h-72">
                         {d.heroImageUrl ? (
                           <Image
                             src={d.heroImageUrl}
                             alt={`${d.city}, ${d.country}`}
                             fill
-                            className="object-cover hover:scale-105 transition-transform duration-300"
+                            className="object-cover transition-transform duration-300 group-hover:scale-105"
                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                           />
                         ) : (
-                          <div className="h-full w-full bg-gradient-to-br from-pink-100 to-rose-100 flex items-center justify-center">
+                          <div className="h-full w-full bg-gradient-to-br from-yellow-100 to-gold/20 flex items-center justify-center">
                             <MapPin className="h-12 w-12 text-muted-foreground" />
                           </div>
                         )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent p-6 flex flex-col justify-start">
+                          <div>
+                            <h3 className="text-white text-xl font-semibold uppercase">
+                              {d.city}, {d.country}
+                            </h3>
+                            <p className="text-white">Intercambia votos en un entorno impresionante</p>
                       </div>
-                      <div className="p-2">
-                        <div className="text-lg font-bold mb-2 text-foreground">
-                          {d.city}, {d.country}
                         </div>
-                        <div className="text-sm text-muted-foreground">
-                          Intercambia votos en un entorno impresionante.
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
+                          <div className="flex justify-between items-center">
+                            <p className="text-white text-lg font-bold">
+                              Boda de Ensueño
+                            </p>
+                            <div className="text-white">
+                              <ArrowRight className="h-5 w-5" />
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </Link>
-                  </Card>
-                </ShineBorder>
+                  </div>
               ))
             )}
+            </div>
           </div>
         </section>
 
         {/* Packages */}
-        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+        <section className="py-12 w-full bg-white">
+          <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4 text-foreground">
-              Paquetes Personalizables
+                              <h2 className="text-5xl font-bold text-gray-900 mb-4">
+                  Paquetes <span className="font-light italic text-gold">Personalizables</span>
             </h2>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
               Nuestros paquetes de boda son flexibles. Adapta lugares, catering
               y actividades para crear una celebración que refleje tu historia
               de amor única.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {(packages.length > 0
               ? packages
               : [
@@ -254,7 +215,7 @@ export default async function WeddingsPage() {
                       "Catering básico",
                       "Fotografía",
                     ],
-                    color: "from-blue-500 to-blue-600",
+                    image: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=400&q=80",
                   },
                   {
                     name: "Premium",
@@ -265,7 +226,7 @@ export default async function WeddingsPage() {
                       "Fotografía y videografía",
                       "Entretenimiento",
                     ],
-                    color: "from-purple-500 to-purple-600",
+                    image: "https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?auto=format&fit=crop&w=400&q=80",
                   },
                   {
                     name: "Lujo",
@@ -277,7 +238,7 @@ export default async function WeddingsPage() {
                       "Entretenimiento",
                       "Servicio de conserjería personalizado",
                     ],
-                    color: "from-pink-500 to-pink-600",
+                    image: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=400&q=80",
                   },
                 ]
             ).map(
@@ -285,146 +246,115 @@ export default async function WeddingsPage() {
                 name: string;
                 price: string;
                 features: string[];
-                color: string;
+                image: string;
               }) => (
-                <ShineBorder
-                  key={p.name}
-                  className="rounded-xl w-full"
-                  borderWidth={1}
-                >
-                  <Card className="p-8 flex flex-col gap-6 bg-transparent border-0 hover:shadow-xl transition-all duration-300 h-full">
-                    <div className="flex flex-col gap-2">
-                      <h3 className="text-xl font-bold text-foreground">
+                <div key={p.name} className="bg-white border border-gray-200 hover:border-gray-300 transition-colors duration-200 h-full flex flex-col">
+                  <div className="p-6 flex flex-col flex-grow">
+                    <div className="mb-4">
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">
                         {p.name}
                       </h3>
-                      <p className="flex items-baseline gap-1">
-                        <span
-                          className="text-4xl font-extrabold"
-                          style={{ color: primary }}
-                        >
-                          {p.price}
-                        </span>
-                        <span className="text-sm font-semibold text-foreground">
-                          por boda
-                        </span>
+                      <p className="text-4xl font-bold text-gold">
+                        {p.price}
                       </p>
                     </div>
-                    <Button
-                      variant="secondary"
-                      className={`h-12 rounded-xl bg-gradient-to-r ${p.color} hover:opacity-90 text-white border-0`}
-                    >
-                      Seleccionar Plan
-                    </Button>
-                    <div className="flex flex-col gap-3 flex-1">
-                      {p.features.map((f: string) => (
-                        <div key={f} className="text-sm flex items-start gap-3">
-                          <Check
-                            className="h-5 w-5 text-green-600 mt-0.5"
-                            aria-hidden="true"
-                          />
-                          <span className="text-foreground">{f}</span>
-                        </div>
-                      ))}
+                    <div className="mb-6 flex-grow">
+                      <h4 className="text-sm font-semibold text-gray-700 mb-3">Incluye:</h4>
+                      <ul className="space-y-2">
+                        {p.features.map((feature, index) => (
+                          <li key={index} className="flex items-center text-sm text-gray-600">
+                            <div className="w-1.5 h-1.5 bg-gold rounded-full mr-3 flex-shrink-0"></div>
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
-                  </Card>
-                </ShineBorder>
+                    <Button
+                      asChild
+                      className="w-full bg-gold text-white hover:bg-gold-light transition-colors duration-200 border-0 mt-auto"
+                    >
+                      <Link href="/contact">
+                        Personalizar Paquete
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
               )
             )}
+            </div>
           </div>
         </section>
 
         {/* Testimonials */}
-        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+        <section className="py-12 w-full bg-white">
+          <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4 text-foreground">
-              Testimonios
+                                              <h2 className="text-5xl font-bold text-gray-900 mb-4">
+                  Nuestros <span className="font-light italic text-gold">Testimonios</span>
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Lo que dicen nuestras parejas felices
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
             {testimonials.length === 0 ? (
-              <div className="col-span-full text-center py-12">
-                <ShineBorder
-                  className="rounded-xl inline-block w-full"
-                  borderWidth={1}
-                >
-                  <Card className="p-8 text-muted-foreground bg-transparent border-0">
-                    <Star className="h-16 w-16 mx-auto mb-4 opacity-50" />
-                    <p className="text-lg text-foreground">
+               <div className="col-span-full text-center py-16">
+                 <div className="bg-gray-50 p-12 max-w-md mx-auto">
+                   <Star className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                   <p className="text-lg text-gray-600">
                       Próximamente testimonios de bodas.
                     </p>
-                  </Card>
-                </ShineBorder>
+                 </div>
               </div>
             ) : (
               testimonials.map((t) => (
-                <ShineBorder
+                 <div
                   key={t.id}
-                  className="rounded-xl w-full"
-                  borderWidth={1}
-                >
-                  <Card className="p-6 sm:p-8 bg-transparent border-0 hover:shadow-xl transition-all duration-300">
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className="h-12 w-12 rounded-full bg-gradient-to-r from-pink-400 to-rose-400 flex items-center justify-center">
-                        <span className="text-white font-bold text-lg">
-                          {t.authorName.charAt(0)}
-                        </span>
-                      </div>
-                      <div className="flex-1">
-                        <div className="text-lg font-bold leading-tight text-foreground">
+                   className="bg-white p-8 border border-gray-200 hover:border-gray-300 transition-colors duration-200"
+                 >
+                   <div className="mb-6">
+                     <div className="text-lg font-semibold text-gray-900 mb-2">
                           {t.authorName}
                         </div>
-                        <div className="text-sm text-muted-foreground leading-tight">
+                     <div className="text-sm text-gray-500 mb-4">
                           {t.location ?? ""}
                         </div>
-                      </div>
-                    </div>
-                    <div className="mb-4 flex items-center gap-1">
+                     <div className="flex items-center gap-1 mb-4">
                       {Array.from({
                         length: Math.max(0, Math.min(5, t.rating ?? 5)),
                       }).map((_, i) => (
                         <Star
                           key={i}
-                          className="h-4 w-4"
-                          style={{ color: primary }}
+                           className="h-4 w-4 text-yellow-400"
                           fill="currentColor"
                         />
                       ))}
                     </div>
-                    <p className="text-foreground leading-relaxed">
-                      {t.content}
+                   </div>
+                   <p className="text-gray-700 leading-relaxed">
+                     "{t.content}"
                     </p>
-                  </Card>
-                </ShineBorder>
+                 </div>
               ))
             )}
+            </div>
           </div>
         </section>
 
-        {/* Blog Posts Section */}
-        <BlogPostsSectionServer
-          posts={blogPosts}
-          title="Consejos para tu Boda"
-          description="Descubre ideas, tendencias y consejos para hacer de tu boda un día perfecto"
-          type={DepartmentType.WEDDINGS}
-        />
+
 
         {/* Final CTA */}
-        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
-          <ShineBorder className="rounded-2xl w-full" borderWidth={1}>
-            <Card className="p-12 sm:p-16 text-center bg-gradient-to-r from-pink-50 to-rose-50 border-0 shadow-xl">
+        <section className="py-12 w-full bg-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center">
               <div className="flex items-center justify-center mb-6">
-                <ShineBorder className="rounded-full p-3" borderWidth={1}>
-                  <Heart className="h-8 w-8 text-pink-600" />
-                </ShineBorder>
+                <Heart className="h-12 w-12 text-gold" />
               </div>
-              <h3 className="text-3xl sm:text-4xl font-bold tracking-tight mb-6 text-foreground">
-                ¿Listo para Planificar tu Boda de Ensueño?
+              <h3 className="text-5xl font-bold text-gray-900 mb-6">
+                ¿Listo para Planificar tu <span className="font-light italic text-gold">Boda</span> de Ensueño?
               </h3>
-              <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+              <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
                 Contáctanos hoy para una consulta gratuita y déjanos ayudarte a
                 crear la boda de tus sueños.
               </p>
@@ -434,19 +364,19 @@ export default async function WeddingsPage() {
                   variables={{ url: "" }}
                   label="Obtener Cotización Gratuita"
                   size="lg"
-                  className="rounded-full h-14 px-8 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white border-0 text-lg font-semibold"
+                  className="h-14 px-8 bg-black hover:bg-gray-800 text-white border-0 text-lg font-semibold rounded-none"
                 />
                 <Button
                   asChild
                   variant="outline"
                   size="lg"
-                  className="rounded-full h-14 px-8 text-lg font-semibold border-2"
+                  className="h-14 px-8 text-lg font-semibold border-2 rounded-none"
                 >
                   <Link href="/contact">Más Información</Link>
                 </Button>
               </div>
-            </Card>
-          </ShineBorder>
+            </div>
+          </div>
         </section>
       </main>
 

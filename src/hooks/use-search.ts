@@ -36,13 +36,15 @@ const searchApi = async (query: string): Promise<SearchResponse> => {
 };
 
 export const useSearch = (query: string) => {
-  const debouncedQuery = useDebounce(query, 300);
+  const debouncedQuery = useDebounce(query, 500); // Increased debounce time
 
   return useQuery({
     queryKey: ["search", debouncedQuery],
     queryFn: () => searchApi(debouncedQuery),
     enabled: debouncedQuery.length >= 2,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    staleTime: 10 * 60 * 1000, // 10 minutes - search results don't change often
+    gcTime: 15 * 60 * 1000, // 15 minutes
+    retry: 1, // Only retry once for search
+    refetchOnWindowFocus: false, // Don't refetch on window focus
   });
 };

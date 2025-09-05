@@ -87,6 +87,16 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        wine: {
+          DEFAULT: "#bb503c", // R: 187, G: 80, B: 60
+          light: "#d16b5a", // versión más clara
+          dark: "#9a3f2f", // versión más oscura
+        },
+        gold: {
+          DEFAULT: "#d4af37", // Dorado clásico elegante
+          light: "#e6c547", // versión más clara
+          dark: "#b8941f", // versión más oscura
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

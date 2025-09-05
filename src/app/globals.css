@@ -2,6 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Reset margins and padding */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Custom Animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 1s ease-out;
+}
+
 /* Custom Fonts */
 @font-face {
   font-family: 'HomepageBaukasten-Bold';
@@ -300,4 +336,14 @@ body {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Simple white text shadow for black text */
+.text-shadow-white-glow {
+  text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+}
+
+/* Black text shadow for white text */
+.text-shadow-black-glow {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }

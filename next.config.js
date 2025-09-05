@@ -6,6 +6,8 @@ const nextConfig = {
       "gjsxdqrdkhbyvcfjuxiq.supabase.co",
 
       "images.unsplash.com",
+      "images.pexels.com",
+      "lh3.googleusercontent.com",
     ],
   },
   eslint: {
