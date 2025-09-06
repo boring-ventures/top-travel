@@ -110,8 +110,8 @@ export async function uploadDestinationImage(
     bucket: "destinations",
     folder: destinationSlug,
     quality,
-    width: file.size,
-    height: file.size,
+    width: 1200,
+    height: 800,
     fit: "cover",
   });
 }
@@ -125,8 +125,8 @@ export async function uploadPackageImage(
     bucket: "packages",
     folder: packageSlug,
     quality,
-    width: file.size,
-    height: file.size,
+    width: 1200,
+    height: 800,
     fit: "cover",
   });
 }
@@ -140,8 +140,8 @@ export async function uploadOfferImage(
     bucket: "offers",
     folder: offerId,
     quality,
-    width: file.size,
-    height: file.size,
+    width: 1200,
+    height: 600,
     fit: "cover",
   });
 }
@@ -155,8 +155,8 @@ export async function uploadDepartmentImage(
     bucket: "departments",
     folder: departmentType,
     quality,
-    width: file.size,
-    height: file.size,
+    width: 800,
+    height: 600,
     fit: "cover",
   });
 }
@@ -170,8 +170,8 @@ export async function uploadEventImage(
     bucket: "events",
     folder: eventSlug,
     quality,
-    width: file.size,
-    height: file.size,
+    width: 1200,
+    height: 800,
     fit: "cover",
   });
 }
@@ -185,8 +185,8 @@ export async function uploadFixedDepartureImage(
     bucket: "fixed-departures",
     folder: departureSlug,
     quality,
-    width: file.size,
-    height: file.size,
+    width: 1200,
+    height: 800,
     fit: "cover",
   });
 }
@@ -215,8 +215,8 @@ export async function uploadPageImage(
     bucket: "pages",
     folder: pageSlug,
     quality,
-    width: file.size,
-    height: file.size,
+    width: 1200,
+    height: 800,
     fit: "cover",
   });
 }

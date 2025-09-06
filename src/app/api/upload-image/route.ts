@@ -29,6 +29,18 @@ function generateFileName(originalName: string, prefix?: string): string {
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if environment variables are available
+    if (
+      !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+      !process.env.SUPABASE_SERVICE_ROLE_KEY
+    ) {
+      console.error("Missing Supabase environment variables");
+      return NextResponse.json(
+        { error: "Server configuration error" },
+        { status: 500 }
+      );
+    }
+
     const formData = await request.formData();
     const file = formData.get("file") as File;
     const bucket = formData.get("bucket") as string;
@@ -54,26 +66,52 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(arrayBuffer);
 
     // Process image with Sharp
-    let sharpInstance = sharp(buffer);
+    let sharpInstance;
+    try {
+      sharpInstance = sharp(buffer);
+    } catch (sharpError) {
+      console.error("Sharp initialization error:", sharpError);
+      return NextResponse.json(
+        { error: "Image processing failed" },
+        { status: 500 }
+      );
+    }
 
     // Resize if dimensions are provided
     if (width || height) {
-      sharpInstance = sharpInstance.resize(width, height, {
-        fit: fit as any,
-        kernel: "lanczos3", // Better quality resizing algorithm
-        withoutEnlargement: true, // Don't upscale small images
-      });
+      try {
+        sharpInstance = sharpInstance.resize(width, height, {
+          fit: fit as any,
+          kernel: "lanczos3", // Better quality resizing algorithm
+          withoutEnlargement: true, // Don't upscale small images
+        });
+      } catch (resizeError) {
+        console.error("Sharp resize error:", resizeError);
+        return NextResponse.json(
+          { error: "Image resize failed" },
+          { status: 500 }
+        );
+      }
     }
 
     // Convert to WebP with improved settings
-    const webpBuffer = await sharpInstance
-      .webp({
-        quality,
-        effort: 6, // Higher compression effort for better quality
-        nearLossless: false, // Keep lossy for better compression
-        smartSubsample: true, // Better color sampling
-      })
-      .toBuffer();
+    let webpBuffer;
+    try {
+      webpBuffer = await sharpInstance
+        .webp({
+          quality,
+          effort: 6, // Higher compression effort for better quality
+          nearLossless: false, // Keep lossy for better compression
+          smartSubsample: true, // Better color sampling
+        })
+        .toBuffer();
+    } catch (webpError) {
+      console.error("Sharp WebP conversion error:", webpError);
+      return NextResponse.json(
+        { error: "Image conversion failed" },
+        { status: 500 }
+      );
+    }
 
     // Generate unique filename
     const fileName = generateFileName(file.name, folder);

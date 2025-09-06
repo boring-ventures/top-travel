@@ -112,7 +112,7 @@ export default function CmsPackagesList() {
                     <td className="px-3 py-2">
                       {p.durationDays ? (
                         <span className="text-sm">
-                          {p.durationDays} día{p.durationDays !== 1 ? 's' : ''}
+                          {p.durationDays} día{p.durationDays !== 1 ? "s" : ""}
                         </span>
                       ) : (
                         <span className="text-muted-foreground">—</span>
@@ -121,7 +121,8 @@ export default function CmsPackagesList() {
                     <td className="px-3 py-2">
                       {p.fromPrice ? (
                         <span className="text-sm font-medium">
-                          {p.currency === 'USD' ? '$' : 'Bs. '}{p.fromPrice}
+                          {p.currency === "USD" ? "$" : "Bs. "}
+                          {p.fromPrice}
                         </span>
                       ) : (
                         <span className="text-muted-foreground">—</span>
