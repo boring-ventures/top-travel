@@ -12,18 +12,16 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Eye, Loader2, ExternalLink } from "lucide-react";
+import { Eye, Loader2, ExternalLink, MessageSquare } from "lucide-react";
 import { buildWhatsAppUrl } from "@/lib/utils";
+import { WhatsAppTemplateBuilder } from "@/components/admin/forms/whatsapp-template-builder";
 
 interface ViewItemModalProps {
   templateId: string;
   onSuccess?: () => void;
 }
 
-export function ViewItemModal({
-  templateId,
-  onSuccess,
-}: ViewItemModalProps) {
+export function ViewItemModal({ templateId, onSuccess }: ViewItemModalProps) {
   const [open, setOpen] = useState(false);
   const [templateData, setTemplateData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -65,8 +63,12 @@ export function ViewItemModal({
     }
   }, [open, templateId]);
 
-  const previewUrl = templateData 
-    ? buildWhatsAppUrl(templateData.phoneNumber || phone, templateData.templateBody, previewVars) 
+  const previewUrl = templateData
+    ? buildWhatsAppUrl(
+        templateData.phoneNumber || phone,
+        templateData.templateBody,
+        previewVars
+      )
     : "";
 
   const handleOpenChange = (newOpen: boolean) => {
@@ -125,29 +127,45 @@ export function ViewItemModal({
                   <div className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label className="text-sm font-medium">Tipo de Uso</Label>
+                        <Label className="text-sm font-medium">
+                          Tipo de Uso
+                        </Label>
                         <div className="mt-2">
                           <Badge variant="outline">
-                            {templateData.usageType === "OFFERS" ? "Ofertas" :
-                             templateData.usageType === "PACKAGES" ? "Paquetes" :
-                             templateData.usageType === "DESTINATIONS" ? "Destinos" :
-                             templateData.usageType === "EVENTS" ? "Eventos" :
-                             templateData.usageType === "FIXED_DEPARTURES" ? "Salidas Fijas" :
-                             "General"}
+                            {templateData.usageType === "OFFERS"
+                              ? "Ofertas"
+                              : templateData.usageType === "PACKAGES"
+                                ? "Paquetes"
+                                : templateData.usageType === "DESTINATIONS"
+                                  ? "Destinos"
+                                  : templateData.usageType === "EVENTS"
+                                    ? "Eventos"
+                                    : templateData.usageType ===
+                                        "FIXED_DEPARTURES"
+                                      ? "Salidas Fijas"
+                                      : "General"}
                           </Badge>
                         </div>
                       </div>
                       <div>
-                        <Label className="text-sm font-medium">Número de Teléfono</Label>
+                        <Label className="text-sm font-medium">
+                          Número de Teléfono
+                        </Label>
                         <div className="mt-2 p-2 bg-muted rounded-md text-sm font-mono">
                           {templateData.phoneNumber || "No definido"}
                         </div>
                       </div>
                     </div>
                     <div>
-                      <Label className="text-sm font-medium">Cuerpo de la plantilla</Label>
-                      <div className="mt-2 p-3 bg-muted rounded-md text-sm whitespace-pre-wrap">
-                        {templateData.templateBody}
+                      <Label className="text-sm font-medium">
+                        Cuerpo de la plantilla
+                      </Label>
+                      <div className="mt-2">
+                        <WhatsAppTemplateBuilder
+                          value={templateData.templateBody}
+                          onChange={() => {}} // Read-only in view mode
+                          className="pointer-events-none opacity-75"
+                        />
                       </div>
                     </div>
                   </div>
@@ -162,12 +180,17 @@ export function ViewItemModal({
                   <div className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="preview-itemTitle">Título del item</Label>
+                        <Label htmlFor="preview-itemTitle">
+                          Título del item
+                        </Label>
                         <Input
                           id="preview-itemTitle"
                           value={previewVars.itemTitle}
                           onChange={(e) =>
-                            setPreviewVars((v) => ({ ...v, itemTitle: e.target.value }))
+                            setPreviewVars((v) => ({
+                              ...v,
+                              itemTitle: e.target.value,
+                            }))
                           }
                         />
                       </div>
@@ -177,7 +200,10 @@ export function ViewItemModal({
                           id="preview-url"
                           value={previewVars.url}
                           onChange={(e) =>
-                            setPreviewVars((v) => ({ ...v, url: e.target.value }))
+                            setPreviewVars((v) => ({
+                              ...v,
+                              url: e.target.value,
+                            }))
                           }
                         />
                       </div>
@@ -189,23 +215,33 @@ export function ViewItemModal({
                           id="preview-utmSource"
                           value={previewVars.utmSource}
                           onChange={(e) =>
-                            setPreviewVars((v) => ({ ...v, utmSource: e.target.value }))
+                            setPreviewVars((v) => ({
+                              ...v,
+                              utmSource: e.target.value,
+                            }))
                           }
                         />
                       </div>
                       <div>
-                        <Label htmlFor="preview-utmCampaign">UTM Campaign</Label>
+                        <Label htmlFor="preview-utmCampaign">
+                          UTM Campaign
+                        </Label>
                         <Input
                           id="preview-utmCampaign"
                           value={previewVars.utmCampaign}
                           onChange={(e) =>
-                            setPreviewVars((v) => ({ ...v, utmCampaign: e.target.value }))
+                            setPreviewVars((v) => ({
+                              ...v,
+                              utmCampaign: e.target.value,
+                            }))
                           }
                         />
                       </div>
                     </div>
                     <div>
-                      <Label className="text-sm font-medium">Mensaje generado</Label>
+                      <Label className="text-sm font-medium">
+                        Mensaje generado
+                      </Label>
                       <div className="mt-2 p-3 bg-muted rounded-md text-sm whitespace-pre-wrap">
                         {templateData.templateBody
                           .replace(/\{itemTitle\}/g, previewVars.itemTitle)
@@ -215,7 +251,9 @@ export function ViewItemModal({
                       </div>
                     </div>
                     <div>
-                      <Label className="text-sm font-medium">Enlace de WhatsApp</Label>
+                      <Label className="text-sm font-medium">
+                        Enlace de WhatsApp
+                      </Label>
                       <div className="mt-2">
                         <a
                           href={previewUrl}

@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import {
   Select,
@@ -17,6 +16,8 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2, Save, X } from "lucide-react";
+import { WhatsAppTemplateBuilder } from "./whatsapp-template-builder";
+import { WhatsAppTemplateHelp } from "./whatsapp-template-help";
 import {
   WhatsAppTemplateCreateSchema,
   WhatsAppTemplateUpdateSchema,
@@ -30,14 +31,20 @@ import type {
 
 interface WhatsAppTemplateFormProps {
   initialValues?: any;
+  initialTemplate?: string;
+  initialUsageType?: string;
   onSuccess?: () => void;
   onCancel?: () => void;
+  onBackToExamples?: () => void;
 }
 
 export function WhatsAppTemplateForm({
   initialValues,
+  initialTemplate,
+  initialUsageType,
   onSuccess,
   onCancel,
+  onBackToExamples,
 }: WhatsAppTemplateFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -57,9 +64,9 @@ export function WhatsAppTemplateForm({
     resolver: zodResolver(schema),
     defaultValues: initialValues || {
       name: "",
-      templateBody: "",
+      templateBody: initialTemplate || "",
       phoneNumber: "",
-      usageType: "GENERAL",
+      usageType: initialUsageType || "GENERAL",
       isDefault: false,
     },
   });
@@ -178,23 +185,16 @@ export function WhatsAppTemplateForm({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="templateBody">Cuerpo de la Plantilla *</Label>
-          <Textarea
-            id="templateBody"
-            placeholder="Hola! Te comparto esta increíble oferta para {itemTitle}. Más detalles en: {url}?utm_source={utmSource}&utm_campaign={utmCampaign}"
-            rows={6}
-            {...register("templateBody")}
-            className={errors.templateBody ? "border-red-500" : ""}
+          <div className="flex items-center justify-between">
+            <Label htmlFor="templateBody">Cuerpo de la Plantilla *</Label>
+            <WhatsAppTemplateHelp />
+          </div>
+          <WhatsAppTemplateBuilder
+            value={watch("templateBody") || ""}
+            onChange={(value) => setValue("templateBody", value)}
+            error={errors.templateBody?.message}
+            usageType={watch("usageType") || "GENERAL"}
           />
-          {errors.templateBody && (
-            <p className="text-sm text-corporate-red">
-              {errors.templateBody.message}
-            </p>
-          )}
-          <p className="text-xs text-muted-foreground">
-            Variables disponibles: {"{itemTitle}"}, {"{url}"}, {"{utmSource}"},{" "}
-            {"{utmCampaign}"}
-          </p>
         </div>
 
         <div className="flex items-center space-x-2">
@@ -207,18 +207,30 @@ export function WhatsAppTemplateForm({
         </div>
       </div>
 
-      <div className="flex justify-end space-x-2 pt-4">
-        {onCancel && (
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onCancel}
-            disabled={isSubmitting}
-          >
-            <X className="h-4 w-4 mr-2" />
-            Cancelar
-          </Button>
-        )}
+      <div className="flex justify-between pt-4">
+        <div className="flex space-x-2">
+          {onBackToExamples && !isEditing && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onBackToExamples}
+              disabled={isSubmitting}
+            >
+              ← Volver a ejemplos
+            </Button>
+          )}
+          {onCancel && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onCancel}
+              disabled={isSubmitting}
+            >
+              <X className="h-4 w-4 mr-2" />
+              Cancelar
+            </Button>
+          )}
+        </div>
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? (
             <Loader2 className="h-4 w-4 mr-2 animate-spin" />

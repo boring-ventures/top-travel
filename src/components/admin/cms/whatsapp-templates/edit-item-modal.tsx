@@ -16,10 +16,7 @@ interface EditItemModalProps {
   onSuccess?: () => void;
 }
 
-export function EditItemModal({
-  templateId,
-  onSuccess,
-}: EditItemModalProps) {
+export function EditItemModal({ templateId, onSuccess }: EditItemModalProps) {
   const [open, setOpen] = useState(false);
   const [templateData, setTemplateData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -102,6 +99,7 @@ export function EditItemModal({
             </div>
           ) : templateData ? (
             <WhatsAppTemplateForm
+              key={templateData.id}
               onSuccess={handleSuccess}
               initialValues={templateData}
             />

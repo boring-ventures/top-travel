@@ -10,6 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { WhatsAppTemplateForm } from "@/components/admin/forms/whatsapp-template-form";
+import { WhatsAppTemplateQuickstart } from "@/components/admin/forms/whatsapp-template-quickstart";
 import { Plus } from "lucide-react";
 
 interface NewItemModalProps {
@@ -18,16 +19,43 @@ interface NewItemModalProps {
 
 export function NewItemModal({ onSuccess }: NewItemModalProps) {
   const [open, setOpen] = useState(false);
+  const [showQuickstart, setShowQuickstart] = useState(true);
+  const [selectedTemplate, setSelectedTemplate] = useState<string>("");
+  const [usageType, setUsageType] = useState<string>("GENERAL");
 
   const handleSuccess = () => {
     setOpen(false);
+    setShowQuickstart(true);
+    setSelectedTemplate("");
     onSuccess?.();
   };
 
+  const handleSelectTemplate = (template: string) => {
+    setSelectedTemplate(template);
+    setShowQuickstart(false);
+    // Keep modal open to show the form with the selected template
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setShowQuickstart(true);
+    setSelectedTemplate("");
+    setUsageType("GENERAL");
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(newOpen) => {
+        if (!newOpen) {
+          handleClose();
+        } else {
+          setOpen(true);
+        }
+      }}
+    >
       <DialogTrigger asChild>
-        <Button size="sm">
+        <Button size="sm" onClick={() => setOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
           Nueva Plantilla
         </Button>
@@ -39,7 +67,23 @@ export function NewItemModal({ onSuccess }: NewItemModalProps) {
           </DialogTitle>
         </DialogHeader>
         <div className="px-2">
-          <WhatsAppTemplateForm onSuccess={handleSuccess} />
+          {showQuickstart ? (
+            <WhatsAppTemplateQuickstart
+              key="quickstart"
+              onSelectTemplate={handleSelectTemplate}
+              onClose={() => setShowQuickstart(false)}
+              usageType={usageType}
+              onUsageTypeChange={setUsageType}
+            />
+          ) : (
+            <WhatsAppTemplateForm
+              key="new-template"
+              onSuccess={handleSuccess}
+              initialTemplate={selectedTemplate}
+              onBackToExamples={() => setShowQuickstart(true)}
+              initialUsageType={usageType}
+            />
+          )}
         </div>
       </DialogContent>
     </Dialog>
