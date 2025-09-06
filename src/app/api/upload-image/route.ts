@@ -1,89 +1,64 @@
 import { NextRequest, NextResponse } from "next/server";
 import sharp from "sharp";
 import { createClient } from "@supabase/supabase-js";
-import { auth, ensureSuperadmin } from "@/lib/auth";
 
+// Initialize Supabase client
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-interface UploadOptions {
-  bucket: string;
-  folder?: string;
-  quality?: number;
-  width?: number;
-  height?: number;
-  fit?: "cover" | "contain" | "fill" | "inside" | "outside";
-}
+// Valid buckets
+const VALID_BUCKETS = [
+  "offers",
+  "packages", 
+  "destinations",
+  "departments",
+  "events",
+  "fixed-departures",
+  "testimonials",
+  "pages"
+];
 
-function generateFileName(originalName: string, prefix?: string): string {
+function generateFileName(originalName: string, folder?: string): string {
   const timestamp = Date.now();
   const randomId = Math.random().toString(36).slice(2, 8);
-  const extension = "webp";
-
-  const baseName = originalName.replace(/\.[^/.]+$/, "");
-  const fileName = `${baseName}-${timestamp}-${randomId}.${extension}`;
-
-  return prefix ? `${prefix}/${fileName}` : fileName;
+  const baseName = originalName.replace(/\.[^/.]+$/, "").replace(/[^a-zA-Z0-9]/g, '-');
+  const fileName = `${baseName}-${timestamp}-${randomId}.webp`;
+  return folder ? `${folder}/${fileName}` : fileName;
 }
 
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication
-    const session = await auth();
-    if (!session) {
-      return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
-      );
-    }
-    
-    try {
-      ensureSuperadmin(session?.user);
-    } catch (authError) {
-      return NextResponse.json(
-        { error: "Insufficient permissions - SUPERADMIN role required" },
-        { status: 403 }
-      );
-    }
-
-    // Check if environment variables are available
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
-      console.error("Missing NEXT_PUBLIC_SUPABASE_URL environment variable");
-      return NextResponse.json(
-        { error: "Server configuration error: Missing Supabase URL" },
-        { status: 500 }
-      );
-    }
-
-    if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
-      console.error("Missing SUPABASE_SERVICE_ROLE_KEY environment variable");
-      return NextResponse.json(
-        {
-          error:
-            "Server configuration error: Missing Supabase service role key",
-        },
-        { status: 500 }
-      );
-    }
-
+    // Parse form data
     const formData = await request.formData();
     const file = formData.get("file") as File;
     const bucket = formData.get("bucket") as string;
     const folder = formData.get("folder") as string;
-    const quality = parseInt(formData.get("quality") as string) || 90; // Increased from 80 to 90
+    const quality = parseInt(formData.get("quality") as string) || 85;
     const width = parseInt(formData.get("width") as string) || undefined;
     const height = parseInt(formData.get("height") as string) || undefined;
-    const fit = (formData.get("fit") as string) || "cover";
 
+    // Validate inputs
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
     if (!bucket) {
+      return NextResponse.json({ error: "No bucket specified" }, { status: 400 });
+    }
+
+    if (!VALID_BUCKETS.includes(bucket)) {
       return NextResponse.json(
-        { error: "No bucket specified" },
+        { error: `Invalid bucket. Must be one of: ${VALID_BUCKETS.join(", ")}` },
+        { status: 400 }
+      );
+    }
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      return NextResponse.json(
+        { error: "File must be an image" },
         { status: 400 }
       );
     }
@@ -92,66 +67,35 @@ export async function POST(request: NextRequest) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Process image with Sharp
-    let sharpInstance;
-    try {
-      sharpInstance = sharp(buffer);
-    } catch (sharpError) {
-      console.error("Sharp initialization error:", sharpError);
-      return NextResponse.json(
-        { error: "Image processing failed" },
-        { status: 500 }
-      );
-    }
+    // Process with Sharp
+    let sharpInstance = sharp(buffer);
 
-    // Resize if dimensions are provided
+    // Resize if dimensions provided
     if (width || height) {
-      try {
-        sharpInstance = sharpInstance.resize(width, height, {
-          fit: fit as any,
-          kernel: "lanczos3", // Better quality resizing algorithm
-          withoutEnlargement: true, // Don't upscale small images
-        });
-      } catch (resizeError) {
-        console.error("Sharp resize error:", resizeError);
-        return NextResponse.json(
-          { error: "Image resize failed" },
-          { status: 500 }
-        );
-      }
+      sharpInstance = sharpInstance.resize(width, height, {
+        fit: "cover",
+        withoutEnlargement: true,
+      });
     }
 
-    // Convert to WebP with improved settings
-    let webpBuffer;
-    try {
-      webpBuffer = await sharpInstance
-        .webp({
-          quality,
-          effort: 6, // Higher compression effort for better quality
-          nearLossless: false, // Keep lossy for better compression
-          smartSubsample: true, // Better color sampling
-        })
-        .toBuffer();
-    } catch (webpError) {
-      console.error("Sharp WebP conversion error:", webpError);
-      return NextResponse.json(
-        { error: "Image conversion failed" },
-        { status: 500 }
-      );
-    }
+    // Convert to WebP
+    const webpBuffer = await sharpInstance
+      .webp({
+        quality,
+        effort: 4,
+      })
+      .toBuffer();
 
-    // Generate unique filename
+    // Generate file path
     const fileName = generateFileName(file.name, folder);
-    const filePath = `${fileName}`;
 
     // Upload to Supabase Storage
-    console.log(`Uploading to bucket: ${bucket}, path: ${filePath}`);
     const { error: uploadError } = await supabase.storage
       .from(bucket)
-      .upload(filePath, webpBuffer, {
+      .upload(fileName, webpBuffer, {
+        contentType: "image/webp",
         cacheControl: "3600",
         upsert: false,
-        contentType: "image/webp",
       });
 
     if (uploadError) {
@@ -160,16 +104,17 @@ export async function POST(request: NextRequest) {
     }
 
     // Get public URL
-    const {
-      data: { publicUrl },
-    } = supabase.storage.from(bucket).getPublicUrl(filePath);
+    const { data: { publicUrl } } = supabase.storage
+      .from(bucket)
+      .getPublicUrl(fileName);
 
     return NextResponse.json({
       success: true,
       url: publicUrl,
-      path: filePath,
+      path: fileName,
       bucket,
     });
+
   } catch (error) {
     console.error("Image upload error:", error);
     return NextResponse.json(
@@ -183,24 +128,6 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    // Check authentication
-    const session = await auth();
-    if (!session) {
-      return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
-      );
-    }
-    
-    try {
-      ensureSuperadmin(session?.user);
-    } catch (authError) {
-      return NextResponse.json(
-        { error: "Insufficient permissions - SUPERADMIN role required" },
-        { status: 403 }
-      );
-    }
-
     const { searchParams } = new URL(request.url);
     const bucket = searchParams.get("bucket");
     const path = searchParams.get("path");
@@ -208,6 +135,13 @@ export async function DELETE(request: NextRequest) {
     if (!bucket || !path) {
       return NextResponse.json(
         { error: "Bucket and path are required" },
+        { status: 400 }
+      );
+    }
+
+    if (!VALID_BUCKETS.includes(bucket)) {
+      return NextResponse.json(
+        { error: `Invalid bucket. Must be one of: ${VALID_BUCKETS.join(", ")}` },
         { status: 400 }
       );
     }
@@ -225,6 +159,7 @@ export async function DELETE(request: NextRequest) {
       success: true,
       message: "Image deleted successfully",
     });
+
   } catch (error) {
     console.error("Image delete error:", error);
     return NextResponse.json(
