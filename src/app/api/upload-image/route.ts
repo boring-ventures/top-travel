@@ -1,28 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-// Dynamic import for Sharp to handle serverless environment
-let sharp: typeof import('sharp');
-
-async function initSharp() {
-  if (!sharp) {
-    sharp = (await import('sharp')).default;
-  }
-  return sharp;
-}
-
-// Initialize Supabase client with proper error handling
-function createSupabaseClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  
-  if (!url || !key) {
-    throw new Error('Missing Supabase environment variables');
-  }
-  
-  return createClient(url, key);
-}
-
 // Valid buckets
 const VALID_BUCKETS = [
   "offers",
@@ -39,24 +17,24 @@ function generateFileName(originalName: string, folder?: string): string {
   const timestamp = Date.now();
   const randomId = Math.random().toString(36).slice(2, 8);
   const baseName = originalName.replace(/\.[^/.]+$/, "").replace(/[^a-zA-Z0-9]/g, '-');
-  const fileName = `${baseName}-${timestamp}-${randomId}.webp`;
+  const extension = originalName.split('.').pop()?.toLowerCase() || 'jpg';
+  const fileName = `${baseName}-${timestamp}-${randomId}.${extension}`;
   return folder ? `${folder}/${fileName}` : fileName;
 }
 
 export async function POST(request: NextRequest) {
   try {
-    // Initialize Sharp and Supabase
-    const sharpLib = await initSharp();
-    const supabase = createSupabaseClient();
+    // Initialize Supabase
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
 
     // Parse form data
     const formData = await request.formData();
     const file = formData.get("file") as File;
     const bucket = formData.get("bucket") as string;
     const folder = formData.get("folder") as string;
-    const quality = parseInt(formData.get("quality") as string) || 85;
-    const width = parseInt(formData.get("width") as string) || undefined;
-    const height = parseInt(formData.get("height") as string) || undefined;
 
     // Validate inputs
     if (!file) {
@@ -86,33 +64,14 @@ export async function POST(request: NextRequest) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Process with Sharp
-    let sharpInstance = sharpLib(buffer);
-
-    // Resize if dimensions provided
-    if (width || height) {
-      sharpInstance = sharpInstance.resize(width, height, {
-        fit: "cover",
-        withoutEnlargement: true,
-      });
-    }
-
-    // Convert to WebP
-    const webpBuffer = await sharpInstance
-      .webp({
-        quality,
-        effort: 4,
-      })
-      .toBuffer();
-
     // Generate file path
     const fileName = generateFileName(file.name, folder);
 
-    // Upload to Supabase Storage
+    // Upload to Supabase Storage (keep original format for now)
     const { error: uploadError } = await supabase.storage
       .from(bucket)
-      .upload(fileName, webpBuffer, {
-        contentType: "image/webp",
+      .upload(fileName, buffer, {
+        contentType: file.type,
         cacheControl: "3600",
         upsert: false,
       });
@@ -147,7 +106,10 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const supabase = createSupabaseClient();
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
     
     const { searchParams } = new URL(request.url);
     const bucket = searchParams.get("bucket");
