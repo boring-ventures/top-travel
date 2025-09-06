@@ -32,7 +32,21 @@ export async function POST(request: NextRequest) {
   try {
     // Check authentication
     const session = await auth();
-    ensureSuperadmin(session?.user);
+    if (!session) {
+      return NextResponse.json(
+        { error: "Authentication required" },
+        { status: 401 }
+      );
+    }
+    
+    try {
+      ensureSuperadmin(session?.user);
+    } catch (authError) {
+      return NextResponse.json(
+        { error: "Insufficient permissions - SUPERADMIN role required" },
+        { status: 403 }
+      );
+    }
 
     // Check if environment variables are available
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
@@ -171,7 +185,21 @@ export async function DELETE(request: NextRequest) {
   try {
     // Check authentication
     const session = await auth();
-    ensureSuperadmin(session?.user);
+    if (!session) {
+      return NextResponse.json(
+        { error: "Authentication required" },
+        { status: 401 }
+      );
+    }
+    
+    try {
+      ensureSuperadmin(session?.user);
+    } catch (authError) {
+      return NextResponse.json(
+        { error: "Insufficient permissions - SUPERADMIN role required" },
+        { status: 403 }
+      );
+    }
 
     const { searchParams } = new URL(request.url);
     const bucket = searchParams.get("bucket");
