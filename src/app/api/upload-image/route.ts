@@ -1,12 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
-import sharp from "sharp";
 import { createClient } from "@supabase/supabase-js";
 
-// Initialize Supabase client
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Dynamic import for Sharp to handle serverless environment
+let sharp: typeof import('sharp');
+
+async function initSharp() {
+  if (!sharp) {
+    sharp = (await import('sharp')).default;
+  }
+  return sharp;
+}
+
+// Initialize Supabase client with proper error handling
+function createSupabaseClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  
+  if (!url || !key) {
+    throw new Error('Missing Supabase environment variables');
+  }
+  
+  return createClient(url, key);
+}
 
 // Valid buckets
 const VALID_BUCKETS = [
@@ -30,6 +45,10 @@ function generateFileName(originalName: string, folder?: string): string {
 
 export async function POST(request: NextRequest) {
   try {
+    // Initialize Sharp and Supabase
+    const sharpLib = await initSharp();
+    const supabase = createSupabaseClient();
+
     // Parse form data
     const formData = await request.formData();
     const file = formData.get("file") as File;
@@ -68,7 +87,7 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(arrayBuffer);
 
     // Process with Sharp
-    let sharpInstance = sharp(buffer);
+    let sharpInstance = sharpLib(buffer);
 
     // Resize if dimensions provided
     if (width || height) {
@@ -128,6 +147,8 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
+    const supabase = createSupabaseClient();
+    
     const { searchParams } = new URL(request.url);
     const bucket = searchParams.get("bucket");
     const path = searchParams.get("path");
