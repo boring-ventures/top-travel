@@ -38,7 +38,7 @@ Important keys to set in `.env.local`:
 - DATABASE_URL: pooled connection string for runtime
 - DIRECT_URL: direct connection for Prisma migrations
 - NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY
-- NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET
+- SUPABASE_SERVICE_ROLE_KEY: for server-side operations
 - NEXT_PUBLIC_APP_URL (e.g., http://localhost:3000)
 - NEXT_PUBLIC_GA_ID (optional)
 - MOCK_SUPERADMIN=true for local CMS access (do not enable in prod)
