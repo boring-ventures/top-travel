@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import sharp from "sharp";
 import { createClient } from "@supabase/supabase-js";
+import { auth, ensureSuperadmin } from "@/lib/auth";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -29,14 +30,26 @@ function generateFileName(originalName: string, prefix?: string): string {
 
 export async function POST(request: NextRequest) {
   try {
+    // Check authentication
+    const session = await auth();
+    ensureSuperadmin(session?.user);
+
     // Check if environment variables are available
-    if (
-      !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-      !process.env.SUPABASE_SERVICE_ROLE_KEY
-    ) {
-      console.error("Missing Supabase environment variables");
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+      console.error("Missing NEXT_PUBLIC_SUPABASE_URL environment variable");
       return NextResponse.json(
-        { error: "Server configuration error" },
+        { error: "Server configuration error: Missing Supabase URL" },
+        { status: 500 }
+      );
+    }
+
+    if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      console.error("Missing SUPABASE_SERVICE_ROLE_KEY environment variable");
+      return NextResponse.json(
+        {
+          error:
+            "Server configuration error: Missing Supabase service role key",
+        },
         { status: 500 }
       );
     }
@@ -118,6 +131,7 @@ export async function POST(request: NextRequest) {
     const filePath = `${fileName}`;
 
     // Upload to Supabase Storage
+    console.log(`Uploading to bucket: ${bucket}, path: ${filePath}`);
     const { error: uploadError } = await supabase.storage
       .from(bucket)
       .upload(filePath, webpBuffer, {
@@ -127,6 +141,7 @@ export async function POST(request: NextRequest) {
       });
 
     if (uploadError) {
+      console.error("Supabase upload error:", uploadError);
       throw new Error(`Upload failed: ${uploadError.message}`);
     }
 
@@ -154,6 +169,10 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
+    // Check authentication
+    const session = await auth();
+    ensureSuperadmin(session?.user);
+
     const { searchParams } = new URL(request.url);
     const bucket = searchParams.get("bucket");
     const path = searchParams.get("path");
