@@ -11,7 +11,7 @@ const supabaseAdmin = createClient(
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
@@ -34,10 +34,7 @@ export async function GET(
     });
 
     if (!profile) {
-      return NextResponse.json(
-        { error: "User not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     // Get user email from Supabase Auth
@@ -56,16 +53,13 @@ export async function GET(
   } catch (error) {
     console.error("GET /api/users/[id] - Error:", error);
     const status = (error as any)?.status ?? 500;
-    return NextResponse.json(
-      { error: "Failed to fetch user" },
-      { status }
-    );
+    return NextResponse.json({ error: "Failed to fetch user" }, { status });
   }
 }
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
@@ -110,16 +104,13 @@ export async function PATCH(
   } catch (error) {
     console.error("PATCH /api/users/[id] - Error:", error);
     const status = (error as any)?.status ?? 500;
-    return NextResponse.json(
-      { error: "Failed to update user" },
-      { status }
-    );
+    return NextResponse.json({ error: "Failed to update user" }, { status });
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
@@ -133,10 +124,7 @@ export async function DELETE(
     });
 
     if (!profile) {
-      return NextResponse.json(
-        { error: "User not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     // Delete user from our database first
@@ -148,7 +136,9 @@ export async function DELETE(
     try {
       const { error } = await supabaseAdmin.auth.admin.deleteUser(id);
       if (error) {
-        console.error(`Failed to delete user from Supabase Auth: ${error.message}`);
+        console.error(
+          `Failed to delete user from Supabase Auth: ${error.message}`
+        );
         // We don't throw here because we've already deleted from our database
         // This could be a case where the user was already deleted from Supabase but not from our DB
       }
@@ -160,9 +150,6 @@ export async function DELETE(
   } catch (error) {
     console.error("DELETE /api/users/[id] - Error:", error);
     const status = (error as any)?.status ?? 500;
-    return NextResponse.json(
-      { error: "Failed to delete user" },
-      { status }
-    );
+    return NextResponse.json({ error: "Failed to delete user" }, { status });
   }
 }
