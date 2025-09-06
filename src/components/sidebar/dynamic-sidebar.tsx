@@ -31,6 +31,7 @@ import {
   Heart,
   Crown,
   BookOpen,
+  Users,
 } from "lucide-react";
 import type { NavGroupProps } from "./types";
 
@@ -98,11 +99,6 @@ const baseNavGroups: NavGroupProps[] = [
         icon: Settings,
         url: "/settings",
       },
-      {
-        title: "Centro de Ayuda",
-        url: "/help-center",
-        icon: HelpCircle,
-      },
     ],
   },
 ];
@@ -111,9 +107,9 @@ const adminNavGroup: NavGroupProps = {
   title: "Administración",
   items: [
     {
-      title: "Panel de Administración",
-      url: "/admin",
-      icon: Shield,
+      title: "Gestión de Usuarios",
+      url: "/cms/users",
+      icon: Users,
     },
   ],
 };

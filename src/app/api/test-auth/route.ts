@@ -9,7 +9,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         {
           error: "Not authenticated",
-          mockSuperadmin: process.env.MOCK_SUPERADMIN,
         },
         { status: 401 }
       );
@@ -17,7 +16,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       user: session.user,
-      mockSuperadmin: process.env.MOCK_SUPERADMIN,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
@@ -26,7 +24,6 @@ export async function GET(request: NextRequest) {
       {
         error: "Auth test failed",
         details: error instanceof Error ? error.message : "Unknown error",
-        mockSuperadmin: process.env.MOCK_SUPERADMIN,
       },
       { status: 500 }
     );
@@ -47,7 +44,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       message: "SUPERADMIN access confirmed",
       user: session.user,
-      mockSuperadmin: process.env.MOCK_SUPERADMIN,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
@@ -56,7 +52,6 @@ export async function POST(request: NextRequest) {
       {
         error: "SUPERADMIN access denied",
         details: error instanceof Error ? error.message : "Unknown error",
-        mockSuperadmin: process.env.MOCK_SUPERADMIN,
       },
       { status: 403 }
     );

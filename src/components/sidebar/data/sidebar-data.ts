@@ -118,11 +118,6 @@ export const sidebarData: SidebarData = {
           icon: Settings,
           url: "/settings",
         },
-        {
-          title: "Centro de Ayuda",
-          url: "/help-center",
-          icon: HelpCircle,
-        },
       ],
     },
   ],

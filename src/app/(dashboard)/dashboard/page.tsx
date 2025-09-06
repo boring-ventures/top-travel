@@ -58,11 +58,8 @@ export default async function DashboardPage() {
     },
   });
 
-  // If no profile exists, create one
+  // If no profile exists, create one as SUPERADMIN
   if (!profile) {
-    const mockSuperadmin = process.env.MOCK_SUPERADMIN === "true";
-    const defaultRole = mockSuperadmin ? "SUPERADMIN" : "USER";
-
     await prisma.profile.create({
       data: {
         userId,
@@ -70,7 +67,7 @@ export default async function DashboardPage() {
         lastName: null,
         avatarUrl: null,
         active: true,
-        role: defaultRole,
+        role: "SUPERADMIN",
       },
     });
 

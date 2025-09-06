@@ -60,12 +60,8 @@ export async function auth(): Promise<Session | null> {
       timestamp: new Date().toISOString(),
     });
 
-    // If profile doesn't exist, create a default one
+    // If profile doesn't exist, create a default one with SUPERADMIN role
     if (!profile) {
-      // Check if MOCK_SUPERADMIN is enabled for local development
-      const mockSuperadmin = process.env.MOCK_SUPERADMIN === "true";
-      const defaultRole = mockSuperadmin ? "SUPERADMIN" : "USER";
-
       const newProfile = await prisma.profile.create({
         data: {
           userId: session.user.id,
@@ -73,28 +69,15 @@ export async function auth(): Promise<Session | null> {
           lastName: null,
           avatarUrl: null,
           active: true,
-          role: defaultRole,
+          role: "SUPERADMIN",
         },
         select: { role: true },
       });
       profile = newProfile;
       console.log("Created new profile with role:", newProfile.role);
-    } else if (process.env.MOCK_SUPERADMIN === "true") {
-      // If MOCK_SUPERADMIN is enabled and profile exists, ensure SUPERADMIN role
-      if (profile.role !== "SUPERADMIN") {
-        const updatedProfile = await prisma.profile.update({
-          where: { userId: session.user.id },
-          data: { role: "SUPERADMIN" },
-          select: { role: true },
-        });
-        profile = updatedProfile;
-        console.log(
-          "Updated profile to SUPERADMIN due to MOCK_SUPERADMIN=true"
-        );
-      }
     }
 
-    const userRole = (profile?.role as User["role"]) ?? "USER";
+    const userRole = (profile?.role as User["role"]) ?? "SUPERADMIN";
     console.log("Final user role:", userRole);
 
     return {

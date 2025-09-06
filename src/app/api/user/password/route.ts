@@ -1,13 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase-server";
 
-export async function POST(request: NextRequest) {
+export async function PUT(request: NextRequest) {
   try {
     const supabase = await createServerSupabaseClient();
-    const { password } = await request.json();
+    const { currentPassword, newPassword } = await request.json();
 
+    // Validate that we have the required fields
+    if (!currentPassword || !newPassword) {
+      return NextResponse.json(
+        { error: "Current password and new password are required" },
+        { status: 400 }
+      );
+    }
+
+    // Update the user's password
     const { error } = await supabase.auth.updateUser({
-      password: password,
+      password: newPassword,
     });
 
     if (error) {
