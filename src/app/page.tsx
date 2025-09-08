@@ -11,7 +11,9 @@ import {
   Footer,
   PersistentWhatsAppCTA,
   Tags,
+  GlobeDemo,
 } from "@/components/views/landing-page";
+import MetricsSection from "@/components/views/landing-page/MetricsSection";
 import prisma from "@/lib/prisma";
 import { filterValidImageUrls } from "@/lib/utils";
 import { getWhatsAppTemplateByUsage } from "@/lib/whatsapp-utils";
@@ -23,88 +25,13 @@ export const metadata = {
   icons: { icon: "/favicon.ico" },
 };
 
-// Fallback images for different categories
+// Fallback images for different categories - using placeholder API
 const FALLBACK_IMAGES = {
-  events:
-    "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=400&q=80",
-  destinations:
-    "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80",
-  mountains:
-    "https://images.unsplash.com/photo-1483683804023-6ccdb62f86ef?auto=format&fit=crop&w=400&q=80",
-  beaches:
-    "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=400&q=80",
-  weddings:
-    "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=400&q=80",
-};
-
-// Default data for when database is empty
-const DEFAULT_DATA = {
-  events: [
-    {
-      id: "1",
-      title: "Rock Fest Bolivia",
-      locationCity: "La Paz",
-      locationCountry: "Bolivia",
-      slug: "rock-fest",
-    },
-    {
-      id: "2",
-      title: "Electronic Dance Carnival",
-      locationCity: "Santa Cruz",
-      locationCountry: "Bolivia",
-      slug: "electronic-carnival",
-    },
-    {
-      id: "3",
-      title: "Latin Music Extravaganza",
-      locationCity: "Cochabamba",
-      locationCountry: "Bolivia",
-      slug: "latin-music",
-    },
-  ],
-  destinations: [
-    {
-      id: "1",
-      city: "La Paz",
-      country: "Bolivia",
-      slug: "la-paz",
-      heroImageUrl: FALLBACK_IMAGES.destinations,
-    },
-    {
-      id: "2",
-      city: "Santa Cruz",
-      country: "Bolivia",
-      slug: "santa-cruz",
-      heroImageUrl: FALLBACK_IMAGES.destinations,
-    },
-    {
-      id: "3",
-      city: "Cochabamba",
-      country: "Bolivia",
-      slug: "cochabamba",
-      heroImageUrl: FALLBACK_IMAGES.destinations,
-    },
-  ],
-  offers: [
-    {
-      id: "1",
-      title: "Beach Getaway",
-      subtitle: "Relax on the beautiful beaches of Brazil",
-      bannerImageUrl: FALLBACK_IMAGES.beaches,
-    },
-    {
-      id: "2",
-      title: "Mountain Adventure",
-      subtitle: "Explore the stunning mountains of Peru",
-      bannerImageUrl: FALLBACK_IMAGES.mountains,
-    },
-    {
-      id: "3",
-      title: "City Exploration",
-      subtitle: "Discover the vibrant cities of Argentina",
-      bannerImageUrl: FALLBACK_IMAGES.destinations,
-    },
-  ],
+  events: "/api/placeholder/400/300",
+  destinations: "/api/placeholder/400/300",
+  mountains: "/api/placeholder/400/300",
+  beaches: "/api/placeholder/400/300",
+  weddings: "/api/placeholder/400/300",
 };
 
 export default async function Home() {
@@ -261,10 +188,7 @@ export default async function Home() {
     console.error("Home data fetch failed", err);
   }
 
-  // Use default data if no data from database
-  if (!offers.length) offers = DEFAULT_DATA.offers;
-  if (!topDestinations.length) topDestinations = DEFAULT_DATA.destinations;
-  if (!featuredEvents.length) featuredEvents = DEFAULT_DATA.events;
+  // No fallback to mock data - only use real database data
 
   // Helper function to get valid image URL
   const getValidImageUrl = (
@@ -322,7 +246,7 @@ export default async function Home() {
         description: `${event.locationCity}, ${event.locationCountry}`,
         imageUrl: getValidImageUrl(event.heroImageUrl, FALLBACK_IMAGES.events),
         href: `/events/${event.slug}`,
-        price: "$150/persona",
+        price: "Consultar precio",
         location: `${event.locationCity}, ${event.locationCountry}`,
         amenities: event.amenities || [],
         exclusions: event.exclusions || [],
@@ -342,7 +266,7 @@ export default async function Home() {
           FALLBACK_IMAGES.destinations
         ),
         href: `/destinations/${dest.slug}`,
-        price: "$800/persona",
+        price: "Consultar precio",
         location: `${dest.city}, ${dest.country}`,
       })),
     },
@@ -356,7 +280,7 @@ export default async function Home() {
         description: "Viajes programados con fechas fijas y precios especiales",
         imageUrl: getValidImageUrl(dep.heroImageUrl, FALLBACK_IMAGES.mountains),
         href: `/fixed-departures/${dep.slug}`,
-        price: "$1200/persona",
+        price: "Consultar precio",
         location: "Bolivia",
         amenities: dep.amenities || [],
         exclusions: dep.exclusions || [],
@@ -372,7 +296,7 @@ export default async function Home() {
         description: "Descubre Sudamérica con nuestras rutas exclusivas",
         imageUrl: getValidImageUrl(dest.heroImageUrl, FALLBACK_IMAGES.beaches),
         href: `/destinations/${dest.slug}`,
-        price: "$950/persona",
+        price: "Consultar precio",
         location: `${dest.city}, ${dest.country}`,
       })),
     },
@@ -387,7 +311,7 @@ export default async function Home() {
         "Planifica tu boda soñada con nuestro equipo experto, asegurando una celebración sin problemas e inolvidable en los destinos más románticos.",
       imageUrl: FALLBACK_IMAGES.weddings,
       href: "/weddings",
-      price: "Desde $5000",
+      price: "Consultar precio",
     },
     {
       id: "quinceanera",
@@ -396,7 +320,7 @@ export default async function Home() {
         "Celebra tu 15 cumpleaños especial con un tour diseñado personalmente, creando recuerdos duraderos en destinos mágicos.",
       imageUrl: FALLBACK_IMAGES.weddings,
       href: "/quinceanera",
-      price: "Desde $3000",
+      price: "Consultar precio",
     },
   ];
 
@@ -408,17 +332,48 @@ export default async function Home() {
         <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-transparent -z-10" />
 
-        <Hero items={heroItems} featuredOffer={offers[0]} tags={tags} />
-        
+        <Hero items={heroItems} tags={tags} />
+
+        {/* Metrics Section */}
+        <MetricsSection />
+
         {/* Tabbed Content Section */}
-        <section className="py-12 w-full bg-white">
+        <section className="py-16 w-full bg-gray-50">
           <div className="container mx-auto px-4">
-            <div className="text-left mb-12">
+            <div className="text-center mb-12">
               <h2 className="text-5xl font-bold text-gray-900 mb-4">
-                Descubre las <span className="font-light italic">Maravillas</span> del mundo
+                Descubre las{" "}
+                <span className="font-bold text-blue-600">Maravillas</span> del
+                mundo
               </h2>
             </div>
-        <TabbedContent tabs={tabbedContent} />
+            <TabbedContent tabs={tabbedContent} />
+          </div>
+        </section>
+
+        {/* Experiences Section */}
+        <section className="py-16 w-full bg-gray-900 text-white">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              {/* Left side - Text content */}
+              <div className="text-left">
+                <h2 className="text-5xl font-bold mb-6">
+                  En GabyTopTravel las{" "}
+                  <span className="font-bold text-blue-400">experiencias</span>{" "}
+                  son <span className="font-bold text-blue-400">Únicas</span>
+                </h2>
+                <p className="text-xl text-gray-300 leading-relaxed">
+                  Descubre el mundo con nosotros y vive aventuras que
+                  transformarán tu perspectiva. Cada viaje es una historia única
+                  esperando ser contada.
+                </p>
+              </div>
+
+              {/* Right side - Globe component */}
+              <div className="relative">
+                <GlobeDemo />
+              </div>
+            </div>
           </div>
         </section>
 
@@ -430,7 +385,6 @@ export default async function Home() {
           whatsappTemplate={whatsappTemplates.offers}
         />
         <Tags tags={tags} />
-
 
         {/* Services Section */}
         <Services />

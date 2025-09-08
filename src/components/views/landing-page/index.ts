@@ -35,3 +35,4 @@ export { default as Testimonials } from "./Testimonials";
 export { default as CTA } from "./CTA";
 export { default as GlassCTA } from "./GlassCTA";
 export { default as Tags } from "./Tags";
+export { GlobeDemo } from "./GlobeDemo";

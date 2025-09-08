@@ -3,7 +3,8 @@
 @tailwind utilities;
 
 /* Reset margins and padding */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
@@ -11,7 +12,8 @@ html, body {
 
 /* Custom Animations */
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px);
   }
   50% {
@@ -40,16 +42,16 @@ html, body {
 
 /* Custom Fonts */
 @font-face {
-  font-family: 'HomepageBaukasten-Bold';
-  src: url('/fonts/HomepageBaukasten-Bold.ttf') format('truetype');
+  font-family: "HomepageBaukasten-Bold";
+  src: url("/fonts/HomepageBaukasten-Bold.ttf") format("truetype");
   font-weight: bold;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'BlarneyRegular';
-  src: url('/fonts/BlarneyRegular.ttf') format('truetype');
+  font-family: "BlarneyRegular";
+  src: url("/fonts/BlarneyRegular.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
