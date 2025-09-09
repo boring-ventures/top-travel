@@ -50,7 +50,7 @@ export default function FeaturedOffers({
     <section className="py-16 w-full bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-8">
-          <h1 className="text-5xl font-bold mb-2">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2">
             Ofertas <span className="font-bold text-blue-600">Destacadas</span>{" "}
             del Mes
           </h1>

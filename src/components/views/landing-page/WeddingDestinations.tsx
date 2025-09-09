@@ -42,7 +42,7 @@ export default function WeddingDestinations({
     <section className="py-16 w-full bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-8">
-          <h1 className="text-5xl font-bold mb-2">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2">
             Destinos para <span className="font-bold text-blue-600">Bodas</span>{" "}
             de Ensueño
           </h1>

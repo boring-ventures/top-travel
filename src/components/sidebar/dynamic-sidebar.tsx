@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/sidebar";
 import { NavGroup } from "./nav-group";
 import { NavUser } from "./nav-user";
-import { TeamSwitcher } from "./team-switcher";
 import { useAuth } from "@/providers/auth-provider";
 import { UserRole } from "@prisma/client";
 import {
@@ -114,15 +113,6 @@ const adminNavGroup: NavGroupProps = {
   ],
 };
 
-// Default team for the TeamSwitcher
-const defaultTeams = [
-  {
-    name: "Top Travel",
-    logo: Command,
-    plan: "Admin Panel",
-  },
-];
-
 export function DynamicSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
@@ -137,7 +127,7 @@ export function DynamicSidebar({
   return (
     <Sidebar collapsible="icon" variant="floating" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={defaultTeams} />
+        {/* Team switcher removed - no functionality needed */}
       </SidebarHeader>
       <SidebarContent>
         {navGroups.map((navGroup: NavGroupProps) => (

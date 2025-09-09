@@ -142,26 +142,26 @@ export default function TabbedContent({
   }
 
   return (
-    <div className="text-center">
-      {/* Tab Navigation - Centered */}
-      <div className="flex justify-center items-start mb-12">
+    <div>
+      {/* Tab Navigation */}
+      <div className="flex justify-center mb-12">
         {/* Filter Tabs with Glassmorphism Design */}
         <div className="bg-white/80 backdrop-blur-sm border border-black/20 rounded-2xl p-2 shadow-lg">
-          <div className="flex space-x-1">
+          <div className="flex space-x-1 overflow-x-auto scrollbar-hide">
             {tabs.map((tab) => {
               const IconComponent = getTabIcon(tab.id);
               return (
                 <button
                   key={tab.id}
                   onClick={() => setCurrentTab(tab.id)}
-                  className={`px-6 py-2 rounded-xl transition-all duration-200 font-medium flex items-center ${
+                  className={`px-4 sm:px-6 py-2 rounded-xl transition-all duration-200 font-medium flex items-center whitespace-nowrap flex-shrink-0 ${
                     currentTab === tab.id
                       ? "bg-black text-white shadow-lg"
                       : "hover:bg-black/10 text-black"
                   }`}
                 >
-                  <IconComponent className="h-4 w-4 mr-2" />
-                  {tab.label}
+                  <IconComponent className="h-4 w-4 mr-1 sm:mr-2" />
+                  <span className="text-sm sm:text-base">{tab.label}</span>
                 </button>
               );
             })}
@@ -169,8 +169,8 @@ export default function TabbedContent({
         </div>
       </div>
 
-      {/* Tab Content - Centered Grid Layout */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
+      {/* Tab Content - Grid Layout */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {currentTabData?.items.map((item) => (
           <div
             key={item.id}
@@ -223,7 +223,7 @@ export default function TabbedContent({
         ))}
       </div>
 
-      {/* View All Button - Centered below content */}
+      {/* View All Button - Centered below cards */}
       {showViewAllButton && (
         <div className="mt-12 text-center">
           <Link
