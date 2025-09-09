@@ -47,18 +47,13 @@ export default function FeaturedOffers({
   }
 
   return (
-    <section className="py-12 w-full bg-white">
+    <section className="py-16 w-full bg-gray-50">
       <div className="container mx-auto px-4">
-        <div className="flex justify-between items-start mb-8">
-          <div>
-            <h1 className="text-5xl font-bold mb-2">Ofertas <span className="font-light italic">Destacadas</span> del Mes</h1>
-          </div>
-          <Link className="text-black hover:text-gray-600 transition-colors duration-300 whitespace-nowrap hidden sm:flex items-center gap-2" href="/packages">
-            Ver Todos
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </Link>
+        <div className="text-center mb-8">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2">
+            Ofertas <span className="font-bold text-blue-600">Destacadas</span>{" "}
+            del Mes
+          </h1>
         </div>
 
         {offers.length === 0 ? (
@@ -71,45 +66,50 @@ export default function FeaturedOffers({
               const href = o.package?.slug
                 ? `/packages/${o.package.slug}`
                 : o.externalUrl || "#";
-              const price = o.package?.fromPrice 
+              const price = o.package?.fromPrice
                 ? `Desde $${o.package.fromPrice}`
-                : "Desde $600";
+                : "Consultar precio";
 
               return (
-                <div key={o.id} className="relative overflow-hidden rounded-2xl group flex-shrink-0 w-80">
+                <div
+                  key={o.id}
+                  className="relative overflow-hidden rounded-2xl group flex-shrink-0 w-80"
+                >
                   <div className="relative h-80 sm:h-96">
                     <Image
                       src={
                         o.bannerImageUrl && isValidImageUrl(o.bannerImageUrl)
                           ? o.bannerImageUrl
-                          : "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80"
+                          : "/api/placeholder/400/300"
                       }
                       alt={o.title}
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-110"
                     />
-                    
+
                     {/* Subtle gradient overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-                    
+
                     {/* Top Glass Content */}
                     <div className="absolute top-0 left-0 right-0 p-6">
                       <div className="bg-black/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 inline-block">
-                        <p className="text-white text-sm font-medium">{o.subtitle || "Oferta especial"}</p>
+                        <p className="text-white text-sm font-medium">
+                          {o.subtitle || "Oferta especial"}
+                        </p>
                       </div>
                     </div>
-                    
+
                     {/* Bottom Glass Content */}
                     <div className="absolute bottom-0 left-0 right-0 p-6">
                       <div className="space-y-4">
                         <h2 className="text-white text-2xl font-bold font-serif drop-shadow-lg">
                           {o.title}
                         </h2>
-                        
+
                         <p className="text-white text-lg font-normal drop-shadow-lg">
                           {price}
                         </p>
-                        
+
                         <Button
                           asChild
                           className="w-full bg-black/30 backdrop-blur-md hover:bg-black/40 text-white font-semibold py-3 rounded-xl transition-all duration-300 border border-white/20 hover:border-white/30 flex items-center justify-center gap-2"
@@ -128,11 +128,24 @@ export default function FeaturedOffers({
           </div>
         )}
 
-        <div className="mt-12 text-center sm:hidden">
-          <Link className="text-black hover:text-gray-600 transition-colors duration-300 inline-flex items-center gap-2" href="/packages">
+        <div className="mt-12 text-center">
+          <Link
+            className="bg-black text-white px-8 py-4 rounded-full hover:bg-black/80 transition-colors duration-300 inline-flex items-center gap-2 text-lg font-semibold"
+            href="/packages"
+          >
             Ver Todos
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
             </svg>
           </Link>
         </div>

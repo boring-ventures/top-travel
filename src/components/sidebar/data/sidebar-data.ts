@@ -1,21 +1,5 @@
 import {
-  AlertCircle,
-  AppWindow,
-  AudioWaveform,
-  Ban,
-  Bug,
-  CheckSquare,
-  Command,
-  GalleryVerticalEnd,
-  HelpCircle,
   LayoutDashboard,
-  Lock,
-  LockKeyhole,
-  MessageSquare,
-  Settings,
-  ServerCrash,
-  UserX,
-  Users,
   MapPin,
   Tag,
   Package,
@@ -23,11 +7,12 @@ import {
   PlaneTakeoff,
   Tags,
   Building2,
-  FileText,
+  MessageSquare,
   MessageSquareText,
   Heart,
   Crown,
   BookOpen,
+  Settings,
 } from "lucide-react";
 import type { SidebarData } from "../types";
 
@@ -37,23 +22,6 @@ export const sidebarData: SidebarData = {
     email: "satnaingdev@gmail.com",
     avatar: "/avatars/shadcn.jpg",
   },
-  teams: [
-    {
-      name: "Admin Shadcn",
-      logo: Command,
-      plan: "Vite + ShadcnUI",
-    },
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Empresa",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-  ],
   navGroups: [
     {
       title: "General",

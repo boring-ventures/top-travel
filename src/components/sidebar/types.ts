@@ -6,12 +6,6 @@ interface User {
   avatar: string;
 }
 
-interface Team {
-  name: string;
-  logo: LucideIcon;
-  plan: string;
-}
-
 interface BaseNavItem {
   title: string;
   icon?: LucideIcon;
@@ -37,7 +31,6 @@ export interface NavGroup {
 
 export interface SidebarData {
   user: User;
-  teams: Team[];
   navGroups: NavGroup[];
 }
 

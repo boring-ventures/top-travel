@@ -48,17 +48,23 @@ export function buildWhatsAppUrl(
  * @returns boolean indicating if the URL is valid
  */
 export function isValidImageUrl(url: string | null | undefined): boolean {
-  if (!url || typeof url !== 'string') return false;
-  
+  if (!url || typeof url !== "string") return false;
+
   // Filter out common invalid values
-  if (url === '1' || url === '0' || url === '' || url === 'null' || url === 'undefined') {
+  if (
+    url === "1" ||
+    url === "0" ||
+    url === "" ||
+    url === "null" ||
+    url === "undefined"
+  ) {
     return false;
   }
-  
+
   // Check if it's a valid URL
   try {
     const urlObj = new URL(url);
-    return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+    return urlObj.protocol === "http:" || urlObj.protocol === "https:";
   } catch {
     return false;
   }
@@ -74,7 +80,7 @@ export function filterValidImageUrls<T extends Record<string, any>>(
   items: T[],
   imageUrlKey: keyof T
 ): T[] {
-  return items.filter(item => {
+  return items.filter((item) => {
     const imageUrl = item[imageUrlKey];
     return isValidImageUrl(imageUrl);
   });

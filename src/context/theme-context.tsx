@@ -37,12 +37,16 @@ export function ThemeProvider({
   const [theme, setTheme] = useState<Theme>("light");
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    
     // Force light mode - ignore stored preferences
     setTheme("light");
     localStorage.setItem(storageKey, "light");
   }, [storageKey]);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    
     const root = window.document.documentElement;
     root.classList.remove("light", "dark");
     

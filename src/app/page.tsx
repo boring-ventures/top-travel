@@ -12,6 +12,9 @@ import {
   PersistentWhatsAppCTA,
   Tags,
 } from "@/components/views/landing-page";
+import { World } from "@/components/ui/globe-client";
+import { RotatingWords } from "@/components/ui/rotating-words";
+import MetricsSection from "@/components/views/landing-page/MetricsSection";
 import prisma from "@/lib/prisma";
 import { filterValidImageUrls } from "@/lib/utils";
 import { getWhatsAppTemplateByUsage } from "@/lib/whatsapp-utils";
@@ -23,88 +26,13 @@ export const metadata = {
   icons: { icon: "/favicon.ico" },
 };
 
-// Fallback images for different categories
+// Fallback images for different categories - using placeholder API
 const FALLBACK_IMAGES = {
-  events:
-    "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=400&q=80",
-  destinations:
-    "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80",
-  mountains:
-    "https://images.unsplash.com/photo-1483683804023-6ccdb62f86ef?auto=format&fit=crop&w=400&q=80",
-  beaches:
-    "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=400&q=80",
-  weddings:
-    "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=400&q=80",
-};
-
-// Default data for when database is empty
-const DEFAULT_DATA = {
-  events: [
-    {
-      id: "1",
-      title: "Rock Fest Bolivia",
-      locationCity: "La Paz",
-      locationCountry: "Bolivia",
-      slug: "rock-fest",
-    },
-    {
-      id: "2",
-      title: "Electronic Dance Carnival",
-      locationCity: "Santa Cruz",
-      locationCountry: "Bolivia",
-      slug: "electronic-carnival",
-    },
-    {
-      id: "3",
-      title: "Latin Music Extravaganza",
-      locationCity: "Cochabamba",
-      locationCountry: "Bolivia",
-      slug: "latin-music",
-    },
-  ],
-  destinations: [
-    {
-      id: "1",
-      city: "La Paz",
-      country: "Bolivia",
-      slug: "la-paz",
-      heroImageUrl: FALLBACK_IMAGES.destinations,
-    },
-    {
-      id: "2",
-      city: "Santa Cruz",
-      country: "Bolivia",
-      slug: "santa-cruz",
-      heroImageUrl: FALLBACK_IMAGES.destinations,
-    },
-    {
-      id: "3",
-      city: "Cochabamba",
-      country: "Bolivia",
-      slug: "cochabamba",
-      heroImageUrl: FALLBACK_IMAGES.destinations,
-    },
-  ],
-  offers: [
-    {
-      id: "1",
-      title: "Beach Getaway",
-      subtitle: "Relax on the beautiful beaches of Brazil",
-      bannerImageUrl: FALLBACK_IMAGES.beaches,
-    },
-    {
-      id: "2",
-      title: "Mountain Adventure",
-      subtitle: "Explore the stunning mountains of Peru",
-      bannerImageUrl: FALLBACK_IMAGES.mountains,
-    },
-    {
-      id: "3",
-      title: "City Exploration",
-      subtitle: "Discover the vibrant cities of Argentina",
-      bannerImageUrl: FALLBACK_IMAGES.destinations,
-    },
-  ],
+  events: "/api/placeholder/400/300",
+  destinations: "/api/placeholder/400/300",
+  mountains: "/api/placeholder/400/300",
+  beaches: "/api/placeholder/400/300",
+  weddings: "/api/placeholder/400/300",
 };
 
 export default async function Home() {
@@ -116,6 +44,392 @@ export default async function Home() {
   let fixedDepartures: any[] = [];
   let tags: any[] = [];
   let whatsappTemplates: any = {};
+
+  const globeConfig = {
+    pointSize: 4,
+    globeColor: "#062056",
+    showAtmosphere: true,
+    atmosphereColor: "#FFFFFF",
+    atmosphereAltitude: 0.1,
+    emissive: "#062056",
+    emissiveIntensity: 0.1,
+    shininess: 0.9,
+    polygonColor: "rgba(255,255,255,0.7)",
+    ambientLight: "#38bdf8",
+    directionalLeftLight: "#ffffff",
+    directionalTopLight: "#ffffff",
+    pointLight: "#ffffff",
+    arcTime: 1000,
+    arcLength: 0.9,
+    rings: 1,
+    maxRings: 3,
+    initialPosition: { lat: 22.3193, lng: 114.1694 },
+    autoRotate: true,
+    autoRotateSpeed: 0.5,
+  };
+  const colors = ["#06b6d4", "#3b82f6", "#6366f1"];
+  const sampleArcs = [
+    {
+      order: 1,
+      startLat: -19.885592,
+      startLng: -43.951191,
+      endLat: -22.9068,
+      endLng: -43.1729,
+      arcAlt: 0.1,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 1,
+      startLat: 28.6139,
+      startLng: 77.209,
+      endLat: 3.139,
+      endLng: 101.6869,
+      arcAlt: 0.2,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 1,
+      startLat: -19.885592,
+      startLng: -43.951191,
+      endLat: -1.303396,
+      endLng: 36.852443,
+      arcAlt: 0.5,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 2,
+      startLat: 1.3521,
+      startLng: 103.8198,
+      endLat: 35.6762,
+      endLng: 139.6503,
+      arcAlt: 0.2,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 2,
+      startLat: 51.5072,
+      startLng: -0.1276,
+      endLat: 3.139,
+      endLng: 101.6869,
+      arcAlt: 0.3,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 2,
+      startLat: -15.785493,
+      startLng: -47.909029,
+      endLat: 36.162809,
+      endLng: -115.119411,
+      arcAlt: 0.3,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 3,
+      startLat: -33.8688,
+      startLng: 151.2093,
+      endLat: 22.3193,
+      endLng: 114.1694,
+      arcAlt: 0.3,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 3,
+      startLat: 21.3099,
+      startLng: -157.8581,
+      endLat: 40.7128,
+      endLng: -74.006,
+      arcAlt: 0.3,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 3,
+      startLat: -6.2088,
+      startLng: 106.8456,
+      endLat: 51.5072,
+      endLng: -0.1276,
+      arcAlt: 0.3,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 4,
+      startLat: 11.986597,
+      startLng: 8.571831,
+      endLat: -15.595412,
+      endLng: -56.05918,
+      arcAlt: 0.5,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 4,
+      startLat: -34.6037,
+      startLng: -58.3816,
+      endLat: 22.3193,
+      endLng: 114.1694,
+      arcAlt: 0.7,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 4,
+      startLat: 51.5072,
+      startLng: -0.1276,
+      endLat: 48.8566,
+      endLng: -2.3522,
+      arcAlt: 0.1,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 5,
+      startLat: 14.5995,
+      startLng: 120.9842,
+      endLat: 51.5072,
+      endLng: -0.1276,
+      arcAlt: 0.3,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 5,
+      startLat: 1.3521,
+      startLng: 103.8198,
+      endLat: -33.8688,
+      endLng: 151.2093,
+      arcAlt: 0.2,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 5,
+      startLat: 34.0522,
+      startLng: -118.2437,
+      endLat: 48.8566,
+      endLng: -2.3522,
+      arcAlt: 0.2,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 6,
+      startLat: -15.432563,
+      startLng: 28.315853,
+      endLat: 1.094136,
+      endLng: -63.34546,
+      arcAlt: 0.7,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 6,
+      startLat: 37.5665,
+      startLng: 126.978,
+      endLat: 35.6762,
+      endLng: 139.6503,
+      arcAlt: 0.1,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 6,
+      startLat: 22.3193,
+      startLng: 114.1694,
+      endLat: 51.5072,
+      endLng: -0.1276,
+      arcAlt: 0.3,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 7,
+      startLat: -19.885592,
+      startLng: -43.951191,
+      endLat: -15.595412,
+      endLng: -56.05918,
+      arcAlt: 0.1,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 7,
+      startLat: 48.8566,
+      startLng: -2.3522,
+      endLat: 52.52,
+      endLng: 13.405,
+      arcAlt: 0.1,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 7,
+      startLat: 52.52,
+      startLng: 13.405,
+      endLat: 34.0522,
+      endLng: -118.2437,
+      arcAlt: 0.2,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 8,
+      startLat: -8.833221,
+      startLng: 13.264837,
+      endLat: -33.936138,
+      endLng: 18.436529,
+      arcAlt: 0.2,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 8,
+      startLat: 49.2827,
+      startLng: -123.1207,
+      endLat: 52.3676,
+      endLng: 4.9041,
+      arcAlt: 0.2,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 8,
+      startLat: 1.3521,
+      startLng: 103.8198,
+      endLat: 40.7128,
+      endLng: -74.006,
+      arcAlt: 0.5,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 9,
+      startLat: 51.5072,
+      startLng: -0.1276,
+      endLat: 34.0522,
+      endLng: -118.2437,
+      arcAlt: 0.2,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 9,
+      startLat: 22.3193,
+      startLng: 114.1694,
+      endLat: -22.9068,
+      endLng: -43.1729,
+      arcAlt: 0.7,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 9,
+      startLat: 1.3521,
+      startLng: 103.8198,
+      endLat: -34.6037,
+      endLng: -58.3816,
+      arcAlt: 0.5,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 10,
+      startLat: -22.9068,
+      startLng: -43.1729,
+      endLat: 28.6139,
+      endLng: 77.209,
+      arcAlt: 0.7,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 10,
+      startLat: 34.0522,
+      startLng: -118.2437,
+      endLat: 31.2304,
+      endLng: 121.4737,
+      arcAlt: 0.3,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 10,
+      startLat: -6.2088,
+      startLng: 106.8456,
+      endLat: 52.3676,
+      endLng: 4.9041,
+      arcAlt: 0.3,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 11,
+      startLat: 41.9028,
+      startLng: 12.4964,
+      endLat: 34.0522,
+      endLng: -118.2437,
+      arcAlt: 0.2,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 11,
+      startLat: -6.2088,
+      startLng: 106.8456,
+      endLat: 31.2304,
+      endLng: 121.4737,
+      arcAlt: 0.2,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 11,
+      startLat: 22.3193,
+      startLng: 114.1694,
+      endLat: 1.3521,
+      endLng: 103.8198,
+      arcAlt: 0.2,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 12,
+      startLat: 34.0522,
+      startLng: -118.2437,
+      endLat: 37.7749,
+      endLng: -122.4194,
+      arcAlt: 0.1,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 12,
+      startLat: 35.6762,
+      startLng: 139.6503,
+      endLat: 22.3193,
+      endLng: 114.1694,
+      arcAlt: 0.2,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 12,
+      startLat: 22.3193,
+      startLng: 114.1694,
+      endLat: 34.0522,
+      endLng: -118.2437,
+      arcAlt: 0.3,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 13,
+      startLat: 52.52,
+      startLng: 13.405,
+      endLat: 22.3193,
+      endLng: 114.1694,
+      arcAlt: 0.3,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 13,
+      startLat: 11.986597,
+      startLng: 8.571831,
+      endLat: 35.6762,
+      endLng: 139.6503,
+      arcAlt: 0.3,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 13,
+      startLat: -22.9068,
+      startLng: -43.1729,
+      endLat: -34.6037,
+      endLng: -58.3816,
+      arcAlt: 0.1,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+    {
+      order: 14,
+      startLat: -33.936138,
+      startLng: 18.436529,
+      endLat: 21.395643,
+      endLng: 39.883798,
+      arcAlt: 0.3,
+      color: colors[Math.floor(Math.random() * (colors.length - 1))],
+    },
+  ];
 
   try {
     const results = await Promise.all([
@@ -261,10 +575,7 @@ export default async function Home() {
     console.error("Home data fetch failed", err);
   }
 
-  // Use default data if no data from database
-  if (!offers.length) offers = DEFAULT_DATA.offers;
-  if (!topDestinations.length) topDestinations = DEFAULT_DATA.destinations;
-  if (!featuredEvents.length) featuredEvents = DEFAULT_DATA.events;
+  // No fallback to mock data - only use real database data
 
   // Helper function to get valid image URL
   const getValidImageUrl = (
@@ -322,7 +633,7 @@ export default async function Home() {
         description: `${event.locationCity}, ${event.locationCountry}`,
         imageUrl: getValidImageUrl(event.heroImageUrl, FALLBACK_IMAGES.events),
         href: `/events/${event.slug}`,
-        price: "$150/persona",
+        price: "Consultar precio",
         location: `${event.locationCity}, ${event.locationCountry}`,
         amenities: event.amenities || [],
         exclusions: event.exclusions || [],
@@ -342,7 +653,7 @@ export default async function Home() {
           FALLBACK_IMAGES.destinations
         ),
         href: `/destinations/${dest.slug}`,
-        price: "$800/persona",
+        price: "Consultar precio",
         location: `${dest.city}, ${dest.country}`,
       })),
     },
@@ -356,7 +667,7 @@ export default async function Home() {
         description: "Viajes programados con fechas fijas y precios especiales",
         imageUrl: getValidImageUrl(dep.heroImageUrl, FALLBACK_IMAGES.mountains),
         href: `/fixed-departures/${dep.slug}`,
-        price: "$1200/persona",
+        price: "Consultar precio",
         location: "Bolivia",
         amenities: dep.amenities || [],
         exclusions: dep.exclusions || [],
@@ -372,7 +683,7 @@ export default async function Home() {
         description: "Descubre Sudamérica con nuestras rutas exclusivas",
         imageUrl: getValidImageUrl(dest.heroImageUrl, FALLBACK_IMAGES.beaches),
         href: `/destinations/${dest.slug}`,
-        price: "$950/persona",
+        price: "Consultar precio",
         location: `${dest.city}, ${dest.country}`,
       })),
     },
@@ -387,7 +698,7 @@ export default async function Home() {
         "Planifica tu boda soñada con nuestro equipo experto, asegurando una celebración sin problemas e inolvidable en los destinos más románticos.",
       imageUrl: FALLBACK_IMAGES.weddings,
       href: "/weddings",
-      price: "Desde $5000",
+      price: "Consultar precio",
     },
     {
       id: "quinceanera",
@@ -396,7 +707,7 @@ export default async function Home() {
         "Celebra tu 15 cumpleaños especial con un tour diseñado personalmente, creando recuerdos duraderos en destinos mágicos.",
       imageUrl: FALLBACK_IMAGES.weddings,
       href: "/quinceanera",
-      price: "Desde $3000",
+      price: "Consultar precio",
     },
   ];
 
@@ -408,17 +719,53 @@ export default async function Home() {
         <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-transparent -z-10" />
 
-        <Hero items={heroItems} featuredOffer={offers[0]} tags={tags} />
-        
+        <Hero items={heroItems} tags={tags} />
+
+        {/* Metrics Section */}
+        <MetricsSection />
+
         {/* Tabbed Content Section */}
-        <section className="py-12 w-full bg-white">
+        <section className="py-16 w-full bg-gray-50">
           <div className="container mx-auto px-4">
-            <div className="text-left mb-12">
-              <h2 className="text-5xl font-bold text-gray-900 mb-4">
-                Descubre las <span className="font-light italic">Maravillas</span> del mundo
+            <div className="text-center mb-8 sm:mb-12">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+                Descubre las{" "}
+                <span className="font-bold text-blue-600">Maravillas</span> del
+                mundo
               </h2>
             </div>
-        <TabbedContent tabs={tabbedContent} />
+            <TabbedContent tabs={tabbedContent} />
+          </div>
+        </section>
+
+        {/* Experiences Section */}
+        <section className="py-8 sm:py-16 w-full bg-gray-900 text-white">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+              {/* Left side - Text content */}
+              <div className="text-left order-2 lg:order-1">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
+                  En GabyTopTravel las{" "}
+                  <span className="font-bold text-white">experiencias</span> son
+                  <br />
+                  <RotatingWords
+                    words={["Únicas", "Inolvidables", "Extraordinarias"]}
+                    interval={2500}
+                    className="text-3xl sm:text-4xl lg:text-5xl font-bold text-blue-700"
+                  />
+                </h2>
+                <p className="text-lg sm:text-xl text-gray-300 leading-relaxed">
+                  Descubre el mundo con nosotros y vive aventuras que
+                  transformarán tu perspectiva. Cada viaje es una historia única
+                  esperando ser contada.
+                </p>
+              </div>
+
+              {/* Right side - Globe component */}
+              <div className="relative order-1 lg:order-2">
+                <World globeConfig={globeConfig} data={sampleArcs} />
+              </div>
+            </div>
           </div>
         </section>
 
@@ -430,7 +777,6 @@ export default async function Home() {
           whatsappTemplate={whatsappTemplates.offers}
         />
         <Tags tags={tags} />
-
 
         {/* Services Section */}
         <Services />

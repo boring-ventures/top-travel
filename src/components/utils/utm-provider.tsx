@@ -15,6 +15,8 @@ const MAX_AGE_MS = 1000 * 60 * 60 * 24 * 90; // 90 days
 
 export function UtmProvider() {
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
     try {
       const params = new URLSearchParams(window.location.search);
       const incoming: UtmValues = {};
@@ -64,6 +66,8 @@ export function UtmProvider() {
 }
 
 export function getPersistedUtm(): UtmValues | undefined {
+  if (typeof window === "undefined") return undefined;
+
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return undefined;
