@@ -41,20 +41,27 @@ export async function auth(): Promise<Session | null> {
     );
 
     const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+    const {
       data: { session },
     } = await supabase.auth.getSession();
 
-    if (!session?.user) return null;
+    if (userError || !user) {
+      console.error("Error getting user:", userError);
+      return null;
+    }
 
     // Lookup role from our Profile table; create profile if missing
     let profile = await prisma.profile.findUnique({
-      where: { userId: session.user.id },
+      where: { userId: user.id },
       select: { role: true },
     });
 
     console.log("Auth debug:", {
-      userId: session.user.id,
-      email: session.user.email,
+      userId: user.id,
+      email: user.email,
       profileRole: profile?.role,
       profileExists: !!profile,
       timestamp: new Date().toISOString(),
@@ -64,7 +71,7 @@ export async function auth(): Promise<Session | null> {
     if (!profile) {
       const newProfile = await prisma.profile.create({
         data: {
-          userId: session.user.id,
+          userId: user.id,
           firstName: null,
           lastName: null,
           avatarUrl: null,
@@ -82,8 +89,8 @@ export async function auth(): Promise<Session | null> {
 
     return {
       user: {
-        id: session.user.id,
-        email: session.user.email,
+        id: user.id,
+        email: user.email,
         role: userRole,
       },
     };

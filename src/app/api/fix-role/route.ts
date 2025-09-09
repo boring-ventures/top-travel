@@ -7,14 +7,15 @@ export async function POST() {
     const supabase = await createServerSupabaseClient();
 
     const {
-      data: { session },
-    } = await supabase.auth.getSession();
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
 
-    if (!session) {
+    if (userError || !user) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    const userId = session.user.id;
+    const userId = user.id;
 
     // Update the user's role to SUPERADMIN
     const updatedProfile = await prisma.profile.update({

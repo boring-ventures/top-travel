@@ -43,14 +43,22 @@ export function useCurrentUser() {
   const refetch = useCallback(async () => {
     try {
       const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      setUser(session?.user ?? null);
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
 
-      if (session?.user) {
-        await fetchProfile(session.user.id);
-      } else {
+      if (userError) {
+        console.error("Error getting user:", userError);
+        setUser(null);
         setProfile(null);
+      } else {
+        setUser(user);
+
+        if (user) {
+          await fetchProfile(user.id);
+        } else {
+          setProfile(null);
+        }
       }
     } catch (error) {
       console.error("Error refetching user data:", error);
@@ -63,20 +71,27 @@ export function useCurrentUser() {
     const getUser = async () => {
       try {
         const {
-          data: { session },
-        } = await supabase.auth.getSession();
-        
-        if (!isMounted) return;
-        
-        setUser(session?.user ?? null);
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
 
-        if (session?.user) {
-          await fetchProfile(session.user.id);
+        if (!isMounted) return;
+
+        if (userError) {
+          console.error("Error getting user:", userError);
+          setUser(null);
+          setProfile(null);
+        } else {
+          setUser(user);
+
+          if (user) {
+            await fetchProfile(user.id);
+          }
         }
 
         setLoading(false);
       } catch (error) {
-        console.error("Error getting user session:", error);
+        console.error("Error getting user:", error);
         if (isMounted) {
           setLoading(false);
         }
@@ -89,12 +104,26 @@ export function useCurrentUser() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (!isMounted) return;
-      
-      setUser(session?.user ?? null);
 
-      if (session?.user) {
-        await fetchProfile(session.user.id);
+      if (session) {
+        // Verify the user is still valid
+        const {
+          data: { user },
+          error,
+        } = await supabase.auth.getUser();
+        if (error) {
+          console.error("Error verifying user:", error);
+          setUser(null);
+          setProfile(null);
+        } else {
+          setUser(user);
+
+          if (user) {
+            await fetchProfile(user.id);
+          }
+        }
       } else {
+        setUser(null);
         setProfile(null);
       }
 

@@ -56,17 +56,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const initializeAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
         if (!isMounted) return;
-        
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          await fetchProfile(session.user.id);
+
+        if (userError) {
+          console.error("Error getting user:", userError);
+          setUser(null);
+          setSession(null);
+        } else {
+          setUser(user);
+          setSession(session);
+
+          if (user) {
+            await fetchProfile(user.id);
+          }
         }
-        
+
         setIsLoading(false);
       } catch (error) {
         console.error("Error initializing auth:", error);
@@ -82,13 +94,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (!isMounted) return;
-      
-      setSession(session);
-      setUser(session?.user ?? null);
 
-      if (session?.user) {
-        await fetchProfile(session.user.id);
+      if (session) {
+        // Verify the user is still valid
+        const {
+          data: { user },
+          error,
+        } = await supabase.auth.getUser();
+        if (error) {
+          console.error("Error verifying user:", error);
+          setUser(null);
+          setSession(null);
+          setProfile(null);
+        } else {
+          setUser(user);
+          setSession(session);
+
+          if (user) {
+            await fetchProfile(user.id);
+          }
+        }
       } else {
+        setUser(null);
+        setSession(null);
         setProfile(null);
       }
 

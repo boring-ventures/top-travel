@@ -6,12 +6,16 @@ export async function GET() {
     const supabase = await createServerSupabaseClient();
 
     const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+    const {
       data: { session },
     } = await supabase.auth.getSession();
 
     return NextResponse.json({
-      authenticated: !!session,
-      user: session?.user || null,
+      authenticated: !userError && !!user,
+      user: user || null,
       session: session,
     });
   } catch (error) {
@@ -28,12 +32,16 @@ export async function POST() {
     const supabase = await createServerSupabaseClient();
 
     const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+    const {
       data: { session },
     } = await supabase.auth.getSession();
 
     return NextResponse.json({
-      authenticated: !!session,
-      user: session?.user || null,
+      authenticated: !userError && !!user,
+      user: user || null,
       session: session,
     });
   } catch (error) {

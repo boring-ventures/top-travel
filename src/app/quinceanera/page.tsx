@@ -21,6 +21,8 @@ import {
   Building2,
   Calendar,
   ArrowRight,
+  BookOpen,
+  User,
 } from "lucide-react";
 import { ShineBorder } from "@/components/magicui/shine-border";
 import { BlogPostsSectionServer } from "@/components/views/landing-page/BlogPostsSectionServer";
@@ -31,9 +33,8 @@ export default async function QuinceaneraPage() {
   const [
     dept,
     quinceaneraDestinations,
-    quinceaneraPackages,
+    quinceaneraBlogPosts,
     testimonials,
-    blogPosts,
   ] = await Promise.all([
     prisma.department.findUnique({ where: { type: "QUINCEANERA" } }),
     prisma.quinceaneraDestination.findMany({
@@ -48,22 +49,21 @@ export default async function QuinceaneraPage() {
         heroImageUrl: true,
       },
     }),
-    prisma.package.findMany({
+    prisma.blogPost.findMany({
       where: {
+        type: "QUINCEANERA",
         status: "PUBLISHED",
-        isCustom: false,
       },
+      orderBy: { publishedAt: "desc" },
       take: 3,
       select: {
         id: true,
         slug: true,
         title: true,
-        summary: true,
+        excerpt: true,
         heroImageUrl: true,
-        fromPrice: true,
-        currency: true,
-        durationDays: true,
-        inclusions: true,
+        author: true,
+        publishedAt: true,
       },
     }),
     prisma.testimonial.findMany({
@@ -76,24 +76,6 @@ export default async function QuinceaneraPage() {
         location: true,
         rating: true,
         content: true,
-      },
-    }),
-    prisma.blogPost.findMany({
-      where: {
-        status: "PUBLISHED",
-        type: "QUINCEANERA",
-      },
-      orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
-      take: 3,
-      select: {
-        id: true,
-        slug: true,
-        title: true,
-        excerpt: true,
-        heroImageUrl: true,
-        author: true,
-        publishedAt: true,
-        type: true,
       },
     }),
   ]);
@@ -312,102 +294,116 @@ export default async function QuinceaneraPage() {
           </div>
         </section>
 
-        {/* Packages */}
+        {/* Blog Posts */}
         <section className="py-12 w-full bg-white">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-5xl font-bold text-gray-900 mb-4">
-                Paquetes{" "}
+                Consejos y{" "}
                 <span className="font-light italic text-rose-500">
-                  Personalizables
-                </span>
+                  Inspiración
+                </span>{" "}
+                para Quinceañeras
               </h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Nuestros paquetes de quinceañera son flexibles. Adapta lugares,
-                actividades y experiencias para crear una celebración que
-                refleje su personalidad única.
+                Descubre tips, tendencias y experiencias reales para hacer de tu
+                quinceañera una celebración perfecta
               </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {quinceaneraPackages.length === 0 ? (
+              {quinceaneraBlogPosts.length === 0 ? (
                 <div className="col-span-full text-center py-12">
                   <div className="text-muted-foreground">
-                    <Building2 className="h-16 w-16 mx-auto mb-4 opacity-50" />
+                    <BookOpen className="h-16 w-16 mx-auto mb-4 opacity-50" />
                     <h3 className="text-xl font-semibold mb-2 text-foreground">
-                      Paquetes próximamente
+                      Artículos próximamente
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      Estamos preparando paquetes especiales para quinceañeras
+                      Estamos preparando contenido especial sobre quinceañeras
                     </p>
                   </div>
                 </div>
               ) : (
-                quinceaneraPackages.map((p) => (
+                quinceaneraBlogPosts.map((post) => (
                   <div
-                    key={p.id}
-                    className="bg-white border border-gray-200 hover:border-gray-300 transition-colors duration-200 h-full flex flex-col"
+                    key={post.id}
+                    className="bg-white border border-gray-200 hover:border-gray-300 transition-colors duration-200 h-full flex flex-col group"
                   >
+                    <div className="relative h-48 overflow-hidden">
+                      {post.heroImageUrl ? (
+                        <Image
+                          src={post.heroImageUrl}
+                          alt={post.title}
+                          fill
+                          className="object-cover transition-transform duration-300 group-hover:scale-105"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        />
+                      ) : (
+                        <div className="h-full w-full bg-gradient-to-br from-pink-100 to-rose-100 flex items-center justify-center">
+                          <BookOpen className="h-12 w-12 text-muted-foreground" />
+                        </div>
+                      )}
+                    </div>
                     <div className="p-6 flex flex-col flex-grow">
                       <div className="mb-4">
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">
-                          {p.title}
+                        <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2">
+                          {post.title}
                         </h3>
-                        {p.fromPrice && (
-                          <p className="text-4xl font-bold text-rose-500">
-                            {p.currency === "USD" ? "$" : "Bs"}{" "}
-                            {p.fromPrice.toLocaleString()}
-                            {p.durationDays && (
-                              <span className="text-sm font-normal text-gray-500 ml-2">
-                                / {p.durationDays} días
-                              </span>
-                            )}
+                        {post.excerpt && (
+                          <p className="text-sm text-gray-600 line-clamp-3">
+                            {post.excerpt}
                           </p>
                         )}
                       </div>
-                      {p.summary && (
-                        <div className="mb-4">
-                          <p className="text-sm text-gray-600">{p.summary}</p>
-                        </div>
-                      )}
-                      <div className="mb-6 flex-grow">
-                        {p.inclusions && p.inclusions.length > 0 && (
-                          <>
-                            <h4 className="text-sm font-semibold text-gray-700 mb-3">
-                              Incluye:
-                            </h4>
-                            <ul className="space-y-2">
-                              {p.inclusions
-                                .slice(0, 4)
-                                .map((inclusion, index) => (
-                                  <li
-                                    key={index}
-                                    className="flex items-center text-sm text-gray-600"
-                                  >
-                                    <div className="w-1.5 h-1.5 bg-rose-500 rounded-full mr-3 flex-shrink-0"></div>
-                                    {inclusion}
-                                  </li>
-                                ))}
-                              {p.inclusions.length > 4 && (
-                                <li className="text-sm text-gray-500 italic">
-                                  +{p.inclusions.length - 4} más...
-                                </li>
+                      <div className="mt-auto">
+                        <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                          {post.author && (
+                            <div className="flex items-center">
+                              <User className="h-4 w-4 mr-1" />
+                              {post.author}
+                            </div>
+                          )}
+                          {post.publishedAt && (
+                            <div className="flex items-center">
+                              <Calendar className="h-4 w-4 mr-1" />
+                              {new Date(post.publishedAt).toLocaleDateString(
+                                "es-ES",
+                                {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
+                                }
                               )}
-                            </ul>
-                          </>
-                        )}
+                            </div>
+                          )}
+                        </div>
+                        <Button
+                          asChild
+                          variant="outline"
+                          className="w-full border-rose-500 text-rose-500 hover:bg-rose-500 hover:text-white transition-colors duration-200"
+                        >
+                          <Link href={`/blog/${post.slug}`}>Leer Más</Link>
+                        </Button>
                       </div>
-                      <Button
-                        asChild
-                        className="w-full bg-rose-500 text-white hover:bg-rose-600 transition-colors duration-200 border-0 mt-auto"
-                      >
-                        <Link href={`/packages/${p.slug}`}>Ver Detalles</Link>
-                      </Button>
                     </div>
                   </div>
                 ))
               )}
             </div>
+
+            {quinceaneraBlogPosts.length > 0 && (
+              <div className="text-center mt-8">
+                <Button
+                  asChild
+                  variant="outline"
+                  size="lg"
+                  className="border-rose-500 text-rose-500 hover:bg-rose-500 hover:text-white transition-colors duration-200"
+                >
+                  <Link href="/blog?type=QUINCEANERA">Ver Todos los Artículos</Link>
+                </Button>
+              </div>
+            )}
           </div>
         </section>
 
@@ -556,14 +552,6 @@ export default async function QuinceaneraPage() {
             </ShineBorder>
           </section>
         )}
-
-        {/* Blog Posts Section */}
-        <BlogPostsSectionServer
-          posts={blogPosts}
-          title="Guía para tu Quinceañera"
-          description="Todo lo que necesitas saber para planificar la celebración perfecta de los 15 años"
-          type={DepartmentType.QUINCEANERA}
-        />
 
         {/* Final CTA */}
         <section className="py-12 w-full bg-white">

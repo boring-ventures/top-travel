@@ -29,12 +29,13 @@ export async function GET() {
     );
 
     const {
-      data: { session },
-    } = await supabase.auth.getSession();
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
 
     return NextResponse.json({
-      authenticated: !!session,
-      user: session?.user || null,
+      authenticated: !userError && !!user,
+      user: user || null,
     });
   } catch (error) {
     console.error("DB check error:", error);

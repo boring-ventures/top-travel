@@ -7,14 +7,15 @@ export async function GET() {
     const supabase = await createServerSupabaseClient();
 
     const {
-      data: { session },
-    } = await supabase.auth.getSession();
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
 
-    if (!session) {
+    if (userError || !user) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    const userId = session.user.id;
+    const userId = user.id;
 
     const profile = await prisma.profile.findUnique({
       where: { userId },
@@ -39,14 +40,15 @@ export async function PUT(request: NextRequest) {
     const supabase = await createServerSupabaseClient();
 
     const {
-      data: { session },
-    } = await supabase.auth.getSession();
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
 
-    if (!session) {
+    if (userError || !user) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    const userId = session.user.id;
+    const userId = user.id;
     const body = await request.json();
 
     const updatedProfile = await prisma.profile.update({
@@ -73,14 +75,15 @@ export async function DELETE() {
     const supabase = await createServerSupabaseClient();
 
     const {
-      data: { session },
-    } = await supabase.auth.getSession();
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
 
-    if (!session) {
+    if (userError || !user) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    const userId = session.user.id;
+    const userId = user.id;
 
     await prisma.profile.delete({
       where: { userId },

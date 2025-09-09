@@ -37,14 +37,15 @@ import Link from "next/link";
 export default async function DashboardPage() {
   const supabase = await createServerSupabaseClient();
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
 
-  if (!session) {
+  if (userError || !user) {
     redirect("/sign-in");
   }
 
-  const userId = session.user.id;
+  const userId = user.id;
 
   // Get user profile
   const profile = await prisma.profile.findUnique({
@@ -180,7 +181,7 @@ export default async function DashboardPage() {
 
   const displayName =
     [profile.firstName, profile.lastName].filter(Boolean).join(" ") ||
-    session.user.email;
+    user.email;
 
   const getStatusBadge = (status: string) => {
     switch (status) {

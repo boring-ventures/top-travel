@@ -7,14 +7,15 @@ export async function GET() {
     const supabase = await createServerSupabaseClient();
 
     const {
-      data: { session },
-    } = await supabase.auth.getSession();
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
 
-    if (!session) {
+    if (userError || !user) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    const userId = session.user.id;
+    const userId = user.id;
 
     // Get current profile
     const profile = await prisma.profile.findUnique({
@@ -24,8 +25,8 @@ export async function GET() {
 
     return NextResponse.json({
       user: {
-        id: session.user.id,
-        email: session.user.email,
+        id: user.id,
+        email: user.email,
       },
       role: profile?.role || "USER",
       profileExists: !!profile,

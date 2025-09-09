@@ -38,10 +38,11 @@ export default async function DashboardLayout({
   );
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
 
-  if (!session) {
+  if (userError || !user) {
     redirect("/sign-in");
   }
 

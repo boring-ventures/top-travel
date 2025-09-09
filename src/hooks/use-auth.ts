@@ -10,19 +10,58 @@ export function useAuth() {
   const router = useRouter();
 
   useEffect(() => {
-    // Check current session
-    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
-      setSession(currentSession);
-      setUser(currentSession?.user ?? null);
-      setLoading(false);
-    });
+    // Check current user and session
+    const initializeAuth = async () => {
+      try {
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        if (userError) {
+          console.error("Error getting user:", userError);
+          setUser(null);
+          setSession(null);
+        } else {
+          setUser(user);
+          setSession(session);
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error("Error initializing auth:", error);
+        setUser(null);
+        setSession(null);
+        setLoading(false);
+      }
+    };
+
+    initializeAuth();
 
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, newSession) => {
-      setSession(newSession);
-      setUser(newSession?.user ?? null);
+    } = supabase.auth.onAuthStateChange(async (_event, newSession) => {
+      if (newSession) {
+        // Verify the user is still valid
+        const {
+          data: { user },
+          error,
+        } = await supabase.auth.getUser();
+        if (error) {
+          console.error("Error verifying user:", error);
+          setUser(null);
+          setSession(null);
+        } else {
+          setUser(user);
+          setSession(newSession);
+        }
+      } else {
+        setUser(null);
+        setSession(null);
+      }
       setLoading(false);
     });
 
@@ -42,7 +81,7 @@ export function useAuth() {
 
     if (data?.session) {
       setSession(data.session);
-      setUser(data.session.user);
+      setUser(data.user);
       await supabase.auth.setSession(data.session);
       return data.session;
     }
@@ -53,7 +92,8 @@ export function useAuth() {
     try {
       // Get the site URL from the environment or current location
       const siteUrl =
-        process.env.NEXT_PUBLIC_SITE_URL || (typeof window !== "undefined" ? window.location.origin : "");
+        process.env.NEXT_PUBLIC_SITE_URL ||
+        (typeof window !== "undefined" ? window.location.origin : "");
 
       const { data, error } = await supabase.auth.signUp({
         email: email.trim().toLowerCase(),

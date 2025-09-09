@@ -24,6 +24,10 @@ export async function middleware(req: NextRequest) {
   );
 
   const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+  const {
     data: { session },
   } = await supabase.auth.getSession();
 
@@ -32,9 +36,9 @@ export async function middleware(req: NextRequest) {
     return res;
   }
 
-  // If there's no session and the user is trying to access a protected route
+  // If there's no user and the user is trying to access a protected route
   if (
-    !session &&
+    (userError || !user) &&
     (req.nextUrl.pathname.startsWith("/dashboard") ||
       req.nextUrl.pathname.startsWith("/cms"))
   ) {
@@ -44,9 +48,9 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  // If there's a session and the user is trying to access auth routes
+  // If there's a user and the user is trying to access auth routes
   if (
-    session &&
+    user &&
     (req.nextUrl.pathname.startsWith("/sign-in") ||
       req.nextUrl.pathname.startsWith("/sign-up"))
   ) {
@@ -57,18 +61,18 @@ export async function middleware(req: NextRequest) {
 
   // Enforce SUPERADMIN for CMS
   if (req.nextUrl.pathname.startsWith("/cms")) {
-    if (!session) {
+    if (userError || !user) {
       const redirectUrl = req.nextUrl.clone();
       redirectUrl.pathname = "/sign-in";
       redirectUrl.searchParams.set("redirectTo", req.nextUrl.pathname);
       return NextResponse.redirect(redirectUrl);
     }
     // First try role on JWT if present
-    const role = (session.user as any)?.role;
+    const role = (user as any)?.role;
     if (role !== "SUPERADMIN") {
       // Fallback: fetch profile from our API and check role
       try {
-        const profileUrl = new URL(`/api/profile/${session.user.id}`, req.url);
+        const profileUrl = new URL(`/api/profile/${user.id}`, req.url);
         const profileRes = await fetch(profileUrl.toString(), {
           headers: {
             // Pass through cookies so the API can authenticate the user

@@ -37,10 +37,11 @@ export default async function AuthLayout({
   );
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
 
-  if (session) {
+  if (!userError && user) {
     redirect("/dashboard");
   }
 
