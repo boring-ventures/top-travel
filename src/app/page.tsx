@@ -12,7 +12,7 @@ import {
   PersistentWhatsAppCTA,
   Tags,
 } from "@/components/views/landing-page";
-// import { World } from "@/components/ui/globe-client";
+import { World } from "@/components/ui/globe-client";
 import { RotatingWords } from "@/components/ui/rotating-words";
 import MetricsSection from "@/components/views/landing-page/MetricsSection";
 import prisma from "@/lib/prisma";
@@ -763,12 +763,7 @@ export default async function Home() {
 
               {/* Right side - Globe component */}
               <div className="relative order-1 lg:order-2">
-                {/* <World globeConfig={globeConfig} data={sampleArcs} /> */}
-                <div className="w-full h-[400px] sm:h-[500px] lg:h-[600px] flex items-center justify-center bg-gray-100 rounded-lg">
-                  <div className="text-gray-500">
-                    Globe component temporarily disabled
-                  </div>
-                </div>
+                <World globeConfig={globeConfig} data={sampleArcs} />
               </div>
             </div>
           </div>

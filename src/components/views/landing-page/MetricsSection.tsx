@@ -70,7 +70,7 @@ const AnimatedCounter = ({
   }, [shouldAnimate, isAnimating, delay]);
 
   useEffect(() => {
-    if (!isAnimating) return;
+    if (!isAnimating || typeof window === "undefined") return;
 
     let startTime: number;
     let animationFrame: number;
@@ -145,6 +145,8 @@ const useInView = (threshold = 0.3) => {
   const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && !hasTriggered) {

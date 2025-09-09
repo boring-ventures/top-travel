@@ -1,19 +1,27 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { Color, Scene, Fog, PerspectiveCamera, Vector3 } from "three";
-import ThreeGlobe from "three-globe";
 import { useThree, Canvas, extend } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import countries from "../../../data/globe.json";
+
+// Dynamically import ThreeGlobe only on client side
+let ThreeGlobe: any = null;
+
+if (typeof window !== "undefined") {
+  import("three-globe").then((module) => {
+    ThreeGlobe = module.default;
+    extend({ ThreeGlobe: ThreeGlobe });
+  });
+}
+
 declare module "@react-three/fiber" {
   interface ThreeElements {
     threeGlobe: ThreeElements["mesh"] & {
-      new (): ThreeGlobe;
+      new (): any;
     };
   }
 }
-
-extend({ ThreeGlobe: ThreeGlobe });
 
 const RING_PROPAGATION_SPEED = 3;
 const aspect = 1.2;
@@ -63,9 +71,10 @@ interface WorldProps {
 let numbersOfRings = [0];
 
 export function Globe({ globeConfig, data }: WorldProps) {
-  const globeRef = useRef<ThreeGlobe | null>(null);
+  const globeRef = useRef<any | null>(null);
   const groupRef = useRef<any>(null);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
+  const [threeGlobeLoaded, setThreeGlobeLoaded] = useState<boolean>(false);
 
   const defaultProps = {
     pointSize: 1.5,
@@ -84,14 +93,30 @@ export function Globe({ globeConfig, data }: WorldProps) {
     ...globeConfig,
   };
 
-  // Initialize globe only once
+  // Load ThreeGlobe dynamically
   useEffect(() => {
-    if (!globeRef.current && groupRef.current) {
+    if (typeof window !== "undefined" && !threeGlobeLoaded) {
+      import("three-globe").then((module) => {
+        ThreeGlobe = module.default;
+        extend({ ThreeGlobe: ThreeGlobe });
+        setThreeGlobeLoaded(true);
+      });
+    }
+  }, [threeGlobeLoaded]);
+
+  // Initialize globe only once after ThreeGlobe is loaded
+  useEffect(() => {
+    if (
+      !globeRef.current &&
+      groupRef.current &&
+      threeGlobeLoaded &&
+      ThreeGlobe
+    ) {
       globeRef.current = new ThreeGlobe();
       (groupRef.current as any).add(globeRef.current);
       setIsInitialized(true);
     }
-  }, []);
+  }, [threeGlobeLoaded]);
 
   // Build material when globe is initialized or when relevant props change
   useEffect(() => {
@@ -161,21 +186,21 @@ export function Globe({ globeConfig, data }: WorldProps) {
 
     globeRef.current
       .arcsData(data)
-      .arcStartLat((d) => (d as { startLat: number }).startLat * 1)
-      .arcStartLng((d) => (d as { startLng: number }).startLng * 1)
-      .arcEndLat((d) => (d as { endLat: number }).endLat * 1)
-      .arcEndLng((d) => (d as { endLng: number }).endLng * 1)
-      .arcColor((e: any) => (e as { color: string }).color)
-      .arcAltitude((e) => (e as { arcAlt: number }).arcAlt * 1)
+      .arcStartLat((d: { startLat: number }) => d.startLat * 1)
+      .arcStartLng((d: { startLng: number }) => d.startLng * 1)
+      .arcEndLat((d: { endLat: number }) => d.endLat * 1)
+      .arcEndLng((d: { endLng: number }) => d.endLng * 1)
+      .arcColor((e: { color: string }) => e.color)
+      .arcAltitude((e: { arcAlt: number }) => e.arcAlt * 1)
       .arcStroke(() => [0.32, 0.28, 0.3][Math.round(Math.random() * 2)])
       .arcDashLength(defaultProps.arcLength)
-      .arcDashInitialGap((e) => (e as { order: number }).order * 1)
+      .arcDashInitialGap((e: { order: number }) => e.order * 1)
       .arcDashGap(15)
       .arcDashAnimateTime(() => defaultProps.arcTime);
 
     globeRef.current
       .pointsData(filteredPoints)
-      .pointColor((e) => (e as { color: string }).color)
+      .pointColor((e: { color: string }) => e.color)
       .pointsMerge(true)
       .pointAltitude(0.0)
       .pointRadius(3);
@@ -243,7 +268,7 @@ export function WebGLRendererConfig() {
     }
     gl.setSize(size.width, size.height);
     gl.setClearColor(0xffaaff, 0);
-  }, []);
+  }, [gl, size]);
 
   return null;
 }

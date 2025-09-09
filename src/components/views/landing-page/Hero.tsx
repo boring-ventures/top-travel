@@ -39,8 +39,16 @@ export default function Hero({ items = [], tags = [] }: HeroProps) {
       title: "Travel destination",
     },
   ];
-  const monthIndex = new Date().getMonth() % fallbackBackgrounds.length;
-  const defaultBackgroundSrc = fallbackBackgrounds[monthIndex].src;
+  const [defaultBackgroundSrc, setDefaultBackgroundSrc] = useState(
+    fallbackBackgrounds[0].src
+  );
+
+  // Set month-based background on client side only
+  useEffect(() => {
+    const monthIndex = new Date().getMonth() % fallbackBackgrounds.length;
+    setDefaultBackgroundSrc(fallbackBackgrounds[monthIndex].src);
+  }, []);
+
   const heroBackgroundSrc =
     featured?.src && isValidImageUrl(featured.src)
       ? featured.src

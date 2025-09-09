@@ -6,7 +6,7 @@ import { World } from "./globe-demo";
 const DynamicWorld = dynamic(() => Promise.resolve(World), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-[400px] sm:h-[500px] lg:h-[600px] flex items-center justify-center bg-gray-100 rounded-lg">
+    <div className="w-full h-[500px] sm:h-[600px] lg:h-[700px] xl:h-[800px] flex items-center justify-center bg-gray-100 rounded-lg">
       <div className="text-gray-500">Loading globe...</div>
     </div>
   ),
