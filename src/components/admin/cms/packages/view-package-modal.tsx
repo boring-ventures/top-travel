@@ -18,6 +18,9 @@ import {
   MapPin,
   Tag,
   Image,
+  FileText,
+  ExternalLink,
+  Download,
 } from "lucide-react";
 
 interface ViewPackageModalProps {
@@ -66,6 +69,32 @@ export function ViewPackageModal({ packageSlug }: ViewPackageModalProps) {
     if (!newOpen) {
       setPackageData(null);
       setError(null);
+    }
+  };
+
+  const handleDownloadPdf = async (pdfUrl: string, packageTitle: string) => {
+    try {
+      // Fetch the PDF file
+      const response = await fetch(pdfUrl);
+      const blob = await response.blob();
+
+      // Create a blob URL
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      // Create download link
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = `${packageTitle}-documento.pdf`;
+      document.body.appendChild(link);
+      link.click();
+
+      // Clean up
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Error downloading PDF:", error);
+      // Fallback to opening in new tab
+      window.open(pdfUrl, "_blank");
     }
   };
 
@@ -193,6 +222,52 @@ export function ViewPackageModal({ packageSlug }: ViewPackageModalProps) {
                           {packageData.heroImageUrl}
                         </div>
                       </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* PDF Document */}
+              {packageData.pdfUrl && (
+                <div className="pt-4 border-t">
+                  <div className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
+                    <FileText className="h-4 w-4" />
+                    Documento PDF
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                    <FileText className="h-8 w-8 text-red-600" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">
+                        Documento del paquete
+                      </p>
+                      <p className="text-xs text-gray-500">Archivo PDF</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          window.open(packageData.pdfUrl, "_blank")
+                        }
+                        className="flex items-center gap-2"
+                      >
+                        <ExternalLink className="h-3 w-3" />
+                        Ver PDF
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          handleDownloadPdf(
+                            packageData.pdfUrl,
+                            packageData.title
+                          )
+                        }
+                        className="flex items-center gap-2"
+                      >
+                        <Download className="h-3 w-3" />
+                        Descargar
+                      </Button>
                     </div>
                   </div>
                 </div>

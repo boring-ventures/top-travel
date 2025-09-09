@@ -19,7 +19,7 @@ import {
   ViewPackageModal,
   DeletePackageDialog,
 } from "@/components/admin/cms/packages";
-import { Plus } from "lucide-react";
+import { Plus, FileText, ExternalLink } from "lucide-react";
 
 async function fetchPackages() {
   const res = await fetch(`/api/packages?page=1&pageSize=20`);
@@ -95,6 +95,7 @@ export default function CmsPackagesList() {
                   <th className="px-3 py-2 text-left">Precio</th>
                   <th className="px-3 py-2 text-left">Tipo</th>
                   <th className="px-3 py-2 text-left">Estado</th>
+                  <th className="px-3 py-2 text-center">PDF</th>
                   <th className="px-3 py-2 text-right">Acciones</th>
                 </tr>
               </thead>
@@ -141,6 +142,27 @@ export default function CmsPackagesList() {
                     </td>
                     <td className="px-3 py-2">
                       <StatusBadge status={p.status} />
+                    </td>
+                    <td className="px-3 py-2 text-center">
+                      {p.pdfUrl ? (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => window.open(p.pdfUrl, "_blank")}
+                              className="h-6 w-6 p-0"
+                            >
+                              <FileText className="h-3 w-3 text-red-600" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Ver documento PDF</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      ) : (
+                        <span className="text-muted-foreground text-xs">—</span>
+                      )}
                     </td>
                     <td className="px-3 py-2 text-right">
                       <div className="flex justify-end gap-1">

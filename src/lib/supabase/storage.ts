@@ -19,6 +19,11 @@ export interface StorageUploadOptions {
   fit?: "cover" | "contain" | "fill" | "inside" | "outside";
 }
 
+export interface DocumentUploadOptions {
+  bucket: string;
+  folder?: string;
+}
+
 export async function uploadImageToStorage(
   file: File,
   options: StorageUploadOptions
@@ -58,6 +63,38 @@ export async function uploadImageToStorage(
     return result.url;
   } catch (error) {
     console.error("Image upload error:", error);
+    throw error;
+  }
+}
+
+export async function uploadDocumentToStorage(
+  file: File,
+  options: DocumentUploadOptions
+): Promise<string> {
+  const { bucket, folder } = options;
+
+  try {
+    // Create FormData for the upload
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("bucket", bucket);
+    if (folder) formData.append("folder", folder);
+
+    // Upload to our server-side API
+    const response = await fetch("/api/upload-image", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || "Upload failed");
+    }
+
+    const result = await response.json();
+    return result.url;
+  } catch (error) {
+    console.error("Document upload error:", error);
     throw error;
   }
 }
@@ -234,6 +271,16 @@ export async function uploadBlogPostImage(
     width: 1200,
     height: 800,
     fit: "cover",
+  });
+}
+
+export async function uploadPackagePdf(
+  file: File,
+  packageSlug: string
+): Promise<string> {
+  return uploadDocumentToStorage(file, {
+    bucket: "documents",
+    folder: `packages/${packageSlug}`,
   });
 }
 

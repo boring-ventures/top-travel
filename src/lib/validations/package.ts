@@ -11,6 +11,7 @@ export const PackageCreateSchema = z.object({
   title: NonEmptyStringSchema,
   summary: z.string().optional(),
   heroImageUrl: z.string().optional(),
+  pdfUrl: z.string().optional(),
   gallery: z.any().optional(),
   itineraryJson: z.any().optional(),
   inclusions: z.array(z.string()).default([]),
