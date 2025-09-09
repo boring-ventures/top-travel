@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ImageUpload } from "@/components/ui/image-upload";
+import { PdfUpload } from "@/components/ui/pdf-upload";
 import { AmenitiesInput } from "@/components/ui/amenities-input";
 import {
   Command,
@@ -29,8 +30,17 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useToast } from "@/components/ui/use-toast";
-import { uploadPackageImage } from "@/lib/supabase/storage";
-import { Check, ChevronsUpDown, X, MapPin, Tag } from "lucide-react";
+import { uploadPackageImage, uploadPackagePdf } from "@/lib/supabase/storage";
+import {
+  Check,
+  ChevronsUpDown,
+  X,
+  MapPin,
+  Tag,
+  FileText,
+  ExternalLink,
+  Download,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PackageFormProps {
@@ -47,6 +57,7 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
   const [currencyOpen, setCurrencyOpen] = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+  const [selectedPdfFile, setSelectedPdfFile] = useState<File | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -71,6 +82,7 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
       title: "",
       summary: "",
       heroImageUrl: "",
+      pdfUrl: "",
       inclusions: [],
       exclusions: [],
       isCustom: false,
@@ -86,6 +98,7 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
         title: (initialValues as any).title ?? "",
         summary: (initialValues as any).summary ?? "",
         heroImageUrl: (initialValues as any).heroImageUrl ?? "",
+        pdfUrl: (initialValues as any).pdfUrl ?? "",
         inclusions: (initialValues as any).inclusions ?? [],
         exclusions: (initialValues as any).exclusions ?? [],
         durationDays: (initialValues as any).durationDays ?? undefined,
@@ -111,16 +124,49 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
   const selectedTagIds = form.watch("tagIds") || [];
   const selectedTags = tags.filter((t) => selectedTagIds.includes(t.id));
 
+  const handleDownloadPdf = async (pdfUrl: string, packageTitle: string) => {
+    try {
+      // Fetch the PDF file
+      const response = await fetch(pdfUrl);
+      const blob = await response.blob();
+
+      // Create a blob URL
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      // Create download link
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = `${packageTitle}-documento.pdf`;
+      document.body.appendChild(link);
+      link.click();
+
+      // Clean up
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Error downloading PDF:", error);
+      // Fallback to opening in new tab
+      window.open(pdfUrl, "_blank");
+    }
+  };
+
   const handleSubmit = form.handleSubmit(async (values) => {
     setSubmitting(true);
 
     try {
       let finalHeroImageUrl = values.heroImageUrl;
+      let finalPdfUrl = values.pdfUrl;
 
       // Upload image if a new file was selected
       if (selectedImageFile) {
         const slug = values.slug || "temp";
         finalHeroImageUrl = await uploadPackageImage(selectedImageFile, slug);
+      }
+
+      // Upload PDF if a new file was selected
+      if (selectedPdfFile) {
+        const slug = values.slug || "temp";
+        finalPdfUrl = await uploadPackagePdf(selectedPdfFile, slug);
       }
 
       const isEdit = Boolean((initialValues as any)?.id);
@@ -133,6 +179,7 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
       const apiData: any = {
         ...values,
         heroImageUrl: finalHeroImageUrl,
+        pdfUrl: finalPdfUrl,
       };
       Object.keys(apiData).forEach((key) => {
         if (apiData[key] === "") {
@@ -154,8 +201,9 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
 
       const result = await res.json();
 
-      // Clear the selected file after successful submission
+      // Clear the selected files after successful submission
       setSelectedImageFile(null);
+      setSelectedPdfFile(null);
 
       toast({
         title: isEdit ? "Paquete actualizado" : "Paquete creado",
@@ -233,6 +281,60 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
           placeholder="Imagen Principal del Paquete"
           aspectRatio={3 / 2}
         />
+      </div>
+
+      <div className="space-y-2">
+        <PdfUpload
+          value={form.watch("pdfUrl")}
+          onChange={(url) => form.setValue("pdfUrl", url)}
+          onFileSelect={(file) => setSelectedPdfFile(file)}
+          placeholder="Subir documento PDF del paquete"
+        />
+
+        {/* Current PDF Display */}
+        {form.watch("pdfUrl") && (
+          <div className="mt-3 p-3 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-800">
+            <div className="flex items-center gap-3">
+              <FileText className="h-5 w-5 text-green-600" />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-green-800 dark:text-green-200">
+                  Documento PDF actual
+                </p>
+                <p className="text-xs text-green-600 dark:text-green-400">
+                  Haz clic en "Ver PDF" para abrir el documento
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => window.open(form.watch("pdfUrl"), "_blank")}
+                  className="flex items-center gap-2 border-green-300 text-green-700 hover:bg-green-100 dark:border-green-600 dark:text-green-300 dark:hover:bg-green-900"
+                >
+                  <ExternalLink className="h-3 w-3" />
+                  Ver PDF
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const pdfUrl = form.watch("pdfUrl");
+                    const title = form.watch("title") || "paquete";
+                    if (pdfUrl) {
+                      handleDownloadPdf(pdfUrl, title);
+                    }
+                  }}
+                  className="flex items-center gap-2 border-green-300 text-green-700 hover:bg-green-100 dark:border-green-600 dark:text-green-300 dark:hover:bg-green-900"
+                >
+                  <Download className="h-3 w-3" />
+                  Descargar
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

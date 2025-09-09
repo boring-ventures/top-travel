@@ -42,6 +42,7 @@ import {
   Gift,
 } from "lucide-react";
 import { notFound } from "next/navigation";
+import { PackagePdfSection } from "@/components/ui/package-pdf-section";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -63,6 +64,7 @@ export default async function PackageDetailPage({ params }: Params) {
   const pkgWithNumbers = {
     ...pkg,
     fromPrice: pkg.fromPrice ? Number(pkg.fromPrice) : undefined,
+    pdfUrl: pkg.pdfUrl,
   };
 
   const destinations = pkgWithNumbers.packageDestinations.map(
@@ -75,7 +77,7 @@ export default async function PackageDetailPage({ params }: Params) {
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-transparent -z-10" />
-      
+
       {/* Hero Section */}
       <section className="relative h-[60vh] min-h-[400px] w-full overflow-hidden">
         {pkgWithNumbers.heroImageUrl ? (
@@ -164,44 +166,42 @@ export default async function PackageDetailPage({ params }: Params) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
-                         {/* Price Information Card */}
-             <Card className="p-6 sm:p-8 bg-white/80 backdrop-blur-sm border border-black/20 shadow-lg">
-                <div className="space-y-4">
-                 <h3 className="text-lg font-semibold flex items-center gap-2 text-black/80">
-                   <DollarSign className="h-5 w-5 text-black/60" />
-                    Información de precios
-                  </h3>
-                 <div className="bg-black/5 p-4 rounded-lg border border-black/10">
-                    {pkgWithNumbers.isCustom ? (
-                     <div className="flex items-center gap-3">
-                       <Gift className="h-6 w-6 text-black/60" />
-                       <p className="text-lg text-black/80">
+            {/* Price Information Card */}
+            <Card className="p-6 sm:p-8 bg-white/80 backdrop-blur-sm border border-black/20 shadow-lg">
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold flex items-center gap-2 text-black/80">
+                  <DollarSign className="h-5 w-5 text-black/60" />
+                  Información de precios
+                </h3>
+                <div className="bg-black/5 p-4 rounded-lg border border-black/10">
+                  {pkgWithNumbers.isCustom ? (
+                    <div className="flex items-center gap-3">
+                      <Gift className="h-6 w-6 text-black/60" />
+                      <p className="text-lg text-black/80">
                         Paquete personalizado - Consulta precios
                       </p>
-                     </div>
-                    ) : (
-                     <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                         <div className="flex items-center gap-2">
-                           <DollarSign className="h-5 w-5 text-black/60" />
-                           <span className="text-black/60">
-                            Precio desde:
-                          </span>
-                         </div>
-                         <span className="text-2xl font-bold text-black/90">
-                            {pkgWithNumbers.currency ?? "USD"}{" "}
-                            {pkgWithNumbers.fromPrice?.toString() ?? "—"}
-                          </span>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="h-5 w-5 text-black/60" />
+                          <span className="text-black/60">Precio desde:</span>
                         </div>
-                       <div className="flex items-start gap-2">
-                         <Info className="h-4 w-4 text-black/50 mt-0.5 flex-shrink-0" />
-                         <p className="text-sm text-black/60">
+                        <span className="text-2xl font-bold text-black/90">
+                          {pkgWithNumbers.currency ?? "USD"}{" "}
+                          {pkgWithNumbers.fromPrice?.toString() ?? "—"}
+                        </span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Info className="h-4 w-4 text-black/50 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-black/60">
                           * Los precios pueden variar según la temporada y
                           disponibilidad
                         </p>
-                       </div>
                       </div>
-                    )}
+                    </div>
+                  )}
                 </div>
               </div>
             </Card>
@@ -219,25 +219,59 @@ export default async function PackageDetailPage({ params }: Params) {
                       // Función para obtener el icono apropiado basado en el contenido
                       const getInclusionIcon = (text: string) => {
                         const lowerText = text.toLowerCase();
-                        if (lowerText.includes('hotel') || lowerText.includes('alojamiento')) return <Bed className="h-4 w-4 text-black/60" />;
-                        if (lowerText.includes('comida') || lowerText.includes('desayuno') || lowerText.includes('cena')) return <Utensils className="h-4 w-4 text-black/60" />;
-                        if (lowerText.includes('transporte') || lowerText.includes('vuelo') || lowerText.includes('bus')) return <Car className="h-4 w-4 text-black/60" />;
-                        if (lowerText.includes('wifi') || lowerText.includes('internet')) return <Wifi className="h-4 w-4 text-black/60" />;
-                        if (lowerText.includes('guía') || lowerText.includes('tour')) return <Compass className="h-4 w-4 text-black/60" />;
-                        if (lowerText.includes('seguro') || lowerText.includes('protección')) return <Shield className="h-4 w-4 text-black/60" />;
-                        if (lowerText.includes('foto') || lowerText.includes('cámara')) return <Camera className="h-4 w-4 text-black/60" />;
-                        if (lowerText.includes('café') || lowerText.includes('bebida')) return <Coffee className="h-4 w-4 text-black/60" />;
+                        if (
+                          lowerText.includes("hotel") ||
+                          lowerText.includes("alojamiento")
+                        )
+                          return <Bed className="h-4 w-4 text-black/60" />;
+                        if (
+                          lowerText.includes("comida") ||
+                          lowerText.includes("desayuno") ||
+                          lowerText.includes("cena")
+                        )
+                          return <Utensils className="h-4 w-4 text-black/60" />;
+                        if (
+                          lowerText.includes("transporte") ||
+                          lowerText.includes("vuelo") ||
+                          lowerText.includes("bus")
+                        )
+                          return <Car className="h-4 w-4 text-black/60" />;
+                        if (
+                          lowerText.includes("wifi") ||
+                          lowerText.includes("internet")
+                        )
+                          return <Wifi className="h-4 w-4 text-black/60" />;
+                        if (
+                          lowerText.includes("guía") ||
+                          lowerText.includes("tour")
+                        )
+                          return <Compass className="h-4 w-4 text-black/60" />;
+                        if (
+                          lowerText.includes("seguro") ||
+                          lowerText.includes("protección")
+                        )
+                          return <Shield className="h-4 w-4 text-black/60" />;
+                        if (
+                          lowerText.includes("foto") ||
+                          lowerText.includes("cámara")
+                        )
+                          return <Camera className="h-4 w-4 text-black/60" />;
+                        if (
+                          lowerText.includes("café") ||
+                          lowerText.includes("bebida")
+                        )
+                          return <Coffee className="h-4 w-4 text-black/60" />;
                         return <Check className="h-4 w-4 text-black/60" />;
                       };
 
                       return (
-                      <div
-                        key={idx}
+                        <div
+                          key={idx}
                           className="flex items-center gap-3 p-3 bg-black/5 rounded-lg border border-black/10 hover:bg-black/10 transition-colors"
-                      >
+                        >
                           {getInclusionIcon(inc)}
                           <span className="text-sm text-black/80">{inc}</span>
-                      </div>
+                        </div>
                       );
                     })}
                   </div>
@@ -257,25 +291,59 @@ export default async function PackageDetailPage({ params }: Params) {
                       // Función para obtener el icono apropiado basado en el contenido
                       const getExclusionIcon = (text: string) => {
                         const lowerText = text.toLowerCase();
-                        if (lowerText.includes('hotel') || lowerText.includes('alojamiento')) return <Bed className="h-4 w-4 text-black/60" />;
-                        if (lowerText.includes('comida') || lowerText.includes('desayuno') || lowerText.includes('cena')) return <Utensils className="h-4 w-4 text-black/60" />;
-                        if (lowerText.includes('transporte') || lowerText.includes('vuelo') || lowerText.includes('bus')) return <Car className="h-4 w-4 text-black/60" />;
-                        if (lowerText.includes('wifi') || lowerText.includes('internet')) return <Wifi className="h-4 w-4 text-black/60" />;
-                        if (lowerText.includes('guía') || lowerText.includes('tour')) return <Compass className="h-4 w-4 text-black/60" />;
-                        if (lowerText.includes('seguro') || lowerText.includes('protección')) return <Shield className="h-4 w-4 text-black/60" />;
-                        if (lowerText.includes('foto') || lowerText.includes('cámara')) return <Camera className="h-4 w-4 text-black/60" />;
-                        if (lowerText.includes('café') || lowerText.includes('bebida')) return <Coffee className="h-4 w-4 text-black/60" />;
+                        if (
+                          lowerText.includes("hotel") ||
+                          lowerText.includes("alojamiento")
+                        )
+                          return <Bed className="h-4 w-4 text-black/60" />;
+                        if (
+                          lowerText.includes("comida") ||
+                          lowerText.includes("desayuno") ||
+                          lowerText.includes("cena")
+                        )
+                          return <Utensils className="h-4 w-4 text-black/60" />;
+                        if (
+                          lowerText.includes("transporte") ||
+                          lowerText.includes("vuelo") ||
+                          lowerText.includes("bus")
+                        )
+                          return <Car className="h-4 w-4 text-black/60" />;
+                        if (
+                          lowerText.includes("wifi") ||
+                          lowerText.includes("internet")
+                        )
+                          return <Wifi className="h-4 w-4 text-black/60" />;
+                        if (
+                          lowerText.includes("guía") ||
+                          lowerText.includes("tour")
+                        )
+                          return <Compass className="h-4 w-4 text-black/60" />;
+                        if (
+                          lowerText.includes("seguro") ||
+                          lowerText.includes("protección")
+                        )
+                          return <Shield className="h-4 w-4 text-black/60" />;
+                        if (
+                          lowerText.includes("foto") ||
+                          lowerText.includes("cámara")
+                        )
+                          return <Camera className="h-4 w-4 text-black/60" />;
+                        if (
+                          lowerText.includes("café") ||
+                          lowerText.includes("bebida")
+                        )
+                          return <Coffee className="h-4 w-4 text-black/60" />;
                         return <X className="h-4 w-4 text-black/60" />;
                       };
 
                       return (
-                      <div
-                        key={idx}
+                        <div
+                          key={idx}
                           className="flex items-center gap-3 p-3 bg-black/5 rounded-lg border border-black/10 hover:bg-black/10 transition-colors"
-                      >
+                        >
                           {getExclusionIcon(exc)}
                           <span className="text-sm text-black/80">{exc}</span>
-                      </div>
+                        </div>
                       );
                     })}
                   </div>
@@ -285,7 +353,9 @@ export default async function PackageDetailPage({ params }: Params) {
             {/* Itinerary */}
             {pkg.itineraryJson && (
               <Card className="p-6 sm:p-8 bg-white/80 backdrop-blur-sm border border-black/20 shadow-lg">
-                <h3 className="text-xl font-semibold mb-4 text-black/80">Itinerario</h3>
+                <h3 className="text-xl font-semibold mb-4 text-black/80">
+                  Itinerario
+                </h3>
                 <div className="bg-black/5 p-4 rounded-lg border border-black/10">
                   <pre className="whitespace-pre-wrap text-sm text-black/80">
                     {JSON.stringify(pkg.itineraryJson, null, 2)}
@@ -294,6 +364,13 @@ export default async function PackageDetailPage({ params }: Params) {
               </Card>
             )}
 
+            {/* PDF Document */}
+            {pkgWithNumbers.pdfUrl && (
+              <PackagePdfSection
+                pdfUrl={pkgWithNumbers.pdfUrl}
+                packageTitle={pkgWithNumbers.title}
+              />
+            )}
           </div>
 
           {/* Sidebar */}
@@ -322,11 +399,19 @@ export default async function PackageDetailPage({ params }: Params) {
                   />
 
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="flex-1 border-black/20 hover:bg-black/5">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 border-black/20 hover:bg-black/5"
+                    >
                       <Heart className="h-4 w-4 mr-2 text-black/60" />
                       Guardar
                     </Button>
-                    <Button variant="outline" size="sm" className="flex-1 border-black/20 hover:bg-black/5">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 border-black/20 hover:bg-black/5"
+                    >
                       <Share2 className="h-4 w-4 mr-2 text-black/60" />
                       Compartir
                     </Button>
@@ -336,7 +421,9 @@ export default async function PackageDetailPage({ params }: Params) {
 
               {/* Quick Info */}
               <Card className="p-6 bg-white/80 backdrop-blur-sm border border-black/20 shadow-lg">
-                <h4 className="font-semibold mb-4 text-black/80">Información rápida</h4>
+                <h4 className="font-semibold mb-4 text-black/80">
+                  Información rápida
+                </h4>
                 <div className="space-y-3 text-sm">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -354,22 +441,24 @@ export default async function PackageDetailPage({ params }: Params) {
                       <MapPin className="h-4 w-4 text-black/60" />
                       <span className="text-black/60">Destinos:</span>
                     </div>
-                    <span className="font-medium text-black/80">{destinations.length}</span>
+                    <span className="font-medium text-black/80">
+                      {destinations.length}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Award className="h-4 w-4 text-black/60" />
                       <span className="text-black/60">Etiquetas:</span>
                     </div>
-                    <span className="font-medium text-black/80">{tags.length}</span>
+                    <span className="font-medium text-black/80">
+                      {tags.length}
+                    </span>
                   </div>
                   {pkgWithNumbers.fromPrice && (
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <DollarSign className="h-4 w-4 text-black/60" />
-                        <span className="text-black/60">
-                          Precio desde:
-                        </span>
+                        <span className="text-black/60">Precio desde:</span>
                       </div>
                       <span className="font-semibold text-black/90">
                         {pkgWithNumbers.currency ?? "USD"}{" "}
@@ -404,7 +493,12 @@ export default async function PackageDetailPage({ params }: Params) {
                             {destination.country}
                           </div>
                         </div>
-                        <Button asChild variant="ghost" size="sm" className="text-black/60 hover:text-black/80 hover:bg-black/5">
+                        <Button
+                          asChild
+                          variant="ghost"
+                          size="sm"
+                          className="text-black/60 hover:text-black/80 hover:bg-black/5"
+                        >
                           <Link href={`/destinations/${destination.slug}`}>
                             Ver
                           </Link>
@@ -424,7 +518,6 @@ export default async function PackageDetailPage({ params }: Params) {
                   </div>
                 </Card>
               )}
-
             </div>
           </div>
         </div>

@@ -125,6 +125,7 @@ model Package {
   title            String
   summary          String?
   heroImageUrl     String?
+  pdfUrl           String?          // URL to PDF document in documents bucket
   gallery          Json?
   itineraryJson    Json?
   inclusions       String[]

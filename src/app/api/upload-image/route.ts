@@ -4,20 +4,23 @@ import { createClient } from "@supabase/supabase-js";
 // Valid buckets
 const VALID_BUCKETS = [
   "offers",
-  "packages", 
+  "packages",
   "destinations",
   "departments",
   "events",
   "fixed-departures",
   "testimonials",
-  "pages"
+  "pages",
+  "documents",
 ];
 
 function generateFileName(originalName: string, folder?: string): string {
   const timestamp = Date.now();
   const randomId = Math.random().toString(36).slice(2, 8);
-  const baseName = originalName.replace(/\.[^/.]+$/, "").replace(/[^a-zA-Z0-9]/g, '-');
-  const extension = originalName.split('.').pop()?.toLowerCase() || 'jpg';
+  const baseName = originalName
+    .replace(/\.[^/.]+$/, "")
+    .replace(/[^a-zA-Z0-9]/g, "-");
+  const extension = originalName.split(".").pop()?.toLowerCase() || "jpg";
   const fileName = `${baseName}-${timestamp}-${randomId}.${extension}`;
   return folder ? `${folder}/${fileName}` : fileName;
 }
@@ -42,20 +45,25 @@ export async function POST(request: NextRequest) {
     }
 
     if (!bucket) {
-      return NextResponse.json({ error: "No bucket specified" }, { status: 400 });
+      return NextResponse.json(
+        { error: "No bucket specified" },
+        { status: 400 }
+      );
     }
 
     if (!VALID_BUCKETS.includes(bucket)) {
       return NextResponse.json(
-        { error: `Invalid bucket. Must be one of: ${VALID_BUCKETS.join(", ")}` },
+        {
+          error: `Invalid bucket. Must be one of: ${VALID_BUCKETS.join(", ")}`,
+        },
         { status: 400 }
       );
     }
 
     // Validate file type
-    if (!file.type.startsWith("image/")) {
+    if (!file.type.startsWith("image/") && file.type !== "application/pdf") {
       return NextResponse.json(
-        { error: "File must be an image" },
+        { error: "File must be an image or PDF" },
         { status: 400 }
       );
     }
@@ -82,9 +90,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Get public URL
-    const { data: { publicUrl } } = supabase.storage
-      .from(bucket)
-      .getPublicUrl(fileName);
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from(bucket).getPublicUrl(fileName);
 
     return NextResponse.json({
       success: true,
@@ -92,7 +100,6 @@ export async function POST(request: NextRequest) {
       path: fileName,
       bucket,
     });
-
   } catch (error) {
     console.error("Image upload error:", error);
     return NextResponse.json(
@@ -110,7 +117,7 @@ export async function DELETE(request: NextRequest) {
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
-    
+
     const { searchParams } = new URL(request.url);
     const bucket = searchParams.get("bucket");
     const path = searchParams.get("path");
@@ -124,7 +131,9 @@ export async function DELETE(request: NextRequest) {
 
     if (!VALID_BUCKETS.includes(bucket)) {
       return NextResponse.json(
-        { error: `Invalid bucket. Must be one of: ${VALID_BUCKETS.join(", ")}` },
+        {
+          error: `Invalid bucket. Must be one of: ${VALID_BUCKETS.join(", ")}`,
+        },
         { status: 400 }
       );
     }
@@ -142,7 +151,6 @@ export async function DELETE(request: NextRequest) {
       success: true,
       message: "Image deleted successfully",
     });
-
   } catch (error) {
     console.error("Image delete error:", error);
     return NextResponse.json(

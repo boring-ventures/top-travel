@@ -88,6 +88,7 @@ export async function POST(request: Request) {
         title: parsed.title,
         summary: parsed.summary,
         heroImageUrl: parsed.heroImageUrl,
+        pdfUrl: parsed.pdfUrl,
         gallery: sanitizeRichJson(parsed.gallery),
         itineraryJson: sanitizeRichJson(parsed.itineraryJson),
         inclusions: parsed.inclusions ?? [],
