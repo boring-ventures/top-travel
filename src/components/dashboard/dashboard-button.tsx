@@ -20,10 +20,10 @@ export default function DashboardButton({
   return (
     <Button
       onClick={() => router.push("/dashboard")}
-      className={`flex items-center gap-2 shadow-lg ${className}`}
+      className={`flex items-center justify-center w-10 h-10 rounded-full shadow-lg ${className}`}
+      size="icon"
     >
-      <LayoutDashboard className="h-4 w-4" />
-      Dashboard
+      <LayoutDashboard className="h-5 w-5" />
     </Button>
   );
 }
