@@ -101,7 +101,7 @@ const AnimatedCounter = ({
 
   return (
     <div className="transition-all duration-300">
-      <span className="text-5xl font-bold text-gray-900">
+      <span className="text-3xl font-semibold text-blue-600">
         {suffix}
         {count.toLocaleString()}
       </span>

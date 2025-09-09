@@ -655,7 +655,7 @@ export default async function Home() {
         </section>
 
         {/* Experiences Section */}
-        <section className="py-8 sm:py-16 w-full bg-gray-900 text-white">
+        <section className="py-4 sm:py-6 w-full bg-gray-900 text-white">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
               {/* Left side - Text content */}

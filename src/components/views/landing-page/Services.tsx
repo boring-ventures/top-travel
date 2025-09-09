@@ -6,12 +6,12 @@ export default function Services() {
   return (
     <section className="py-12 w-full bg-gray-900 text-white">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-8 sm:mb-12">
+        <div className="text-center">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
             Nuestros <span className="font-bold text-blue-600">Servicios</span>
           </h2>
         </div>
-        <div className="h-screen py-20 w-full">
+        <div className="h-screen w-full">
           <LayoutGrid cards={cards} />
         </div>
       </div>
