@@ -180,17 +180,6 @@ export function EditEventModal({
       // Explicitly ensure heroImageUrl is included
       apiData.heroImageUrl = values.heroImageUrl;
 
-      // Debug: Log the data being sent
-      console.log("Sending event update data:", apiData);
-      console.log("heroImageUrl in apiData:", apiData.heroImageUrl);
-      console.log("heroImageUrl type:", typeof apiData.heroImageUrl);
-      console.log(
-        "heroImageUrl === undefined:",
-        apiData.heroImageUrl === undefined
-      );
-      console.log("heroImageUrl === null:", apiData.heroImageUrl === null);
-      console.log("heroImageUrl === '':", apiData.heroImageUrl === "");
-
       const res = await fetch(`/api/events/${eventSlug}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -199,12 +188,11 @@ export function EditEventModal({
 
       if (!res.ok) {
         const error = await res.json();
-        console.error("API Error:", error);
+        // API Error occurred
         throw new Error(error.error || "Error al actualizar el evento");
       }
 
       const result = await res.json();
-      console.log("Event updated successfully:", result);
 
       toast({
         title: "Evento actualizado",
@@ -216,7 +204,7 @@ export function EditEventModal({
 
       onOpenChange(false);
     } catch (error: any) {
-      console.error("Form submission error:", error);
+      // Form submission error occurred
       toast({
         title: "Error",
         description: error.message || "Error al actualizar el evento",
@@ -454,36 +442,13 @@ export function EditEventModal({
               <ImageUpload
                 value={form.watch("heroImageUrl")}
                 onChange={(url) => {
-                  console.log(
-                    "EditModal ImageUpload onChange called with URL:",
-                    url
-                  );
-                  console.log("EditModal URL type:", typeof url);
-                  console.log("EditModal URL === '':", url === "");
-                  console.log(
-                    "EditModal URL === undefined:",
-                    url === undefined
-                  );
-
                   // Convert empty string to undefined
                   const finalUrl = url === "" ? undefined : url;
-                  console.log("EditModal Final URL to set:", finalUrl);
-
                   form.setValue("heroImageUrl", finalUrl);
-                  console.log(
-                    "EditModal Form heroImageUrl after setValue:",
-                    form.watch("heroImageUrl")
-                  );
                 }}
                 onUpload={async (file) => {
-                  console.log(
-                    "EditModal ImageUpload onUpload called with file:",
-                    file
-                  );
                   const slug = form.watch("slug") || "temp";
-                  console.log("EditModal Using slug for upload:", slug);
                   const result = await uploadEventImage(file, slug);
-                  console.log("EditModal Upload result:", result);
                   return result;
                 }}
                 placeholder="Imagen Principal del Evento"

@@ -134,6 +134,7 @@ model Package {
   fromPrice        Decimal?
   currency         Currency?
   isCustom         Boolean          @default(false)
+  isTop            Boolean          @default(false)  // Top packages filter
   status           ContentStatus    @default(DRAFT)
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
@@ -145,6 +146,7 @@ model Package {
 
   @@index([status])
   @@index([isCustom])
+  @@index([isTop])
   @@index([createdAt])
 }
 

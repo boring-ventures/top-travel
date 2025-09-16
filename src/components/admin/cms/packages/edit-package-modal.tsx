@@ -27,7 +27,6 @@ export function EditPackageModal({
 
   useEffect(() => {
     if (open && packageSlug) {
-      console.log("Fetching package:", packageSlug);
       setLoading(true);
       setError(null);
       fetch(`/api/packages/${packageSlug}`, {
@@ -37,15 +36,12 @@ export function EditPackageModal({
         },
       })
         .then((res) => {
-          console.log("Response status:", res.status);
-          console.log("Response headers:", res.headers);
           if (!res.ok) {
             throw new Error(`HTTP error! status: ${res.status}`);
           }
           return res.json();
         })
         .then((data) => {
-          console.log("Package data:", data);
           setPackageData(data);
         })
         .catch((error) => {
@@ -78,7 +74,6 @@ export function EditPackageModal({
         size="sm"
         title="Editar paquete"
         onClick={() => {
-          console.log("Edit button clicked for package:", packageSlug);
           setOpen(true);
         }}
       >

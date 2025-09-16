@@ -356,19 +356,6 @@ export function OfferForm({ onSuccess, initialValues }: OfferFormProps) {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => {
-              console.log("Test button clicked");
-              console.log("Current form values:", form.getValues());
-              console.log("Form is valid:", form.formState.isValid);
-              console.log("Form errors:", form.formState.errors);
-              console.log("Form touched fields:", form.formState.touchedFields);
-            }}
-          >
-            Debug Form
-          </Button>
           <Button type="submit" disabled={submitting} className="min-w-[120px]">
             {submitting
               ? "Guardando..."

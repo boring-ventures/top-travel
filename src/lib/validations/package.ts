@@ -20,6 +20,7 @@ export const PackageCreateSchema = z.object({
   fromPrice: z.coerce.number().positive().optional(),
   currency: CurrencySchema.optional(),
   isCustom: z.boolean().default(false),
+  isTop: z.boolean().default(false),
   status: ContentStatusSchema.default("DRAFT"),
   destinationIds: z.array(z.string()).optional(),
   tagIds: z.array(z.string()).optional(),

@@ -615,23 +615,6 @@ export function WhatsAppTemplateBuilder({
         </Card>
       )}
 
-      {/* Raw Template (for debugging) */}
-      <details className="text-xs">
-        <summary className="cursor-pointer text-muted-foreground">
-          Ver código de plantilla
-        </summary>
-        <Textarea
-          value={value}
-          onChange={(e) => {
-            onChange(e.target.value);
-            setBlocks(parseTemplateToBlocks(e.target.value));
-          }}
-          className="mt-2 font-mono text-xs"
-          rows={4}
-          placeholder="O escribe directamente aquí..."
-        />
-      </details>
-
       {error && (
         <div className="flex items-center gap-2 text-sm text-red-600">
           <AlertCircle className="h-3 w-3" />

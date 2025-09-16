@@ -16,7 +16,12 @@ import {
   DeleteItemDialog,
 } from "@/components/admin/cms/testimonials";
 import { Eye, Edit, Trash2, Plus } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 async function fetchTestimonials() {
   const res = await fetch(`/api/testimonials`);
@@ -31,7 +36,7 @@ export default function CmsTestimonialsList() {
   });
   const items = data ?? [];
   const [search, setSearch] = useState("");
-  
+
   // Modal states
   const [newModalOpen, setNewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -67,46 +72,46 @@ export default function CmsTestimonialsList() {
   const handleApprove = async (testimonial: any) => {
     try {
       const res = await fetch(`/api/testimonials/${testimonial.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'APPROVED' })
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "APPROVED" }),
       });
       if (res.ok) {
         // Refetch data
         window.location.reload();
       }
     } catch (error) {
-      console.error('Error approving testimonial:', error);
+      // Error handling - could be improved with proper error reporting
     }
   };
 
   const handleReject = async (testimonial: any) => {
     try {
       const res = await fetch(`/api/testimonials/${testimonial.id}`, {
-        method: 'DELETE'
+        method: "DELETE",
       });
       if (res.ok) {
         // Refetch data
         window.location.reload();
       }
     } catch (error) {
-      console.error('Error rejecting testimonial:', error);
+      // Error handling - could be improved with proper error reporting
     }
   };
 
   const handlePublish = async (testimonial: any) => {
     try {
       const res = await fetch(`/api/testimonials/${testimonial.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'PUBLISHED' })
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "PUBLISHED" }),
       });
       if (res.ok) {
         // Refetch data
         window.location.reload();
       }
     } catch (error) {
-      console.error('Error publishing testimonial:', error);
+      // Error handling - could be improved with proper error reporting
     }
   };
 
@@ -124,9 +129,11 @@ export default function CmsTestimonialsList() {
       >
         <SearchInput placeholder="Buscar testimonios" onSearch={setSearch} />
       </ListHeader>
-      
+
       {error ? (
-        <div className="text-sm text-red-600">Error al cargar los testimonios.</div>
+        <div className="text-sm text-red-600">
+          Error al cargar los testimonios.
+        </div>
       ) : (
         <TableShell
           title="Todos los Testimonios"
@@ -135,7 +142,9 @@ export default function CmsTestimonialsList() {
             filtered.length === 0 ? (
               <EmptyState
                 title={
-                  search ? "No hay testimonios que coincidan con tu búsqueda" : "Aún no hay testimonios"
+                  search
+                    ? "No hay testimonios que coincidan con tu búsqueda"
+                    : "Aún no hay testimonios"
                 }
                 description={
                   search
@@ -181,8 +190,8 @@ export default function CmsTestimonialsList() {
                         <Star
                           key={i}
                           className={`h-3 w-3 ${
-                            i < t.rating 
-                              ? "fill-yellow-400 text-yellow-400" 
+                            i < t.rating
+                              ? "fill-yellow-400 text-yellow-400"
                               : "text-gray-300"
                           }`}
                         />
@@ -196,19 +205,25 @@ export default function CmsTestimonialsList() {
                     </p>
                   </td>
                   <td className="px-3 py-2">
-                    {t.status === 'PENDING' && (
-                      <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
+                    {t.status === "PENDING" && (
+                      <Badge
+                        variant="outline"
+                        className="bg-yellow-50 text-yellow-700 border-yellow-200"
+                      >
                         <Clock className="h-3 w-3 mr-1" />
                         Pendiente
                       </Badge>
                     )}
-                    {t.status === 'APPROVED' && (
-                      <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                    {t.status === "APPROVED" && (
+                      <Badge
+                        variant="outline"
+                        className="bg-blue-50 text-blue-700 border-blue-200"
+                      >
                         <Check className="h-3 w-3 mr-1" />
                         Aprobado
                       </Badge>
                     )}
-                    {t.status === 'PUBLISHED' && (
+                    {t.status === "PUBLISHED" && (
                       <Badge variant="default" className="bg-green-600">
                         <Check className="h-3 w-3 mr-1" />
                         Publicado
@@ -216,7 +231,7 @@ export default function CmsTestimonialsList() {
                     )}
                   </td>
                   <td className="px-3 py-2">
-                    {t.status === 'PENDING' && (
+                    {t.status === "PENDING" && (
                       <div className="flex gap-1">
                         <Button
                           size="sm"
@@ -236,7 +251,7 @@ export default function CmsTestimonialsList() {
                         </Button>
                       </div>
                     )}
-                    {t.status === 'APPROVED' && (
+                    {t.status === "APPROVED" && (
                       <Button
                         size="sm"
                         variant="outline"
@@ -265,7 +280,7 @@ export default function CmsTestimonialsList() {
                             <p>Ver detalles</p>
                           </TooltipContent>
                         </Tooltip>
-                        
+
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button
@@ -281,7 +296,7 @@ export default function CmsTestimonialsList() {
                             <p>Editar</p>
                           </TooltipContent>
                         </Tooltip>
-                        
+
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button
@@ -309,19 +324,19 @@ export default function CmsTestimonialsList() {
 
       {/* Modals */}
       <NewItemModal open={newModalOpen} onOpenChange={setNewModalOpen} />
-      
-      <EditItemModal 
-        open={editModalOpen} 
+
+      <EditItemModal
+        open={editModalOpen}
         onOpenChange={setEditModalOpen}
         testimonialId={selectedTestimonial?.id || null}
       />
-      
-      <ViewItemModal 
-        open={viewModalOpen} 
+
+      <ViewItemModal
+        open={viewModalOpen}
         onOpenChange={setViewModalOpen}
         testimonialId={selectedTestimonial?.id || null}
       />
-      
+
       <DeleteItemDialog
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}

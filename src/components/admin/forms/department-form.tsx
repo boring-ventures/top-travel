@@ -83,13 +83,11 @@ export function DepartmentForm({
 
       // Upload image if a new file was selected
       if (selectedImageFile) {
-        console.log("Uploading selected image file...");
         const departmentType = values.type || "temp";
         finalHeroImageUrl = await uploadDepartmentImage(
           selectedImageFile,
           departmentType
         );
-        console.log("Image uploaded successfully:", finalHeroImageUrl);
       }
 
       const url = isEditing

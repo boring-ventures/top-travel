@@ -24,6 +24,8 @@ export async function GET(request: Request) {
     const isCustomParam = searchParams.get("isCustom");
     const isCustom =
       isCustomParam === null ? undefined : isCustomParam === "true";
+    const isTopParam = searchParams.get("isTop");
+    const isTop = isTopParam === null ? undefined : isTopParam === "true";
     const q = searchParams.get("q") || undefined;
     const tagId = searchParams.get("tagId") || undefined;
     const destinationId = searchParams.get("destinationId") || undefined;
@@ -38,6 +40,7 @@ export async function GET(request: Request) {
     const where: any = {
       status: isSuperadmin ? (status ?? undefined) : "PUBLISHED",
       isCustom,
+      isTop,
       ...(q
         ? {
             OR: [
@@ -97,6 +100,7 @@ export async function POST(request: Request) {
         fromPrice: parsed.fromPrice,
         currency: parsed.currency,
         isCustom: parsed.isCustom ?? false,
+        isTop: parsed.isTop ?? false,
         status: parsed.status ?? "DRAFT",
         packageDestinations: parsed.destinationIds
           ? {

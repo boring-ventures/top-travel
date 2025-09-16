@@ -68,10 +68,8 @@ export function EventForm({ onSuccess }: { onSuccess?: () => void }) {
 
       // Upload image if a new file was selected
       if (selectedImageFile) {
-        console.log("Uploading selected image file...");
         const slug = values.slug || "temp";
         finalHeroImageUrl = await uploadEventImage(selectedImageFile, slug);
-        console.log("Image uploaded successfully:", finalHeroImageUrl);
       }
 
       // Convert dateRange to startDate and endDate for API compatibility
@@ -97,10 +95,6 @@ export function EventForm({ onSuccess }: { onSuccess?: () => void }) {
         }
       });
 
-      // Debug: Log the data being sent
-      console.log("Sending event data:", apiData);
-      console.log("heroImageUrl in apiData:", apiData.heroImageUrl);
-
       const res = await fetch("/api/events", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -117,7 +111,6 @@ export function EventForm({ onSuccess }: { onSuccess?: () => void }) {
       // Clear the selected file after successful submission
       setSelectedImageFile(null);
 
-      console.log("Event created successfully:", result);
       onSuccess?.();
       form.reset();
     } catch (error) {

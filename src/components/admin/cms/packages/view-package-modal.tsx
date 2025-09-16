@@ -35,7 +35,6 @@ export function ViewPackageModal({ packageSlug }: ViewPackageModalProps) {
 
   useEffect(() => {
     if (open && packageSlug) {
-      console.log("Fetching package for view:", packageSlug);
       setLoading(true);
       setError(null);
       fetch(`/api/packages/${packageSlug}`, {
@@ -51,7 +50,6 @@ export function ViewPackageModal({ packageSlug }: ViewPackageModalProps) {
           return res.json();
         })
         .then((data) => {
-          console.log("Package data for view:", data);
           setPackageData(data);
         })
         .catch((error) => {
@@ -105,7 +103,6 @@ export function ViewPackageModal({ packageSlug }: ViewPackageModalProps) {
         size="sm"
         title="Ver paquete"
         onClick={() => {
-          console.log("View button clicked for package:", packageSlug);
           setOpen(true);
         }}
       >

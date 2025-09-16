@@ -86,6 +86,7 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
       inclusions: [],
       exclusions: [],
       isCustom: false,
+      isTop: false,
       status: "DRAFT",
     },
     mode: "onChange",
@@ -105,6 +106,7 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
         fromPrice: (initialValues as any).fromPrice ?? undefined,
         currency: (initialValues as any).currency ?? "",
         isCustom: Boolean((initialValues as any).isCustom) ?? false,
+        isTop: Boolean((initialValues as any).isTop) ?? false,
         status: (initialValues as any).status ?? "DRAFT",
         destinationIds:
           (initialValues as any).packageDestinations?.map(
@@ -704,6 +706,20 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
           </Label>
         </div>
 
+        <div className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            id="isTop"
+            {...form.register("isTop")}
+            className="rounded border-gray-300"
+          />
+          <Label htmlFor="isTop" className="text-sm font-medium">
+            Marcar como paquete top
+          </Label>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label>Estado</Label>
           <Popover open={statusOpen} onOpenChange={setStatusOpen}>
@@ -809,15 +825,6 @@ export function PackageForm({ onSuccess, initialValues }: PackageFormProps) {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => {
-              // Debug form state (logs removed for production)
-            }}
-          >
-            Debug Form
-          </Button>
           <Button type="submit" disabled={submitting} className="min-w-[120px]">
             {submitting
               ? "Guardando..."

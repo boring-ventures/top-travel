@@ -22,6 +22,7 @@ import {
   Wrench,
   Mountain,
   Crown,
+  Star,
 } from "lucide-react";
 
 type TabItem = {
@@ -38,6 +39,7 @@ type TabItem = {
     location?: string;
     amenities?: string[];
     exclusions?: string[];
+    isTop?: boolean;
   }>;
 };
 
@@ -87,6 +89,10 @@ export default function TabbedContent({
         return Mountain;
       case "luxury":
         return Crown;
+      case "top":
+        return Star;
+      case "vacational":
+        return Package;
       default:
         return Package;
     }
@@ -189,10 +195,18 @@ export default function TabbedContent({
 
               {/* Top Glass Content */}
               <div className="absolute top-0 left-0 right-0 p-6">
-                <div className="bg-black/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 inline-block">
-                  <p className="text-white text-sm font-medium">
-                    {item.location}
-                  </p>
+                <div className="flex justify-between items-start">
+                  <div className="bg-black/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 inline-block">
+                    <p className="text-white text-sm font-medium">
+                      {item.location}
+                    </p>
+                  </div>
+                  {item.isTop && (
+                    <div className="bg-yellow-500/90 backdrop-blur-md px-3 py-1 rounded-full border border-yellow-300/30 inline-flex items-center gap-1">
+                      <Star className="h-3 w-3 text-white fill-white" />
+                      <span className="text-white text-xs font-bold">TOP</span>
+                    </div>
+                  )}
                 </div>
               </div>
 

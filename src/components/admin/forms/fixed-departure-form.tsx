@@ -88,13 +88,11 @@ export function FixedDepartureForm({ onSuccess }: { onSuccess?: () => void }) {
 
       // Upload image if a new file was selected
       if (selectedImageFile) {
-        console.log("Uploading selected image file...");
         const slug = values.slug || "temp";
         finalHeroImageUrl = await uploadFixedDepartureImage(
           selectedImageFile,
           slug
         );
-        console.log("Image uploaded successfully:", finalHeroImageUrl);
       }
 
       // Convert dateRange to startDate and endDate for API compatibility

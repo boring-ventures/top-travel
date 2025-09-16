@@ -85,11 +85,7 @@ export default async function DestinationDetailPage({ params }: Params) {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-secondary/20">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-transparent -z-10" />
-      
+    <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
       <section className="relative h-[70vh] min-h-[500px] w-full overflow-hidden">
         {dest.heroImageUrl ? (
@@ -169,19 +165,22 @@ export default async function DestinationDetailPage({ params }: Params) {
       </section>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8 sm:py-12">
+      <div className="container mx-auto px-4 py-12 sm:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
             {/* Related Packages */}
             {relatedPackages.length > 0 && (
-              <Card className="p-6 sm:p-8 bg-white/80 backdrop-blur-sm border border-black/20 shadow-lg">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-2xl font-bold flex items-center gap-2">
-                    <Package className="h-6 w-6 text-emerald-600" />
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-2xl font-bold text-gray-900">
                     Paquetes disponibles ({relatedPackages.length})
                   </h3>
-                  <Button asChild variant="outline" className="hover:bg-emerald-50 hover:border-emerald-300">
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="hover:bg-emerald-50 hover:border-emerald-300"
+                  >
                     <Link href="/packages">
                       <Package className="h-4 w-4 mr-2 text-emerald-600" />
                       Ver todos
@@ -189,9 +188,12 @@ export default async function DestinationDetailPage({ params }: Params) {
                   </Button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {relatedPackages.map((pkg) => (
-                    <div key={pkg.id} className="relative overflow-hidden rounded-2xl group">
+                    <div
+                      key={pkg.id}
+                      className="relative overflow-hidden rounded-xl group bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300"
+                    >
                       <Link href={`/packages/${pkg.slug}`} className="block">
                         <div className="relative h-80 sm:h-96">
                           {pkg.heroImageUrl ? (
@@ -206,30 +208,30 @@ export default async function DestinationDetailPage({ params }: Params) {
                             <div className="h-full w-full bg-gradient-to-br from-emerald-100 via-teal-50 to-cyan-100 flex items-center justify-center">
                               <div className="bg-emerald-500/20 rounded-full p-6">
                                 <Package className="h-12 w-12 text-emerald-600" />
-                          </div>
+                              </div>
                             </div>
                           )}
-                          
+
                           {/* Subtle gradient overlay */}
                           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-                          
+
                           {/* Top Glass Content */}
-                          <div className="absolute top-0 left-0 right-0 p-6">
+                          <div className="absolute top-0 left-0 right-0 p-4">
                             <div className="flex justify-between items-start">
                               <div className="bg-black/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 inline-block">
                                 <p className="text-white text-sm font-medium">
-                              {pkg.packageDestinations
-                                .slice(0, 2)
-                                .map((pd) => pd.destination.city)
-                                .join(", ")}
-                              {pkg.packageDestinations.length > 2 &&
-                                ` +${pkg.packageDestinations.length - 2} más`}
+                                  {pkg.packageDestinations
+                                    .slice(0, 2)
+                                    .map((pd) => pd.destination.city)
+                                    .join(", ")}
+                                  {pkg.packageDestinations.length > 2 &&
+                                    ` +${pkg.packageDestinations.length - 2} más`}
                                 </p>
                               </div>
                               <Badge
                                 className={`text-xs font-medium px-3 py-1 backdrop-blur-md ${
-                                  pkg.isCustom 
-                                    ? "bg-amber-500/80 text-white border-amber-300/50" 
+                                  pkg.isCustom
+                                    ? "bg-amber-500/80 text-white border-amber-300/50"
                                     : "bg-emerald-500/80 text-white border-emerald-300/50"
                                 }`}
                               >
@@ -237,19 +239,21 @@ export default async function DestinationDetailPage({ params }: Params) {
                               </Badge>
                             </div>
                           </div>
-                          
+
                           {/* Bottom Glass Content */}
-                          <div className="absolute bottom-0 left-0 right-0 p-6">
-                            <div className="space-y-4">
-                              <h2 className="text-white text-2xl font-bold font-serif drop-shadow-lg">
+                          <div className="absolute bottom-0 left-0 right-0 p-4">
+                            <div className="space-y-3">
+                              <h2 className="text-white text-xl font-bold font-serif drop-shadow-lg">
                                 {pkg.title}
                               </h2>
-                              
-                              <p className="text-white text-lg font-normal drop-shadow-lg">
-                                {pkg.fromPrice ? `Desde $${pkg.fromPrice.toString()}` : "Desde $600"}
+
+                              <p className="text-white text-base font-normal drop-shadow-lg">
+                                {pkg.fromPrice
+                                  ? `Desde $${pkg.fromPrice.toString()}`
+                                  : "Desde $600"}
                               </p>
-                              
-                              <div className="w-full bg-black/30 backdrop-blur-md hover:bg-black/40 text-white font-semibold py-3 rounded-xl transition-all duration-300 border border-white/20 hover:border-white/30 flex items-center justify-center gap-2">
+
+                              <div className="w-full bg-black/30 backdrop-blur-md hover:bg-black/40 text-white font-semibold py-2 rounded-lg transition-all duration-300 border border-white/20 hover:border-white/30 flex items-center justify-center gap-2 text-sm">
                                 <span>Conoce más</span>
                                 <ArrowRight className="h-4 w-4" />
                               </div>
@@ -257,21 +261,24 @@ export default async function DestinationDetailPage({ params }: Params) {
                           </div>
                         </div>
                       </Link>
-                      </div>
+                    </div>
                   ))}
                 </div>
-              </Card>
+              </div>
             )}
 
             {/* Related Fixed Departures */}
             {relatedFixedDepartures.length > 0 && (
-              <Card className="p-6 sm:p-8 bg-white/80 backdrop-blur-sm border border-black/20 shadow-lg">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-2xl font-bold flex items-center gap-2">
-                    <Plane className="h-6 w-6 text-violet-600" />
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-2xl font-bold text-gray-900">
                     Salidas fijas ({relatedFixedDepartures.length})
                   </h3>
-                  <Button asChild variant="outline" className="hover:bg-violet-50 hover:border-violet-300">
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="hover:bg-violet-50 hover:border-violet-300"
+                  >
                     <Link href="/fixed-departures">
                       <Plane className="h-4 w-4 mr-2 text-violet-600" />
                       Ver todas
@@ -283,7 +290,7 @@ export default async function DestinationDetailPage({ params }: Params) {
                   {relatedFixedDepartures.map((departure) => (
                     <Card
                       key={departure.id}
-                      className="p-4 bg-white/80 backdrop-blur-sm border border-black/20 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                      className="p-6 bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1"
                     >
                       <Link
                         href={`/fixed-departures/${departure.slug}`}
@@ -297,30 +304,34 @@ export default async function DestinationDetailPage({ params }: Params) {
                             <div className="flex items-center gap-4 text-sm text-black/70">
                               <div className="flex items-center gap-1">
                                 <Calendar className="h-4 w-4 text-indigo-600" />
-                              <span>
-                                {new Date(
-                                  departure.startDate
-                                ).toLocaleDateString()}{" "}
-                                -{" "}
-                                {new Date(
-                                  departure.endDate
-                                ).toLocaleDateString()}
-                              </span>
+                                <span>
+                                  {new Date(
+                                    departure.startDate
+                                  ).toLocaleDateString()}{" "}
+                                  -{" "}
+                                  {new Date(
+                                    departure.endDate
+                                  ).toLocaleDateString()}
+                                </span>
                               </div>
                               <div className="flex items-center gap-1">
                                 <Clock className="h-4 w-4 text-amber-600" />
-                              <span>
-                                {Math.ceil(
-                                  (new Date(departure.endDate).getTime() -
-                                    new Date(departure.startDate).getTime()) /
-                                    (1000 * 60 * 60 * 24)
-                                )}{" "}
-                                días
-                              </span>
+                                <span>
+                                  {Math.ceil(
+                                    (new Date(departure.endDate).getTime() -
+                                      new Date(departure.startDate).getTime()) /
+                                      (1000 * 60 * 60 * 24)
+                                  )}{" "}
+                                  días
+                                </span>
+                              </div>
                             </div>
                           </div>
-                          </div>
-                          <Button variant="outline" size="sm" className="ml-4 hover:bg-violet-50 hover:border-violet-300">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="ml-4 hover:bg-violet-50 hover:border-violet-300"
+                          >
                             Ver detalles
                           </Button>
                         </div>
@@ -328,7 +339,7 @@ export default async function DestinationDetailPage({ params }: Params) {
                     </Card>
                   ))}
                 </div>
-              </Card>
+              </div>
             )}
           </div>
 
@@ -336,7 +347,7 @@ export default async function DestinationDetailPage({ params }: Params) {
           <div className="lg:col-span-1">
             <div className="sticky top-24 space-y-6">
               {/* Contact Card */}
-              <Card className="p-6 bg-white/80 backdrop-blur-sm border border-black/20 shadow-lg">
+              <Card className="p-6 bg-white border border-gray-200 shadow-sm">
                 <div className="space-y-4">
                   <div className="text-center">
                     <h3 className="text-lg font-semibold mb-2">
@@ -371,7 +382,7 @@ export default async function DestinationDetailPage({ params }: Params) {
               </Card>
 
               {/* Quick Info */}
-              <Card className="p-6 bg-white/80 backdrop-blur-sm border border-black/20 shadow-lg">
+              <Card className="p-6 bg-white border border-gray-200 shadow-sm">
                 <h4 className="font-semibold mb-4">Información rápida</h4>
                 <div className="space-y-3 text-sm">
                   <div className="flex items-center justify-between">
@@ -392,17 +403,19 @@ export default async function DestinationDetailPage({ params }: Params) {
                     <div className="flex items-center gap-2">
                       <Package className="h-4 w-4 text-emerald-600" />
                       <span className="text-black/70">Paquetes:</span>
-                  </div>
-                    <span className="font-medium">{relatedPackages.length}</span>
+                    </div>
+                    <span className="font-medium">
+                      {relatedPackages.length}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Plane className="h-4 w-4 text-violet-600" />
-                      <span className="text-black/70">
-                      Salidas fijas:
-                    </span>
+                      <span className="text-black/70">Salidas fijas:</span>
                     </div>
-                    <span className="font-medium">{relatedFixedDepartures.length}</span>
+                    <span className="font-medium">
+                      {relatedFixedDepartures.length}
+                    </span>
                   </div>
                   {dest.isFeatured && (
                     <div className="flex items-center justify-between">
@@ -418,7 +431,6 @@ export default async function DestinationDetailPage({ params }: Params) {
                   )}
                 </div>
               </Card>
-
             </div>
           </div>
         </div>

@@ -24,7 +24,6 @@ export function EditOfferModal({ offerId, onSuccess }: EditOfferModalProps) {
 
   useEffect(() => {
     if (open && offerId) {
-      console.log("Fetching offer:", offerId);
       setLoading(true);
       setError(null);
       fetch(`/api/offers/${offerId}`, {
@@ -34,15 +33,12 @@ export function EditOfferModal({ offerId, onSuccess }: EditOfferModalProps) {
         },
       })
         .then((res) => {
-          console.log("Response status:", res.status);
-          console.log("Response headers:", res.headers);
           if (!res.ok) {
             throw new Error(`HTTP error! status: ${res.status}`);
           }
           return res.json();
         })
         .then((data) => {
-          console.log("Offer data:", data);
           setOffer(data);
         })
         .catch((error) => {
@@ -75,7 +71,6 @@ export function EditOfferModal({ offerId, onSuccess }: EditOfferModalProps) {
         size="sm"
         title="Editar oferta"
         onClick={() => {
-          console.log("Edit button clicked for offer:", offerId);
           setOpen(true);
         }}
       >

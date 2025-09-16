@@ -19,21 +19,43 @@ import {
   ViewPackageModal,
   DeletePackageDialog,
 } from "@/components/admin/cms/packages";
-import { Plus, FileText, ExternalLink } from "lucide-react";
+import { Plus, FileText, ExternalLink, Star } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-async function fetchPackages() {
-  const res = await fetch(`/api/packages?page=1&pageSize=20`);
+async function fetchPackages(isTop?: boolean | null | undefined) {
+  const params = new URLSearchParams({
+    page: "1",
+    pageSize: "20",
+  });
+
+  if (typeof isTop === "boolean") {
+    params.append("isTop", isTop.toString());
+  }
+
+  const res = await fetch(`/api/packages?${params.toString()}`);
   if (!res.ok) throw new Error("Error al cargar los paquetes");
   return res.json();
 }
 
 export default function CmsPackagesList() {
+  const [search, setSearch] = useState("");
+  const [isTopFilter, setIsTopFilter] = useState<boolean | null>(null);
+
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["cms", "packages", { page: 1, pageSize: 20 }],
-    queryFn: fetchPackages,
+    queryKey: [
+      "cms",
+      "packages",
+      { page: 1, pageSize: 20, isTop: isTopFilter },
+    ],
+    queryFn: () => fetchPackages(isTopFilter ?? undefined),
   });
   const items = data?.items ?? [];
-  const [search, setSearch] = useState("");
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -57,7 +79,28 @@ export default function CmsPackagesList() {
           description="Crear y gestionar paquetes de viaje."
           actions={<NewPackageModal onSuccess={handleSuccess} />}
         >
-          <SearchInput placeholder="Buscar paquetes" onSearch={setSearch} />
+          <div className="flex gap-2">
+            <SearchInput placeholder="Buscar paquetes" onSearch={setSearch} />
+            <Select
+              value={isTopFilter === null ? "all" : isTopFilter.toString()}
+              onValueChange={(value) => {
+                if (value === "all") {
+                  setIsTopFilter(null);
+                } else {
+                  setIsTopFilter(value === "true");
+                }
+              }}
+            >
+              <SelectTrigger className="w-40">
+                <SelectValue placeholder="Filtrar por Top" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos</SelectItem>
+                <SelectItem value="true">Solo Top</SelectItem>
+                <SelectItem value="false">No Top</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </ListHeader>
 
         {error ? (
@@ -94,6 +137,7 @@ export default function CmsPackagesList() {
                   <th className="px-3 py-2 text-left">Duración</th>
                   <th className="px-3 py-2 text-left">Precio</th>
                   <th className="px-3 py-2 text-left">Tipo</th>
+                  <th className="px-3 py-2 text-left">Top</th>
                   <th className="px-3 py-2 text-left">Estado</th>
                   <th className="px-3 py-2 text-center">PDF</th>
                   <th className="px-3 py-2 text-right">Acciones</th>
@@ -138,6 +182,16 @@ export default function CmsPackagesList() {
                         <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
                           Estándar
                         </span>
+                      )}
+                    </td>
+                    <td className="px-3 py-2">
+                      {p.isTop ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                          <Star className="h-3 w-3" />
+                          Top
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground text-xs">—</span>
                       )}
                     </td>
                     <td className="px-3 py-2">

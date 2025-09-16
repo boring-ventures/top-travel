@@ -104,13 +104,11 @@ export function DestinationForm({
 
       // Upload image if a new file was selected
       if (selectedImageFile) {
-        console.log("Uploading selected image file...");
         const slug = values.slug || "temp";
         finalHeroImageUrl = await uploadDestinationImage(
           selectedImageFile,
           slug
         );
-        console.log("Image uploaded successfully:", finalHeroImageUrl);
       }
 
       const isEdit = Boolean((initialValues as any)?.id);

@@ -60,7 +60,7 @@ const Navbar1 = () => {
           isPinkHeaderPage
             ? "border-pink-200/30 bg-pink-50/20"
             : isGoldHeaderPage
-              ? "bg-[#eaa298]/20 border-[#eaa298]/30"
+              ? "bg-rose-50/20 border-rose-200/30"
               : isBlackDetailsPage
                 ? "bg-white/90 border-gray-200/50"
                 : isWhiteHeaderPage
@@ -82,22 +82,22 @@ const Navbar1 = () => {
             <Image
               src={
                 isPinkHeaderPage
-                  ? "/logos/quinceanera_logo.svg"
-                  : isGoldHeaderPage
-                    ? "/logos/bodas_logo.svg"
-                    : isWhiteHeaderPage
-                      ? "/logos/iso_white.svg"
-                      : isBlueHeaderPage
+                  ? "/logos/iso_white.svg"
+                  : isWhiteHeaderPage
+                    ? "/logos/iso_white.svg"
+                    : isBlueHeaderPage
+                      ? "/logos/iso_blue.svg"
+                      : isBlackDetailsPage
                         ? "/logos/iso_blue.svg"
-                        : isBlackDetailsPage
-                          ? "/logos/iso_blue.svg"
-                          : "/logos/iso_blue.svg"
+                        : "/logos/iso_blue.svg"
               }
               alt="Logo"
-              width={44}
-              height={34}
+              width={28}
+              height={22}
               className={cn(
                 "transition-all duration-300 ease-out",
+                isPinkHeaderPage &&
+                  "brightness-0 saturate-100 hue-rotate-[295deg] sepia-95 saturate-2083 contrast-89",
                 isBlackDetailsPage && "brightness-0"
               )}
             />
@@ -140,7 +140,7 @@ const Navbar1 = () => {
                   isPinkHeaderPage
                     ? "text-[#e03d90] hover:opacity-80"
                     : isGoldHeaderPage
-                      ? "text-[#eaa298] hover:text-[#eaa298]/80"
+                      ? "text-gold hover:text-gold/80"
                       : isBlackDetailsPage
                         ? "text-black hover:text-black/80"
                         : isWhiteHeaderPage
@@ -204,7 +204,7 @@ const Navbar1 = () => {
               className={cn(
                 "rounded-full transition-all duration-300 hover:scale-105",
                 isGoldHeaderPage
-                  ? "bg-[#eaa298] text-white hover:bg-[#d49186] shadow-[#eaa298]/50"
+                  ? "bg-gold text-white hover:bg-gold-light shadow-gold/50"
                   : isWineDetailsPage
                     ? "bg-wine text-white hover:bg-wine-light shadow-wine/50"
                     : isBlackDetailsPage
@@ -236,7 +236,7 @@ const Navbar1 = () => {
               className={cn(
                 "rounded-full transition-all duration-300 hover:scale-105",
                 isGoldHeaderPage
-                  ? "bg-[#eaa298] text-white hover:bg-[#d49186] shadow-[#eaa298]/50"
+                  ? "bg-gold text-white hover:bg-gold-light shadow-gold/50"
                   : isWineDetailsPage
                     ? "bg-wine text-white hover:bg-wine-light shadow-wine/50"
                     : isBlackDetailsPage
@@ -260,7 +260,7 @@ const Navbar1 = () => {
             isPinkHeaderPage
               ? "hover:bg-pink-500/20"
               : isGoldHeaderPage
-                ? "hover:bg-[#eaa298]/20"
+                ? "hover:bg-gold/20"
                 : isWineDetailsPage
                   ? "hover:bg-wine/20"
                   : isBlackDetailsPage
@@ -278,7 +278,7 @@ const Navbar1 = () => {
               isPinkHeaderPage
                 ? "text-[#e03d90]"
                 : isGoldHeaderPage
-                  ? "text-[#eaa298]"
+                  ? "text-gold"
                   : isBlackDetailsPage
                     ? "text-black"
                     : isWhiteHeaderPage
@@ -300,7 +300,7 @@ const Navbar1 = () => {
               isPinkHeaderPage
                 ? "bg-pink-50/95"
                 : isGoldHeaderPage
-                  ? "bg-[#eaa298]/10"
+                  ? "bg-gold/10"
                   : isBlackDetailsPage
                     ? "bg-white/95"
                     : isWhiteHeaderPage
@@ -320,7 +320,7 @@ const Navbar1 = () => {
                 isPinkHeaderPage
                   ? "bg-pink-100 hover:bg-pink-200"
                   : isGoldHeaderPage
-                    ? "bg-[#eaa298]/20 hover:bg-[#eaa298]/30"
+                    ? "bg-gold/20 hover:bg-gold/30"
                     : isBlackDetailsPage
                       ? "bg-gray-100 hover:bg-gray-200"
                       : isWhiteHeaderPage
@@ -341,7 +341,7 @@ const Navbar1 = () => {
                   isPinkHeaderPage
                     ? "text-[#e03d90]"
                     : isGoldHeaderPage
-                      ? "text-[#eaa298]"
+                      ? "text-gold"
                       : isBlackDetailsPage
                         ? "text-gray-700"
                         : isWhiteHeaderPage
@@ -369,7 +369,7 @@ const Navbar1 = () => {
                       isPinkHeaderPage
                         ? "text-[#e03d90] hover:opacity-80"
                         : isGoldHeaderPage
-                          ? "text-[#eaa298] hover:text-[#eaa298]/80"
+                          ? "text-gold hover:text-gold/80"
                           : isBlackDetailsPage
                             ? "text-black hover:text-black/80"
                             : isWhiteHeaderPage
@@ -417,7 +417,7 @@ const Navbar1 = () => {
                       className={cn(
                         "w-full rounded-full",
                         isGoldHeaderPage
-                          ? "bg-[#eaa298] text-white hover:bg-[#d49186] shadow-[#eaa298]/50"
+                          ? "bg-gold text-white hover:bg-gold-light shadow-gold/50"
                           : isWineDetailsPage
                             ? "bg-wine text-white hover:bg-wine-light shadow-wine/50"
                             : isBlackDetailsPage
@@ -452,7 +452,7 @@ const Navbar1 = () => {
                     className={cn(
                       "w-full rounded-full transition-all duration-300",
                       isGoldHeaderPage
-                        ? "bg-[#eaa298] text-white hover:bg-[#d49186] shadow-[#eaa298]/50"
+                        ? "bg-gold text-white hover:bg-gold-light shadow-gold/50"
                         : isWineDetailsPage
                           ? "bg-wine text-white hover:bg-wine-light shadow-wine/50"
                           : isBlackDetailsPage
