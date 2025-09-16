@@ -2,8 +2,17 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
-import { Search, MapPin, Tag, Package } from "lucide-react";
+import { useEffect, useMemo, useState, useRef } from "react";
+import {
+  Search,
+  MapPin,
+  Tag,
+  Package,
+  Globe,
+  Plane,
+  Calendar,
+  Users,
+} from "lucide-react";
 
 import { BlurFade } from "@/components/magicui/blur-fade";
 import { WhatsAppCTA } from "@/components/utils/whatsapp-cta";
@@ -30,8 +39,176 @@ type HeroProps = {
   tags?: DatabaseTag[];
 };
 
+interface Metric {
+  id: string;
+  value: number;
+  label: string;
+  icon: React.ReactNode;
+  suffix?: string;
+}
+
+const metrics: Metric[] = [
+  {
+    id: "countries",
+    value: 30,
+    label: "Países Destino",
+    icon: <Globe className="h-8 w-8" />,
+    suffix: "+",
+  },
+  {
+    id: "trips",
+    value: 10000,
+    label: "Viajes Exitosos",
+    icon: <Plane className="h-8 w-8" />,
+    suffix: "+",
+  },
+  {
+    id: "experience",
+    value: 10,
+    label: "Años de Experiencia",
+    icon: <Calendar className="h-8 w-8" />,
+    suffix: "+",
+  },
+  {
+    id: "clients",
+    value: 20000,
+    label: "Clientes Satisfechos",
+    icon: <Users className="h-8 w-8" />,
+    suffix: "+",
+  },
+];
+
+interface AnimatedCounterProps {
+  end: number;
+  duration?: number;
+  suffix?: string;
+  shouldAnimate?: boolean;
+  delay?: number;
+}
+
+const AnimatedCounter = ({
+  end,
+  duration = 2000,
+  suffix = "",
+  shouldAnimate = false,
+  delay = 0,
+}: AnimatedCounterProps) => {
+  const [count, setCount] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  useEffect(() => {
+    if (shouldAnimate && !isAnimating) {
+      const timer = setTimeout(() => {
+        setIsAnimating(true);
+      }, delay);
+
+      return () => clearTimeout(timer);
+    }
+  }, [shouldAnimate, isAnimating, delay]);
+
+  useEffect(() => {
+    if (!isAnimating || typeof window === "undefined") return;
+
+    let startTime: number;
+    let animationFrame: number;
+
+    const animate = (currentTime: number) => {
+      if (!startTime) startTime = currentTime;
+      const progress = Math.min((currentTime - startTime) / duration, 1);
+
+      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+      const currentCount = Math.floor(easeOutQuart * end);
+
+      setCount(currentCount);
+
+      if (progress < 1) {
+        animationFrame = requestAnimationFrame(animate);
+      }
+    };
+
+    animationFrame = requestAnimationFrame(animate);
+
+    return () => {
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+      }
+    };
+  }, [end, duration, isAnimating]);
+
+  return (
+    <div className="transition-all duration-300">
+      <span className="text-3xl font-semibold text-white">
+        {suffix}
+        {count.toLocaleString()}
+      </span>
+    </div>
+  );
+};
+
+interface MetricCardProps {
+  metric: Metric;
+  isInView: boolean;
+  index: number;
+}
+
+const MetricCard = ({ metric, isInView, index }: MetricCardProps) => {
+  const delay = index * 200;
+
+  return (
+    <div className="flex flex-col items-center text-center">
+      <div className="mb-2 text-white/80">{metric.icon}</div>
+      <div className="mb-2">
+        <AnimatedCounter
+          end={metric.value}
+          duration={2000}
+          suffix={metric.suffix}
+          shouldAnimate={isInView}
+          delay={delay}
+        />
+      </div>
+      <h3 className="text-sm font-medium text-white/80 uppercase tracking-wide">
+        {metric.label}
+      </h3>
+    </div>
+  );
+};
+
+const useInView = (threshold = 0.3) => {
+  const [inView, setInView] = useState(false);
+  const [hasTriggered, setHasTriggered] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasTriggered) {
+          setInView(true);
+          setHasTriggered(true);
+        }
+      },
+      { threshold }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current);
+      }
+    };
+  }, [threshold, hasTriggered]);
+
+  return { ref, inView };
+};
+
 export default function Hero({ items = [], tags = [] }: HeroProps) {
   const featured = items[0];
+  const { ref: metricsRef, inView } = useInView(0.1);
+
   // Use a simple gradient background as fallback instead of external images
   const fallbackBackgrounds: { src: string; title: string }[] = [
     {
@@ -300,6 +477,22 @@ export default function Hero({ items = [], tags = [] }: HeroProps) {
                 </div>
               </BlurFade>
             )}
+          </div>
+        </div>
+
+        {/* Metrics Section at the bottom of hero */}
+        <div ref={metricsRef} className="absolute bottom-8 left-0 right-0 z-20">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 max-w-4xl mx-auto">
+              {metrics.map((metric, index) => (
+                <MetricCard
+                  key={metric.id}
+                  metric={metric}
+                  isInView={inView}
+                  index={index}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>

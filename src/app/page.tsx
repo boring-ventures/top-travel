@@ -14,7 +14,6 @@ import {
 } from "@/components/views/landing-page";
 import { World } from "@/components/ui/globe-client";
 import { RotatingWords } from "@/components/ui/rotating-words";
-import MetricsSection from "@/components/views/landing-page/MetricsSection";
 import prisma from "@/lib/prisma";
 import { filterValidImageUrls } from "@/lib/utils";
 import { getWhatsAppTemplateByUsage } from "@/lib/whatsapp-utils";
@@ -636,9 +635,6 @@ export default async function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-transparent -z-10" />
 
         <Hero items={heroItems} tags={tags} />
-
-        {/* Metrics Section */}
-        <MetricsSection />
 
         {/* Tabbed Content Section */}
         <section className="py-16 w-full bg-gray-50">

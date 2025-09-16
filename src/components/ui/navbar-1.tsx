@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
@@ -20,7 +20,6 @@ const navItems = [
   { href: "/events", label: "Eventos" },
   { href: "/weddings", label: "Bodas" },
   { href: "/quinceanera", label: "Quinceañeras" },
-  { href: "/blog", label: "Blog" },
   { href: "/about", label: "Nosotros" },
   { href: "/contact", label: "Contacto" },
 ];
@@ -29,6 +28,17 @@ const Navbar1 = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const { user, isLoading } = useAuth();
+
+  // Safety check to prevent hydration issues
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
 
   // Páginas que necesitan header con fondo rosado
   const isPinkHeaderPage = pathname === "/quinceanera";
@@ -183,7 +193,9 @@ const Navbar1 = () => {
         >
           {/* Auth Button */}
           {isLoading ? (
-            <div className="h-9 w-[100px] animate-pulse rounded-full bg-muted" />
+            <div className="w-10 h-10 rounded-full bg-muted animate-pulse flex items-center justify-center">
+              <div className="w-5 h-5 bg-muted-foreground/30 rounded" />
+            </div>
           ) : user ? (
             <DashboardButton />
           ) : isPinkHeaderPage ? (
@@ -395,7 +407,9 @@ const Navbar1 = () => {
                 {/* Mobile Auth Button */}
                 <div className="w-full">
                   {isLoading ? (
-                    <div className="h-12 w-full animate-pulse rounded-full bg-muted" />
+                    <div className="w-full h-12 rounded-full bg-muted animate-pulse flex items-center justify-center">
+                      <div className="w-6 h-6 bg-muted-foreground/30 rounded" />
+                    </div>
                   ) : user ? (
                     <DashboardButton />
                   ) : isPinkHeaderPage ? (
