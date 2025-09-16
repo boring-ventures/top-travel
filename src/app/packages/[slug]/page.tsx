@@ -1,7 +1,8 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
-import WhatsAppCTA from "@/components/utils/whatsapp-cta";
+import { ClientWhatsAppCTA } from "@/components/utils/client-whatsapp-cta";
 import { pageMeta } from "@/lib/seo";
+import { getWhatsAppTemplateByUsage } from "@/lib/whatsapp-utils";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -59,6 +60,9 @@ export default async function PackageDetailPage({ params }: Params) {
   if (!pkg || pkg.status !== "PUBLISHED") {
     notFound();
   }
+
+  // Fetch WhatsApp template for packages
+  const whatsappTemplate = await getWhatsAppTemplateByUsage("PACKAGES");
 
   // Convert Decimal objects to numbers for client components
   const pkgWithNumbers = {
@@ -388,10 +392,18 @@ export default async function PackageDetailPage({ params }: Params) {
                     </p>
                   </div>
 
-                  <WhatsAppCTA
+                  <ClientWhatsAppCTA
+                    whatsappTemplate={whatsappTemplate}
                     label="Consultar por WhatsApp"
-                    template="Hola! Me interesa el paquete {title}."
-                    variables={{ title: pkg.title, slug: pkg.slug }}
+                    template={
+                      whatsappTemplate?.templateBody ||
+                      "Hola! Me interesa el paquete {title}."
+                    }
+                    variables={{
+                      title: pkg.title,
+                      slug: pkg.slug,
+                      itemTitle: pkg.title,
+                    }}
                     campaign="package_detail"
                     content={pkg.slug}
                     size="lg"

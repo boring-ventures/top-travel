@@ -26,7 +26,7 @@ interface MessageBlock {
   id: string;
   type: "text" | "variable" | "line-break";
   content: string;
-  variableType?: "itemTitle" | "url" | "utmSource" | "utmCampaign";
+  variableType?: "itemTitle" | "url";
 }
 
 interface WhatsAppTemplateBuilderProps {
@@ -45,18 +45,6 @@ const VARIABLE_TYPES = [
     description: "Nombre del paquete, oferta o destino",
   },
   { key: "url", label: "URL", icon: Link, description: "Enlace al contenido" },
-  {
-    key: "utmSource",
-    label: "UTM Source",
-    icon: Hash,
-    description: "Fuente de tráfico",
-  },
-  {
-    key: "utmCampaign",
-    label: "UTM Campaign",
-    icon: Hash,
-    description: "Campaña de marketing",
-  },
 ];
 
 const TEMPLATE_EXAMPLES_BY_TYPE = {
@@ -344,9 +332,7 @@ export function WhatsAppTemplateBuilder({
 
   const previewMessage = value
     .replace(/\{itemTitle\}/g, "Rio Carnival 5D4N")
-    .replace(/\{url\}/g, "https://gabytoptravel.com/package/rio-carnival-5d4n")
-    .replace(/\{utmSource\}/g, "whatsapp")
-    .replace(/\{utmCampaign\}/g, "carnival2024");
+    .replace(/\{url\}/g, "https://gabytoptravel.com/package/rio-carnival-5d4n");
 
   const validateTemplate = () => {
     const issues: string[] = [];
@@ -360,7 +346,7 @@ export function WhatsAppTemplateBuilder({
     }
 
     const variableMatches = value.match(/\{[^}]+\}/g) || [];
-    const validVariables = ["itemTitle", "url", "utmSource", "utmCampaign"];
+    const validVariables = ["itemTitle", "url"];
     const invalidVariables = variableMatches.filter(
       (v) => !validVariables.includes(v.slice(1, -1))
     );
@@ -406,6 +392,7 @@ export function WhatsAppTemplateBuilder({
             {currentExamples.map((example, index) => (
               <Button
                 key={index}
+                type="button"
                 variant={
                   selectedExample === example.name ? "default" : "outline"
                 }
@@ -434,12 +421,13 @@ export function WhatsAppTemplateBuilder({
           <CardTitle className="text-sm">Insertar Variables</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             {VARIABLE_TYPES.map((variable) => {
               const Icon = variable.icon;
               return (
                 <Button
                   key={variable.key}
+                  type="button"
                   variant="outline"
                   size="sm"
                   className="h-auto p-2 flex flex-col items-center gap-1"
@@ -464,6 +452,7 @@ export function WhatsAppTemplateBuilder({
             Constructor de Mensaje
             <div className="flex items-center gap-2">
               <Button
+                type="button"
                 variant="outline"
                 size="sm"
                 onClick={() => setShowPreview(!showPreview)}

@@ -272,9 +272,7 @@ export function WhatsAppTemplateQuickstart({
                   .replace(
                     /\{url\}/g,
                     "https://gabytoptravel.com/package/rio-carnival-5d4n"
-                  )
-                  .replace(/\{utmSource\}/g, "whatsapp")
-                  .replace(/\{utmCampaign\}/g, "carnival2024")}
+                  )}
               </div>
             </div>
           )}

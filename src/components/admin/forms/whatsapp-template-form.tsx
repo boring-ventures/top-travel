@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Loader2, Save, X } from "lucide-react";
 import { WhatsAppTemplateBuilder } from "./whatsapp-template-builder";
 import { WhatsAppTemplateHelp } from "./whatsapp-template-help";
+import { PhoneNumbersInput } from "./phone-numbers-input";
 import {
   WhatsAppTemplateCreateSchema,
   WhatsAppTemplateUpdateSchema,
@@ -57,21 +58,48 @@ export function WhatsAppTemplateForm({
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
     setValue,
     watch,
   } = useForm<WhatsAppTemplateCreateInput | WhatsAppTemplateUpdateInput>({
     resolver: zodResolver(schema),
-    defaultValues: initialValues || {
-      name: "",
-      templateBody: initialTemplate || "",
-      phoneNumber: "",
-      usageType: initialUsageType || "GENERAL",
-      isDefault: false,
-    },
+    mode: "onSubmit", // Only validate on submit, not on every change
+    defaultValues: initialValues
+      ? {
+          ...initialValues,
+          // Handle migration from phoneNumber to phoneNumbers
+          phoneNumbers:
+            initialValues.phoneNumbers ||
+            (initialValues.phoneNumber ? [initialValues.phoneNumber] : []),
+        }
+      : {
+          name: "",
+          templateBody: initialTemplate || "",
+          phoneNumbers: [], // Start with empty array
+          usageType: initialUsageType || "GENERAL",
+          isDefault: false,
+        },
   });
 
   const isDefault = watch("isDefault");
+
+  // Reset form when initialValues change (for editing)
+  useEffect(() => {
+    if (initialValues) {
+      const formData = {
+        ...initialValues,
+        // Handle migration from phoneNumber to phoneNumbers
+        phoneNumbers:
+          initialValues.phoneNumbers ||
+          (initialValues.phoneNumber ? [initialValues.phoneNumber] : []),
+      };
+      setValue("name", formData.name || "");
+      setValue("templateBody", formData.templateBody || "");
+      setValue("phoneNumbers", formData.phoneNumbers || []);
+      setValue("usageType", formData.usageType || "GENERAL");
+      setValue("isDefault", formData.isDefault || false);
+    }
+  }, [initialValues, setValue]);
 
   const onSubmit = async (
     data: WhatsAppTemplateCreateInput | WhatsAppTemplateUpdateInput
@@ -135,24 +163,16 @@ export function WhatsAppTemplateForm({
           )}
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="phoneNumber">Número de Teléfono *</Label>
-          <Input
-            id="phoneNumber"
-            placeholder="Ej: +59171234567"
-            {...register("phoneNumber")}
-            className={errors.phoneNumber ? "border-red-500" : ""}
-          />
-          {errors.phoneNumber && (
-            <p className="text-sm text-corporate-red">
-              {errors.phoneNumber.message}
-            </p>
-          )}
-          <p className="text-xs text-muted-foreground">
-            Número de WhatsApp que recibirá los mensajes para este tipo de
-            contenido
+        <PhoneNumbersInput
+          value={watch("phoneNumbers") || []}
+          onChange={(phoneNumbers) => setValue("phoneNumbers", phoneNumbers)}
+          error={errors.phoneNumbers?.message}
+        />
+        {errors.phoneNumbers && (
+          <p className="text-sm text-corporate-red">
+            {errors.phoneNumbers.message}
           </p>
-        </div>
+        )}
 
         <div className="space-y-2">
           <Label htmlFor="usageType">Tipo de Uso *</Label>

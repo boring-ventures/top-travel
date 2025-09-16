@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
-import WhatsAppCTA from "@/components/utils/whatsapp-cta";
+import { ClientWhatsAppCTA } from "@/components/utils/client-whatsapp-cta";
+import { getWhatsAppTemplateByUsage } from "@/lib/whatsapp-utils";
 import { pageMeta } from "@/lib/seo";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
@@ -54,6 +55,9 @@ export default async function EventDetailPage({ params }: Params) {
     notFound();
   }
 
+  // Fetch WhatsApp template for events
+  const whatsappTemplate = await getWhatsAppTemplateByUsage("EVENTS");
+
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat("es-ES", {
       weekday: "long",
@@ -79,7 +83,7 @@ export default async function EventDetailPage({ params }: Params) {
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-transparent -z-10" />
-      
+
       {/* Hero Section */}
       <section className="relative h-[60vh] min-h-[400px] w-full overflow-hidden">
         {(evt as any)?.heroImageUrl ? (
@@ -179,7 +183,9 @@ export default async function EventDetailPage({ params }: Params) {
                       <div className="w-10 h-10 bg-black/10 rounded-lg flex items-center justify-center">
                         <Clock className="h-5 w-5 text-black/60" />
                       </div>
-                      <span className="font-semibold text-black/80">Horario</span>
+                      <span className="font-semibold text-black/80">
+                        Horario
+                      </span>
                     </div>
                     <div className="text-lg font-medium text-black/90">
                       {formatTime(evt.startDate)} - {formatTime(evt.endDate)}
@@ -195,11 +201,15 @@ export default async function EventDetailPage({ params }: Params) {
                     <div className="w-12 h-12 bg-black/10 rounded-lg flex items-center justify-center">
                       <MapPin className="h-6 w-6 text-black/60" />
                     </div>
-                    <h3 className="text-xl font-semibold text-black/80">Ubicación</h3>
+                    <h3 className="text-xl font-semibold text-black/80">
+                      Ubicación
+                    </h3>
                   </div>
                   <div className="space-y-2">
                     {evt.venue && (
-                      <div className="text-lg font-medium text-black/90">{evt.venue}</div>
+                      <div className="text-lg font-medium text-black/90">
+                        {evt.venue}
+                      </div>
                     )}
                     <div className="text-black/70">
                       {evt.locationCity}, {evt.locationCountry}
@@ -216,7 +226,9 @@ export default async function EventDetailPage({ params }: Params) {
                         <div className="w-12 h-12 bg-black/10 rounded-lg flex items-center justify-center">
                           <Info className="h-6 w-6 text-black/60" />
                         </div>
-                        <h3 className="text-xl font-semibold text-black/80">Detalles del evento</h3>
+                        <h3 className="text-xl font-semibold text-black/80">
+                          Detalles del evento
+                        </h3>
                       </div>
                       <div className="bg-white/60 p-4 rounded-lg border border-black/10 backdrop-blur-sm">
                         <pre className="whitespace-pre-wrap text-sm text-black/90">
@@ -226,10 +238,8 @@ export default async function EventDetailPage({ params }: Params) {
                     </div>
                   </>
                 )}
-
               </div>
             </Card>
-
           </div>
 
           {/* Sidebar */}
@@ -247,13 +257,18 @@ export default async function EventDetailPage({ params }: Params) {
                     </p>
                   </div>
 
-                  <WhatsAppCTA
+                  <ClientWhatsAppCTA
+                    whatsappTemplate={whatsappTemplate}
                     label="Consultar por WhatsApp"
-                    template="Hola! Me interesa el evento {title} en {city}, {country}."
+                    template={
+                      whatsappTemplate?.templateBody ||
+                      "Hola! Me interesa el evento {title} en {city}, {country}."
+                    }
                     variables={{
                       title: evt.title,
                       city: evt.locationCity ?? "",
                       country: evt.locationCountry ?? "",
+                      itemTitle: evt.title,
                     }}
                     campaign="event_detail"
                     content={evt.slug}
@@ -261,7 +276,11 @@ export default async function EventDetailPage({ params }: Params) {
                     className="w-full"
                   />
 
-                  <Button variant="outline" size="sm" className="w-full hover:bg-gray-50 hover:border-gray-300 transition-all duration-200">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full hover:bg-gray-50 hover:border-gray-300 transition-all duration-200"
+                  >
                     <Share2 className="h-4 w-4 mr-2" />
                     Compartir evento
                   </Button>
@@ -283,20 +302,24 @@ export default async function EventDetailPage({ params }: Params) {
                         <Calendar className="h-4 w-4 text-black/60" />
                         <span className="text-black/70 font-medium">Tipo:</span>
                       </div>
-                      <span className="font-semibold text-black/90">Evento</span>
+                      <span className="font-semibold text-black/90">
+                        Evento
+                      </span>
                     </div>
                   </div>
                   <div className="p-3 bg-black/5 rounded-lg border border-black/10 backdrop-blur-sm">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Clock className="h-4 w-4 text-black/60" />
-                        <span className="text-black/70 font-medium">Duración:</span>
-                  </div>
+                        <span className="text-black/70 font-medium">
+                          Duración:
+                        </span>
+                      </div>
                       <span className="font-semibold text-black/90">
-                      {isSameDay
-                        ? "1 día"
-                        : `${Math.ceil((new Date(evt.endDate).getTime() - new Date(evt.startDate).getTime()) / (1000 * 60 * 60 * 24))} días`}
-                    </span>
+                        {isSameDay
+                          ? "1 día"
+                          : `${Math.ceil((new Date(evt.endDate).getTime() - new Date(evt.startDate).getTime()) / (1000 * 60 * 60 * 24))} días`}
+                      </span>
                     </div>
                   </div>
                 </div>

@@ -45,14 +45,14 @@ export default function CmsWhatsAppTemplatesList() {
       <ListHeader
         title="Plantillas de WhatsApp"
         description="Mensajes predefinidos para compartir vía WhatsApp."
-        actions={
-          <NewItemModal onSuccess={handleSuccess} />
-        }
+        actions={<NewItemModal onSuccess={handleSuccess} />}
       >
         <SearchInput placeholder="Buscar plantillas" onSearch={setSearch} />
       </ListHeader>
       {error ? (
-        <div className="text-sm text-red-600">Error al cargar las plantillas.</div>
+        <div className="text-sm text-red-600">
+          Error al cargar las plantillas.
+        </div>
       ) : (
         <TableShell
           title="Todas las Plantillas de WhatsApp"
@@ -66,11 +66,11 @@ export default function CmsWhatsAppTemplatesList() {
                     : "Aún no hay plantillas"
                 }
                 description={
-                  search ? "Intenta con una búsqueda diferente." : "Crea tu primera plantilla."
+                  search
+                    ? "Intenta con una búsqueda diferente."
+                    : "Crea tu primera plantilla."
                 }
-                action={
-                  <NewItemModal onSuccess={handleSuccess} />
-                }
+                action={<NewItemModal onSuccess={handleSuccess} />}
               />
             ) : null
           }
@@ -88,25 +88,49 @@ export default function CmsWhatsAppTemplatesList() {
             <tbody>
               {filtered.map((t: any) => (
                 <tr key={t.id} className="border-t">
-                  <td className="px-3 py-2 font-medium">
-                    {t.name}
-                  </td>
+                  <td className="px-3 py-2 font-medium">{t.name}</td>
                   <td className="px-3 py-2">
                     {t.usageType ? (
                       <Badge variant="outline">
-                        {t.usageType === "OFFERS" ? "Ofertas" :
-                         t.usageType === "PACKAGES" ? "Paquetes" :
-                         t.usageType === "DESTINATIONS" ? "Destinos" :
-                         t.usageType === "EVENTS" ? "Eventos" :
-                         t.usageType === "FIXED_DEPARTURES" ? "Salidas Fijas" :
-                         "General"}
+                        {t.usageType === "OFFERS"
+                          ? "Ofertas"
+                          : t.usageType === "PACKAGES"
+                            ? "Paquetes"
+                            : t.usageType === "DESTINATIONS"
+                              ? "Destinos"
+                              : t.usageType === "EVENTS"
+                                ? "Eventos"
+                                : t.usageType === "FIXED_DEPARTURES"
+                                  ? "Salidas Fijas"
+                                  : "General"}
                       </Badge>
                     ) : (
                       <span className="text-muted-foreground">No definido</span>
                     )}
                   </td>
                   <td className="px-3 py-2 text-muted-foreground">
-                    {t.phoneNumber || "No definido"}
+                    {t.phoneNumbers && t.phoneNumbers.length > 0 ? (
+                      <div className="space-y-1">
+                        {t.phoneNumbers.map((phone: string, index: number) => (
+                          <div
+                            key={index}
+                            className="text-xs bg-gray-100 px-2 py-1 rounded"
+                          >
+                            {phone}
+                          </div>
+                        ))}
+                        <div className="text-xs text-gray-500">
+                          {t.phoneNumbers.length} número
+                          {t.phoneNumbers.length !== 1 ? "s" : ""}
+                        </div>
+                      </div>
+                    ) : t.phoneNumber ? (
+                      <div className="text-xs bg-gray-100 px-2 py-1 rounded">
+                        {t.phoneNumber}
+                      </div>
+                    ) : (
+                      "No definido"
+                    )}
                   </td>
                   <td className="px-3 py-2">
                     {t.isDefault ? (
@@ -117,12 +141,18 @@ export default function CmsWhatsAppTemplatesList() {
                   </td>
                   <td className="px-3 py-2">
                     <div className="flex items-center gap-1">
-                      <ViewItemModal templateId={t.id} onSuccess={handleSuccess} />
-                      <EditItemModal templateId={t.id} onSuccess={handleSuccess} />
-                      <DeleteItemDialog 
-                        templateId={t.id} 
+                      <ViewItemModal
+                        templateId={t.id}
+                        onSuccess={handleSuccess}
+                      />
+                      <EditItemModal
+                        templateId={t.id}
+                        onSuccess={handleSuccess}
+                      />
+                      <DeleteItemDialog
+                        templateId={t.id}
                         templateName={t.name}
-                        onSuccess={handleSuccess} 
+                        onSuccess={handleSuccess}
                       />
                     </div>
                   </td>

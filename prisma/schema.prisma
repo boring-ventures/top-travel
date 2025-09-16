@@ -387,6 +387,7 @@ model WhatsAppTemplate {
   name         String            @unique
   templateBody String
   phoneNumber  String            // Different phone number for each template
+  phoneNumbers String[]          // Array of phone numbers for this template
   usageType    TemplateUsageType // What type of content this template is for
   isDefault    Boolean           @default(false)
   createdAt    DateTime          @default(now())

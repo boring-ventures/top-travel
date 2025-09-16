@@ -40,25 +40,11 @@ const Navbar1 = () => {
     return null;
   }
 
-  // Páginas que necesitan header con fondo rosado
+  // Páginas que necesitan header con fondo rosado (PRESERVAR)
   const isPinkHeaderPage = pathname === "/quinceanera";
 
-  // Páginas que necesitan header con fondo rosado y color dorado
-  const isGoldHeaderPage = pathname === "/weddings";
-
-  // Páginas que necesitan header con texto y logos blancos
-  const isWhiteHeaderPage =
-    pathname === "/destinations" || pathname === "/packages";
-
-  // Páginas que necesitan detalles de color vino
-  const isWineDetailsPage =
-    pathname === "/packages" || pathname === "/destinations";
-
-  // Páginas que necesitan detalles de color negro
-  const isBlackDetailsPage = pathname === "/events";
-
-  // Páginas que necesitan header con fondo azul corporativo
-  const isBlueHeaderPage = pathname === "/about" || pathname === "/contact";
+  // Páginas que necesitan header con fondo rosado para weddings (PRESERVAR)
+  const isWeddingsHeaderPage = pathname === "/weddings";
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -69,15 +55,9 @@ const Navbar1 = () => {
           "flex items-center justify-between px-6 py-3 rounded-[3rem] shadow-2xl w-full max-w-5xl relative z-10 backdrop-blur-2xl border",
           isPinkHeaderPage
             ? "border-pink-200/30 bg-pink-50/20"
-            : isGoldHeaderPage
-              ? "bg-[#eaa298]/20 border-[#eaa298]/30"
-              : isBlackDetailsPage
-                ? "bg-white/90 border-gray-200/50"
-                : isWhiteHeaderPage
-                  ? "bg-black/20 border-white/30"
-                  : isBlueHeaderPage
-                    ? "bg-white/90 border-gray-200/50"
-                    : "bg-white/20 border-white/30"
+            : isWeddingsHeaderPage
+              ? "border-pink-200/30 bg-pink-50/20"
+              : "bg-white/60 border-gray-200/30"
         )}
       >
         {/* Logo Section */}
@@ -93,39 +73,22 @@ const Navbar1 = () => {
               src={
                 isPinkHeaderPage
                   ? "/logos/quinceanera_logo.svg"
-                  : isGoldHeaderPage
+                  : isWeddingsHeaderPage
                     ? "/logos/bodas_logo.svg"
-                    : isWhiteHeaderPage
-                      ? "/logos/iso_white.svg"
-                      : isBlueHeaderPage
-                        ? "/logos/iso_blue.svg"
-                        : isBlackDetailsPage
-                          ? "/logos/iso_blue.svg"
-                          : "/logos/iso_blue.svg"
+                    : "/logos/iso_blue.svg"
               }
               alt="Logo"
               width={44}
               height={34}
-              className={cn(
-                "transition-all duration-300 ease-out",
-                isBlackDetailsPage && "brightness-0"
-              )}
+              className="transition-all duration-300 ease-out"
             />
             <TextLogo
               variant={
                 isPinkHeaderPage
                   ? "pink"
-                  : isGoldHeaderPage
+                  : isWeddingsHeaderPage
                     ? "gold"
-                    : isWineDetailsPage
-                      ? "wine"
-                      : isBlackDetailsPage
-                        ? "black"
-                        : isWhiteHeaderPage
-                          ? "white"
-                          : isBlueHeaderPage
-                            ? "dark"
-                            : "dark"
+                    : "dark"
               }
               size="md"
               className="transition-all duration-300 ease-out"
@@ -149,15 +112,9 @@ const Navbar1 = () => {
                   "text-sm font-medium transition-all duration-300 relative group",
                   isPinkHeaderPage
                     ? "text-[#e03d90] hover:opacity-80"
-                    : isGoldHeaderPage
+                    : isWeddingsHeaderPage
                       ? "text-[#eaa298] hover:text-[#eaa298]/80"
-                      : isBlackDetailsPage
-                        ? "text-black hover:text-black/80"
-                        : isWhiteHeaderPage
-                          ? "text-white hover:text-white/80"
-                          : isBlueHeaderPage
-                            ? "text-gray-700 hover:text-gray-900"
-                            : "text-corporate-blue hover:text-corporate-blue/80"
+                      : "text-gray-700 hover:text-gray-900"
                 )}
               >
                 {item.label}
@@ -166,17 +123,9 @@ const Navbar1 = () => {
                     "absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full",
                     isPinkHeaderPage
                       ? "bg-[#e03d90]"
-                      : isGoldHeaderPage
-                        ? "bg-gold"
-                        : isWineDetailsPage
-                          ? "bg-wine"
-                          : isBlackDetailsPage
-                            ? "bg-black"
-                            : isWhiteHeaderPage
-                              ? "bg-white"
-                              : isBlueHeaderPage
-                                ? "bg-corporate-blue"
-                                : "bg-corporate-blue"
+                      : isWeddingsHeaderPage
+                        ? "bg-[#eaa298]"
+                        : "bg-corporate-blue"
                   )}
                 />
               </Link>
@@ -197,7 +146,15 @@ const Navbar1 = () => {
               <div className="w-5 h-5 bg-muted-foreground/30 rounded" />
             </div>
           ) : user ? (
-            <DashboardButton />
+            <DashboardButton
+              variant={
+                isPinkHeaderPage
+                  ? "pink"
+                  : isWeddingsHeaderPage
+                    ? "gold"
+                    : "default"
+              }
+            />
           ) : isPinkHeaderPage ? (
             <NavbarButton
               asChild
@@ -209,27 +166,28 @@ const Navbar1 = () => {
             >
               Sign In
             </NavbarButton>
+          ) : isWeddingsHeaderPage ? (
+            <NavbarButton
+              asChild
+              size="sm"
+              className="shadow-pink-200/50"
+              primaryColor="#eaa298"
+              hoverColor="#d49186"
+              href="/sign-in"
+            >
+              Sign In
+            </NavbarButton>
           ) : (
             <Button
               asChild
               size="sm"
-              className={cn(
-                "rounded-full transition-all duration-300 hover:scale-105",
-                isGoldHeaderPage
-                  ? "bg-[#eaa298] text-white hover:bg-[#d49186] shadow-[#eaa298]/50"
-                  : isWineDetailsPage
-                    ? "bg-wine text-white hover:bg-wine-light shadow-wine/50"
-                    : isBlackDetailsPage
-                      ? "bg-black text-white hover:bg-gray-800 shadow-black/50"
-                      : isBlueHeaderPage
-                        ? "bg-corporate-blue text-white hover:bg-corporate-blue/90 shadow-blue-200/50"
-                        : "bg-primary text-primary-foreground"
-              )}
+              className="rounded-full transition-all duration-300 hover:scale-105 bg-corporate-blue text-white hover:bg-corporate-blue/90 shadow-blue-200/50"
             >
               <Link href="/sign-in">Sign In</Link>
             </Button>
           )}
 
+          {/* Contact Button */}
           {isPinkHeaderPage ? (
             <NavbarButton
               asChild
@@ -241,24 +199,22 @@ const Navbar1 = () => {
             >
               Contactar
             </NavbarButton>
+          ) : isWeddingsHeaderPage ? (
+            <NavbarButton
+              asChild
+              size="sm"
+              className="shadow-pink-200/50"
+              primaryColor="#eaa298"
+              hoverColor="#d49186"
+              href="/contact"
+            >
+              Contactar
+            </NavbarButton>
           ) : (
             <Button
               asChild
               size="sm"
-              className={cn(
-                "rounded-full transition-all duration-300 hover:scale-105",
-                isGoldHeaderPage
-                  ? "bg-[#eaa298] text-white hover:bg-[#d49186] shadow-[#eaa298]/50"
-                  : isWineDetailsPage
-                    ? "bg-wine text-white hover:bg-wine-light shadow-wine/50"
-                    : isBlackDetailsPage
-                      ? "bg-black text-white hover:bg-gray-800 shadow-black/50"
-                      : isWhiteHeaderPage
-                        ? "bg-white text-black hover:bg-white/90 shadow-white/50"
-                        : isBlueHeaderPage
-                          ? "bg-corporate-blue text-white hover:bg-corporate-blue/90 shadow-blue-200/50"
-                          : "bg-corporate-blue text-white hover:bg-corporate-blue/90 shadow-blue-200/50"
-              )}
+              className="rounded-full transition-all duration-300 hover:scale-105 bg-corporate-blue text-white hover:bg-corporate-blue/90 shadow-blue-200/50"
             >
               <Link href="/contact">Contactar</Link>
             </Button>
@@ -269,17 +225,9 @@ const Navbar1 = () => {
         <motion.button
           className={cn(
             "lg:hidden flex items-center p-2 rounded-lg transition-colors",
-            isPinkHeaderPage
+            isPinkHeaderPage || isWeddingsHeaderPage
               ? "hover:bg-pink-500/20"
-              : isGoldHeaderPage
-                ? "hover:bg-[#eaa298]/20"
-                : isWineDetailsPage
-                  ? "hover:bg-wine/20"
-                  : isBlackDetailsPage
-                    ? "hover:bg-black/10"
-                    : isBlueHeaderPage
-                      ? "hover:bg-gray-100/50"
-                      : "hover:bg-gray-100/50"
+              : "hover:bg-gray-100/50"
           )}
           onClick={toggleMenu}
           whileTap={{ scale: 0.95 }}
@@ -289,15 +237,9 @@ const Navbar1 = () => {
               "h-6 w-6",
               isPinkHeaderPage
                 ? "text-[#e03d90]"
-                : isGoldHeaderPage
+                : isWeddingsHeaderPage
                   ? "text-[#eaa298]"
-                  : isBlackDetailsPage
-                    ? "text-black"
-                    : isWhiteHeaderPage
-                      ? "text-white"
-                      : isBlueHeaderPage
-                        ? "text-gray-700"
-                        : "text-corporate-blue"
+                  : "text-gray-700"
             )}
           />
         </motion.button>
@@ -309,17 +251,9 @@ const Navbar1 = () => {
           <motion.div
             className={cn(
               "fixed inset-0 z-50 pt-20 px-6 lg:hidden backdrop-blur-md",
-              isPinkHeaderPage
+              isPinkHeaderPage || isWeddingsHeaderPage
                 ? "bg-pink-50/95"
-                : isGoldHeaderPage
-                  ? "bg-[#eaa298]/10"
-                  : isBlackDetailsPage
-                    ? "bg-white/95"
-                    : isWhiteHeaderPage
-                      ? "bg-black/95"
-                      : isBlueHeaderPage
-                        ? "bg-white/95"
-                        : "bg-white/95"
+                : "bg-white/95"
             )}
             initial={{ opacity: 0, y: "100%" }}
             animate={{ opacity: 1, y: 0 }}
@@ -329,17 +263,9 @@ const Navbar1 = () => {
             <motion.button
               className={cn(
                 "absolute top-6 right-6 p-3 rounded-full transition-colors",
-                isPinkHeaderPage
+                isPinkHeaderPage || isWeddingsHeaderPage
                   ? "bg-pink-100 hover:bg-pink-200"
-                  : isGoldHeaderPage
-                    ? "bg-[#eaa298]/20 hover:bg-[#eaa298]/30"
-                    : isBlackDetailsPage
-                      ? "bg-gray-100 hover:bg-gray-200"
-                      : isWhiteHeaderPage
-                        ? "bg-white/20 hover:bg-white/30"
-                        : isBlueHeaderPage
-                          ? "bg-gray-100 hover:bg-gray-200"
-                          : "bg-gray-100 hover:bg-gray-200"
+                  : "bg-gray-100 hover:bg-gray-200"
               )}
               onClick={toggleMenu}
               whileTap={{ scale: 0.95 }}
@@ -352,15 +278,9 @@ const Navbar1 = () => {
                   "h-6 w-6",
                   isPinkHeaderPage
                     ? "text-[#e03d90]"
-                    : isGoldHeaderPage
+                    : isWeddingsHeaderPage
                       ? "text-[#eaa298]"
-                      : isBlackDetailsPage
-                        ? "text-gray-700"
-                        : isWhiteHeaderPage
-                          ? "text-white"
-                          : isBlueHeaderPage
-                            ? "text-gray-700"
-                            : "text-gray-700"
+                      : "text-gray-700"
                 )}
               />
             </motion.button>
@@ -380,15 +300,9 @@ const Navbar1 = () => {
                       "text-lg font-medium transition-colors block py-2",
                       isPinkHeaderPage
                         ? "text-[#e03d90] hover:opacity-80"
-                        : isGoldHeaderPage
+                        : isWeddingsHeaderPage
                           ? "text-[#eaa298] hover:text-[#eaa298]/80"
-                          : isBlackDetailsPage
-                            ? "text-black hover:text-black/80"
-                            : isWhiteHeaderPage
-                              ? "text-white hover:text-white/80"
-                              : isBlueHeaderPage
-                                ? "text-gray-700 hover:text-gray-900"
-                                : "text-corporate-blue hover:text-corporate-blue/80"
+                          : "text-gray-700 hover:text-gray-900"
                     )}
                     onClick={toggleMenu}
                   >
@@ -411,7 +325,15 @@ const Navbar1 = () => {
                       <div className="w-6 h-6 bg-muted-foreground/30 rounded" />
                     </div>
                   ) : user ? (
-                    <DashboardButton />
+                    <DashboardButton
+                      variant={
+                        isPinkHeaderPage
+                          ? "pink"
+                          : isWeddingsHeaderPage
+                            ? "gold"
+                            : "default"
+                      }
+                    />
                   ) : isPinkHeaderPage ? (
                     <NavbarButton
                       asChild
@@ -424,22 +346,23 @@ const Navbar1 = () => {
                     >
                       Sign In
                     </NavbarButton>
+                  ) : isWeddingsHeaderPage ? (
+                    <NavbarButton
+                      asChild
+                      size="lg"
+                      className="w-full shadow-pink-200/50"
+                      primaryColor="#eaa298"
+                      hoverColor="#d49186"
+                      href="/sign-in"
+                      onClick={toggleMenu}
+                    >
+                      Sign In
+                    </NavbarButton>
                   ) : (
                     <Button
                       asChild
                       size="lg"
-                      className={cn(
-                        "w-full rounded-full",
-                        isGoldHeaderPage
-                          ? "bg-[#eaa298] text-white hover:bg-[#d49186] shadow-[#eaa298]/50"
-                          : isWineDetailsPage
-                            ? "bg-wine text-white hover:bg-wine-light shadow-wine/50"
-                            : isBlackDetailsPage
-                              ? "bg-black text-white hover:bg-gray-800 shadow-black/50"
-                              : isBlueHeaderPage
-                                ? "bg-corporate-blue text-white hover:bg-corporate-blue/90 shadow-blue-200/50"
-                                : "bg-primary text-primary-foreground"
-                      )}
+                      className="w-full rounded-full bg-corporate-blue text-white hover:bg-corporate-blue/90 shadow-blue-200/50"
                       onClick={toggleMenu}
                     >
                       <Link href="/sign-in">Sign In</Link>
@@ -447,6 +370,7 @@ const Navbar1 = () => {
                   )}
                 </div>
 
+                {/* Mobile Contact Button */}
                 {isPinkHeaderPage ? (
                   <NavbarButton
                     asChild
@@ -459,24 +383,23 @@ const Navbar1 = () => {
                   >
                     Contactar
                   </NavbarButton>
+                ) : isWeddingsHeaderPage ? (
+                  <NavbarButton
+                    asChild
+                    size="lg"
+                    className="w-full shadow-pink-200/50"
+                    primaryColor="#eaa298"
+                    hoverColor="#d49186"
+                    href="/contact"
+                    onClick={toggleMenu}
+                  >
+                    Contactar
+                  </NavbarButton>
                 ) : (
                   <Button
                     asChild
                     size="lg"
-                    className={cn(
-                      "w-full rounded-full transition-all duration-300",
-                      isGoldHeaderPage
-                        ? "bg-[#eaa298] text-white hover:bg-[#d49186] shadow-[#eaa298]/50"
-                        : isWineDetailsPage
-                          ? "bg-wine text-white hover:bg-wine-light shadow-wine/50"
-                          : isBlackDetailsPage
-                            ? "bg-black text-white hover:bg-gray-800 shadow-black/50"
-                            : isWhiteHeaderPage
-                              ? "bg-white text-black hover:bg-white/90 shadow-white/50"
-                              : isBlueHeaderPage
-                                ? "bg-corporate-blue text-white hover:bg-corporate-blue/90 shadow-blue-200/50"
-                                : "bg-corporate-blue text-white hover:bg-corporate-blue/90 shadow-blue-200/50"
-                    )}
+                    className="w-full rounded-full transition-all duration-300 bg-corporate-blue text-white hover:bg-corporate-blue/90 shadow-blue-200/50"
                     onClick={toggleMenu}
                   >
                     <Link href="/contact">Contactar</Link>

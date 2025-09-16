@@ -14,6 +14,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, Loader2, ExternalLink, MessageSquare } from "lucide-react";
 import { buildWhatsAppUrl } from "@/lib/utils";
+import { getRandomPhoneNumber } from "@/lib/whatsapp-utils";
 import { WhatsAppTemplateBuilder } from "@/components/admin/forms/whatsapp-template-builder";
 
 interface ViewItemModalProps {
@@ -65,7 +66,7 @@ export function ViewItemModal({ templateId, onSuccess }: ViewItemModalProps) {
 
   const previewUrl = templateData
     ? buildWhatsAppUrl(
-        templateData.phoneNumber || phone,
+        getRandomPhoneNumber(templateData) || phone,
         templateData.templateBody,
         previewVars
       )

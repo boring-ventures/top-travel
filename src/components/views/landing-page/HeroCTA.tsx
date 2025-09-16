@@ -1,9 +1,10 @@
-import { WhatsAppCTA } from "@/components/utils/whatsapp-cta";
+import { ClientWhatsAppCTA } from "@/components/utils/client-whatsapp-cta";
 
 interface HeroCTAProps {
   whatsappTemplate?: {
     templateBody: string;
     phoneNumber?: string;
+    phoneNumbers?: string[];
   };
 }
 
@@ -21,13 +22,13 @@ export default function HeroCTA({ whatsappTemplate }: HeroCTAProps) {
           </p>
         </div>
         <div className="shrink-0 w-full sm:w-auto">
-          <WhatsAppCTA
+          <ClientWhatsAppCTA
+            whatsappTemplate={whatsappTemplate}
             template={
               whatsappTemplate?.templateBody ||
               "Hola, quiero más información — {url}"
             }
             variables={{ url: "" }}
-            phone={whatsappTemplate?.phoneNumber}
             label="Consultar por WhatsApp"
             variant="default"
             size="lg"

@@ -1,9 +1,10 @@
-import { WhatsAppCTA } from "@/components/utils/whatsapp-cta";
+import { ClientWhatsAppCTA } from "@/components/utils/client-whatsapp-cta";
 
 interface PersistentWhatsAppCTAProps {
   whatsappTemplate?: {
     templateBody: string;
     phoneNumber?: string;
+    phoneNumbers?: string[];
   };
 }
 
@@ -13,13 +14,13 @@ export default function PersistentWhatsAppCTA({
   return (
     <div className="fixed bottom-3 sm:bottom-4 right-3 sm:right-4 z-50 pointer-events-none">
       <div className="pointer-events-auto">
-        <WhatsAppCTA
+        <ClientWhatsAppCTA
+          whatsappTemplate={whatsappTemplate}
           template={
             whatsappTemplate?.templateBody ||
             "Hola, me gustaría hablar con un asesor — {url}"
           }
           variables={{ url: "" }}
-          phone={whatsappTemplate?.phoneNumber}
           label=""
           variant="default"
           size="icon"

@@ -7,6 +7,7 @@ import { AnimatedHero } from "@/components/ui/animated-hero";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { WhatsAppCTA } from "@/components/utils/whatsapp-cta";
+import PinkWhatsAppCTA from "@/components/utils/pink-whatsapp-cta";
 import {
   Heart,
   MapPin,
@@ -523,6 +524,7 @@ export default async function WeddingsPage() {
       </main>
 
       <Footer />
+      <PinkWhatsAppCTA variant="weddings" />
     </div>
   );
 }

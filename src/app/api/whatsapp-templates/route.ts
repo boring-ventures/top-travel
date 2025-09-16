@@ -17,17 +17,30 @@ export async function GET(request: Request) {
       50,
       Math.max(1, parseInt(searchParams.get("pageSize") || "10", 10))
     );
+    const usageType = searchParams.get("usageType");
     const skip = (page - 1) * pageSize;
+
+    // Build where clause for filtering
+    const whereClause = usageType ? { usageType } : {};
 
     const [items, total] = await Promise.all([
       prisma.whatsAppTemplate.findMany({
+        where: whereClause,
         orderBy: { createdAt: "desc" },
         skip,
         take: pageSize,
       }),
-      prisma.whatsAppTemplate.count(),
+      prisma.whatsAppTemplate.count({ where: whereClause }),
     ]);
-    return NextResponse.json({ items, total, page, pageSize });
+
+    // Ensure phoneNumbers array is properly formatted for all items
+    const formattedItems = items.map((item) => ({
+      ...item,
+      phoneNumbers:
+        item.phoneNumbers || (item.phoneNumber ? [item.phoneNumber] : []),
+    }));
+
+    return NextResponse.json({ items: formattedItems, total, page, pageSize });
   } catch {
     return NextResponse.json(
       { error: "Failed to fetch templates" },
@@ -43,7 +56,16 @@ export async function POST(request: Request) {
     const json = await request.json();
     const parsed = WhatsAppTemplateCreateSchema.parse(json);
     const created = await prisma.whatsAppTemplate.create({ data: parsed });
-    return NextResponse.json(created, { status: 201 });
+
+    // Return formatted response
+    const formattedItem = {
+      ...created,
+      phoneNumbers:
+        created.phoneNumbers ||
+        (created.phoneNumber ? [created.phoneNumber] : []),
+    };
+
+    return NextResponse.json(formattedItem, { status: 201 });
   } catch (error: any) {
     const status = error?.status ?? 400;
     return NextResponse.json(

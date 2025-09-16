@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { isValidImageUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { ClientWhatsAppCTA } from "@/components/utils/client-whatsapp-cta";
 
 interface Offer {
   id: string;
@@ -28,6 +29,7 @@ interface FeaturedOffersProps {
   whatsappTemplate?: {
     templateBody: string;
     phoneNumber?: string;
+    phoneNumbers?: string[];
   };
 }
 
@@ -110,15 +112,36 @@ export default function FeaturedOffers({
                           {price}
                         </p>
 
-                        <Button
-                          asChild
-                          className="w-full bg-black/30 backdrop-blur-md hover:bg-black/40 text-white font-semibold py-3 rounded-xl transition-all duration-300 border border-white/20 hover:border-white/30 flex items-center justify-center gap-2"
-                        >
-                          <Link href={href}>
-                            <span>Conoce más</span>
-                            <ArrowRight className="h-4 w-4" />
-                          </Link>
-                        </Button>
+                        <div className="space-y-2">
+                          <Button
+                            asChild
+                            variant="outline"
+                            className="w-full bg-white/20 backdrop-blur-md hover:bg-white/30 text-white font-semibold py-2 rounded-xl transition-all duration-300 border border-white/30 hover:border-white/40 flex items-center justify-center gap-2"
+                          >
+                            <Link href={href}>
+                              <span>Ver detalles</span>
+                              <ArrowRight className="h-4 w-4" />
+                            </Link>
+                          </Button>
+
+                          {whatsappTemplate && (
+                            <ClientWhatsAppCTA
+                              whatsappTemplate={whatsappTemplate}
+                              template={
+                                whatsappTemplate.templateBody ||
+                                "Hola! Me interesa la oferta {title}."
+                              }
+                              variables={{
+                                title: o.title,
+                                itemTitle: o.title,
+                              }}
+                              label="Consultar por WhatsApp"
+                              variant="default"
+                              size="sm"
+                              className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-xl transition-all duration-300"
+                            />
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -131,7 +154,7 @@ export default function FeaturedOffers({
         <div className="mt-12 text-center">
           <Link
             className="bg-black text-white px-8 py-4 rounded-full hover:bg-black/80 transition-colors duration-300 inline-flex items-center gap-2 text-lg font-semibold"
-            href="/packages"
+            href="/offers"
           >
             Ver Todos
             <svg

@@ -1,11 +1,12 @@
 "use client";
 
-import { WhatsAppCTA } from "@/components/utils/whatsapp-cta";
+import { ClientWhatsAppCTA } from "@/components/utils/client-whatsapp-cta";
 
 interface GlassCTAProps {
   whatsappTemplate?: {
     templateBody?: string;
     phoneNumber?: string;
+    phoneNumbers?: string[];
   };
 }
 
@@ -26,13 +27,13 @@ export default function GlassCTA({ whatsappTemplate }: GlassCTAProps) {
 
         {/* Action Button */}
         <div className="flex justify-center">
-          <WhatsAppCTA
+          <ClientWhatsAppCTA
+            whatsappTemplate={whatsappTemplate}
             template={
               whatsappTemplate?.templateBody ||
               "Hola, quiero planear mi próximo viaje — {url}"
             }
             variables={{ url: "" }}
-            phone={whatsappTemplate?.phoneNumber}
             label="Hablar por WhatsApp"
             variant="default"
             size="lg"

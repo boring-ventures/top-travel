@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
-import WhatsAppCTA from "@/components/utils/whatsapp-cta";
+import { ClientWhatsAppCTA } from "@/components/utils/client-whatsapp-cta";
+import { getWhatsAppTemplateByUsage } from "@/lib/whatsapp-utils";
 import { pageMeta } from "@/lib/seo";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
@@ -32,6 +33,9 @@ export default async function FixedDepartureDetailPage({ params }: Params) {
   if (!item || item.status !== "PUBLISHED") {
     notFound();
   }
+
+  // Fetch WhatsApp template for fixed departures
+  const whatsappTemplate = await getWhatsAppTemplateByUsage("FIXED_DEPARTURES");
 
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat("es-ES", {
@@ -255,13 +259,18 @@ export default async function FixedDepartureDetailPage({ params }: Params) {
                     </p>
                   </div>
 
-                  <WhatsAppCTA
+                  <ClientWhatsAppCTA
+                    whatsappTemplate={whatsappTemplate}
                     label="Consultar por WhatsApp"
-                    template="Hola! Me interesa la salida fija {title} en {city}, {country}."
+                    template={
+                      whatsappTemplate?.templateBody ||
+                      "Hola! Me interesa la salida fija {title} en {city}, {country}."
+                    }
                     variables={{
                       title: item.title,
                       city: item.destination?.city,
                       country: item.destination?.country,
+                      itemTitle: item.title,
                     }}
                     campaign="fixed_departure_detail"
                     content={item.slug}

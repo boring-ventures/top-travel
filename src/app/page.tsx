@@ -37,6 +37,7 @@ const FALLBACK_IMAGES = {
 export default async function Home() {
   let offers: any[] = [];
   let topDestinations: any[] = [];
+  let topPackages: any[] = [];
   let weddingDestinations: any[] = [];
   let featuredEvents: any[] = [];
   let departments: any[] = [];
@@ -388,6 +389,34 @@ export default async function Home() {
           heroImageUrl: true,
         },
       }),
+      prisma.package.findMany({
+        where: {
+          status: "PUBLISHED",
+          isTop: true,
+        },
+        orderBy: { createdAt: "desc" },
+        take: 6,
+        select: {
+          id: true,
+          slug: true,
+          title: true,
+          summary: true,
+          heroImageUrl: true,
+          fromPrice: true,
+          currency: true,
+          packageDestinations: {
+            select: {
+              destination: {
+                select: {
+                  city: true,
+                  country: true,
+                },
+              },
+            },
+            take: 1,
+          },
+        },
+      }),
       prisma.weddingDestination.findMany({
         where: {
           isFeatured: true,
@@ -460,6 +489,7 @@ export default async function Home() {
     [
       offers,
       topDestinations,
+      topPackages,
       weddingDestinations,
       featuredEvents,
       departments,
@@ -478,6 +508,12 @@ export default async function Home() {
               : undefined,
           }
         : undefined,
+    }));
+
+    // Convert Decimal objects to numbers for top packages
+    topPackages = topPackages.map((pkg) => ({
+      ...pkg,
+      fromPrice: pkg.fromPrice ? Number(pkg.fromPrice) : undefined,
     }));
 
     // Fetch WhatsApp templates for different usage types
@@ -539,6 +575,30 @@ export default async function Home() {
   // Prepare tabbed content data
   const tabbedContent = [
     {
+      id: "destinations",
+      label: "Destinos Top",
+      href: "/packages",
+      items: topPackages.slice(0, 6).map((pkg) => ({
+        id: pkg.id,
+        title: pkg.title,
+        description:
+          pkg.summary ||
+          "Explora destinos increíbles con nuestras experiencias únicas",
+        imageUrl: getValidImageUrl(
+          pkg.heroImageUrl,
+          FALLBACK_IMAGES.destinations
+        ),
+        href: `/packages/${pkg.slug}`,
+        price: pkg.fromPrice
+          ? `${pkg.currency || "USD"} ${pkg.fromPrice.toLocaleString()}`
+          : "Consultar precio",
+        location: pkg.packageDestinations?.[0]?.destination
+          ? `${pkg.packageDestinations[0].destination.city}, ${pkg.packageDestinations[0].destination.country}`
+          : "Bolivia",
+        isTop: true,
+      })),
+    },
+    {
       id: "events",
       label: "Conciertos & Eventos",
       href: "/events",
@@ -555,24 +615,6 @@ export default async function Home() {
       })),
     },
     {
-      id: "destinations",
-      label: "Destinos Top",
-      href: "/tags/top-destinations",
-      items: topDestinations.slice(0, 6).map((dest) => ({
-        id: dest.id,
-        title: `${dest.city}, ${dest.country}`,
-        description:
-          "Explora destinos increíbles con nuestras experiencias únicas",
-        imageUrl: getValidImageUrl(
-          dest.heroImageUrl,
-          FALLBACK_IMAGES.destinations
-        ),
-        href: `/destinations/${dest.slug}`,
-        price: "Consultar precio",
-        location: `${dest.city}, ${dest.country}`,
-      })),
-    },
-    {
       id: "fixed-departures",
       label: "Salidas Fijas",
       href: "/fixed-departures",
@@ -586,20 +628,6 @@ export default async function Home() {
         location: "Bolivia",
         amenities: dep.amenities || [],
         exclusions: dep.exclusions || [],
-      })),
-    },
-    {
-      id: "south-america",
-      label: "Destinos Sudamericanos",
-      href: "/destinations",
-      items: topDestinations.slice(0, 6).map((dest) => ({
-        id: dest.id,
-        title: `${dest.city}, ${dest.country}`,
-        description: "Descubre Sudamérica con nuestras rutas exclusivas",
-        imageUrl: getValidImageUrl(dest.heroImageUrl, FALLBACK_IMAGES.beaches),
-        href: `/destinations/${dest.slug}`,
-        price: "Consultar precio",
-        location: `${dest.city}, ${dest.country}`,
       })),
     },
   ];
@@ -636,6 +664,11 @@ export default async function Home() {
 
         <Hero items={heroItems} tags={tags} />
 
+        <FeaturedOffers
+          offers={offers}
+          whatsappTemplate={whatsappTemplates.offers}
+        />
+
         {/* Tabbed Content Section */}
         <section className="py-16 w-full bg-gray-50">
           <div className="container mx-auto px-4">
@@ -663,7 +696,7 @@ export default async function Home() {
                   <RotatingWords
                     words={["Únicas", "Inolvidables", "Extraordinarias"]}
                     interval={2500}
-                    className="text-3xl sm:text-4xl lg:text-5xl font-bold text-blue-700"
+                    className="text-3xl sm:text-4xl lg:text-5xl font-bold italic text-blue-700"
                   />
                 </h2>
                 <p className="text-lg sm:text-xl text-gray-300 leading-relaxed">
@@ -684,10 +717,6 @@ export default async function Home() {
         {/* Wedding Destinations Section */}
         <WeddingDestinations destinations={weddingDestinations} />
 
-        <FeaturedOffers
-          offers={offers}
-          whatsappTemplate={whatsappTemplates.offers}
-        />
         <Tags tags={tags} />
 
         {/* Services Section */}

@@ -13,7 +13,15 @@ export async function GET(_req: Request, { params }: Params) {
     });
     if (!item)
       return NextResponse.json({ error: "Not found" }, { status: 404 });
-    return NextResponse.json(item);
+
+    // Ensure phoneNumbers array is properly formatted
+    const formattedItem = {
+      ...item,
+      phoneNumbers:
+        item.phoneNumbers || (item.phoneNumber ? [item.phoneNumber] : []),
+    };
+
+    return NextResponse.json(formattedItem);
   } catch {
     return NextResponse.json(
       { error: "Failed to fetch template" },
@@ -29,11 +37,28 @@ export async function PATCH(request: Request, { params }: Params) {
     const { id } = await params;
     const json = await request.json();
     const parsed = WhatsAppTemplateUpdateSchema.parse(json);
+
+    // Ensure phoneNumbers is properly handled
+    const updateData = {
+      ...parsed,
+      // If phoneNumbers is provided, use it; otherwise keep existing
+      ...(parsed.phoneNumbers && { phoneNumbers: parsed.phoneNumbers }),
+    };
+
     const updated = await prisma.whatsAppTemplate.update({
       where: { id },
-      data: parsed,
+      data: updateData,
     });
-    return NextResponse.json(updated);
+
+    // Return formatted response
+    const formattedItem = {
+      ...updated,
+      phoneNumbers:
+        updated.phoneNumbers ||
+        (updated.phoneNumber ? [updated.phoneNumber] : []),
+    };
+
+    return NextResponse.json(formattedItem);
   } catch (error: any) {
     const status = error?.status ?? 400;
     return NextResponse.json(

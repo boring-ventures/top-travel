@@ -37,8 +37,12 @@ export function WhatsAppCTA({
   const defaultPhone = process.env.NEXT_PUBLIC_WHATSAPP_PHONE || "";
 
   // Build a deterministic initial href for SSR and first client render
-  const [href, setHref] = useState<string>(() =>
-    buildWhatsAppUrl(phone || defaultPhone, template, variables, {
+  const [href, setHref] = useState<string>(() => {
+    const initialVariables = {
+      ...variables,
+      url: "",
+    };
+    return buildWhatsAppUrl(phone || defaultPhone, template, initialVariables, {
       utm: {
         source: "site",
         medium: "whatsapp",
@@ -46,19 +50,26 @@ export function WhatsAppCTA({
         content,
       },
       pageUrl: undefined,
-    })
-  );
+    });
+  });
 
-  // After mount, enhance with real page URL and any persisted UTM params
+  // After mount, enhance with real page URL, persisted UTM params, and random phone number
   useEffect(() => {
     const pageUrl =
       typeof window !== "undefined" ? window.location.href : undefined;
     const persisted =
       typeof window !== "undefined" ? getPersistedUtm() : undefined;
+
+    // Enhanced variables with URL data
+    const enhancedVariables = {
+      ...variables,
+      url: pageUrl || "",
+    };
+
     const enhanced = buildWhatsAppUrl(
       phone || defaultPhone,
       template,
-      variables,
+      enhancedVariables,
       {
         utm: {
           source: persisted?.utm_source || "site",

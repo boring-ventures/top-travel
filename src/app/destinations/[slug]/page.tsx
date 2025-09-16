@@ -1,7 +1,8 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
-import WhatsAppCTA from "@/components/utils/whatsapp-cta";
+import { ClientWhatsAppCTA } from "@/components/utils/client-whatsapp-cta";
 import { pageMeta } from "@/lib/seo";
+import { getWhatsAppTemplateByUsage } from "@/lib/whatsapp-utils";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -58,6 +59,9 @@ export default async function DestinationDetailPage({ params }: Params) {
   if (!dest) {
     notFound();
   }
+
+  // Fetch WhatsApp template for destinations
+  const whatsappTemplate = await getWhatsAppTemplateByUsage("DESTINATIONS");
 
   const relatedPackages = await prisma.package.findMany({
     where: {
@@ -358,10 +362,18 @@ export default async function DestinationDetailPage({ params }: Params) {
                     </p>
                   </div>
 
-                  <WhatsAppCTA
+                  <ClientWhatsAppCTA
+                    whatsappTemplate={whatsappTemplate}
                     label="Consultar por WhatsApp"
-                    template="Hola! Me interesa viajar a {city}, {country}."
-                    variables={{ city: dest.city, country: dest.country }}
+                    template={
+                      whatsappTemplate?.templateBody ||
+                      "Hola! Me interesa viajar a {city}, {country}."
+                    }
+                    variables={{
+                      city: dest.city,
+                      country: dest.country,
+                      itemTitle: `${dest.city}, ${dest.country}`,
+                    }}
                     campaign="destination_detail"
                     content={dest.slug}
                     size="lg"
