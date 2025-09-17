@@ -577,6 +577,7 @@ async function main() {
       name: "Wedding Consultation",
       templateBody:
         "¡Hola! Estoy interesado en planificar mi boda de destino. Me gustaría recibir información sobre {itemTitle} - {url}",
+      phoneNumber: "+59170000000",
       phoneNumbers: ["+59170000000", "+59170000001"],
       usageType: "WEDDINGS",
       isDefault: true,
@@ -590,6 +591,7 @@ async function main() {
       name: "Wedding Quote Request",
       templateBody:
         "Hola, quiero cotizar mi boda de destino. Me interesa {itemTitle} - {url}",
+      phoneNumber: "+59170000000",
       phoneNumbers: ["+59170000000", "+59170000001"],
       usageType: "WEDDINGS",
       isDefault: false,
@@ -603,6 +605,7 @@ async function main() {
       name: "Wedding Destination Info",
       templateBody:
         "¡Hola! Me encanta este destino para mi boda: {itemTitle}. ¿Podrían enviarme más información? - {url}",
+      phoneNumber: "+59170000000",
       phoneNumbers: ["+59170000000", "+59170000001"],
       usageType: "WEDDINGS",
       isDefault: false,
@@ -617,6 +620,7 @@ async function main() {
       name: "Quinceañera Consultation",
       templateBody:
         "¡Hola! Estoy interesada en planificar mi quinceañera de destino. Me gustaría recibir información sobre {itemTitle} - {url}",
+      phoneNumber: "+59170000000",
       phoneNumbers: ["+59170000000", "+59170000001"],
       usageType: "QUINCEANERA",
       isDefault: true,
@@ -630,6 +634,7 @@ async function main() {
       name: "Quinceañera Quote Request",
       templateBody:
         "Hola, quiero cotizar mi quinceañera de destino. Me interesa {itemTitle} - {url}",
+      phoneNumber: "+59170000000",
       phoneNumbers: ["+59170000000", "+59170000001"],
       usageType: "QUINCEANERA",
       isDefault: false,
@@ -643,6 +648,7 @@ async function main() {
       name: "Quinceañera Destination Info",
       templateBody:
         "¡Hola! Me encanta este destino para mi quinceañera: {itemTitle}. ¿Podrían enviarme más información? - {url}",
+      phoneNumber: "+59170000000",
       phoneNumbers: ["+59170000000", "+59170000001"],
       usageType: "QUINCEANERA",
       isDefault: false,

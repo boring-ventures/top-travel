@@ -28,7 +28,15 @@ export default function GlassCTA({ whatsappTemplate }: GlassCTAProps) {
         {/* Action Button */}
         <div className="flex justify-center">
           <ClientWhatsAppCTA
-            whatsappTemplate={whatsappTemplate}
+            whatsappTemplate={
+              whatsappTemplate
+                ? {
+                    templateBody: whatsappTemplate.templateBody,
+                    phoneNumber: whatsappTemplate.phoneNumber,
+                    phoneNumbers: whatsappTemplate.phoneNumbers,
+                  }
+                : undefined
+            }
             template={
               whatsappTemplate?.templateBody ||
               "Hola, quiero planear mi próximo viaje — {url}"

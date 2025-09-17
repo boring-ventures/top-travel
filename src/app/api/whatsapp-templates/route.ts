@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { WhatsAppTemplateCreateSchema } from "@/lib/validations/whatsapp-template";
+import {
+  WhatsAppTemplateCreateSchema,
+  TemplateUsageTypeSchema,
+} from "@/lib/validations/whatsapp-template";
 import { auth, ensureSuperadmin } from "@/lib/auth";
 import { rateLimit } from "@/lib/rate-limit";
 
@@ -17,11 +20,13 @@ export async function GET(request: Request) {
       50,
       Math.max(1, parseInt(searchParams.get("pageSize") || "10", 10))
     );
-    const usageType = searchParams.get("usageType");
+    const usageTypeParam = searchParams.get("usageType");
     const skip = (page - 1) * pageSize;
 
-    // Build where clause for filtering
-    const whereClause = usageType ? { usageType } : {};
+    // Build where clause for filtering - validate usageType if provided
+    const whereClause = usageTypeParam
+      ? { usageType: TemplateUsageTypeSchema.parse(usageTypeParam) }
+      : {};
 
     const [items, total] = await Promise.all([
       prisma.whatsAppTemplate.findMany({

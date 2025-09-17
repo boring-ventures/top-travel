@@ -46,7 +46,15 @@ export default function PinkWhatsAppCTA({
     <div className="fixed bottom-3 sm:bottom-4 right-3 sm:right-4 z-50 pointer-events-none">
       <div className="pointer-events-auto">
         <ClientWhatsAppCTA
-          whatsappTemplate={whatsappTemplate}
+          whatsappTemplate={
+            whatsappTemplate
+              ? {
+                  templateBody: whatsappTemplate.templateBody,
+                  phoneNumber: whatsappTemplate.phoneNumber,
+                  phoneNumbers: whatsappTemplate.phoneNumbers,
+                }
+              : undefined
+          }
           template={getTemplate()}
           variables={{ url: "" }}
           label=""

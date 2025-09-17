@@ -260,7 +260,15 @@ export default async function FixedDepartureDetailPage({ params }: Params) {
                   </div>
 
                   <ClientWhatsAppCTA
-                    whatsappTemplate={whatsappTemplate}
+                    whatsappTemplate={
+                      whatsappTemplate
+                        ? {
+                            templateBody: whatsappTemplate.templateBody,
+                            phoneNumber: whatsappTemplate.phoneNumber,
+                            phoneNumbers: whatsappTemplate.phoneNumbers,
+                          }
+                        : undefined
+                    }
                     label="Consultar por WhatsApp"
                     template={
                       whatsappTemplate?.templateBody ||

@@ -93,7 +93,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const data = await response.json();
       setProfile(data.profile);
     } catch (error) {
-      if (error.name === "AbortError") {
+      if (error instanceof Error && error.name === "AbortError") {
         console.warn("Profile fetch timed out");
       } else {
         console.error("Error fetching profile:", error);

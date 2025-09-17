@@ -126,7 +126,11 @@ export default function FeaturedOffers({
 
                           {whatsappTemplate && (
                             <ClientWhatsAppCTA
-                              whatsappTemplate={whatsappTemplate}
+                              whatsappTemplate={{
+                                templateBody: whatsappTemplate.templateBody,
+                                phoneNumber: whatsappTemplate.phoneNumber,
+                                phoneNumbers: whatsappTemplate.phoneNumbers,
+                              }}
                               template={
                                 whatsappTemplate.templateBody ||
                                 "Hola! Me interesa la oferta {title}."

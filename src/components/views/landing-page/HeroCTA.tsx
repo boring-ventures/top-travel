@@ -23,7 +23,15 @@ export default function HeroCTA({ whatsappTemplate }: HeroCTAProps) {
         </div>
         <div className="shrink-0 w-full sm:w-auto">
           <ClientWhatsAppCTA
-            whatsappTemplate={whatsappTemplate}
+            whatsappTemplate={
+              whatsappTemplate
+                ? {
+                    templateBody: whatsappTemplate.templateBody,
+                    phoneNumber: whatsappTemplate.phoneNumber,
+                    phoneNumbers: whatsappTemplate.phoneNumbers,
+                  }
+                : undefined
+            }
             template={
               whatsappTemplate?.templateBody ||
               "Hola, quiero más información — {url}"
