@@ -191,6 +191,8 @@ export function WhatsAppTemplateForm({
               <SelectItem value="DESTINATIONS">Destinos</SelectItem>
               <SelectItem value="EVENTS">Eventos</SelectItem>
               <SelectItem value="FIXED_DEPARTURES">Salidas Fijas</SelectItem>
+              <SelectItem value="WEDDINGS">Bodas</SelectItem>
+              <SelectItem value="QUINCEANERA">Quinceañeras</SelectItem>
               <SelectItem value="GENERAL">General</SelectItem>
             </SelectContent>
           </Select>

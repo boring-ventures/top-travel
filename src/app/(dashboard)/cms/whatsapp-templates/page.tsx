@@ -102,7 +102,11 @@ export default function CmsWhatsAppTemplatesList() {
                                 ? "Eventos"
                                 : t.usageType === "FIXED_DEPARTURES"
                                   ? "Salidas Fijas"
-                                  : "General"}
+                                  : t.usageType === "WEDDINGS"
+                                    ? "Bodas"
+                                    : t.usageType === "QUINCEANERA"
+                                      ? "Quinceañeras"
+                                      : "General"}
                       </Badge>
                     ) : (
                       <span className="text-muted-foreground">No definido</span>

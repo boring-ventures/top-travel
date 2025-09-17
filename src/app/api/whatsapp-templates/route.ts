@@ -55,7 +55,14 @@ export async function POST(request: Request) {
     ensureSuperadmin(session?.user);
     const json = await request.json();
     const parsed = WhatsAppTemplateCreateSchema.parse(json);
-    const created = await prisma.whatsAppTemplate.create({ data: parsed });
+
+    // Ensure phoneNumber is set (use first phone number from array)
+    const data = {
+      ...parsed,
+      phoneNumber: parsed.phoneNumbers?.[0] || parsed.phoneNumber || "",
+    };
+
+    const created = await prisma.whatsAppTemplate.create({ data });
 
     // Return formatted response
     const formattedItem = {

@@ -38,11 +38,14 @@ export async function PATCH(request: Request, { params }: Params) {
     const json = await request.json();
     const parsed = WhatsAppTemplateUpdateSchema.parse(json);
 
-    // Ensure phoneNumbers is properly handled
+    // Ensure phoneNumbers and phoneNumber are properly handled
     const updateData = {
       ...parsed,
       // If phoneNumbers is provided, use it; otherwise keep existing
-      ...(parsed.phoneNumbers && { phoneNumbers: parsed.phoneNumbers }),
+      ...(parsed.phoneNumbers && {
+        phoneNumbers: parsed.phoneNumbers,
+        phoneNumber: parsed.phoneNumbers[0] || parsed.phoneNumber || "",
+      }),
     };
 
     const updated = await prisma.whatsAppTemplate.update({

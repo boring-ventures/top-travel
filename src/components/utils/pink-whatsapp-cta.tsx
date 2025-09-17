@@ -10,11 +10,13 @@ interface PinkWhatsAppCTAProps {
     phoneNumbers?: string[];
   };
   variant?: "quinceanera" | "weddings";
+  phone?: string;
 }
 
 export default function PinkWhatsAppCTA({
   whatsappTemplate,
   variant = "quinceanera",
+  phone,
 }: PinkWhatsAppCTAProps) {
   const getTemplate = () => {
     if (whatsappTemplate?.templateBody) {
@@ -28,6 +30,18 @@ export default function PinkWhatsAppCTA({
     return "Hola! Me interesa información sobre quinceañeras — {url}";
   };
 
+  const getPhone = () => {
+    // Prioritize template's phone number over fallback
+    if (whatsappTemplate?.phoneNumber) {
+      return whatsappTemplate.phoneNumber;
+    }
+    if (whatsappTemplate?.phoneNumbers?.[0]) {
+      return whatsappTemplate.phoneNumbers[0];
+    }
+    // Use fallback phone if no template phone available
+    return phone;
+  };
+
   return (
     <div className="fixed bottom-3 sm:bottom-4 right-3 sm:right-4 z-50 pointer-events-none">
       <div className="pointer-events-auto">
@@ -36,6 +50,7 @@ export default function PinkWhatsAppCTA({
           template={getTemplate()}
           variables={{ url: "" }}
           label=""
+          phone={getPhone()}
           variant="default"
           size="icon"
           className={cn(

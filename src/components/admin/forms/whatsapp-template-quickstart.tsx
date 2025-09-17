@@ -119,6 +119,42 @@ const QUICKSTART_TEMPLATES_BY_TYPE = {
       category: "Salidas Fijas",
     },
   ],
+  WEDDINGS: [
+    {
+      id: "wedding-consultation",
+      name: "Consulta de Boda",
+      description: "Consulta sobre bodas de destino",
+      template:
+        "¡Hola! 💒\n\nMe interesa planificar mi boda de destino: {itemTitle}\n\n¿Podrían darme información sobre:\n- Paquetes disponibles\n- Precios\n- Fechas disponibles\n- Qué incluye\n- Proceso de reserva\n\n¡Gracias! 💕",
+      category: "Bodas",
+    },
+    {
+      id: "wedding-quote",
+      name: "Cotización de Boda",
+      description: "Solicitar cotización para boda",
+      template:
+        "¡Buenos días! 💒\n\nQuiero cotizar mi boda de destino: {itemTitle}\n\n¿Podrían enviarme una cotización detallada incluyendo:\n- Precios por persona\n- Servicios incluidos\n- Fechas disponibles\n- Opciones de personalización\n\n¡Espero su respuesta! 💕",
+      category: "Bodas",
+    },
+  ],
+  QUINCEANERA: [
+    {
+      id: "quinceanera-consultation",
+      name: "Consulta de Quinceañera",
+      description: "Consulta sobre quinceañeras de destino",
+      template:
+        "¡Hola! 👑\n\nMe interesa planificar mi quinceañera de destino: {itemTitle}\n\n¿Podrían darme información sobre:\n- Paquetes disponibles\n- Precios\n- Fechas disponibles\n- Qué incluye\n- Proceso de reserva\n\n¡Gracias! ✨",
+      category: "Quinceañeras",
+    },
+    {
+      id: "quinceanera-quote",
+      name: "Cotización de Quinceañera",
+      description: "Solicitar cotización para quinceañera",
+      template:
+        "¡Buenos días! 👑\n\nQuiero cotizar mi quinceañera de destino: {itemTitle}\n\n¿Podrían enviarme una cotización detallada incluyendo:\n- Precios por persona\n- Servicios incluidos\n- Fechas disponibles\n- Opciones de personalización\n\n¡Espero su respuesta! ✨",
+      category: "Quinceañeras",
+    },
+  ],
   GENERAL: [
     {
       id: "general-inquiry",
@@ -203,6 +239,8 @@ export function WhatsAppTemplateQuickstart({
                   <SelectItem value="FIXED_DEPARTURES">
                     Salidas Fijas
                   </SelectItem>
+                  <SelectItem value="WEDDINGS">Bodas</SelectItem>
+                  <SelectItem value="QUINCEANERA">Quinceañeras</SelectItem>
                 </SelectContent>
               </Select>
             </div>

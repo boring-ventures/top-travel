@@ -7,6 +7,8 @@ export const TemplateUsageTypeSchema = z.enum([
   "DESTINATIONS",
   "EVENTS",
   "FIXED_DEPARTURES",
+  "WEDDINGS",
+  "QUINCEANERA",
   "GENERAL",
 ]);
 

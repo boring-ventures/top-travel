@@ -569,6 +569,86 @@ async function main() {
     },
   });
 
+  // Wedding WhatsApp Templates
+  await prisma.whatsAppTemplate.upsert({
+    where: { name: "Wedding Consultation" },
+    update: {},
+    create: {
+      name: "Wedding Consultation",
+      templateBody:
+        "¡Hola! Estoy interesado en planificar mi boda de destino. Me gustaría recibir información sobre {itemTitle} - {url}",
+      phoneNumbers: ["+59170000000", "+59170000001"],
+      usageType: "WEDDINGS",
+      isDefault: true,
+    },
+  });
+
+  await prisma.whatsAppTemplate.upsert({
+    where: { name: "Wedding Quote Request" },
+    update: {},
+    create: {
+      name: "Wedding Quote Request",
+      templateBody:
+        "Hola, quiero cotizar mi boda de destino. Me interesa {itemTitle} - {url}",
+      phoneNumbers: ["+59170000000", "+59170000001"],
+      usageType: "WEDDINGS",
+      isDefault: false,
+    },
+  });
+
+  await prisma.whatsAppTemplate.upsert({
+    where: { name: "Wedding Destination Info" },
+    update: {},
+    create: {
+      name: "Wedding Destination Info",
+      templateBody:
+        "¡Hola! Me encanta este destino para mi boda: {itemTitle}. ¿Podrían enviarme más información? - {url}",
+      phoneNumbers: ["+59170000000", "+59170000001"],
+      usageType: "WEDDINGS",
+      isDefault: false,
+    },
+  });
+
+  // Quinceañera WhatsApp Templates
+  await prisma.whatsAppTemplate.upsert({
+    where: { name: "Quinceañera Consultation" },
+    update: {},
+    create: {
+      name: "Quinceañera Consultation",
+      templateBody:
+        "¡Hola! Estoy interesada en planificar mi quinceañera de destino. Me gustaría recibir información sobre {itemTitle} - {url}",
+      phoneNumbers: ["+59170000000", "+59170000001"],
+      usageType: "QUINCEANERA",
+      isDefault: true,
+    },
+  });
+
+  await prisma.whatsAppTemplate.upsert({
+    where: { name: "Quinceañera Quote Request" },
+    update: {},
+    create: {
+      name: "Quinceañera Quote Request",
+      templateBody:
+        "Hola, quiero cotizar mi quinceañera de destino. Me interesa {itemTitle} - {url}",
+      phoneNumbers: ["+59170000000", "+59170000001"],
+      usageType: "QUINCEANERA",
+      isDefault: false,
+    },
+  });
+
+  await prisma.whatsAppTemplate.upsert({
+    where: { name: "Quinceañera Destination Info" },
+    update: {},
+    create: {
+      name: "Quinceañera Destination Info",
+      templateBody:
+        "¡Hola! Me encanta este destino para mi quinceañera: {itemTitle}. ¿Podrían enviarme más información? - {url}",
+      phoneNumbers: ["+59170000000", "+59170000001"],
+      usageType: "QUINCEANERA",
+      isDefault: false,
+    },
+  });
+
   // Offer linked to the package
   const existingOffer = await prisma.offer.findFirst({
     where: { title: "Limited Offer: Rio Carnival" },

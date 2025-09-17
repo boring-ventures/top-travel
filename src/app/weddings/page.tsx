@@ -24,51 +24,67 @@ import {
 import { DepartmentType } from "@prisma/client";
 
 export default async function WeddingsPage() {
-  const [dept, weddingDestinations, weddingBlogPosts, testimonials] =
-    await Promise.all([
-      prisma.department.findUnique({ where: { type: "WEDDINGS" } }),
-      prisma.weddingDestination.findMany({
-        where: { isFeatured: true },
-        take: 6,
-        select: {
-          id: true,
-          slug: true,
-          name: true,
-          title: true,
-          description: true,
-          heroImageUrl: true,
-        },
-      }),
-      prisma.blogPost.findMany({
-        where: {
-          type: "WEDDINGS",
-          status: "PUBLISHED",
-        },
-        orderBy: { publishedAt: "desc" },
-        take: 3,
-        select: {
-          id: true,
-          slug: true,
-          title: true,
-          excerpt: true,
-          heroImageUrl: true,
-          author: true,
-          publishedAt: true,
-        },
-      }),
-      prisma.testimonial.findMany({
-        where: { status: "PUBLISHED" },
-        orderBy: { createdAt: "desc" },
-        take: 3,
-        select: {
-          id: true,
-          authorName: true,
-          location: true,
-          rating: true,
-          content: true,
-        },
-      }),
-    ]);
+  const [
+    dept,
+    weddingDestinations,
+    weddingBlogPosts,
+    testimonials,
+    weddingTemplates,
+  ] = await Promise.all([
+    prisma.department.findUnique({ where: { type: "WEDDINGS" } }),
+    prisma.weddingDestination.findMany({
+      where: { isFeatured: true },
+      take: 6,
+      select: {
+        id: true,
+        slug: true,
+        name: true,
+        title: true,
+        description: true,
+        heroImageUrl: true,
+      },
+    }),
+    prisma.blogPost.findMany({
+      where: {
+        type: "WEDDINGS",
+        status: "PUBLISHED",
+      },
+      orderBy: { publishedAt: "desc" },
+      take: 3,
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        excerpt: true,
+        heroImageUrl: true,
+        author: true,
+        publishedAt: true,
+      },
+    }),
+    prisma.testimonial.findMany({
+      where: { status: "PUBLISHED" },
+      orderBy: { createdAt: "desc" },
+      take: 3,
+      select: {
+        id: true,
+        authorName: true,
+        location: true,
+        rating: true,
+        content: true,
+      },
+    }),
+    prisma.whatsAppTemplate.findMany({
+      where: { usageType: "WEDDINGS" as any },
+      select: {
+        id: true,
+        name: true,
+        templateBody: true,
+        phoneNumber: true,
+        phoneNumbers: true,
+        isDefault: true,
+      },
+    }),
+  ]);
 
   const primary = (dept?.themeJson as any)?.primaryColor ?? "#eaa298";
   const accent = (dept?.themeJson as any)?.accentColor ?? "#fcf8fa";
@@ -84,20 +100,55 @@ export default async function WeddingsPage() {
         {/* Hero Section */}
         <section className="relative">
           <AnimatedHero
-            title="Descubre nuestras"
-            subtitle="de destino"
-            description="Paquetes exclusivos de bodas que ofrecen experiencias inolvidables en los destinos más románticos del mundo."
+            title="Tu boda de ensueño"
+            subtitle="en el destino perfecto"
+            description="Transforma tu día especial en una experiencia única que combina romance, aventura y momentos inolvidables. Nosotros nos encargamos de todos los detalles para que tú solo te preocupes por disfrutar."
             animatedWords={[
-              "Bodas",
-              "Soñadas",
-              "Románticas",
-              "Únicas",
-              "Perfectas",
+              "Romántica",
+              "Mágica",
+              "Perfecta",
+              "Inolvidable",
+              "Soñada",
             ]}
             backgroundImage="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1920&q=80"
             animatedWordColor="text-[#eaa298]"
             accentColor="bg-[#eaa298]"
           />
+        </section>
+
+        {/* Dream Wedding Hotels */}
+        <section className="py-16 bg-gradient-to-br from-[#eaa298]/5 to-[#eaa298]/10">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-gray-900 mb-6">
+                Venues de ensueño para{" "}
+                <span className="font-light italic text-[#eaa298]">
+                  tu boda perfecta
+                </span>
+              </h2>
+              <div className="max-w-4xl mx-auto space-y-6 text-lg text-gray-700 leading-relaxed">
+                <p>
+                  Trabajamos con los mejores venues del mundo para crear el
+                  escenario perfecto para tu celebración. Cada lugar ha sido
+                  cuidadosamente seleccionado por su belleza, exclusividad y
+                  capacidad para crear momentos mágicos.
+                </p>
+                <p>
+                  Desde playas de arena blanca hasta castillos históricos, desde
+                  jardines tropicales hasta terrazas con vistas espectaculares,
+                  cada venue cuenta una historia única que se convertirá en
+                  parte de la tuya.
+                </p>
+                <p>
+                  Nuestro equipo de expertos conoce cada detalle de estos
+                  lugares especiales y se encarga de coordinar todos los
+                  aspectos para que tu boda sea exactamente como la has soñado.
+                  Tu única preocupación será disfrutar cada momento de esta
+                  experiencia extraordinaria.
+                </p>
+              </div>
+            </div>
+          </div>
         </section>
 
         {/* Wedding Services */}
@@ -201,6 +252,77 @@ export default async function WeddingsPage() {
           </div>
         </section>
 
+        {/* What are Destination Weddings */}
+        <section className="py-16 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-gray-900 mb-6">
+                ¿Qué son las{" "}
+                <span className="font-light italic text-[#eaa298]">
+                  bodas de destino
+                </span>
+                ?
+              </h2>
+              <div className="max-w-4xl mx-auto space-y-6 text-lg text-gray-700 leading-relaxed mb-12">
+                <p>
+                  Las bodas de destino son experiencias extraordinarias que
+                  combinan la celebración de tu amor con la emoción de descubrir
+                  nuevos lugares. Son ceremonias que se realizan en destinos
+                  especiales, creando una experiencia única tanto para la pareja
+                  como para sus invitados, transformando tu boda en unas
+                  vacaciones inolvidables.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+              <div className="text-center">
+                <div className="flex items-center justify-center mb-4">
+                  <MapPin className="h-12 w-12 text-[#eaa298]" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  Escenarios naturales espectaculares
+                </h3>
+                <p className="text-gray-600">para una boda de ensueño</p>
+              </div>
+
+              <div className="text-center">
+                <div className="flex items-center justify-center mb-4">
+                  <Heart className="h-12 w-12 text-[#eaa298]" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  Servicios personalizados
+                </h3>
+                <p className="text-gray-600">
+                  para crear una celebración a tu medida
+                </p>
+              </div>
+
+              <div className="text-center">
+                <div className="flex items-center justify-center mb-4">
+                  <Users className="h-12 w-12 text-[#eaa298]" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  Una experiencia completa
+                </h3>
+                <p className="text-gray-600">que combina romance y turismo</p>
+              </div>
+            </div>
+
+            <div className="text-center">
+              <Link href="/wedding-destinations">
+                <Button
+                  size="lg"
+                  className="bg-[#eaa298] hover:bg-[#d49186] text-white px-8 py-3 text-lg font-semibold rounded-xl"
+                >
+                  Ver Destinos
+                  <ArrowRight className="h-5 w-5 ml-2" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* Featured Destinations */}
         <section className="py-16 bg-gray-50">
           <div className="container mx-auto px-4">
@@ -280,15 +402,14 @@ export default async function WeddingsPage() {
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                Consejos y{" "}
+                Lo último de nuestro{" "}
                 <span className="font-light italic text-[#eaa298]">
-                  Inspiración
-                </span>{" "}
-                para Bodas
+                  blog de bodas
+                </span>
               </h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Descubre tips, tendencias y experiencias reales para hacer de tu
-                boda un día perfecto
+                Descubre tips, experiencias y consejos para hacer de tu boda una
+                experiencia inolvidable
               </p>
             </div>
 
@@ -423,61 +544,65 @@ export default async function WeddingsPage() {
         <section className="py-16 bg-gray-50">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                ¿Por qué elegir{" "}
+              <h2 className="text-4xl font-bold text-gray-900 mb-6">
+                ¿Por qué escoger un{" "}
                 <span className="font-light italic text-[#eaa298]">
-                  Gaby Top Travel
-                </span>{" "}
-                para tu boda?
+                  servicio de bodas de destino
+                </span>
+                ?
               </h2>
+              <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-12">
+                Porque nosotros, nos encargamos de absolutamente todo, para que
+                solo te preocupes por disfrutar de tu boda.
+              </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               <div className="text-center">
                 <div className="flex items-center justify-center mb-4">
+                  <MapPin className="h-12 w-12 text-[#eaa298]" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  Destinos de ensueño
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  Lugares paradisíacos para tu boda perfecta
+                </p>
+              </div>
+
+              <div className="text-center">
+                <div className="flex items-center justify-center mb-4">
                   <Heart className="h-12 w-12 text-[#eaa298]" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Experiencia
+                  Experiencia inolvidable
                 </h3>
                 <p className="text-gray-600 text-sm">
-                  Más de 10 años creando bodas inolvidables
+                  Momentos únicos que durarán para siempre
                 </p>
               </div>
 
               <div className="text-center">
                 <div className="flex items-center justify-center mb-4">
-                  <Camera className="h-12 w-12 text-[#eaa298]" />
+                  <Users className="h-12 w-12 text-[#eaa298]" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Atención al Detalle
+                  Armamos tu boda
                 </h3>
                 <p className="text-gray-600 text-sm">
-                  Cada detalle cuenta para tu día perfecto
+                  Nos encargamos de todos los detalles
                 </p>
               </div>
 
               <div className="text-center">
                 <div className="flex items-center justify-center mb-4">
-                  <Gift className="h-12 w-12 text-[#eaa298]" />
+                  <Calendar className="h-12 w-12 text-[#eaa298]" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Servicio Personalizado
+                  Planificación sin stress
                 </h3>
                 <p className="text-gray-600 text-sm">
-                  Adaptamos todo a tus gustos y presupuesto
-                </p>
-              </div>
-
-              <div className="text-center">
-                <div className="flex items-center justify-center mb-4">
-                  <Star className="h-12 w-12 text-[#eaa298]" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Calidad Garantizada
-                </h3>
-                <p className="text-gray-600 text-sm">
-                  Trabajamos solo con los mejores proveedores
+                  Tú solo disfruta, nosotros coordinamos todo
                 </p>
               </div>
             </div>
@@ -485,27 +610,55 @@ export default async function WeddingsPage() {
         </section>
 
         {/* Final CTA */}
-        <section className="py-16 bg-white">
+        <section className="py-16 bg-gradient-to-br from-[#eaa298]/5 to-[#eaa298]/10">
           <div className="container mx-auto px-4">
             <div className="text-center">
               <div className="flex items-center justify-center mb-6">
                 <Heart className="h-16 w-16 text-[#eaa298]" />
               </div>
               <h3 className="text-4xl font-bold text-gray-900 mb-6">
-                ¿Listo para Planificar tu{" "}
-                <span className="font-light italic text-[#eaa298]">Boda</span>{" "}
-                de Ensueño?
+                Crea la boda de{" "}
+                <span className="font-light italic text-[#eaa298]">
+                  tus sueños
+                </span>
               </h3>
-              <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-                Contáctanos hoy para una consulta gratuita y déjanos ayudarte a
-                crear la boda de tus sueños. Te acompañamos en cada paso del
-                camino.
-              </p>
+              <div className="max-w-4xl mx-auto space-y-6 text-lg text-gray-700 leading-relaxed mb-8">
+                <p>
+                  Imagina tu día perfecto en un lugar extraordinario, rodeado de
+                  belleza natural y con cada detalle cuidadosamente planificado.
+                  En Gaby Top Travel, transformamos tus sueños en realidad,
+                  creando bodas que van más allá de una simple celebración.
+                </p>
+                <p>
+                  Desde destinos tropicales hasta ciudades románticas, desde
+                  ceremonias íntimas hasta grandes celebraciones, nuestro equipo
+                  se encarga de coordinar cada aspecto para que tu boda sea
+                  exactamente como la has imaginado.
+                </p>
+                <p className="text-xl font-semibold text-[#eaa298]">
+                  ¡Comienza a planificar tu boda perfecta hoy mismo!
+                </p>
+              </div>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <WhatsAppCTA
-                  template="Hola, quiero una consulta gratuita para mi boda — {url}"
+                  template={
+                    weddingTemplates.find((t) => t.isDefault)?.templateBody ||
+                    "Hola, quiero cotizar mi boda de destino — {url}"
+                  }
                   variables={{ url: "" }}
-                  label="Consulta Gratuita"
+                  label="Cotiza HOY tu boda"
+                  phone={(() => {
+                    const defaultTemplate = weddingTemplates.find(
+                      (t) => t.isDefault
+                    );
+                    if (defaultTemplate?.phoneNumber) {
+                      return defaultTemplate.phoneNumber;
+                    }
+                    if (defaultTemplate?.phoneNumbers?.[0]) {
+                      return defaultTemplate.phoneNumbers[0];
+                    }
+                    return "+59177365655";
+                  })()}
                   size="lg"
                   className="h-14 px-8 bg-[#eaa298] hover:bg-[#d49186] text-white border-0 text-lg font-semibold rounded-xl"
                 />
@@ -515,7 +668,13 @@ export default async function WeddingsPage() {
                   size="lg"
                   className="h-14 px-8 text-lg font-semibold border-2 border-[#eaa298] text-[#eaa298] hover:bg-[#eaa298] hover:text-white rounded-xl"
                 >
-                  <Link href="/contact">Más Información</Link>
+                  <Link
+                    href="https://destinosparabodas.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Conoce más
+                  </Link>
                 </Button>
               </div>
             </div>
@@ -524,7 +683,13 @@ export default async function WeddingsPage() {
       </main>
 
       <Footer />
-      <PinkWhatsAppCTA variant="weddings" />
+      <PinkWhatsAppCTA
+        variant="weddings"
+        whatsappTemplate={
+          weddingTemplates.find((t) => t.isDefault) || undefined
+        }
+        phone="+59177365655"
+      />
     </div>
   );
 }

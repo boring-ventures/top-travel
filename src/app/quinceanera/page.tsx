@@ -26,51 +26,67 @@ import {
 import { DepartmentType } from "@prisma/client";
 
 export default async function QuinceaneraPage() {
-  const [dept, quinceaneraDestinations, quinceaneraBlogPosts, testimonials] =
-    await Promise.all([
-      prisma.department.findUnique({ where: { type: "QUINCEANERA" } }),
-      prisma.quinceaneraDestination.findMany({
-        where: { isFeatured: true },
-        take: 6,
-        select: {
-          id: true,
-          slug: true,
-          name: true,
-          title: true,
-          description: true,
-          heroImageUrl: true,
-        },
-      }),
-      prisma.blogPost.findMany({
-        where: {
-          type: "QUINCEANERA",
-          status: "PUBLISHED",
-        },
-        orderBy: { publishedAt: "desc" },
-        take: 3,
-        select: {
-          id: true,
-          slug: true,
-          title: true,
-          excerpt: true,
-          heroImageUrl: true,
-          author: true,
-          publishedAt: true,
-        },
-      }),
-      prisma.testimonial.findMany({
-        where: { status: "PUBLISHED" },
-        orderBy: { createdAt: "desc" },
-        take: 3,
-        select: {
-          id: true,
-          authorName: true,
-          location: true,
-          rating: true,
-          content: true,
-        },
-      }),
-    ]);
+  const [
+    dept,
+    quinceaneraDestinations,
+    quinceaneraBlogPosts,
+    testimonials,
+    quinceaneraTemplates,
+  ] = await Promise.all([
+    prisma.department.findUnique({ where: { type: "QUINCEANERA" } }),
+    prisma.quinceaneraDestination.findMany({
+      where: { isFeatured: true },
+      take: 6,
+      select: {
+        id: true,
+        slug: true,
+        name: true,
+        title: true,
+        description: true,
+        heroImageUrl: true,
+      },
+    }),
+    prisma.blogPost.findMany({
+      where: {
+        type: "QUINCEANERA",
+        status: "PUBLISHED",
+      },
+      orderBy: { publishedAt: "desc" },
+      take: 3,
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        excerpt: true,
+        heroImageUrl: true,
+        author: true,
+        publishedAt: true,
+      },
+    }),
+    prisma.testimonial.findMany({
+      where: { status: "PUBLISHED" },
+      orderBy: { createdAt: "desc" },
+      take: 3,
+      select: {
+        id: true,
+        authorName: true,
+        location: true,
+        rating: true,
+        content: true,
+      },
+    }),
+    prisma.whatsAppTemplate.findMany({
+      where: { usageType: "QUINCEANERA" as any },
+      select: {
+        id: true,
+        name: true,
+        templateBody: true,
+        phoneNumber: true,
+        phoneNumbers: true,
+        isDefault: true,
+      },
+    }),
+  ]);
 
   const primary = (dept?.themeJson as any)?.primaryColor ?? "#e03d90";
   const accent = (dept?.themeJson as any)?.accentColor ?? "#fcf8fa";
@@ -86,20 +102,55 @@ export default async function QuinceaneraPage() {
         {/* Hero Section */}
         <section className="relative">
           <AnimatedHero
-            title="Descubre nuestras"
-            subtitle="de ensueño"
-            description="Celebra tu quinceañera con experiencias únicas e inolvidables en los destinos más mágicos del mundo."
+            title="Tu quinceañera perfecta"
+            subtitle="en el destino de tus sueños"
+            description="Transforma tu celebración de 15 años en una experiencia mágica que combina tradición, aventura y momentos inolvidables. Nosotros nos encargamos de todos los detalles para que tú solo te preocupes por brillar."
             animatedWords={[
-              "Quinceañeras",
-              "Sueños",
-              "Aventuras",
-              "Viajes",
-              "Momentos",
+              "Mágica",
+              "Única",
+              "Perfecta",
+              "Inolvidable",
+              "Especial",
             ]}
             backgroundImage="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1920&q=80"
             animatedWordColor="text-[#e03d90]"
             accentColor="bg-[#e03d90]"
           />
+        </section>
+
+        {/* Dream Quinceañera Venues */}
+        <section className="py-16 bg-gradient-to-br from-[#e03d90]/5 to-[#e03d90]/10">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-gray-900 mb-6">
+                Venues mágicos para{" "}
+                <span className="font-light italic text-[#e03d90]">
+                  tu quinceañera perfecta
+                </span>
+              </h2>
+              <div className="max-w-4xl mx-auto space-y-6 text-lg text-gray-700 leading-relaxed">
+                <p>
+                  Porque tu quinceañera merece un lugar extraordinario,
+                  trabajamos con los venues más especiales del mundo. Cada lugar
+                  ha sido seleccionado por su capacidad de crear momentos
+                  mágicos y recuerdos que durarán para siempre.
+                </p>
+                <p>
+                  Desde castillos de cuento de hadas hasta playas de ensueño,
+                  desde jardines encantados hasta salones de baile elegantes,
+                  cada venue cuenta una historia única que se convertirá en
+                  parte de tu celebración especial.
+                </p>
+                <p>
+                  Nuestro equipo conoce cada detalle de estos lugares mágicos y
+                  se encarga de coordinar todos los aspectos para que tu
+                  quinceañera sea exactamente como la has soñado. Tu única
+                  preocupación será disfrutar cada momento de esta experiencia
+                  extraordinaria.
+                </p>
+              </div>
+            </div>
+          </div>
         </section>
 
         {/* Quinceanera Services */}
@@ -203,6 +254,76 @@ export default async function QuinceaneraPage() {
           </div>
         </section>
 
+        {/* What Makes Quinceañera Experiences Special */}
+        <section className="py-16 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-gray-900 mb-6">
+                ¿Qué hace especial una{" "}
+                <span className="font-light italic text-[#e03d90]">
+                  quinceañera de destino
+                </span>
+                ?
+              </h2>
+              <div className="max-w-4xl mx-auto space-y-6 text-lg text-gray-700 leading-relaxed mb-12">
+                <p>
+                  Las quinceañeras de destino son experiencias únicas que
+                  combinan la tradición familiar con la emoción de descubrir
+                  nuevos lugares. Son celebraciones que van más allá de una
+                  simple fiesta, creando recuerdos inolvidables tanto para la
+                  quinceañera como para toda su familia.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+              <div className="text-center">
+                <div className="flex items-center justify-center mb-4">
+                  <Crown className="h-12 w-12 text-[#e03d90]" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  Celebración única
+                </h3>
+                <p className="text-gray-600">
+                  que combina tradición y aventura
+                </p>
+              </div>
+
+              <div className="text-center">
+                <div className="flex items-center justify-center mb-4">
+                  <Sparkles className="h-12 w-12 text-[#e03d90]" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  Momentos mágicos
+                </h3>
+                <p className="text-gray-600">en destinos extraordinarios</p>
+              </div>
+
+              <div className="text-center">
+                <div className="flex items-center justify-center mb-4">
+                  <Heart className="h-12 w-12 text-[#e03d90]" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  Experiencia familiar
+                </h3>
+                <p className="text-gray-600">que une a toda la familia</p>
+              </div>
+            </div>
+
+            <div className="text-center">
+              <Link href="/quinceanera-destinations">
+                <Button
+                  size="lg"
+                  className="bg-[#e03d90] hover:bg-[#c8327a] text-white px-8 py-3 text-lg font-semibold rounded-xl"
+                >
+                  Ver Destinos
+                  <ArrowRight className="h-5 w-5 ml-2" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* Featured Destinations */}
         <section className="py-16 bg-gray-50">
           <div className="container mx-auto px-4">
@@ -284,15 +405,14 @@ export default async function QuinceaneraPage() {
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                Consejos y{" "}
+                Lo último de nuestro{" "}
                 <span className="font-light italic text-[#e03d90]">
-                  Inspiración
-                </span>{" "}
-                para Quinceañeras
+                  blog de quinceañeras
+                </span>
               </h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Descubre tips, tendencias y experiencias reales para hacer de tu
-                quinceañera un día perfecto
+                Descubre tips, experiencias y consejos para hacer de tu
+                quinceañera una celebración inolvidable
               </p>
             </div>
 
@@ -428,61 +548,66 @@ export default async function QuinceaneraPage() {
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              <h2 className="text-4xl font-bold text-gray-900 mb-6">
                 ¿Por qué elegir{" "}
                 <span className="font-light italic text-[#e03d90]">
                   Gaby Top Travel
                 </span>{" "}
                 para tu quinceañera?
               </h2>
+              <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-12">
+                Porque tu quinceañera merece ser perfecta, y nosotros nos
+                encargamos de absolutamente todo para que tú solo te preocupes
+                por disfrutar y brillar.
+              </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               <div className="text-center">
                 <div className="flex items-center justify-center mb-4">
-                  <Heart className="h-12 w-12 text-[#e03d90]" />
+                  <Crown className="h-12 w-12 text-[#e03d90]" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Experiencia
+                  Destinos mágicos
                 </h3>
                 <p className="text-gray-600 text-sm">
-                  Más de 10 años creando quinceañeras inolvidables
+                  Lugares extraordinarios para tu celebración perfecta
                 </p>
               </div>
 
               <div className="text-center">
                 <div className="flex items-center justify-center mb-4">
-                  <Camera className="h-12 w-12 text-[#e03d90]" />
+                  <Sparkles className="h-12 w-12 text-[#e03d90]" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Atención al Detalle
+                  Experiencia inolvidable
                 </h3>
                 <p className="text-gray-600 text-sm">
-                  Cada detalle cuenta para tu día perfecto
+                  Momentos únicos que durarán para siempre
                 </p>
               </div>
 
               <div className="text-center">
                 <div className="flex items-center justify-center mb-4">
-                  <Gift className="h-12 w-12 text-[#e03d90]" />
+                  <Users className="h-12 w-12 text-[#e03d90]" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Servicio Personalizado
+                  Organizamos tu fiesta
                 </h3>
                 <p className="text-gray-600 text-sm">
-                  Adaptamos todo a tus gustos y presupuesto
+                  Nos encargamos de todos los detalles
                 </p>
               </div>
 
               <div className="text-center">
                 <div className="flex items-center justify-center mb-4">
-                  <Star className="h-12 w-12 text-[#e03d90]" />
+                  <Calendar className="h-12 w-12 text-[#e03d90]" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Calidad Garantizada
+                  Planificación sin estrés
                 </h3>
                 <p className="text-gray-600 text-sm">
-                  Trabajamos solo con los mejores proveedores
+                  Tú solo disfruta, nosotros coordinamos todo
                 </p>
               </div>
             </div>
@@ -490,29 +615,58 @@ export default async function QuinceaneraPage() {
         </section>
 
         {/* Final CTA */}
-        <section className="py-16 bg-gray-50">
+        <section className="py-16 bg-gradient-to-br from-[#e03d90]/5 to-[#e03d90]/10">
           <div className="container mx-auto px-4">
             <div className="text-center">
               <div className="flex items-center justify-center mb-6">
                 <Crown className="h-16 w-16 text-[#e03d90]" />
               </div>
               <h3 className="text-4xl font-bold text-gray-900 mb-6">
-                ¿Listo para Planificar tu{" "}
+                Haz de tu quinceañera una{" "}
                 <span className="font-light italic text-[#e03d90]">
-                  Quinceañera
-                </span>{" "}
-                de Ensueño?
+                  celebración inolvidable
+                </span>
               </h3>
-              <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-                Contáctanos hoy para una consulta gratuita y déjanos ayudarte a
-                crear la quinceañera de tus sueños. Te acompañamos en cada paso
-                del camino.
-              </p>
+              <div className="max-w-4xl mx-auto space-y-6 text-lg text-gray-700 leading-relaxed mb-8">
+                <p>
+                  Imagina tu día perfecto en un lugar extraordinario, rodeado de
+                  belleza natural y con cada detalle cuidadosamente planificado.
+                  En Gaby Top Travel, transformamos tus sueños en realidad,
+                  creando quinceañeras que van más allá de una simple
+                  celebración.
+                </p>
+                <p>
+                  Desde destinos tropicales hasta ciudades románticas, desde
+                  ceremonias íntimas hasta grandes fiestas, nuestro equipo se
+                  encarga de coordinar cada aspecto para que tu quinceañera sea
+                  exactamente como la has imaginado.
+                </p>
+                <p className="text-xl font-semibold text-[#e03d90]">
+                  ¡Comienza a planificar tu quinceañera perfecta hoy mismo!
+                </p>
+              </div>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <WhatsAppCTA
-                  template="Hola, quiero una consulta gratuita para mi quinceañera — {url}"
+                  template={
+                    quinceaneraTemplates.find(
+                      (t) => t.name === "Quinceañera Quote Request"
+                    )?.templateBody ||
+                    "Hola, quiero cotizar mi quinceañera de destino — {url}"
+                  }
                   variables={{ url: "" }}
-                  label="Consulta Gratuita"
+                  label="Cotiza HOY tu quinceañera"
+                  phone={(() => {
+                    const quoteTemplate = quinceaneraTemplates.find(
+                      (t) => t.name === "Quinceañera Quote Request"
+                    );
+                    if (quoteTemplate?.phoneNumber) {
+                      return quoteTemplate.phoneNumber;
+                    }
+                    if (quoteTemplate?.phoneNumbers?.[0]) {
+                      return quoteTemplate.phoneNumbers[0];
+                    }
+                    return "+59177355906";
+                  })()}
                   size="lg"
                   className="h-14 px-8 bg-[#e03d90] hover:bg-[#c8327a] text-white border-0 text-lg font-semibold rounded-xl"
                 />
@@ -522,7 +676,7 @@ export default async function QuinceaneraPage() {
                   size="lg"
                   className="h-14 px-8 text-lg font-semibold border-2 border-[#e03d90] text-[#e03d90] hover:bg-[#e03d90] hover:text-white rounded-xl"
                 >
-                  <Link href="/contact">Más Información</Link>
+                  <Link href="/contact">Solicitar cotización</Link>
                 </Button>
               </div>
             </div>
@@ -531,7 +685,13 @@ export default async function QuinceaneraPage() {
       </main>
 
       <Footer />
-      <PinkWhatsAppCTA variant="quinceanera" />
+      <PinkWhatsAppCTA
+        variant="quinceanera"
+        whatsappTemplate={
+          quinceaneraTemplates.find((t) => t.isDefault) || undefined
+        }
+        phone="+59177355906"
+      />
     </div>
   );
 }
