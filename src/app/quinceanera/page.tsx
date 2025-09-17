@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { WhatsAppCTA } from "@/components/utils/whatsapp-cta";
 import PinkWhatsAppCTA from "@/components/utils/pink-whatsapp-cta";
+import { GridMotion } from "@/components/ui/grid-motion";
 import {
   Crown,
   Sparkles,
@@ -397,6 +398,68 @@ export default async function QuinceaneraPage() {
                 ))
               )}
             </div>
+          </div>
+        </section>
+
+        {/* Quinceañera Gallery */}
+        <section className="py-20 bg-gradient-to-br from-gray-50 via-white to-gray-50 relative overflow-hidden">
+          <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 bg-[#e03d90]/10 text-[#e03d90] px-4 py-2 rounded-full text-sm font-medium mb-6">
+                <Camera className="w-4 h-4" />
+                Galería de quinceañeras
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                Quinceañeras que hemos{" "}
+                <span className="text-[#e03d90] relative">
+                  hecho realidad
+                  <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-[#e03d90] to-[#e03d90]/50 rounded-full"></div>
+                </span>
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                Cada imagen cuenta una historia de celebración, cada detalle
+                refleja nuestro compromiso con la perfección
+              </p>
+            </div>
+          </div>
+
+          <div className="h-screen w-full">
+            <GridMotion
+              items={[
+                // Quinceañera celebration images - verified working URLs
+                "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80", // Formal dress
+                "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=80", // Celebration ceremony
+                "https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?auto=format&fit=crop&w=800&q=80", // Celebration couple
+                "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=800&q=80", // Celebration jewelry
+                "https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=800&q=80", // Celebration flowers
+                "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=800&q=80", // Celebration cake
+                "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=800&q=80", // Party celebration
+                "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80", // Formal dress
+                "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=80", // Celebration ceremony
+                "https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?auto=format&fit=crop&w=800&q=80", // Celebration couple
+                "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=800&q=80", // Celebration jewelry
+                "https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=800&q=80", // Celebration flowers
+                "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=800&q=80", // Celebration cake
+                "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=800&q=80", // Party celebration
+                "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80", // Formal dress
+                "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=80", // Celebration ceremony
+                "https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?auto=format&fit=crop&w=800&q=80", // Celebration couple
+                "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=800&q=80", // Celebration jewelry
+                "https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=800&q=80", // Celebration flowers
+                "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=800&q=80", // Celebration cake
+                "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=800&q=80", // Party celebration
+                "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80", // Formal dress
+                "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=80", // Celebration ceremony
+                "https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?auto=format&fit=crop&w=800&q=80", // Celebration couple
+                "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=800&q=80", // Celebration jewelry
+                "https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=800&q=80", // Celebration flowers
+                "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=800&q=80", // Celebration cake
+                "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=800&q=80", // Party celebration
+              ]}
+              gradientColor="rgba(224, 61, 144, 0.1)"
+              className="relative z-10"
+            />
           </div>
         </section>
 

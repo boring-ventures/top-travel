@@ -98,6 +98,12 @@ export default {
           dark: "#b8941f", // versión más oscura
         },
       },
+      rotate: {
+        "15": "15deg",
+      },
+      backgroundImage: {
+        noise: "url('https://www.reactbits.dev/assets/noise.png')",
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
