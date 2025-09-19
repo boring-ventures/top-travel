@@ -427,35 +427,35 @@ export default async function QuinceaneraPage() {
           <div className="h-screen w-full">
             <GridMotion
               items={[
-                // Quinceañera celebration images - verified working URLs
-                "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80", // Formal dress
-                "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=80", // Celebration ceremony
-                "https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?auto=format&fit=crop&w=800&q=80", // Celebration couple
-                "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=800&q=80", // Celebration jewelry
-                "https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=800&q=80", // Celebration flowers
-                "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=800&q=80", // Celebration cake
-                "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=800&q=80", // Party celebration
-                "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80", // Formal dress
-                "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=80", // Celebration ceremony
-                "https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?auto=format&fit=crop&w=800&q=80", // Celebration couple
-                "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=800&q=80", // Celebration jewelry
-                "https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=800&q=80", // Celebration flowers
-                "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=800&q=80", // Celebration cake
-                "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=800&q=80", // Party celebration
-                "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80", // Formal dress
-                "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=80", // Celebration ceremony
-                "https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?auto=format&fit=crop&w=800&q=80", // Celebration couple
-                "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=800&q=80", // Celebration jewelry
-                "https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=800&q=80", // Celebration flowers
-                "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=800&q=80", // Celebration cake
-                "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=800&q=80", // Party celebration
-                "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80", // Formal dress
-                "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=80", // Celebration ceremony
-                "https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?auto=format&fit=crop&w=800&q=80", // Celebration couple
-                "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=800&q=80", // Celebration jewelry
-                "https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=800&q=80", // Celebration flowers
-                "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=800&q=80", // Celebration cake
-                "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=800&q=80", // Party celebration
+                // Quinceañera gallery images from local folder - all 22 images
+                "/images/quinceaneras/1.JPG",
+                "/images/quinceaneras/2.JPG",
+                "/images/quinceaneras/3.JPG",
+                "/images/quinceaneras/4.JPG",
+                "/images/quinceaneras/5.JPG",
+                "/images/quinceaneras/6.JPG",
+                "/images/quinceaneras/7.JPG",
+                "/images/quinceaneras/8.JPG",
+                "/images/quinceaneras/9.JPG",
+                "/images/quinceaneras/10.JPG",
+                "/images/quinceaneras/11.JPG",
+                "/images/quinceaneras/12.JPG",
+                "/images/quinceaneras/13.JPG",
+                "/images/quinceaneras/14.JPG",
+                "/images/quinceaneras/15.JPG",
+                "/images/quinceaneras/16.JPG",
+                "/images/quinceaneras/17.JPG",
+                "/images/quinceaneras/18.JPG",
+                "/images/quinceaneras/19.JPG",
+                "/images/quinceaneras/20.JPG",
+                "/images/quinceaneras/21.JPG",
+                "/images/quinceaneras/22.JPG",
+                "/images/quinceaneras/1.JPG",
+                "/images/quinceaneras/2.JPG",
+                "/images/quinceaneras/3.JPG",
+                "/images/quinceaneras/4.JPG",
+                "/images/quinceaneras/5.JPG",
+                "/images/quinceaneras/6.JPG",
               ]}
               gradientColor="rgba(224, 61, 144, 0.1)"
               className="relative z-10"

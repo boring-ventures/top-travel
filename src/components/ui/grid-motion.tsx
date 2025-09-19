@@ -26,6 +26,7 @@ export function GridMotion({
   const gridRef = useRef<HTMLDivElement>(null);
   const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [mouseX, setMouseX] = useState(0);
+  const [isClient, setIsClient] = useState(false);
 
   const totalItems = 28;
   const defaultItems = Array.from(
@@ -36,6 +37,8 @@ export function GridMotion({
     items.length > 0 ? items.slice(0, totalItems) : defaultItems;
 
   useEffect(() => {
+    setIsClient(true);
+
     const handleMouseMove = (e: MouseEvent) => {
       setMouseX(e.clientX);
     };
@@ -61,14 +64,17 @@ export function GridMotion({
         <div className="relative z-2 flex-none grid h-[150vh] w-[150vw] gap-4 grid-rows-[repeat(4,1fr)] grid-cols-[100%] -rotate-15 origin-center">
           {[...Array(4)].map((_, rowIndex) => {
             const direction = rowIndex % 2 === 0 ? 1 : -1;
-            const moveAmount =
-              ((mouseX / window.innerWidth) * 300 - 150) * direction;
+            const moveAmount = isClient
+              ? ((mouseX / window.innerWidth) * 300 - 150) * direction
+              : 0;
 
             return (
               <div
                 key={rowIndex}
                 className="grid gap-4 grid-cols-[repeat(7,1fr)] will-change-transform transition-transform duration-700 ease-out"
-                ref={(el) => (rowRefs.current[rowIndex] = el)}
+                ref={(el) => {
+                  rowRefs.current[rowIndex] = el;
+                }}
                 style={{
                   transform: `translateX(${moveAmount}px)`,
                 }}
@@ -79,7 +85,8 @@ export function GridMotion({
                     <div key={itemIndex} className="relative">
                       <div className="relative h-full w-full overflow-hidden rounded-lg bg-muted flex items-center justify-center text-foreground text-xl">
                         {typeof content === "string" &&
-                        content.startsWith("http") ? (
+                        (content.startsWith("http") ||
+                          content.startsWith("/images/")) ? (
                           <div
                             className="absolute inset-0 bg-cover bg-center"
                             style={{

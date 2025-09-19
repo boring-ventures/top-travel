@@ -424,38 +424,58 @@ export default async function WeddingsPage() {
           <div className="h-screen w-full">
             <GridMotion
               items={[
-                // Wedding ceremony images - verified working URLs
-                "https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?auto=format&fit=crop&w=800&q=80", // Wedding couple
-                "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=800&q=80", // Wedding rings
-                "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=80", // Wedding ceremony
-                "https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?auto=format&fit=crop&w=800&q=80", // Wedding couple
-                "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=800&q=80", // Wedding rings
-                "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80", // Wedding dress
-                "https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=800&q=80", // Wedding bouquet
-                "https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?auto=format&fit=crop&w=800&q=80", // Wedding couple
-                "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=800&q=80", // Wedding rings
-                "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=800&q=80", // Wedding cake
-                "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=800&q=80", // Wedding reception
-                "https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?auto=format&fit=crop&w=800&q=80", // Wedding couple
-                "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=800&q=80", // Wedding rings
-                "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80", // Wedding dress
-                "https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=800&q=80", // Wedding bouquet
-                "https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?auto=format&fit=crop&w=800&q=80", // Wedding couple
-                "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=800&q=80", // Wedding rings
-                "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80", // Wedding dress
-                "https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=800&q=80", // Wedding bouquet
-                "https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?auto=format&fit=crop&w=800&q=80", // Wedding couple
-                "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=800&q=80", // Wedding rings
-                "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=800&q=80", // Wedding cake
-                "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=800&q=80", // Wedding reception
-                "https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?auto=format&fit=crop&w=800&q=80", // Wedding couple
-                "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=800&q=80", // Wedding rings
-                "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80", // Wedding dress
-                "https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=800&q=80", // Wedding bouquet
-                "https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?auto=format&fit=crop&w=800&q=80", // Wedding couple
-                "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=800&q=80", // Wedding rings
-                "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=800&q=80", // Wedding cake
-                "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=800&q=80", // Wedding reception
+                // Wedding gallery images from local folder - all 17 images
+                "/images/weddings/1.webp",
+                "/images/weddings/2.webp",
+                "/images/weddings/3.webp",
+                "/images/weddings/4.webp",
+                "/images/weddings/5.webp",
+                "/images/weddings/6.webp",
+                "/images/weddings/7.webp",
+                "/images/weddings/8.webp",
+                "/images/weddings/9.webp",
+                "/images/weddings/10.webp",
+                "/images/weddings/11.webp",
+                "/images/weddings/12.webp",
+                "/images/weddings/13.webp",
+                "/images/weddings/14.webp",
+                "/images/weddings/15.webp",
+                "/images/weddings/16.webp",
+                "/images/weddings/17.webp",
+                "/images/weddings/1.webp",
+                "/images/weddings/2.webp",
+                "/images/weddings/3.webp",
+                "/images/weddings/4.webp",
+                "/images/weddings/5.webp",
+                "/images/weddings/6.webp",
+                "/images/weddings/7.webp",
+                "/images/weddings/8.webp",
+                "/images/weddings/9.webp",
+                "/images/weddings/10.webp",
+                "/images/weddings/11.webp",
+                "/images/weddings/12.webp",
+                "/images/weddings/13.webp",
+                "/images/weddings/14.webp",
+                "/images/weddings/15.webp",
+                "/images/weddings/16.webp",
+                "/images/weddings/17.webp",
+                "/images/weddings/1.webp",
+                "/images/weddings/2.webp",
+                "/images/weddings/3.webp",
+                "/images/weddings/4.webp",
+                "/images/weddings/5.webp",
+                "/images/weddings/6.webp",
+                "/images/weddings/7.webp",
+                "/images/weddings/8.webp",
+                "/images/weddings/9.webp",
+                "/images/weddings/10.webp",
+                "/images/weddings/11.webp",
+                "/images/weddings/12.webp",
+                "/images/weddings/13.webp",
+                "/images/weddings/14.webp",
+                "/images/weddings/15.webp",
+                "/images/weddings/16.webp",
+                "/images/weddings/17.webp",
               ]}
               gradientColor="rgba(234, 162, 152, 0.1)"
               className="relative z-10"
