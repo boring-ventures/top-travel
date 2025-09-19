@@ -15,13 +15,13 @@ import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 
 const navItems = [
+  { href: "/offers", label: "Ofertas" },
   { href: "/destinations", label: "Destinos" },
   { href: "/packages", label: "Paquetes" },
   { href: "/events", label: "Eventos" },
   { href: "/weddings", label: "Bodas" },
   { href: "/quinceanera", label: "Quinceañeras" },
   { href: "/about", label: "Nosotros" },
-  { href: "/contact", label: "Contacto" },
 ];
 
 const Navbar1 = () => {
@@ -186,39 +186,6 @@ const Navbar1 = () => {
               <Link href="/sign-in">Sign In</Link>
             </Button>
           )}
-
-          {/* Contact Button */}
-          {isPinkHeaderPage ? (
-            <NavbarButton
-              asChild
-              size="sm"
-              className="shadow-pink-200/50"
-              primaryColor="#e03d90"
-              hoverColor="#c8327a"
-              href="/contact"
-            >
-              Contactar
-            </NavbarButton>
-          ) : isWeddingsHeaderPage ? (
-            <NavbarButton
-              asChild
-              size="sm"
-              className="shadow-pink-200/50"
-              primaryColor="#eaa298"
-              hoverColor="#d49186"
-              href="/contact"
-            >
-              Contactar
-            </NavbarButton>
-          ) : (
-            <Button
-              asChild
-              size="sm"
-              className="rounded-full transition-all duration-300 hover:scale-105 bg-corporate-blue text-white hover:bg-corporate-blue/90 shadow-blue-200/50"
-            >
-              <Link href="/contact">Contactar</Link>
-            </Button>
-          )}
         </motion.div>
 
         {/* Mobile Menu Button */}
@@ -369,42 +336,6 @@ const Navbar1 = () => {
                     </Button>
                   )}
                 </div>
-
-                {/* Mobile Contact Button */}
-                {isPinkHeaderPage ? (
-                  <NavbarButton
-                    asChild
-                    size="lg"
-                    className="w-full shadow-pink-200/50"
-                    primaryColor="#e03d90"
-                    hoverColor="#c8327a"
-                    href="/contact"
-                    onClick={toggleMenu}
-                  >
-                    Contactar
-                  </NavbarButton>
-                ) : isWeddingsHeaderPage ? (
-                  <NavbarButton
-                    asChild
-                    size="lg"
-                    className="w-full shadow-pink-200/50"
-                    primaryColor="#eaa298"
-                    hoverColor="#d49186"
-                    href="/contact"
-                    onClick={toggleMenu}
-                  >
-                    Contactar
-                  </NavbarButton>
-                ) : (
-                  <Button
-                    asChild
-                    size="lg"
-                    className="w-full rounded-full transition-all duration-300 bg-corporate-blue text-white hover:bg-corporate-blue/90 shadow-blue-200/50"
-                    onClick={toggleMenu}
-                  >
-                    <Link href="/contact">Contactar</Link>
-                  </Button>
-                )}
               </motion.div>
             </div>
           </motion.div>

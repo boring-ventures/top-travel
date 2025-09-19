@@ -8,9 +8,13 @@ interface GlassCTAProps {
     phoneNumber?: string;
     phoneNumbers?: string[];
   };
+  fallbackPhone?: string;
 }
 
-export default function GlassCTA({ whatsappTemplate }: GlassCTAProps) {
+export default function GlassCTA({
+  whatsappTemplate,
+  fallbackPhone,
+}: GlassCTAProps) {
   return (
     <section className="py-12 w-full bg-gray-50">
       <div className="container mx-auto px-4">
@@ -43,6 +47,7 @@ export default function GlassCTA({ whatsappTemplate }: GlassCTAProps) {
             }
             variables={{ url: "" }}
             label="Hablar por WhatsApp"
+            phone={fallbackPhone}
             variant="default"
             size="lg"
             className="px-12 py-6 bg-black hover:bg-gray-900 text-white font-bold text-xl rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"

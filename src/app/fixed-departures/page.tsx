@@ -285,6 +285,7 @@ export default async function FixedDeparturesPage({
                           variables={{ title: f.title }}
                           campaign="fixed_departure_list"
                           content={f.slug}
+                          phone="+59175651451"
                           className="w-full"
                         />
                       </div>

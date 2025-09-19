@@ -384,6 +384,7 @@ export default async function PackagesPage({
                         template="Hola! Quiero crear un paquete personalizado."
                         variables={{}}
                         label="Consultar por WhatsApp"
+                        phone="+59178000192"
                         size="default"
                       />
                     </div>

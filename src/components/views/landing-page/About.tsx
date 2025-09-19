@@ -78,47 +78,6 @@ export default function About() {
     },
   ];
 
-  const teamMembers = [
-    {
-      name: "Gabriela Villegas Suárez",
-      role: "CEO",
-      image:
-        "https://images.unsplash.com/photo-1494790108755-2616b612b786?auto=format&fit=crop&w=200&q=80",
-      description:
-        "Fundadora y líder visionaria con más de 17 años de experiencia en turismo y eventos.",
-    },
-    {
-      name: "Nahla Yusuf",
-      role: "Event Planner",
-      image:
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=200&q=80",
-      description:
-        "Especialista en eventos y bodas de destino con experiencia internacional.",
-    },
-    {
-      name: "Nicole Cueto",
-      role: "Travel Coordinator",
-      image:
-        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80",
-      description:
-        "Experta en planificación de viajes y coordinación de eventos especiales.",
-    },
-    {
-      name: "Marlene Fernandez",
-      role: "Customer Relations",
-      image:
-        "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=200&q=80",
-      description: "Especialista en atención al cliente y gestión de reservas.",
-    },
-    {
-      name: "Gabriela Yave",
-      role: "Finance Department",
-      image:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
-      description: "Experta en gestión financiera y administración de viajes.",
-    },
-  ];
-
   const testimonials = [
     {
       name: "Camila Silva",
@@ -169,8 +128,8 @@ export default function About() {
         <section className="py-20 w-full bg-gradient-to-br from-white via-gray-50/30 to-white relative overflow-hidden">
           <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
           <div className="container mx-auto px-4">
-            <div className="max-w-6xl mx-auto">
-              <div className="text-center mb-16">
+            <div className="max-w-7xl mx-auto">
+              <div className="text-center mb-20">
                 <div className="inline-flex items-center gap-2 bg-wine/10 text-wine px-4 py-2 rounded-full text-sm font-medium mb-6">
                   <Award className="w-4 h-4" />
                   Más de 17 años de experiencia
@@ -182,68 +141,190 @@ export default function About() {
                     <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-wine to-wine/50 rounded-full"></div>
                   </span>
                 </h2>
-                <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
                   Tu agencia de confianza para crear experiencias inolvidables
+                  en Bolivia y el mundo
                 </p>
               </div>
 
-              <div className="grid lg:grid-cols-2 gap-16 items-center">
-                <div className="space-y-8">
-                  <div className="bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all duration-300">
-                    <p className="text-lg text-gray-700 leading-relaxed">
-                      <strong className="text-wine">Gaby Top Travel</strong> es
-                      una agencia de viajes y turismo con reconocimiento a nivel
-                      nacional e internacional, dedicada a ofrecer experiencias
-                      excepcionales en cada rincón del mundo. Nuestra misión es
-                      hacer realidad los viajes y eventos más memorables y
-                      encantadores.
-                    </p>
+              {/* Main Content Grid */}
+              <div className="grid lg:grid-cols-2 gap-12 mb-20">
+                {/* Mission Card */}
+                <div>
+                  <div className="bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-3xl p-10 shadow-2xl hover:shadow-3xl transition-all duration-700 hover:-translate-y-3 group h-full flex flex-col">
+                    <div className="flex items-start gap-6 mb-8">
+                      <div className="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-wine/20 to-wine/10 rounded-3xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg">
+                        <Globe className="w-8 h-8 text-wine" />
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-wine transition-colors duration-300">
+                          Nuestra Misión
+                        </h3>
+                        <p className="text-lg text-gray-700 leading-relaxed">
+                          <strong className="text-wine">Gaby Top Travel</strong>{" "}
+                          es una agencia de viajes y turismo con reconocimiento
+                          a nivel nacional e internacional, dedicada a ofrecer
+                          experiencias excepcionales en cada rincón del mundo.
+                          Nuestra misión es hacer realidad los viajes y eventos
+                          más memorables y encantadores.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="border-t border-gray-200/50 pt-6 mt-auto">
+                      <p className="text-gray-600 leading-relaxed">
+                        Transformamos sueños en realidades, creando momentos
+                        únicos que perduran para siempre. Cada viaje es una
+                        historia que contar, cada evento es una celebración que
+                        recordar.
+                      </p>
+                    </div>
                   </div>
-                  <div className="bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all duration-300">
-                    <p className="text-lg text-gray-700 leading-relaxed">
-                      Con más de{" "}
-                      <strong className="text-wine">
-                        17 años de experiencia
-                      </strong>{" "}
-                      en la industria del turismo y la planificación de eventos,
-                      hemos organizado innumerables viajes y eventos exitosos.
-                      Esta expertise nos permite ofrecer servicios que se
-                      destacan por su profesionalismo y atención a los detalles.
-                    </p>
+                </div>
+
+                {/* Experience Card */}
+                <div>
+                  <div className="bg-gradient-to-br from-wine/10 via-white to-wine/5 border border-wine/20 rounded-3xl p-10 shadow-2xl hover:shadow-3xl transition-all duration-700 hover:-translate-y-3 group h-full flex flex-col">
+                    <div className="flex items-start gap-6 mb-8">
+                      <div className="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-wine/20 to-wine/10 rounded-3xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg">
+                        <Award className="w-8 h-8 text-wine" />
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-wine transition-colors duration-300">
+                          Nuestra Experiencia
+                        </h3>
+                        <p className="text-lg text-gray-700 leading-relaxed">
+                          Con más de{" "}
+                          <strong className="text-wine">
+                            17 años de experiencia
+                          </strong>{" "}
+                          en la industria del turismo y la planificación de
+                          eventos, hemos organizado innumerables viajes y
+                          eventos exitosos.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="border-t border-wine/20 pt-6 mt-auto">
+                      <p className="text-gray-600 leading-relaxed">
+                        Esta expertise nos permite ofrecer servicios que se
+                        destacan por su profesionalismo y atención a los
+                        detalles.
+                      </p>
+                    </div>
                   </div>
-                  <div className="bg-gradient-to-r from-wine/5 to-wine/10 border border-wine/20 rounded-3xl p-8">
-                    <p className="text-lg text-gray-700 leading-relaxed">
+                </div>
+              </div>
+
+              {/* Services Highlight */}
+              <div className="relative">
+                <div className="absolute -inset-4 bg-gradient-to-r from-wine/10 to-wine/5 rounded-3xl blur-2xl opacity-50"></div>
+                <div className="relative bg-gradient-to-r from-wine/5 via-wine/10 to-wine/5 border border-wine/20 rounded-3xl p-10 text-center">
+                  <div className="mb-8">
+                    <div className="inline-flex items-center gap-2 bg-wine/20 text-wine px-4 py-2 rounded-full text-sm font-semibold mb-6">
+                      <Sparkles className="w-4 h-4" />
+                      Nuestros Servicios
+                    </div>
+                    <h3 className="text-3xl font-bold text-gray-900 mb-6">
+                      Especialistas en Experiencias Únicas
+                    </h3>
+                    <p className="text-lg text-gray-700 leading-relaxed max-w-4xl mx-auto">
                       Desde conciertos y eventos exclusivos hasta destinos
                       exóticos, viajes de quinceañera y bodas de destino,
                       creamos experiencias únicas que van más allá de un simple
-                      viaje.
+                      viaje. Cada proyecto es una obra maestra personalizada.
                     </p>
                   </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+                    <div className="bg-white/90 backdrop-blur-sm border border-wine/20 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group">
+                      <Calendar className="w-8 h-8 text-wine mx-auto mb-3 group-hover:scale-110 transition-transform duration-300" />
+                      <div className="text-sm font-semibold text-gray-900">
+                        Bodas de Destino
+                      </div>
+                    </div>
+                    <div className="bg-white/90 backdrop-blur-sm border border-wine/20 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group">
+                      <Heart className="w-8 h-8 text-wine mx-auto mb-3 group-hover:scale-110 transition-transform duration-300" />
+                      <div className="text-sm font-semibold text-gray-900">
+                        Quinceañeras
+                      </div>
+                    </div>
+                    <div className="bg-white/90 backdrop-blur-sm border border-wine/20 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group">
+                      <Globe className="w-8 h-8 text-wine mx-auto mb-3 group-hover:scale-110 transition-transform duration-300" />
+                      <div className="text-sm font-semibold text-gray-900">
+                        Viajes Familiares
+                      </div>
+                    </div>
+                    <div className="bg-white/90 backdrop-blur-sm border border-wine/20 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group">
+                      <Sparkles className="w-8 h-8 text-wine mx-auto mb-3 group-hover:scale-110 transition-transform duration-300" />
+                      <div className="text-sm font-semibold text-gray-900">
+                        Viajes de Lujo
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="relative group">
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Founders Section */}
+        <section className="py-20 w-full bg-gradient-to-br from-gray-50 via-white to-gray-50 relative overflow-hidden">
+          <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                <span className="text-wine relative">
+                  Fundadores
+                  <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-wine to-wine/50 rounded-full"></div>
+                </span>
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                Conoce a las personas que dieron vida a Gaby Top Travel
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
+              <div className="text-center">
+                <div className="relative group mb-6">
                   <div className="absolute -inset-4 bg-gradient-to-r from-wine/20 to-wine/10 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-500"></div>
                   <div className="relative">
                     <Image
-                      src="https://images.unsplash.com/photo-1494790108755-2616b612b786?auto=format&fit=crop&w=600&q=80"
-                      alt="Gabriela Villegas Suárez - CEO"
-                      width={500}
-                      height={600}
-                      className="rounded-3xl shadow-2xl group-hover:scale-105 transition-transform duration-500"
+                      src="/images/team/founder1.png"
+                      alt="Elias Belmonte Eguez - Fundador"
+                      width={400}
+                      height={500}
+                      className="rounded-3xl shadow-2xl group-hover:scale-105 transition-transform duration-500 w-full h-auto"
                     />
-                    <div className="absolute -bottom-8 -right-8 bg-white/95 backdrop-blur-sm p-6 rounded-2xl shadow-xl border border-gray-200/50">
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="w-3 h-3 bg-wine rounded-full"></div>
-                        <p className="font-bold text-gray-900 text-lg">
-                          Gabriela Villegas Suárez
-                        </p>
-                      </div>
-                      <p className="text-wine font-semibold text-lg">
-                        CEO & Fundadora
-                      </p>
-                      <p className="text-gray-600 text-sm mt-2">
-                        Líder visionaria con 17+ años de experiencia
-                      </p>
-                    </div>
+                  </div>
+                </div>
+                <div className="bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-6 shadow-lg">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                    Elias Belmonte Eguez
+                  </h3>
+                  <div className="inline-flex items-center gap-2 bg-wine/10 text-wine px-3 py-1 rounded-full text-sm font-semibold">
+                    <Crown className="w-4 h-4" />
+                    Fundador
+                  </div>
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="relative group mb-6">
+                  <div className="absolute -inset-4 bg-gradient-to-r from-wine/20 to-wine/10 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-500"></div>
+                  <div className="relative">
+                    <Image
+                      src="/images/team/founder2.png"
+                      alt="Gabriela Villegas Suárez - Fundadora"
+                      width={400}
+                      height={500}
+                      className="rounded-3xl shadow-2xl group-hover:scale-105 transition-transform duration-500 w-full h-auto"
+                    />
+                  </div>
+                </div>
+                <div className="bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-6 shadow-lg">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                    Gabriela Villegas Suárez
+                  </h3>
+                  <div className="inline-flex items-center gap-2 bg-wine/10 text-wine px-3 py-1 rounded-full text-sm font-semibold">
+                    <Crown className="w-4 h-4" />
+                    Fundadora
                   </div>
                 </div>
               </div>
@@ -321,36 +402,19 @@ export default function About() {
                 viaje o evento perfecto
               </p>
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {teamMembers.map((member, index) => (
-                <div
-                  key={index}
-                  className="group relative bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-3xl p-8 hover:shadow-2xl transition-all duration-500 ease-in-out hover:-translate-y-3 hover:border-wine/20 text-center"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-wine/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  <div className="relative">
-                    <div className="relative w-36 h-36 mx-auto mb-8 group-hover:scale-105 transition-transform duration-500">
-                      <div className="absolute -inset-2 bg-gradient-to-r from-wine/20 to-wine/10 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                      <Image
-                        src={member.image}
-                        alt={member.name}
-                        fill
-                        className="rounded-full object-cover shadow-xl border-4 border-white group-hover:border-wine/20 transition-colors duration-500"
-                      />
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-wine transition-colors duration-300">
-                      {member.name}
-                    </h3>
-                    <div className="inline-flex items-center gap-2 bg-wine/10 text-wine px-3 py-1 rounded-full text-sm font-semibold mb-4">
-                      <div className="w-2 h-2 bg-wine rounded-full"></div>
-                      {member.role}
-                    </div>
-                    <p className="text-gray-600 text-sm leading-relaxed">
-                      {member.description}
-                    </p>
-                  </div>
+            <div className="max-w-5xl mx-auto">
+              <div className="relative group">
+                <div className="absolute -inset-8 bg-gradient-to-r from-wine/20 to-wine/10 rounded-3xl blur-3xl group-hover:blur-4xl transition-all duration-500"></div>
+                <div className="relative">
+                  <Image
+                    src="/images/team/team.jpg"
+                    alt="Equipo de Gaby Top Travel"
+                    width={800}
+                    height={600}
+                    className="rounded-3xl shadow-2xl group-hover:scale-105 transition-transform duration-500 w-full h-auto"
+                  />
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         </section>

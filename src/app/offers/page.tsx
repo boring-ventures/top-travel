@@ -259,11 +259,7 @@ export default async function OffersPage({ searchParams }: OffersPageProps) {
               asChild
               className="w-full bg-black/30 backdrop-blur-md hover:bg-black/40 text-white font-semibold py-3 rounded-xl transition-all duration-300 border border-white/20 hover:border-white/30 flex items-center justify-center gap-2"
             >
-              <Link
-                href={
-                  offer.package?.slug ? `/packages/${offer.package.slug}` : "#"
-                }
-              >
+              <Link href={`/offers/${offer.id}`}>
                 <span>Ver oferta</span>
                 <ArrowRight className="h-4 w-4" />
               </Link>
@@ -420,6 +416,7 @@ export default async function OffersPage({ searchParams }: OffersPageProps) {
                         template="Hola! Quiero información sobre ofertas especiales."
                         variables={{}}
                         label="Consultar por WhatsApp"
+                        phone="+59175651451"
                         size="default"
                       />
                     </div>
@@ -454,14 +451,7 @@ export default async function OffersPage({ searchParams }: OffersPageProps) {
                         key={offer.id}
                         className="relative overflow-hidden rounded-lg group"
                       >
-                        <Link
-                          href={
-                            offer.package?.slug
-                              ? `/packages/${offer.package.slug}`
-                              : "#"
-                          }
-                          className="block"
-                        >
+                        <Link href={`/offers/${offer.id}`} className="block">
                           <div className="relative h-64 sm:h-72">
                             <Image
                               src={

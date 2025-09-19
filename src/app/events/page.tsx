@@ -73,14 +73,15 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
   let whatsappTemplates: any = {};
 
   // Check if there are active filters
-  const hasActiveFilters = q || (country && country !== "all") || city || from || to;
+  const hasActiveFilters =
+    q || (country && country !== "all") || city || from || to;
 
   try {
     // Build where clause for filtered events
-  const where: any = {
-    status: "PUBLISHED",
-    locationCountry: country === "all" ? undefined : country,
-    locationCity: city,
+    const where: any = {
+      status: "PUBLISHED",
+      locationCountry: country === "all" ? undefined : country,
+      locationCity: city,
       ...(q
         ? {
             OR: [
@@ -89,15 +90,15 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
             ],
           }
         : {}),
-    ...(from || to
-      ? {
-          AND: [
-            from ? { endDate: { gte: new Date(from) } } : {},
-            to ? { startDate: { lte: new Date(to) } } : {},
-          ],
-        }
-      : {}),
-  };
+      ...(from || to
+        ? {
+            AND: [
+              from ? { endDate: { gte: new Date(from) } } : {},
+              to ? { startDate: { lte: new Date(to) } } : {},
+            ],
+          }
+        : {}),
+    };
 
     const results = await Promise.all([
       // Concerts
@@ -165,11 +166,13 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
         },
       }),
       // Filtered events query
-      hasActiveFilters ? prisma.event.findMany({
-        where,
-        orderBy: { startDate: "asc" },
-        take: 30,
-      }) : Promise.resolve([]),
+      hasActiveFilters
+        ? prisma.event.findMany({
+            where,
+            orderBy: { startDate: "asc" },
+            take: 30,
+          })
+        : Promise.resolve([]),
       // Get unique countries and cities for filters
       prisma.event.findMany({
         where: { status: "PUBLISHED" },
@@ -177,14 +180,15 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
         orderBy: [{ locationCountry: "asc" }, { locationCity: "asc" }],
       }),
     ]);
-    [concerts, festivals, cultural, sports, filteredEvents, allEventsData] = results as any;
+    [concerts, festivals, cultural, sports, filteredEvents, allEventsData] =
+      results as any;
 
-        const uniqueCountries = [
+    const uniqueCountries = [
       ...new Set(allEventsData.map((e) => e.locationCountry)),
-  ].filter((c): c is string => Boolean(c));
-    const uniqueCities = [...new Set(allEventsData.map((e) => e.locationCity))].filter(
-    Boolean
-  );
+    ].filter((c): c is string => Boolean(c));
+    const uniqueCities = [
+      ...new Set(allEventsData.map((e) => e.locationCity)),
+    ].filter(Boolean);
     countries = uniqueCountries;
     cities = uniqueCities;
 
@@ -235,7 +239,10 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
         id: event.id,
         title: event.title,
         description: event.artistOrEvent || "Concierto musical",
-        imageUrl: getValidImageUrl(event.heroImageUrl, FALLBACK_IMAGES.concerts),
+        imageUrl: getValidImageUrl(
+          event.heroImageUrl,
+          FALLBACK_IMAGES.concerts
+        ),
         href: `/events/${event.slug}`,
         price: formatDate(event.startDate),
         location: getLocationText(event),
@@ -249,7 +256,10 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
         id: event.id,
         title: event.title,
         description: event.artistOrEvent || "Festival de música",
-        imageUrl: getValidImageUrl(event.heroImageUrl, FALLBACK_IMAGES.festivals),
+        imageUrl: getValidImageUrl(
+          event.heroImageUrl,
+          FALLBACK_IMAGES.festivals
+        ),
         href: `/events/${event.slug}`,
         price: formatDate(event.startDate),
         location: getLocationText(event),
@@ -263,7 +273,10 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
         id: event.id,
         title: event.title,
         description: event.artistOrEvent || "Evento cultural",
-        imageUrl: getValidImageUrl(event.heroImageUrl, FALLBACK_IMAGES.cultural),
+        imageUrl: getValidImageUrl(
+          event.heroImageUrl,
+          FALLBACK_IMAGES.cultural
+        ),
         href: `/events/${event.slug}`,
         price: formatDate(event.startDate),
         location: getLocationText(event),
@@ -310,7 +323,8 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
         <section className="bg-white py-8">
           <div className="w-full px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-6 text-left">
-              Encuentra el mejor <span className="font-light italic">evento</span> para ti
+              Encuentra el mejor{" "}
+              <span className="font-light italic">evento</span> para ti
             </h2>
             <form method="get">
               <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end w-full">
@@ -318,14 +332,14 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
                   <label className="block text-sm font-bold italic text-gray-700 mb-2">
                     Búsqueda
                   </label>
-                    <Input
+                  <Input
                     className="h-12 bg-gray-50 border-0 focus:border-0 focus:ring-0 rounded-xl"
                     type="text"
                     name="q"
                     defaultValue={q}
                     placeholder="Buscar eventos..."
-                    />
-                  </div>
+                  />
+                </div>
                 <div>
                   <label className="block text-sm font-bold italic text-gray-700 mb-2">
                     País
@@ -375,8 +389,8 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
                     Buscar Eventos »
                   </Button>
                 </div>
-                </div>
-              </form>
+              </div>
+            </form>
           </div>
         </section>
 
@@ -385,50 +399,60 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
           <section className="py-8 w-full bg-white">
             <div className="w-full px-4 sm:px-6 lg:px-8">
               {filteredEvents.length === 0 ? (
-            <div className="text-center py-20">
-              <div className="text-muted-foreground mb-6">
-                <Compass className="h-20 w-20 mx-auto mb-6 opacity-50" />
-                <h3 className="text-2xl font-semibold mb-3 text-foreground">
-                  No se encontraron eventos
-                </h3>
-                <p className="text-lg max-w-md mx-auto text-muted-foreground">
-                  Intenta ajustar tus filtros de búsqueda o consulta con
-                  nosotros para eventos próximos
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center mt-6">
-                  <Button asChild variant="outline">
-                    <Link href="/contact">Contactar</Link>
-                  </Button>
-                  <WhatsAppCTA
-                    template="Hola! Quiero información sobre eventos próximos."
-                    variables={{}}
-                    label="Consultar por WhatsApp"
-                    size="default"
-                  />
+                <div className="text-center py-20">
+                  <div className="text-muted-foreground mb-6">
+                    <Compass className="h-20 w-20 mx-auto mb-6 opacity-50" />
+                    <h3 className="text-2xl font-semibold mb-3 text-foreground">
+                      No se encontraron eventos
+                    </h3>
+                    <p className="text-lg max-w-md mx-auto text-muted-foreground">
+                      Intenta ajustar tus filtros de búsqueda o consulta con
+                      nosotros para eventos próximos
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center mt-6">
+                      <Button asChild variant="outline">
+                        <Link href="/contact">Contactar</Link>
+                      </Button>
+                      <WhatsAppCTA
+                        template="Hola! Quiero información sobre eventos próximos."
+                        variables={{}}
+                        label="Consultar por WhatsApp"
+                        phone="+59162241435"
+                        size="default"
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ) : (
-            <>
+              ) : (
+                <>
                   <div className="flex items-center justify-between mb-6">
-                <div>
+                    <div>
                       <h2 className="text-3xl font-bold text-gray-900 mb-2 text-left">
-                        {filteredEvents.length} <span className="font-light italic">evento</span>{filteredEvents.length !== 1 ? "s" : ""}{" "}
-                        encontrado{filteredEvents.length !== 1 ? "s" : ""}
-                  </h2>
-                      <p className="text-gray-600">
-                        Resultados de tu búsqueda
-                  </p>
-                </div>
-              </div>
+                        {filteredEvents.length}{" "}
+                        <span className="font-light italic">evento</span>
+                        {filteredEvents.length !== 1 ? "s" : ""} encontrado
+                        {filteredEvents.length !== 1 ? "s" : ""}
+                      </h2>
+                      <p className="text-gray-600">Resultados de tu búsqueda</p>
+                    </div>
+                  </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredEvents.map((event) => (
-                      <div key={event.id} className="relative overflow-hidden rounded-lg group">
+                      <div
+                        key={event.id}
+                        className="relative overflow-hidden rounded-lg group"
+                      >
                         <Link href={`/events/${event.slug}`} className="block">
                           <div className="relative h-64 sm:h-72">
                             <Image
-                              src={event.heroImageUrl && event.heroImageUrl !== "1" && event.heroImageUrl !== "null" ? event.heroImageUrl : FALLBACK_IMAGES.concerts}
+                              src={
+                                event.heroImageUrl &&
+                                event.heroImageUrl !== "1" &&
+                                event.heroImageUrl !== "null"
+                                  ? event.heroImageUrl
+                                  : FALLBACK_IMAGES.concerts
+                              }
                               alt={event.title}
                               fill
                               className="object-cover transition-transform duration-300 group-hover:scale-105"
@@ -436,9 +460,11 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
                             <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent p-6 flex flex-col justify-start">
                               <div>
                                 <h2 className="text-white text-xl font-semibold uppercase">
-                            {event.title}
+                                  {event.title}
                                 </h2>
-                                <p className="text-white">{getLocationText(event)}</p>
+                                <p className="text-white">
+                                  {getLocationText(event)}
+                                </p>
                               </div>
                             </div>
                             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
@@ -448,25 +474,25 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
                                 </p>
                                 <div className="text-white">
                                   <ArrowRight className="h-5 w-5" />
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      </Link>
+                        </Link>
                       </div>
                     ))}
-              </div>
-            </>
-          )}
+                  </div>
+                </>
+              )}
             </div>
           </section>
         ) : (
           /* Tabbed Content Section */
           <section className="py-12 w-full bg-white">
             <div className="container mx-auto px-4">
-            <TabbedContent tabs={tabbedContent} showViewAllButton={false} />
+              <TabbedContent tabs={tabbedContent} showViewAllButton={false} />
             </div>
-        </section>
+          </section>
         )}
       </main>
 

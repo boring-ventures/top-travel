@@ -103,7 +103,9 @@ interface DestinationsPageProps {
   }>;
 }
 
-export default async function DestinationsPage({ searchParams }: DestinationsPageProps) {
+export default async function DestinationsPage({
+  searchParams,
+}: DestinationsPageProps) {
   const params = await searchParams;
   const q = params?.q?.trim() || undefined;
   const country = params?.country || undefined;
@@ -121,7 +123,8 @@ export default async function DestinationsPage({ searchParams }: DestinationsPag
   let whatsappTemplates: any = {};
 
   // Check if there are active filters
-  const hasActiveFilters = q || (country && country !== "all") || city || from || to;
+  const hasActiveFilters =
+    q || (country && country !== "all") || city || from || to;
 
   try {
     // Build where clause for filtered destinations
@@ -141,10 +144,7 @@ export default async function DestinationsPage({ searchParams }: DestinationsPag
     const results = await Promise.all([
       // All destinations (not just top destinations)
       prisma.destination.findMany({
-        orderBy: [
-          { country: "asc" },
-          { city: "asc" }
-        ],
+        orderBy: [{ country: "asc" }, { city: "asc" }],
         select: {
           id: true,
           slug: true,
@@ -188,33 +188,41 @@ export default async function DestinationsPage({ searchParams }: DestinationsPag
         },
       }),
       // Filtered destinations query
-      hasActiveFilters ? prisma.destination.findMany({
-        where,
-        orderBy: [{ country: "asc" }, { city: "asc" }],
-        take: 30,
-        select: {
-          id: true,
-          slug: true,
-          city: true,
-          country: true,
-          heroImageUrl: true,
-        },
-      }) : Promise.resolve([]),
+      hasActiveFilters
+        ? prisma.destination.findMany({
+            where,
+            orderBy: [{ country: "asc" }, { city: "asc" }],
+            take: 30,
+            select: {
+              id: true,
+              slug: true,
+              city: true,
+              country: true,
+              heroImageUrl: true,
+            },
+          })
+        : Promise.resolve([]),
       // Get all destinations for filters
       prisma.destination.findMany({
         select: { country: true, city: true },
         orderBy: [{ country: "asc" }, { city: "asc" }],
       }),
     ]);
-    [allDestinations, featuredEvents, fixedDepartures, filteredDestinations, allDestinationsData] = results as any;
+    [
+      allDestinations,
+      featuredEvents,
+      fixedDepartures,
+      filteredDestinations,
+      allDestinationsData,
+    ] = results as any;
 
     // Get unique countries and cities for filters
     const uniqueCountries = [
       ...new Set(allDestinationsData.map((d) => d.country)),
     ].filter((c): c is string => Boolean(c));
-    const uniqueCities = [...new Set(allDestinationsData.map((d) => d.city))].filter(
-      Boolean
-    );
+    const uniqueCities = [
+      ...new Set(allDestinationsData.map((d) => d.city)),
+    ].filter(Boolean);
     countries = uniqueCountries;
     cities = uniqueCities;
 
@@ -326,24 +334,31 @@ export default async function DestinationsPage({ searchParams }: DestinationsPag
         <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-transparent -z-10" />
 
-                          {/* Hero Section */}
-         <section className="relative">
-           <AnimatedHero
+        {/* Hero Section */}
+        <section className="relative">
+          <AnimatedHero
             title="Descubre nuestros"
             subtitle="de viaje"
             description="Destinos increíbles, eventos únicos y experiencias inolvidables que se adaptan a tus sueños de viaje."
-            animatedWords={["Destinos", "Aventuras", "Experiencias", "Sueños", "Momentos"]}
-             backgroundImage="https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1920&q=80"
-             animatedWordColor="text-wine"
-             accentColor="bg-wine"
-           />
+            animatedWords={[
+              "Destinos",
+              "Aventuras",
+              "Experiencias",
+              "Sueños",
+              "Momentos",
+            ]}
+            backgroundImage="https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1920&q=80"
+            animatedWordColor="text-wine"
+            accentColor="bg-wine"
+          />
         </section>
 
         {/* Search and Filters Section */}
         <section className="bg-white py-8">
           <div className="w-full px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-6 text-left">
-              Encuentra el mejor <span className="font-light italic">destino</span> de viaje
+              Encuentra el mejor{" "}
+              <span className="font-light italic">destino</span> de viaje
             </h2>
             <form method="get">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end w-full">
@@ -351,22 +366,22 @@ export default async function DestinationsPage({ searchParams }: DestinationsPag
                   <label className="block text-sm font-bold italic text-gray-700 mb-2">
                     Búsqueda
                   </label>
-                                      <Input
-                      className="h-12 bg-gray-50 border-0 focus:border-0 focus:ring-0 rounded-xl"
-                      type="text"
-                      name="q"
-                      defaultValue={q}
-                      placeholder="Buscar destinos..."
-                    />
+                  <Input
+                    className="h-12 bg-gray-50 border-0 focus:border-0 focus:ring-0 rounded-xl"
+                    type="text"
+                    name="q"
+                    defaultValue={q}
+                    placeholder="Buscar destinos..."
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-bold italic text-gray-700 mb-2">
                     País
                   </label>
-                                      <Select name="country" defaultValue={country || "all"}>
-                      <SelectTrigger className="h-12 bg-gray-50 border-0 focus:border-0 focus:ring-0 rounded-xl">
-                        <SelectValue placeholder="Seleccionar país" />
-                      </SelectTrigger>
+                  <Select name="country" defaultValue={country || "all"}>
+                    <SelectTrigger className="h-12 bg-gray-50 border-0 focus:border-0 focus:ring-0 rounded-xl">
+                      <SelectValue placeholder="Seleccionar país" />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">Todos los países</SelectItem>
                       {countries.map((c) => (
@@ -381,25 +396,25 @@ export default async function DestinationsPage({ searchParams }: DestinationsPag
                   <label className="block text-sm font-bold italic text-gray-700 mb-2">
                     Ciudad
                   </label>
-                                      <Input
-                      className="h-12 bg-gray-50 border-0 focus:border-0 focus:ring-0 rounded-xl"
-                      type="text"
-                      name="city"
-                      defaultValue={city}
-                      placeholder="Buscar ciudad..."
-                    />
+                  <Input
+                    className="h-12 bg-gray-50 border-0 focus:border-0 focus:ring-0 rounded-xl"
+                    type="text"
+                    name="city"
+                    defaultValue={city}
+                    placeholder="Buscar ciudad..."
+                  />
                 </div>
                 <div>
-                                      <Button
-                      type="submit"
-                      className="h-12 w-full bg-black text-white hover:bg-gray-800 transition-colors duration-200 font-medium rounded-xl"
-                    >
-                      Buscar Destinos »
-                    </Button>
+                  <Button
+                    type="submit"
+                    className="h-12 w-full bg-black text-white hover:bg-gray-800 transition-colors duration-200 font-medium rounded-xl"
+                  >
+                    Buscar Destinos »
+                  </Button>
                 </div>
               </div>
             </form>
-              </div>
+          </div>
         </section>
 
         {/* Results Section */}
@@ -425,6 +440,7 @@ export default async function DestinationsPage({ searchParams }: DestinationsPag
                         template="Hola! Quiero información sobre destinos próximos."
                         variables={{}}
                         label="Consultar por WhatsApp"
+                        phone="+59177802514"
                         size="default"
                       />
                     </div>
@@ -435,22 +451,34 @@ export default async function DestinationsPage({ searchParams }: DestinationsPag
                   <div className="flex items-center justify-between mb-6">
                     <div>
                       <h2 className="text-3xl font-bold text-gray-900 mb-2 text-left">
-                        {filteredDestinations.length} <span className="font-light italic">destino</span>{filteredDestinations.length !== 1 ? "s" : ""}{" "}
+                        {filteredDestinations.length}{" "}
+                        <span className="font-light italic">destino</span>
+                        {filteredDestinations.length !== 1 ? "s" : ""}{" "}
                         encontrado{filteredDestinations.length !== 1 ? "s" : ""}
                       </h2>
-                      <p className="text-gray-600">
-                        Resultados de tu búsqueda
-                      </p>
+                      <p className="text-gray-600">Resultados de tu búsqueda</p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredDestinations.map((destination) => (
-                      <div key={destination.id} className="relative overflow-hidden rounded-lg group">
-                        <Link href={`/destinations/${destination.slug}`} className="block">
+                      <div
+                        key={destination.id}
+                        className="relative overflow-hidden rounded-lg group"
+                      >
+                        <Link
+                          href={`/destinations/${destination.slug}`}
+                          className="block"
+                        >
                           <div className="relative h-64 sm:h-72">
                             <Image
-                              src={destination.heroImageUrl && destination.heroImageUrl !== "1" && destination.heroImageUrl !== "null" ? destination.heroImageUrl : FALLBACK_IMAGES.destinations}
+                              src={
+                                destination.heroImageUrl &&
+                                destination.heroImageUrl !== "1" &&
+                                destination.heroImageUrl !== "null"
+                                  ? destination.heroImageUrl
+                                  : FALLBACK_IMAGES.destinations
+                              }
                               alt={getLocationText(destination)}
                               fill
                               className="object-cover transition-transform duration-300 group-hover:scale-105"

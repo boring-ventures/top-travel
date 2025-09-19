@@ -61,111 +61,75 @@ export default function ContactPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
-              {/* Contact Methods */}
-              <div className="space-y-6">
-                <Card className="p-6 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-start gap-4">
-                    <div className="p-3 bg-green-100 rounded-xl">
-                      <MessageCircle className="h-8 w-8 text-green-600" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                        WhatsApp
-                      </h3>
-                      <p className="text-gray-600 mb-4">
-                        Respuesta rápida y atención personalizada
-                      </p>
-                      <WhatsAppCTA
-                        template="Hola! Quiero más información sobre sus servicios de viajes."
-                        variables={{}}
-                        label="Chatear por WhatsApp"
-                        size="lg"
-                        className="bg-green-600 hover:bg-green-700 text-white"
-                      />
-                    </div>
+            {/* Contact Methods Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+              {/* WhatsApp */}
+              <Card className="p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                <div className="text-center">
+                  <div className="p-4 bg-green-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                    <MessageCircle className="h-8 w-8 text-green-600" />
                   </div>
-                </Card>
-
-                <Card className="p-6 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-start gap-4">
-                    <div className="p-3 bg-blue-100 rounded-xl">
-                      <Phone className="h-8 w-8 text-blue-600" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                        Teléfono
-                      </h3>
-                      <p className="text-gray-600 mb-4">
-                        Lunes a Viernes: 8:00 AM - 6:00 PM
-                      </p>
-                      <p className="text-lg font-semibold text-gray-900">
-                        +591 3 123 4567
-                      </p>
-                    </div>
-                  </div>
-                </Card>
-
-                <Card className="p-6 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-start gap-4">
-                    <div className="p-3 bg-purple-100 rounded-xl">
-                      <Mail className="h-8 w-8 text-purple-600" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                        Email
-                      </h3>
-                      <p className="text-gray-600 mb-4">
-                        Para consultas detalladas y propuestas
-                      </p>
-                      <p className="text-lg font-semibold text-gray-900">
-                        info@gabytoptravel.com
-                      </p>
-                    </div>
-                  </div>
-                </Card>
-              </div>
-
-              {/* Office Hours */}
-              <Card className="p-6 hover:shadow-lg transition-shadow duration-300">
-                <div className="flex items-start gap-4 mb-6">
-                  <div className="p-3 bg-orange-100 rounded-xl">
-                    <Clock className="h-8 w-8 text-orange-600" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                      Horarios de Atención
-                    </h3>
-                    <p className="text-gray-600">
-                      Estamos disponibles para ayudarte en estos horarios
-                    </p>
-                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    WhatsApp
+                  </h3>
+                  <p className="text-gray-600 mb-4 text-sm">
+                    Respuesta rápida y atención personalizada
+                  </p>
+                  <WhatsAppCTA
+                    template="Hola! Quiero más información sobre sus servicios de viajes."
+                    variables={{}}
+                    label="Chatear por WhatsApp"
+                    phone="+59175651451"
+                    size="sm"
+                    className="w-full bg-green-600 hover:bg-green-700 text-white"
+                  />
                 </div>
+              </Card>
 
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                    <span className="font-medium text-gray-900">
-                      Lunes - Viernes:
-                    </span>
-                    <span className="font-semibold text-gray-700">
-                      8:00 AM - 6:00 PM
-                    </span>
+              {/* Phone */}
+              <Card className="p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                <div className="text-center">
+                  <div className="p-4 bg-blue-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                    <Phone className="h-8 w-8 text-blue-600" />
                   </div>
-                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                    <span className="font-medium text-gray-900">Sábados:</span>
-                    <span className="font-semibold text-gray-700">
-                      9:00 AM - 2:00 PM
-                    </span>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    Teléfono
+                  </h3>
+                  <p className="text-gray-600 mb-3 text-sm">
+                    Lunes a Viernes: 8:30 AM - 6:30 PM
+                  </p>
+                  <Link
+                    href="tel:+59175651451"
+                    className="inline-block text-lg font-semibold text-gray-900 hover:text-blue-600 transition-colors duration-200 bg-gray-50 hover:bg-blue-50 px-4 py-2 rounded-lg"
+                  >
+                    +591 756 514 51
+                  </Link>
+                </div>
+              </Card>
+
+              {/* Email */}
+              <Card className="p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 md:col-span-2 lg:col-span-1">
+                <div className="text-center">
+                  <div className="p-4 bg-purple-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                    <Mail className="h-8 w-8 text-purple-600" />
                   </div>
-                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                    <span className="font-medium text-gray-900">Domingos:</span>
-                    <span className="font-semibold text-gray-500">Cerrado</span>
-                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    Email
+                  </h3>
+                  <p className="text-gray-600 mb-3 text-sm">
+                    Para consultas detalladas y propuestas
+                  </p>
+                  <Link
+                    href="mailto:info@gabytoptravel.com"
+                    className="inline-block text-lg font-semibold text-gray-900 hover:text-purple-600 transition-colors duration-200 bg-gray-50 hover:bg-purple-50 px-4 py-2 rounded-lg"
+                  >
+                    info@gabytoptravel.com
+                  </Link>
                 </div>
               </Card>
             </div>
 
-            {/* Office Locations */}
+            {/* Office Locations & Hours */}
             <div className="text-center mb-12">
               <h2 className="text-4xl font-bold text-gray-900 mb-4">
                 Nuestras{" "}
@@ -176,65 +140,118 @@ export default function ContactPage() {
               </p>
             </div>
 
-            <div className="space-y-4">
-              {[
-                {
-                  city: "Santa Cruz",
-                  region: "Centro de Bolivia",
-                  description: "Oficina principal",
-                  address:
-                    "Av. San Martín, Equipetrol Norte Calle F, Edificio Aquarius 7",
-                  mapsLink: "https://maps.app.goo.gl/3CyKDKuUwj7GJ8Yf7",
-                },
-                {
-                  city: "Santa Cruz",
-                  region: "Centro de Bolivia",
-                  description: "Sucursal adicional",
-                  address:
-                    "3er Anillo Externo, Av. Marcelo Terceros, Esq. Salvador Pitare",
-                  mapsLink: "https://maps.app.goo.gl/R88tDzsuBTFgR4M47",
-                },
-                {
-                  city: "Cochabamba",
-                  region: "Valle de Bolivia",
-                  description: "Sucursal estratégica",
-                  address: "Av. Gualberto Villarroel Esquina Av. Oblitas",
-                  mapsLink: "https://maps.app.goo.gl/JfN5CKSx5rXgLCsm7",
-                },
-                {
-                  city: "La Paz",
-                  region: "Altiplano de Bolivia",
-                  description: "Punto de conexión",
-                  address:
-                    "Av. José Ballivián, C/20 de Calacoto, Edificio Platinum #1487, Of.01",
-                  mapsLink: "https://maps.app.goo.gl/BXcNshfLnZyXrkr3A",
-                },
-              ].map((office, index) => (
-                <Card
-                  key={`${office.city}-${index}`}
-                  className="p-4 hover:shadow-lg transition-shadow duration-300"
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <Badge variant="outline" className="text-sm font-semibold">
-                      {office.city}
-                    </Badge>
-                    <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                      {office.description}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Office Locations - Left Column */}
+              <div className="space-y-6">
+                <div className="space-y-4">
+                  {[
+                    {
+                      city: "Santa Cruz",
+                      region: "Centro de Bolivia",
+                      description: "Oficina principal",
+                      address:
+                        "Av. San Martín, Equipetrol Norte Calle F, Edificio Aquarius 7",
+                      mapsLink: "https://maps.app.goo.gl/3CyKDKuUwj7GJ8Yf7",
+                    },
+                    {
+                      city: "Santa Cruz",
+                      region: "Centro de Bolivia",
+                      description: "Sucursal adicional",
+                      address:
+                        "3er Anillo Externo, Av. Marcelo Terceros, Esq. Salvador Pitare",
+                      mapsLink: "https://maps.app.goo.gl/R88tDzsuBTFgR4M47",
+                    },
+                    {
+                      city: "Cochabamba",
+                      region: "Valle de Bolivia",
+                      description: "Sucursal estratégica",
+                      address: "Av. Gualberto Villarroel Esquina Av. Oblitas",
+                      mapsLink: "https://maps.app.goo.gl/JfN5CKSx5rXgLCsm7",
+                    },
+                    {
+                      city: "La Paz",
+                      region: "Altiplano de Bolivia",
+                      description: "Punto de conexión",
+                      address:
+                        "Av. José Ballivián, C/20 de Calacoto, Edificio Platinum #1487, Of.01",
+                      mapsLink: "https://maps.app.goo.gl/BXcNshfLnZyXrkr3A",
+                    },
+                  ].map((office, index) => (
+                    <Card
+                      key={`${office.city}-${index}`}
+                      className="p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="p-3 bg-gray-100 rounded-xl">
+                          <MapPin className="h-6 w-6 text-gray-600" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-3">
+                            <Badge
+                              variant="outline"
+                              className="text-sm font-semibold"
+                            >
+                              {office.city}
+                            </Badge>
+                            <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded-full shadow-sm">
+                              {office.description}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-600 mb-2">
+                            {office.region}
+                          </p>
+                          <Link
+                            href={office.mapsLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-gray-800 hover:text-blue-600 font-medium hover:underline transition-colors duration-200 block"
+                          >
+                            {office.address}
+                          </Link>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+
+              {/* Office Hours - Right Column */}
+              <Card className="p-8 hover:shadow-lg transition-all duration-300 h-fit">
+                <div className="text-center mb-6">
+                  <div className="p-4 bg-orange-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                    <Clock className="h-8 w-8 text-orange-600" />
+                  </div>
+                  <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+                    Horarios de Atención
+                  </h3>
+                  <p className="text-gray-600">
+                    Estamos disponibles para ayudarte en estos horarios
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl">
+                    <span className="font-medium text-gray-900">
+                      Lunes - Viernes:
+                    </span>
+                    <span className="font-bold text-lg text-gray-800">
+                      8:30 AM - 6:30 PM
                     </span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-blue-600" />
-                    <Link
-                      href={office.mapsLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm text-gray-800 hover:text-blue-600 font-medium hover:underline transition-colors duration-200"
-                    >
-                      {office.address}
-                    </Link>
+                  <div className="flex justify-between items-center p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl">
+                    <span className="font-medium text-gray-900">Sábados:</span>
+                    <span className="font-bold text-lg text-gray-800">
+                      9:00 AM - 12:30 PM
+                    </span>
                   </div>
-                </Card>
-              ))}
+                  <div className="flex justify-between items-center p-4 bg-gradient-to-r from-red-50 to-red-100 rounded-xl">
+                    <span className="font-medium text-gray-900">Domingos:</span>
+                    <span className="font-bold text-lg text-red-600">
+                      Cerrado
+                    </span>
+                  </div>
+                </div>
+              </Card>
             </div>
           </div>
         </section>
@@ -351,6 +368,7 @@ export default function ContactPage() {
                   template="Hola, quiero una consulta gratuita para mi próximo viaje — {url}"
                   variables={{ url: "" }}
                   label="Consulta Gratuita"
+                  phone="+59175651451"
                   size="lg"
                   className="h-14 px-8 bg-wine hover:bg-wine/90 text-white border-0 text-lg font-semibold rounded-xl"
                 />
