@@ -39,13 +39,8 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: "/icon.png",
+    icon: "/favicon.ico",
     shortcut: "/favicon.ico",
-    apple: "/apple-icon.png",
-    other: {
-      rel: "apple-touch-icon",
-      url: "/apple-icon.png",
-    },
   },
 };
 
