@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { ImageUpload } from "@/components/ui/image-upload";
+import { PdfUpload } from "@/components/ui/pdf-upload";
 import { AmenitiesInput } from "@/components/ui/amenities-input";
 import {
   Select,
@@ -29,6 +30,7 @@ import {
   SlugSchema,
 } from "@/lib/validations/common";
 import { uploadFixedDepartureImage } from "@/lib/supabase/storage";
+import { FileText, ExternalLink } from "lucide-react";
 
 // Custom schema for the form that includes dateRange
 const FixedDepartureFormSchema = z.object({
@@ -36,6 +38,7 @@ const FixedDepartureFormSchema = z.object({
   title: NonEmptyStringSchema,
   destinationId: z.string(),
   heroImageUrl: z.string().optional(),
+  pdfUrl: z.string().optional(),
   amenities: z.array(z.string()).default([]),
   exclusions: z.array(z.string()).default([]),
   dateRange: z
@@ -55,6 +58,29 @@ export function FixedDepartureForm({ onSuccess }: { onSuccess?: () => void }) {
   const [submitting, setSubmitting] = useState(false);
   const [destinations, setDestinations] = useState<any[]>([]);
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+  const [selectedPdfFile, setSelectedPdfFile] = useState<File | null>(null);
+
+  const handleDownloadPdf = async (pdfUrl: string, departureTitle: string) => {
+    try {
+      // Fetch the PDF file
+      const response = await fetch(pdfUrl);
+      if (!response.ok) throw new Error("Failed to fetch PDF");
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${departureTitle}-documento.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading PDF:", error);
+      // Fallback: open in new tab
+      window.open(pdfUrl, "_blank");
+    }
+  };
 
   useEffect(() => {
     (async () => {
@@ -203,6 +229,60 @@ export function FixedDepartureForm({ onSuccess }: { onSuccess?: () => void }) {
           placeholder="Imagen Principal de la Salida Fija"
           aspectRatio={16 / 9}
         />
+      </div>
+
+      <div className="space-y-2">
+        <PdfUpload
+          value={form.watch("pdfUrl")}
+          onChange={(url) => form.setValue("pdfUrl", url)}
+          onFileSelect={(file) => setSelectedPdfFile(file)}
+          placeholder="Subir documento PDF de la salida fija"
+        />
+
+        {/* Current PDF Display */}
+        {form.watch("pdfUrl") && (
+          <div className="mt-3 p-3 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-800">
+            <div className="flex items-center gap-3">
+              <FileText className="h-5 w-5 text-green-600" />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-green-800 dark:text-green-200">
+                  Documento PDF actual
+                </p>
+                <p className="text-xs text-green-600 dark:text-green-400">
+                  Haz clic en "Ver PDF" para abrir el documento
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => window.open(form.watch("pdfUrl"), "_blank")}
+                  className="flex items-center gap-2 border-green-300 text-green-700 hover:bg-green-100 dark:border-green-600 dark:text-green-300 dark:hover:bg-green-900"
+                >
+                  <ExternalLink className="h-3 w-3" />
+                  Ver PDF
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const pdfUrl = form.watch("pdfUrl");
+                    const title = form.watch("title") || "salida fija";
+                    if (pdfUrl) {
+                      handleDownloadPdf(pdfUrl, title);
+                    }
+                  }}
+                  className="flex items-center gap-2 border-green-300 text-green-700 hover:bg-green-100 dark:border-green-600 dark:text-green-300 dark:hover:bg-green-900"
+                >
+                  <FileText className="h-3 w-3" />
+                  Descargar
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <AmenitiesInput

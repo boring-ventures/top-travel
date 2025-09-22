@@ -75,6 +75,7 @@ model Destination {
   city          String
   description   String?
   heroImageUrl  String?
+  pdfUrl        String?       // URL to PDF document in documents bucket
   isFeatured    Boolean       @default(false)
 
   // Relations
@@ -188,6 +189,7 @@ model Event {
   startDate       DateTime
   endDate         DateTime
   heroImageUrl    String?
+  pdfUrl          String?        // URL to PDF document in documents bucket
   amenities       String[]
   exclusions      String[]
   detailsJson     Json?
@@ -227,6 +229,7 @@ model FixedDeparture {
   startDate     DateTime
   endDate       DateTime
   heroImageUrl  String?
+  pdfUrl        String?       // URL to PDF document in documents bucket
   amenities     String[]
   exclusions    String[]
   detailsJson   Json?
@@ -248,6 +251,7 @@ model Offer {
   title          String
   subtitle       String?
   bannerImageUrl String?
+  pdfUrl         String?       // URL to PDF document in documents bucket
   isFeatured     Boolean       @default(false)
   startAt        DateTime?
   endAt          DateTime?

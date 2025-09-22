@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { ImageUpload } from "@/components/ui/image-upload";
+import { PdfUpload } from "@/components/ui/pdf-upload";
 import { TagsInput } from "@/components/ui/tags-input";
 import {
   Command,
@@ -32,7 +33,7 @@ import { DateRange } from "react-day-picker";
 import { z } from "zod";
 import { useToast } from "@/components/ui/use-toast";
 import { useQuery } from "@tanstack/react-query";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, FileText, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   ContentStatusSchema,
@@ -45,6 +46,7 @@ const OfferFormSchema = z.object({
   title: NonEmptyStringSchema,
   subtitle: z.string().optional(),
   bannerImageUrl: z.string().optional(),
+  pdfUrl: z.string().optional(),
   isFeatured: z.boolean().optional(),
   dateRange: z
     .object({
@@ -81,8 +83,31 @@ export function OfferForm({ onSuccess, initialValues }: OfferFormProps) {
   const [submitting, setSubmitting] = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+  const [selectedPdfFile, setSelectedPdfFile] = useState<File | null>(null);
   const { toast } = useToast();
   const { data: tags, isLoading: tagsLoading } = useTags();
+
+  const handleDownloadPdf = async (pdfUrl: string, offerTitle: string) => {
+    try {
+      // Fetch the PDF file
+      const response = await fetch(pdfUrl);
+      if (!response.ok) throw new Error("Failed to fetch PDF");
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${offerTitle}-documento.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading PDF:", error);
+      // Fallback: open in new tab
+      window.open(pdfUrl, "_blank");
+    }
+  };
 
   const form = useForm<OfferFormInput>({
     resolver: zodResolver(OfferFormSchema),
@@ -113,6 +138,7 @@ export function OfferForm({ onSuccess, initialValues }: OfferFormProps) {
         title: (initialValues as any).title ?? "",
         subtitle: (initialValues as any).subtitle ?? "",
         bannerImageUrl: (initialValues as any).bannerImageUrl ?? "",
+        pdfUrl: (initialValues as any).pdfUrl ?? "",
         isFeatured: Boolean((initialValues as any).isFeatured) ?? false,
         status: (initialValues as any).status ?? "DRAFT",
         dateRange,
@@ -326,6 +352,60 @@ export function OfferForm({ onSuccess, initialValues }: OfferFormProps) {
           placeholder="Imagen de Banner de la Oferta"
           aspectRatio={2 / 1}
         />
+      </div>
+
+      <div className="space-y-2">
+        <PdfUpload
+          value={form.watch("pdfUrl")}
+          onChange={(url) => form.setValue("pdfUrl", url)}
+          onFileSelect={(file) => setSelectedPdfFile(file)}
+          placeholder="Subir documento PDF de la oferta"
+        />
+
+        {/* Current PDF Display */}
+        {form.watch("pdfUrl") && (
+          <div className="mt-3 p-3 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-800">
+            <div className="flex items-center gap-3">
+              <FileText className="h-5 w-5 text-green-600" />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-green-800 dark:text-green-200">
+                  Documento PDF actual
+                </p>
+                <p className="text-xs text-green-600 dark:text-green-400">
+                  Haz clic en "Ver PDF" para abrir el documento
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => window.open(form.watch("pdfUrl"), "_blank")}
+                  className="flex items-center gap-2 border-green-300 text-green-700 hover:bg-green-100 dark:border-green-600 dark:text-green-300 dark:hover:bg-green-900"
+                >
+                  <ExternalLink className="h-3 w-3" />
+                  Ver PDF
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const pdfUrl = form.watch("pdfUrl");
+                    const title = form.watch("title") || "oferta";
+                    if (pdfUrl) {
+                      handleDownloadPdf(pdfUrl, title);
+                    }
+                  }}
+                  className="flex items-center gap-2 border-green-300 text-green-700 hover:bg-green-100 dark:border-green-600 dark:text-green-300 dark:hover:bg-green-900"
+                >
+                  <FileText className="h-3 w-3" />
+                  Descargar
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <OfferDateRangePicker

@@ -11,7 +11,17 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
-import { Loader2, Eye, Calendar, MapPin, Users, Check, X } from "lucide-react";
+import {
+  Loader2,
+  Eye,
+  Calendar,
+  MapPin,
+  Users,
+  Check,
+  X,
+  FileText,
+  ExternalLink,
+} from "lucide-react";
 import Image from "next/image";
 
 interface ViewFixedDepartureModalProps {
@@ -28,6 +38,28 @@ export function ViewFixedDepartureModal({
   const [loading, setLoading] = useState(false);
   const [fixedDeparture, setFixedDeparture] = useState<any>(null);
   const { toast } = useToast();
+
+  const handleDownloadPdf = async (pdfUrl: string, departureTitle: string) => {
+    try {
+      // Fetch the PDF file
+      const response = await fetch(pdfUrl);
+      if (!response.ok) throw new Error("Failed to fetch PDF");
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${departureTitle}-documento.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading PDF:", error);
+      // Fallback: open in new tab
+      window.open(pdfUrl, "_blank");
+    }
+  };
 
   // Fetch fixed departure data when modal opens
   useEffect(() => {
@@ -90,6 +122,51 @@ export function ViewFixedDepartureModal({
                       fill
                       className="object-cover"
                     />
+                  </div>
+                )}
+
+                {/* PDF Document */}
+                {fixedDeparture.pdfUrl && (
+                  <div className="p-4 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-800">
+                    <div className="flex items-center gap-3">
+                      <FileText className="h-5 w-5 text-green-600" />
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-green-800 dark:text-green-200">
+                          Documento PDF disponible
+                        </p>
+                        <p className="text-xs text-green-600 dark:text-green-400">
+                          Haz clic en los botones para ver o descargar el
+                          documento
+                        </p>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            window.open(fixedDeparture.pdfUrl, "_blank")
+                          }
+                          className="flex items-center gap-2 border-green-300 text-green-700 hover:bg-green-100 dark:border-green-600 dark:text-green-300 dark:hover:bg-green-900"
+                        >
+                          <ExternalLink className="h-3 w-3" />
+                          Ver PDF
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            handleDownloadPdf(
+                              fixedDeparture.pdfUrl,
+                              fixedDeparture.title
+                            )
+                          }
+                          className="flex items-center gap-2 border-green-300 text-green-700 hover:bg-green-100 dark:border-green-600 dark:text-green-300 dark:hover:bg-green-900"
+                        >
+                          <FileText className="h-3 w-3" />
+                          Descargar
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 )}
 
@@ -165,38 +242,50 @@ export function ViewFixedDepartureModal({
                 </div>
 
                 {/* Amenities */}
-                {fixedDeparture.amenities && fixedDeparture.amenities.length > 0 && (
-                  <div className="pt-4 border-t">
-                    <div className="text-sm font-medium text-muted-foreground mb-3">
-                      Incluye
+                {fixedDeparture.amenities &&
+                  fixedDeparture.amenities.length > 0 && (
+                    <div className="pt-4 border-t">
+                      <div className="text-sm font-medium text-muted-foreground mb-3">
+                        Incluye
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        {fixedDeparture.amenities.map(
+                          (amenity: string, index: number) => (
+                            <div
+                              key={index}
+                              className="flex items-center gap-2 text-sm"
+                            >
+                              <Check className="h-4 w-4 text-green-600" />
+                              <span>{amenity}</span>
+                            </div>
+                          )
+                        )}
+                      </div>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      {fixedDeparture.amenities.map((amenity: string, index: number) => (
-                        <div key={index} className="flex items-center gap-2 text-sm">
-                          <Check className="h-4 w-4 text-green-600" />
-                          <span>{amenity}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                  )}
 
                 {/* Exclusions */}
-                {fixedDeparture.exclusions && fixedDeparture.exclusions.length > 0 && (
-                  <div className="pt-4 border-t">
-                    <div className="text-sm font-medium text-muted-foreground mb-3">
-                      No Incluye
+                {fixedDeparture.exclusions &&
+                  fixedDeparture.exclusions.length > 0 && (
+                    <div className="pt-4 border-t">
+                      <div className="text-sm font-medium text-muted-foreground mb-3">
+                        No Incluye
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        {fixedDeparture.exclusions.map(
+                          (exclusion: string, index: number) => (
+                            <div
+                              key={index}
+                              className="flex items-center gap-2 text-sm"
+                            >
+                              <X className="h-4 w-4 text-red-600" />
+                              <span>{exclusion}</span>
+                            </div>
+                          )
+                        )}
+                      </div>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      {fixedDeparture.exclusions.map((exclusion: string, index: number) => (
-                        <div key={index} className="flex items-center gap-2 text-sm">
-                          <X className="h-4 w-4 text-red-600" />
-                          <span>{exclusion}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                  )}
 
                 {fixedDeparture.detailsJson && (
                   <div className="pt-4 border-t">

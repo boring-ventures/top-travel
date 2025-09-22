@@ -13,6 +13,7 @@ export const FixedDepartureCreateSchema = z.object({
   startDate: ISODateSchema,
   endDate: ISODateSchema,
   heroImageUrl: z.string().optional(),
+  pdfUrl: z.string().optional(),
   amenities: z.array(z.string()).default([]),
   exclusions: z.array(z.string()).default([]),
   detailsJson: z.any().optional(),

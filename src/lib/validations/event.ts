@@ -21,6 +21,7 @@ export const EventCreateSchema = z.object({
     .optional()
     .or(z.literal(""))
     .transform((val) => (val === "" ? undefined : val)),
+  pdfUrl: z.string().optional(),
   amenities: z.array(z.string()).default([]),
   exclusions: z.array(z.string()).default([]),
   detailsJson: z.any().optional(),

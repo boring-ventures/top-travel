@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ImageUpload } from "@/components/ui/image-upload";
+import { PdfUpload } from "@/components/ui/pdf-upload";
 import {
   Command,
   CommandEmpty,
@@ -29,7 +30,15 @@ import {
 } from "@/components/ui/popover";
 import { useToast } from "@/components/ui/use-toast";
 import { uploadDestinationImage } from "@/lib/supabase/storage";
-import { Check, ChevronsUpDown, X, Tag, Star } from "lucide-react";
+import {
+  Check,
+  ChevronsUpDown,
+  X,
+  Tag,
+  Star,
+  FileText,
+  ExternalLink,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type DestinationFormProps = {
@@ -45,7 +54,33 @@ export function DestinationForm({
   const [tags, setTags] = useState<any[]>([]);
   const [tagsOpen, setTagsOpen] = useState(false);
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+  const [selectedPdfFile, setSelectedPdfFile] = useState<File | null>(null);
   const { toast } = useToast();
+
+  const handleDownloadPdf = async (
+    pdfUrl: string,
+    destinationTitle: string
+  ) => {
+    try {
+      // Fetch the PDF file
+      const response = await fetch(pdfUrl);
+      if (!response.ok) throw new Error("Failed to fetch PDF");
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${destinationTitle}-documento.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading PDF:", error);
+      // Fallback: open in new tab
+      window.open(pdfUrl, "_blank");
+    }
+  };
 
   // Fetch tags data
   useEffect(() => {
@@ -68,6 +103,7 @@ export function DestinationForm({
       city: "",
       description: "",
       heroImageUrl: undefined,
+      pdfUrl: undefined,
       isFeatured: false,
       tagIds: [],
     },
@@ -87,6 +123,7 @@ export function DestinationForm({
         city: (initialValues as any).city ?? "",
         description: (initialValues as any).description ?? "",
         heroImageUrl: (initialValues as any).heroImageUrl ?? undefined,
+        pdfUrl: (initialValues as any).pdfUrl ?? undefined,
         isFeatured: Boolean((initialValues as any).isFeatured) ?? false,
         tagIds: tagIds,
       });
@@ -248,6 +285,60 @@ export function DestinationForm({
           <p className="text-sm text-red-600">
             {form.formState.errors.heroImageUrl.message}
           </p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <PdfUpload
+          value={form.watch("pdfUrl")}
+          onChange={(url) => form.setValue("pdfUrl", url)}
+          onFileSelect={(file) => setSelectedPdfFile(file)}
+          placeholder="Subir documento PDF del destino"
+        />
+
+        {/* Current PDF Display */}
+        {form.watch("pdfUrl") && (
+          <div className="mt-3 p-3 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-800">
+            <div className="flex items-center gap-3">
+              <FileText className="h-5 w-5 text-green-600" />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-green-800 dark:text-green-200">
+                  Documento PDF actual
+                </p>
+                <p className="text-xs text-green-600 dark:text-green-400">
+                  Haz clic en "Ver PDF" para abrir el documento
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => window.open(form.watch("pdfUrl"), "_blank")}
+                  className="flex items-center gap-2 border-green-300 text-green-700 hover:bg-green-100 dark:border-green-600 dark:text-green-300 dark:hover:bg-green-900"
+                >
+                  <ExternalLink className="h-3 w-3" />
+                  Ver PDF
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const pdfUrl = form.watch("pdfUrl");
+                    const city = form.watch("city") || "destino";
+                    if (pdfUrl) {
+                      handleDownloadPdf(pdfUrl, city);
+                    }
+                  }}
+                  className="flex items-center gap-2 border-green-300 text-green-700 hover:bg-green-100 dark:border-green-600 dark:text-green-300 dark:hover:bg-green-900"
+                >
+                  <FileText className="h-3 w-3" />
+                  Descargar
+                </Button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
 

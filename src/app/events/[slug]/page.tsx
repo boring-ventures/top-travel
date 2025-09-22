@@ -1,66 +1,46 @@
 import prisma from "@/lib/prisma";
-import { ClientWhatsAppCTA } from "@/components/utils/client-whatsapp-cta";
-import { getWhatsAppTemplateByUsage } from "@/lib/whatsapp-utils";
-import { pageMeta } from "@/lib/seo";
-import Image from "next/image";
-import { Card } from "@/components/ui/card";
+import { notFound } from "next/navigation";
+import Header from "@/components/views/landing-page/Header";
+import Footer from "@/components/views/landing-page/Footer";
+import { PdfSection } from "@/components/ui/pdf-section";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import {
   Calendar,
   MapPin,
   Clock,
-  Users,
   ArrowLeft,
-  Share2,
-  Star,
-  Heart,
-  Globe,
-  Award,
-  Camera,
-  Coffee,
-  Utensils,
-  Car,
-  Wifi,
-  Shield,
-  Compass,
-  Navigation,
-  Info,
-  Phone,
-  Mail,
-  Zap,
-  Gift,
-  Sun,
-  Moon,
-  Bed,
   Music,
-  Mic,
-  Sparkles,
-  Trophy,
-  Palette,
-  Package,
-  Plane,
+  DollarSign,
 } from "lucide-react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import Image from "next/image";
+import WhatsAppCTA from "@/components/utils/whatsapp-cta";
 
-type Params = { params: Promise<{ slug: string }> };
+interface EventPageProps {
+  params: Promise<{ slug: string }>;
+}
 
-export default async function EventDetailPage({ params }: Params) {
+export default async function EventPage({ params }: EventPageProps) {
   const { slug } = await params;
-  const evt = await prisma.event.findUnique({ where: { slug } });
 
-  if (!evt || evt.status !== "PUBLISHED") {
+  const event = await prisma.event.findUnique({
+    where: { slug },
+    include: {
+      eventTags: {
+        include: {
+          tag: true,
+        },
+      },
+    },
+  });
+
+  if (!event) {
     notFound();
   }
 
-  // Fetch WhatsApp template for events
-  const whatsappTemplate = await getWhatsAppTemplateByUsage("EVENTS");
-
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat("es-ES", {
-      weekday: "long",
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -74,284 +54,283 @@ export default async function EventDetailPage({ params }: Params) {
     }).format(new Date(date));
   };
 
-  const isSameDay =
-    new Date(evt.startDate).toDateString() ===
-    new Date(evt.endDate).toDateString();
+  const formatPrice = (event: any) => {
+    if (event.fromPrice) {
+      return `Desde $${event.fromPrice} ${event.currency || "USD"}`;
+    }
+    return "Consultar precio";
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-secondary/20">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-transparent -z-10" />
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-background via-background to-secondary/20">
+      <Header />
 
-      {/* Hero Section */}
-      <section className="relative h-[60vh] min-h-[400px] w-full overflow-hidden">
-        {(evt as any)?.heroImageUrl ? (
-          <Image
-            src={(evt as any).heroImageUrl}
-            alt={evt.title}
-            fill
-            sizes="100vw"
-            className="object-cover"
-            priority={true}
-          />
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-black to-gray-800" />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+      <main className="flex-grow relative">
+        <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-transparent -z-10" />
 
-        {/* Back Button */}
-        <div className="absolute top-6 left-6 z-10">
-          <Button
-            asChild
-            variant="secondary"
-            size="sm"
-            className="backdrop-blur-sm bg-white/80 text-black hover:bg-white/90 border border-black/20"
-          >
-            <Link href="/events">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Volver a eventos
-            </Link>
-          </Button>
-        </div>
+        {/* Hero Section */}
+        <section className="relative">
+          <div className="relative h-[60vh] min-h-[400px] sm:h-[70vh] lg:h-[80vh]">
+            <Image
+              src={
+                event.heroImageUrl &&
+                event.heroImageUrl !== "1" &&
+                event.heroImageUrl !== "null"
+                  ? event.heroImageUrl
+                  : "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=1920&q=80"
+              }
+              alt={event.title}
+              fill
+              className="object-cover"
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
-        {/* Hero Content */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 lg:p-12">
-          <div className="container mx-auto max-w-4xl">
-            <div className="flex flex-wrap items-center gap-3 mb-4">
-              <Badge
-                variant="secondary"
-                className="bg-white/20 backdrop-blur-sm text-white border-white/30"
-              >
-                Evento
-              </Badge>
+            {/* Navigation */}
+            <div className="absolute top-0 left-0 right-0 p-4 sm:p-6">
+              <div className="flex justify-between items-start">
+                <Button
+                  asChild
+                  variant="secondary"
+                  size="sm"
+                  className="backdrop-blur-md bg-white/10 border-white/20 text-white hover:bg-white/20"
+                >
+                  <Link href="/events" className="flex items-center gap-2">
+                    <ArrowLeft className="h-4 w-4" />
+                    <span className="hidden sm:inline">Volver a eventos</span>
+                    <span className="sm:hidden">Volver</span>
+                  </Link>
+                </Button>
+              </div>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 leading-tight text-white drop-shadow-lg">
-              {evt.title}
-            </h1>
+            {/* Content */}
+            <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 lg:p-8">
+              <div className="max-w-6xl mx-auto">
+                <div className="space-y-4 sm:space-y-6">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight drop-shadow-2xl">
+                    {event.title}
+                  </h1>
+                  <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white/90 max-w-4xl drop-shadow-lg">
+                    {event.artistOrEvent}
+                  </p>
 
-            <div className="flex flex-wrap items-center gap-4 text-sm sm:text-base text-white/90">
-              <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-white/80" />
-                <span>
-                  {evt.locationCity ?? "Ubicación por confirmar"},{" "}
-                  {evt.locationCountry ?? ""}
-                  {evt.venue && ` · ${evt.venue}`}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-white/80" />
-                <span>{formatDate(evt.startDate)}</span>
+                  {/* Event Details */}
+                  <div className="flex flex-wrap gap-3 sm:gap-4">
+                    <div className="flex items-center gap-2 text-white bg-black/20 backdrop-blur-md px-3 py-2 rounded-full border border-white/20">
+                      <Calendar className="h-4 w-4 sm:h-5 sm:w-5" />
+                      <span className="drop-shadow-lg text-sm sm:text-base">
+                        {formatDate(event.startDate)}
+                      </span>
+                    </div>
+                    {event.locationCity && (
+                      <div className="flex items-center gap-2 text-white bg-black/20 backdrop-blur-md px-3 py-2 rounded-full border border-white/20">
+                        <MapPin className="h-4 w-4 sm:h-5 sm:w-5" />
+                        <span className="drop-shadow-lg text-sm sm:text-base">
+                          {event.locationCity}
+                          {event.locationCountry &&
+                            `, ${event.locationCountry}`}
+                        </span>
+                      </div>
+                    )}
+                    {event.venue && (
+                      <div className="flex items-center gap-2 text-white bg-black/20 backdrop-blur-md px-3 py-2 rounded-full border border-white/20">
+                        <Music className="h-4 w-4 sm:h-5 sm:w-5" />
+                        <span className="drop-shadow-lg text-sm sm:text-base">
+                          {event.venue}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {event.fromPrice && (
+                    <div className="flex items-center gap-2 text-white">
+                      <DollarSign className="h-5 w-5 sm:h-6 sm:w-6" />
+                      <span className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold drop-shadow-lg">
+                        {formatPrice(event)}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Main Content */}
-      <div className="container mx-auto px-4 py-8 sm:py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Event Details Card */}
-            <Card className="p-6 sm:p-8 bg-white/90 backdrop-blur-md border border-white/30 shadow-xl hover:shadow-2xl transition-all duration-300">
-              <div className="space-y-6">
-                {/* Date and Time */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="p-4 bg-black/5 rounded-xl border border-black/10 backdrop-blur-sm">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 bg-black/10 rounded-lg flex items-center justify-center">
-                        <Calendar className="h-5 w-5 text-black/60" />
+        {/* Content Section */}
+        <section className="py-8 sm:py-12 lg:py-16 w-full bg-gradient-to-b from-white to-gray-50">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+                {/* Main Content */}
+                <div className="lg:col-span-2 space-y-6 sm:space-y-8">
+                  {/* Event Details */}
+                  <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                    <h3 className="text-lg sm:text-xl font-semibold mb-4 text-gray-900">
+                      Detalles del evento
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                        <Calendar className="h-5 w-5 text-purple-600 mt-0.5" />
+                        <div>
+                          <p className="font-medium text-gray-900">
+                            Fecha de inicio
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            {formatDate(event.startDate)} a las{" "}
+                            {formatTime(event.startDate)}
+                          </p>
+                        </div>
                       </div>
-                      <span className="font-semibold text-black/80">Fecha</span>
-                    </div>
-                    <div className="text-lg font-medium text-black/90">
-                      {isSameDay ? (
-                        formatDate(evt.startDate)
-                      ) : (
-                        <>
-                          {formatDate(evt.startDate)} -{" "}
-                          {formatDate(evt.endDate)}
-                        </>
+                      <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                        <Clock className="h-5 w-5 text-purple-600 mt-0.5" />
+                        <div>
+                          <p className="font-medium text-gray-900">
+                            Fecha de fin
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            {formatDate(event.endDate)} a las{" "}
+                            {formatTime(event.endDate)}
+                          </p>
+                        </div>
+                      </div>
+                      {event.locationCity && (
+                        <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                          <MapPin className="h-5 w-5 text-purple-600 mt-0.5" />
+                          <div>
+                            <p className="font-medium text-gray-900">
+                              Ubicación
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              {event.locationCity}
+                              {event.locationCountry &&
+                                `, ${event.locationCountry}`}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                      {event.venue && (
+                        <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                          <Music className="h-5 w-5 text-purple-600 mt-0.5" />
+                          <div>
+                            <p className="font-medium text-gray-900">Venue</p>
+                            <p className="text-sm text-gray-600">
+                              {event.venue}
+                            </p>
+                          </div>
+                        </div>
                       )}
                     </div>
                   </div>
 
-                  <div className="p-4 bg-black/5 rounded-xl border border-black/10 backdrop-blur-sm">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 bg-black/10 rounded-lg flex items-center justify-center">
-                        <Clock className="h-5 w-5 text-black/60" />
+                  {/* Tags */}
+                  {event.eventTags && event.eventTags.length > 0 && (
+                    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                      <h3 className="text-lg sm:text-xl font-semibold mb-4 text-gray-900">
+                        Categorías
+                      </h3>
+                      <div className="flex flex-wrap gap-2 sm:gap-3">
+                        {event.eventTags.map((eventTag) => (
+                          <Badge
+                            key={eventTag.tag.id}
+                            variant="outline"
+                            className="text-sm px-3 py-1"
+                          >
+                            {eventTag.tag.name}
+                          </Badge>
+                        ))}
                       </div>
-                      <span className="font-semibold text-black/80">
-                        Horario
-                      </span>
                     </div>
-                    <div className="text-lg font-medium text-black/90">
-                      {formatTime(evt.startDate)} - {formatTime(evt.endDate)}
+                  )}
+
+                  {/* Amenities */}
+                  {event.amenities && event.amenities.length > 0 && (
+                    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                      <h3 className="text-lg sm:text-xl font-semibold mb-4 text-gray-900">
+                        Incluye
+                      </h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {event.amenities.map(
+                          (amenity: string, index: number) => (
+                            <div
+                              key={index}
+                              className="flex items-center gap-3 text-sm p-2 bg-green-50 rounded-lg"
+                            >
+                              <div className="h-2 w-2 bg-green-600 rounded-full flex-shrink-0" />
+                              <span className="text-gray-700">{amenity}</span>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Exclusions */}
+                  {event.exclusions && event.exclusions.length > 0 && (
+                    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                      <h3 className="text-lg sm:text-xl font-semibold mb-4 text-gray-900">
+                        No incluye
+                      </h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {event.exclusions.map(
+                          (exclusion: string, index: number) => (
+                            <div
+                              key={index}
+                              className="flex items-center gap-3 text-sm p-2 bg-red-50 rounded-lg"
+                            >
+                              <div className="h-2 w-2 bg-red-600 rounded-full flex-shrink-0" />
+                              <span className="text-gray-700">{exclusion}</span>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Sidebar */}
+                <div className="space-y-6">
+                  {/* PDF Section */}
+                  {event.pdfUrl && (
+                    <div className="sticky top-6">
+                      <PdfSection
+                        pdfUrl={event.pdfUrl}
+                        title={event.title}
+                        documentType="evento"
+                        description="Descarga el documento PDF con toda la información completa del evento, incluyendo detalles, precios, ubicación y condiciones."
+                      />
+                    </div>
+                  )}
+
+                  {/* WhatsApp CTA */}
+                  <div className="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 border border-green-200 rounded-xl p-6 shadow-sm">
+                    <div className="text-center">
+                      <h3 className="text-lg sm:text-xl font-semibold mb-3 text-green-800">
+                        ¿Tienes preguntas?
+                      </h3>
+                      <p className="text-green-700 mb-6 text-sm sm:text-base">
+                        Contáctanos por WhatsApp para obtener más información
+                        sobre este evento.
+                      </p>
+                      <WhatsAppCTA
+                        template={`Hola! Me interesa el evento "${event.title}". ¿Podrían darme más información?`}
+                        variables={{}}
+                        label="Consultar por WhatsApp"
+                        phone="+59175651451"
+                        size="default"
+                        className="w-full"
+                      />
                     </div>
                   </div>
                 </div>
-
-                <Separator className="bg-gradient-to-r from-transparent via-black/20 to-transparent" />
-
-                {/* Location Details */}
-                <div className="p-6 bg-black/5 rounded-xl border border-black/10 backdrop-blur-sm">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-black/10 rounded-lg flex items-center justify-center">
-                      <MapPin className="h-6 w-6 text-black/60" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-black/80">
-                      Ubicación
-                    </h3>
-                  </div>
-                  <div className="space-y-2">
-                    {evt.venue && (
-                      <div className="text-lg font-medium text-black/90">
-                        {evt.venue}
-                      </div>
-                    )}
-                    <div className="text-black/70">
-                      {evt.locationCity}, {evt.locationCountry}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Event Details */}
-                {evt.detailsJson && (
-                  <>
-                    <Separator className="bg-gradient-to-r from-transparent via-black/20 to-transparent" />
-                    <div className="p-6 bg-black/5 rounded-xl border border-black/10 backdrop-blur-sm">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="w-12 h-12 bg-black/10 rounded-lg flex items-center justify-center">
-                          <Info className="h-6 w-6 text-black/60" />
-                        </div>
-                        <h3 className="text-xl font-semibold text-black/80">
-                          Detalles del evento
-                        </h3>
-                      </div>
-                      <div className="bg-white/60 p-4 rounded-lg border border-black/10 backdrop-blur-sm">
-                        <pre className="whitespace-pre-wrap text-sm text-black/90">
-                          {JSON.stringify(evt.detailsJson, null, 2)}
-                        </pre>
-                      </div>
-                    </div>
-                  </>
-                )}
               </div>
-            </Card>
-          </div>
-
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-24 space-y-6">
-              {/* Contact Card */}
-              <Card className="p-6 bg-white/90 backdrop-blur-md border border-white/30 shadow-xl hover:shadow-2xl transition-all duration-300">
-                <div className="space-y-4">
-                  <div className="text-center">
-                    <h3 className="text-lg font-semibold mb-2 text-gray-800">
-                      ¿Te interesa este evento?
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      Consulta disponibilidad, precios y reserva tu lugar
-                    </p>
-                  </div>
-
-                  <ClientWhatsAppCTA
-                    whatsappTemplate={
-                      whatsappTemplate
-                        ? {
-                            templateBody: whatsappTemplate.templateBody,
-                            phoneNumber: whatsappTemplate.phoneNumber,
-                            phoneNumbers: whatsappTemplate.phoneNumbers,
-                          }
-                        : undefined
-                    }
-                    label="Consultar por WhatsApp"
-                    template={
-                      whatsappTemplate?.templateBody ||
-                      "Hola! Me interesa el evento {title} en {city}, {country}."
-                    }
-                    variables={{
-                      title: evt.title,
-                      city: evt.locationCity ?? "",
-                      country: evt.locationCountry ?? "",
-                      itemTitle: evt.title,
-                    }}
-                    campaign="event_detail"
-                    content={evt.slug}
-                    size="lg"
-                    className="w-full"
-                  />
-
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full hover:bg-gray-50 hover:border-gray-300 transition-all duration-200"
-                  >
-                    <Share2 className="h-4 w-4 mr-2" />
-                    Compartir evento
-                  </Button>
-                </div>
-              </Card>
-
-              {/* Quick Info */}
-              <Card className="p-6 bg-white/90 backdrop-blur-md border border-white/30 shadow-xl hover:shadow-2xl transition-all duration-300">
-                <h4 className="font-semibold mb-4 flex items-center gap-2 text-black/80">
-                  <div className="w-8 h-8 bg-black/10 rounded-lg flex items-center justify-center">
-                    <Info className="h-4 w-4 text-black/60" />
-                  </div>
-                  Información rápida
-                </h4>
-                <div className="space-y-4 text-sm">
-                  <div className="p-3 bg-black/5 rounded-lg border border-black/10 backdrop-blur-sm">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-black/60" />
-                        <span className="text-black/70 font-medium">Tipo:</span>
-                      </div>
-                      <span className="font-semibold text-black/90">
-                        Evento
-                      </span>
-                    </div>
-                  </div>
-                  <div className="p-3 bg-black/5 rounded-lg border border-black/10 backdrop-blur-sm">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-black/60" />
-                        <span className="text-black/70 font-medium">
-                          Duración:
-                        </span>
-                      </div>
-                      <span className="font-semibold text-black/90">
-                        {isSameDay
-                          ? "1 día"
-                          : `${Math.ceil((new Date(evt.endDate).getTime() - new Date(evt.startDate).getTime()) / (1000 * 60 * 60 * 24))} días`}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </Card>
             </div>
           </div>
-        </div>
-      </div>
+        </section>
+      </main>
+
+      <Footer />
     </div>
   );
-}
-
-export async function generateMetadata({ params }: Params) {
-  const { slug } = await params;
-  const evt = await prisma.event.findUnique({ where: { slug } });
-  const title = evt?.title ?? "Event";
-  const description = evt?.artistOrEvent
-    ? `${evt.artistOrEvent} - ${evt.locationCity ?? ""} ${evt.locationCountry ?? ""}`.trim()
-    : undefined;
-  const image = (evt as any)?.heroImageUrl ?? undefined;
-  return pageMeta({
-    title,
-    description,
-    urlPath: `/events/${slug}`,
-    image,
-  });
 }

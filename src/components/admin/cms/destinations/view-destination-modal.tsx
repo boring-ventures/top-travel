@@ -19,6 +19,7 @@ import {
   Star,
   Calendar,
   ExternalLink,
+  FileText,
 } from "lucide-react";
 
 interface ViewDestinationModalProps {
@@ -35,6 +36,31 @@ export function ViewDestinationModal({
   const [loading, setLoading] = useState(false);
   const [destination, setDestination] = useState<any>(null);
   const { toast } = useToast();
+
+  const handleDownloadPdf = async (
+    pdfUrl: string,
+    destinationTitle: string
+  ) => {
+    try {
+      // Fetch the PDF file
+      const response = await fetch(pdfUrl);
+      if (!response.ok) throw new Error("Failed to fetch PDF");
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${destinationTitle}-documento.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading PDF:", error);
+      // Fallback: open in new tab
+      window.open(pdfUrl, "_blank");
+    }
+  };
 
   // Fetch destination data when modal opens
   useEffect(() => {
@@ -181,6 +207,56 @@ export function ViewDestinationModal({
                             </div>
                           </div>
                         </a>
+                      </div>
+                    )}
+
+                    {/* PDF Document */}
+                    {destination.pdfUrl && (
+                      <div>
+                        <div className="text-sm font-medium text-muted-foreground mb-2">
+                          Documento PDF
+                        </div>
+                        <div className="p-4 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-800">
+                          <div className="flex items-center gap-3">
+                            <FileText className="h-5 w-5 text-green-600" />
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-green-800 dark:text-green-200">
+                                Documento PDF disponible
+                              </p>
+                              <p className="text-xs text-green-600 dark:text-green-400">
+                                Haz clic en los botones para ver o descargar el
+                                documento
+                              </p>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() =>
+                                  window.open(destination.pdfUrl, "_blank")
+                                }
+                                className="flex items-center gap-2 border-green-300 text-green-700 hover:bg-green-100 dark:border-green-600 dark:text-green-300 dark:hover:bg-green-900"
+                              >
+                                <ExternalLink className="h-3 w-3" />
+                                Ver PDF
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() =>
+                                  handleDownloadPdf(
+                                    destination.pdfUrl,
+                                    `${destination.city}, ${destination.country}`
+                                  )
+                                }
+                                className="flex items-center gap-2 border-green-300 text-green-700 hover:bg-green-100 dark:border-green-600 dark:text-green-300 dark:hover:bg-green-900"
+                              >
+                                <FileText className="h-3 w-3" />
+                                Descargar
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     )}
 
