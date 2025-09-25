@@ -699,11 +699,6 @@ export default async function Home() {
                     className="text-3xl sm:text-4xl lg:text-5xl font-bold italic text-blue-700"
                   />
                 </h2>
-                <p className="text-lg sm:text-xl text-gray-300 leading-relaxed">
-                  Descubre el mundo con nosotros y vive aventuras que
-                  transformarán tu perspectiva. Cada viaje es una historia única
-                  esperando ser contada.
-                </p>
               </div>
 
               {/* Right side - Globe component */}

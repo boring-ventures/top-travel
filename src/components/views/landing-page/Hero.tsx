@@ -137,7 +137,7 @@ const AnimatedCounter = ({
 
   return (
     <div className="transition-all duration-300">
-      <span className="text-3xl font-semibold text-white">
+      <span className="text-lg font-semibold text-white">
         {suffix}
         {count.toLocaleString()}
       </span>
@@ -166,7 +166,7 @@ const MetricCard = ({ metric, isInView, index }: MetricCardProps) => {
           delay={delay}
         />
       </div>
-      <h3 className="text-sm font-medium text-white/80 uppercase tracking-wide">
+      <h3 className="text-[10px] font-medium text-white/80 uppercase tracking-wide">
         {metric.label}
       </h3>
     </div>
@@ -425,58 +425,6 @@ export default function Hero({ items = [], tags = [] }: HeroProps) {
                 />
               </div>
             </BlurFade>
-
-            {/* Database Tags Section */}
-            {tags && tags.length > 0 && (
-              <BlurFade delay={0.12}>
-                <div className="w-full max-w-4xl mx-auto mt-4">
-                  <div className="flex flex-wrap gap-2 justify-center">
-                    {tags.slice(0, 8).map((dbTag) => (
-                      <Link
-                        key={dbTag.id}
-                        href={`/tags/${dbTag.slug}`}
-                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all duration-200 hover:scale-105 hover:shadow-lg backdrop-blur-sm ${getTagColor(dbTag.type)}`}
-                      >
-                        {getTagIcon(dbTag.type, dbTag.name)}
-                        <span className="font-medium text-xs">
-                          {dbTag.name}
-                        </span>
-                        <span className="text-xs opacity-75">
-                          (
-                          {dbTag._count.packageTags +
-                            dbTag._count.destinationTags}
-                          )
-                        </span>
-                      </Link>
-                    ))}
-                  </div>
-
-                  {tags.length > 8 && (
-                    <div className="text-center mt-4">
-                      <Link
-                        href="/tags"
-                        className="inline-flex items-center gap-1 text-white/70 hover:text-white transition-colors text-sm"
-                      >
-                        Ver todas las etiquetas ({tags.length})
-                        <svg
-                          className="w-3 h-3"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 5l7 7-7 7"
-                          />
-                        </svg>
-                      </Link>
-                    </div>
-                  )}
-                </div>
-              </BlurFade>
-            )}
           </div>
         </div>
 
