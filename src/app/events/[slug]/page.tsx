@@ -15,7 +15,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import WhatsAppCTA from "@/components/utils/whatsapp-cta";
+import { ClientWhatsAppCTA } from "@/components/utils/client-whatsapp-cta";
+import { getWhatsAppTemplateByUsage } from "@/lib/whatsapp-utils";
 
 interface EventPageProps {
   params: Promise<{ slug: string }>;
@@ -23,6 +24,9 @@ interface EventPageProps {
 
 export default async function EventPage({ params }: EventPageProps) {
   const { slug } = await params;
+
+  // Fetch WhatsApp template for events
+  const whatsappTemplate = await getWhatsAppTemplateByUsage("EVENTS");
 
   const event = await prisma.event.findUnique({
     where: { slug },
@@ -32,6 +36,7 @@ export default async function EventPage({ params }: EventPageProps) {
           tag: true,
         },
       },
+      destination: true,
     },
   });
 
@@ -124,13 +129,13 @@ export default async function EventPage({ params }: EventPageProps) {
                         {formatDate(event.startDate)}
                       </span>
                     </div>
-                    {event.locationCity && (
+                    {event.destination && (
                       <div className="flex items-center gap-2 text-white bg-black/20 backdrop-blur-md px-3 py-2 rounded-full border border-white/20">
                         <MapPin className="h-4 w-4 sm:h-5 sm:w-5" />
                         <span className="drop-shadow-lg text-sm sm:text-base">
-                          {event.locationCity}
-                          {event.locationCountry &&
-                            `, ${event.locationCountry}`}
+                          {event.destination.city}
+                          {event.destination.country &&
+                            `, ${event.destination.country}`}
                         </span>
                       </div>
                     )}
@@ -195,7 +200,7 @@ export default async function EventPage({ params }: EventPageProps) {
                           </p>
                         </div>
                       </div>
-                      {event.locationCity && (
+                      {event.destination && (
                         <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
                           <MapPin className="h-5 w-5 text-purple-600 mt-0.5" />
                           <div>
@@ -203,9 +208,9 @@ export default async function EventPage({ params }: EventPageProps) {
                               Ubicación
                             </p>
                             <p className="text-sm text-gray-600">
-                              {event.locationCity}
-                              {event.locationCountry &&
-                                `, ${event.locationCountry}`}
+                              {event.destination.city}
+                              {event.destination.country &&
+                                `, ${event.destination.country}`}
                             </p>
                           </div>
                         </div>
@@ -313,11 +318,30 @@ export default async function EventPage({ params }: EventPageProps) {
                         Contáctanos por WhatsApp para obtener más información
                         sobre este evento.
                       </p>
-                      <WhatsAppCTA
-                        template={`Hola! Me interesa el evento "${event.title}". ¿Podrían darme más información?`}
-                        variables={{}}
+                      <ClientWhatsAppCTA
+                        whatsappTemplate={
+                          whatsappTemplate
+                            ? {
+                                templateBody: whatsappTemplate.templateBody,
+                                phoneNumber: whatsappTemplate.phoneNumber,
+                                phoneNumbers: whatsappTemplate.phoneNumbers,
+                              }
+                            : undefined
+                        }
                         label="Consultar por WhatsApp"
-                        phone="+59175651451"
+                        template={
+                          whatsappTemplate?.templateBody ||
+                          `Hola! Me interesa el evento "${event.title}". ¿Podrían darme más información?`
+                        }
+                        variables={{
+                          title: event.title,
+                          slug: event.slug,
+                          itemTitle: event.title,
+                          artistOrEvent: event.artistOrEvent || "",
+                          venue: event.venue || "",
+                        }}
+                        campaign="event_detail"
+                        content={event.slug}
                         size="default"
                         className="w-full"
                       />

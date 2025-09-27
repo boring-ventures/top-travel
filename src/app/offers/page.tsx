@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import WhatsAppCTA from "@/components/utils/whatsapp-cta";
+import { ClientWhatsAppCTA } from "@/components/utils/client-whatsapp-cta";
 
 // Fallback images for different categories
 const FALLBACK_IMAGES = {
@@ -412,11 +412,40 @@ export default async function OffersPage({ searchParams }: OffersPageProps) {
                       <Button asChild variant="outline">
                         <Link href="/contact">Contactar</Link>
                       </Button>
-                      <WhatsAppCTA
-                        template="Hola! Quiero información sobre ofertas especiales."
-                        variables={{}}
+                      <ClientWhatsAppCTA
+                        whatsappTemplate={
+                          whatsappTemplates.offers
+                            ? {
+                                templateBody:
+                                  whatsappTemplates.offers.templateBody,
+                                phoneNumber:
+                                  whatsappTemplates.offers.phoneNumber,
+                                phoneNumbers:
+                                  whatsappTemplates.offers.phoneNumbers,
+                              }
+                            : whatsappTemplates.general
+                              ? {
+                                  templateBody:
+                                    whatsappTemplates.general.templateBody,
+                                  phoneNumber:
+                                    whatsappTemplates.general.phoneNumber,
+                                  phoneNumbers:
+                                    whatsappTemplates.general.phoneNumbers,
+                                }
+                              : undefined
+                        }
+                        template={
+                          whatsappTemplates.offers?.templateBody ||
+                          whatsappTemplates.general?.templateBody ||
+                          "Hola! Quiero información sobre ofertas especiales."
+                        }
+                        variables={{
+                          context: "ofertas",
+                          searchQuery: q || "",
+                        }}
+                        campaign="offers_search"
+                        content="no_results"
                         label="Consultar por WhatsApp"
-                        phone="+59175651451"
                         size="default"
                       />
                     </div>

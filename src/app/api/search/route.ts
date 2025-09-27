@@ -20,83 +20,92 @@ export async function GET(request: Request) {
     const searchTerm = query.toLowerCase();
 
     // Search across multiple entities
-    const [packages, destinations, events, fixedDepartures] = await Promise.all([
-      // Search packages
-      prisma.package.findMany({
-        where: {
-          status: "PUBLISHED",
-          OR: [
-            { title: { contains: searchTerm, mode: "insensitive" } },
-            { summary: { contains: searchTerm, mode: "insensitive" } },
-          ],
-        },
-        take: 5,
-        include: {
-          packageDestinations: {
-            include: {
-              destination: true,
+    const [packages, destinations, events, fixedDepartures] = await Promise.all(
+      [
+        // Search packages
+        prisma.package.findMany({
+          where: {
+            status: "PUBLISHED",
+            OR: [
+              { title: { contains: searchTerm, mode: "insensitive" } },
+              { summary: { contains: searchTerm, mode: "insensitive" } },
+            ],
+          },
+          take: 5,
+          include: {
+            packageDestinations: {
+              include: {
+                destination: true,
+              },
+            },
+            packageTags: {
+              include: {
+                tag: true,
+              },
             },
           },
-          packageTags: {
-            include: {
-              tag: true,
+          orderBy: { createdAt: "desc" },
+        }),
+
+        // Search destinations
+        prisma.destination.findMany({
+          where: {
+            OR: [
+              { country: { contains: searchTerm, mode: "insensitive" } },
+              { city: { contains: searchTerm, mode: "insensitive" } },
+              { description: { contains: searchTerm, mode: "insensitive" } },
+            ],
+          },
+          take: 5,
+          include: {
+            destinationTags: {
+              include: {
+                tag: true,
+              },
             },
           },
-        },
-        orderBy: { createdAt: "desc" },
-      }),
+          orderBy: [{ country: "asc" }, { city: "asc" }],
+        }),
 
-      // Search destinations
-      prisma.destination.findMany({
-        where: {
-          OR: [
-            { country: { contains: searchTerm, mode: "insensitive" } },
-            { city: { contains: searchTerm, mode: "insensitive" } },
-            { description: { contains: searchTerm, mode: "insensitive" } },
-          ],
-        },
-        take: 5,
-        include: {
-          destinationTags: {
-            include: {
-              tag: true,
-            },
+        // Search events
+        prisma.event.findMany({
+          where: {
+            status: "PUBLISHED",
+            OR: [
+              { title: { contains: searchTerm, mode: "insensitive" } },
+              { artistOrEvent: { contains: searchTerm, mode: "insensitive" } },
+              { venue: { contains: searchTerm, mode: "insensitive" } },
+              {
+                destination: {
+                  OR: [
+                    { city: { contains: searchTerm, mode: "insensitive" } },
+                    { country: { contains: searchTerm, mode: "insensitive" } },
+                  ],
+                },
+              },
+            ],
           },
-        },
-        orderBy: [{ country: "asc" }, { city: "asc" }],
-      }),
+          take: 5,
+          include: {
+            destination: true,
+          },
+          orderBy: { startDate: "asc" },
+        }),
 
-      // Search events
-      prisma.event.findMany({
-        where: {
-          status: "PUBLISHED",
-          OR: [
-            { title: { contains: searchTerm, mode: "insensitive" } },
-            { artistOrEvent: { contains: searchTerm, mode: "insensitive" } },
-            { locationCity: { contains: searchTerm, mode: "insensitive" } },
-            { locationCountry: { contains: searchTerm, mode: "insensitive" } },
-            { venue: { contains: searchTerm, mode: "insensitive" } },
-          ],
-        },
-        take: 5,
-        orderBy: { startDate: "asc" },
-      }),
-
-      // Search fixed departures
-      prisma.fixedDeparture.findMany({
-        where: {
-          status: "PUBLISHED",
-          OR: [
-            { title: { contains: searchTerm, mode: "insensitive" } },
-          ],
-        },
-        take: 5,
-        include: {
-          destination: true,
-        },
-        orderBy: { startDate: "asc" },
-      }),
-    ]);
+        // Search fixed departures
+        prisma.fixedDeparture.findMany({
+          where: {
+            status: "PUBLISHED",
+            OR: [{ title: { contains: searchTerm, mode: "insensitive" } }],
+          },
+          take: 5,
+          include: {
+            destination: true,
+          },
+          orderBy: { startDate: "asc" },
+        }),
+      ]
+    );
 
     // Transform results to a unified format
     const results = [
@@ -125,7 +134,7 @@ export async function GET(request: Request) {
         type: "event" as const,
         id: event.id,
         title: event.title,
-        subtitle: `${event.artistOrEvent} - ${event.venue || event.locationCity}`,
+        subtitle: `${event.artistOrEvent} - ${event.venue || event.destination?.city || "Ubicación por confirmar"}`,
         url: `/events/${event.slug}`,
         price: event.fromPrice ? Number(event.fromPrice) : undefined,
         currency: event.currency,

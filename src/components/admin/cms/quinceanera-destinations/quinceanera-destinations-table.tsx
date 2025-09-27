@@ -13,12 +13,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
@@ -32,9 +26,11 @@ interface QuinceaneraDestination {
   slug: string;
   name: string;
   title: string;
+  summary?: string;
   description?: string;
   heroImageUrl?: string;
   gallery?: string[];
+  location?: string;
   isFeatured: boolean;
   createdAt: string;
   updatedAt: string;
@@ -188,29 +184,26 @@ export function QuinceaneraDestinationsTable() {
                       {new Date(destination.createdAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Abrir menú</span>
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            onClick={() => setEditingDestination(destination)}
-                          >
-                            <Edit className="mr-2 h-4 w-4" />
-                            Editar
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => setDeletingDestination(destination)}
-                            className="text-destructive"
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Eliminar
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      <div className="flex items-center justify-end gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setEditingDestination(destination)}
+                          className="h-8 px-2"
+                        >
+                          <Edit className="h-4 w-4" />
+                          <span className="ml-1">Editar</span>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setDeletingDestination(destination)}
+                          className="h-8 px-2 text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          <span className="ml-1">Eliminar</span>
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))

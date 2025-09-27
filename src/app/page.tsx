@@ -440,13 +440,17 @@ export default async function Home() {
           id: true,
           slug: true,
           title: true,
-          locationCity: true,
-          locationCountry: true,
           heroImageUrl: true,
           amenities: true,
           exclusions: true,
           startDate: true,
           endDate: true,
+          destination: {
+            select: {
+              city: true,
+              country: true,
+            },
+          },
         },
       }),
       prisma.department.findMany({

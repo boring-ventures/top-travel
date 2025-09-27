@@ -41,8 +41,11 @@ export default async function WeddingsPage() {
         slug: true,
         name: true,
         title: true,
+        summary: true,
         description: true,
         heroImageUrl: true,
+        gallery: true,
+        location: true,
       },
     }),
     prisma.blogPost.findMany({
@@ -121,13 +124,13 @@ export default async function WeddingsPage() {
         <section className="py-16 bg-gradient-to-br from-[#eaa298]/5 to-[#eaa298]/10">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
                 Venues de ensueño para{" "}
                 <span className="font-light italic text-[#eaa298]">
                   tu boda perfecta
                 </span>
               </h2>
-              <div className="max-w-4xl mx-auto space-y-6 text-lg text-gray-700 leading-relaxed">
+              <div className="max-w-4xl mx-auto space-y-4 md:space-y-6 text-base md:text-lg text-gray-700 leading-relaxed">
                 <p>
                   Trabajamos con los mejores venues del mundo para crear el
                   escenario perfecto para tu celebración. Cada lugar ha sido
@@ -339,7 +342,7 @@ export default async function WeddingsPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               {weddingDestinations.length === 0 ? (
                 <div className="col-span-full text-center py-12">
                   <div className="bg-white p-8 rounded-lg shadow-sm">
@@ -373,12 +376,13 @@ export default async function WeddingsPage() {
                         </div>
                       )}
                     </div>
-                    <div className="p-6">
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    <div className="p-4 md:p-6">
+                      <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-2">
                         {dest.title || dest.name}
                       </h3>
-                      <p className="text-gray-600 mb-4">
-                        {dest.description ||
+                      <p className="text-sm md:text-base text-gray-600 mb-4 line-clamp-3">
+                        {dest.summary ||
+                          dest.description ||
                           "Destino perfecto para tu boda de ensueño"}
                       </p>
                       <Link href={`/wedding-destinations/${dest.slug}`}>
@@ -407,14 +411,14 @@ export default async function WeddingsPage() {
                 <Camera className="w-4 h-4" />
                 Galería de bodas
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
                 Bodas que hemos{" "}
                 <span className="text-[#eaa298] relative">
                   hecho realidad
                   <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-[#eaa298] to-[#eaa298]/50 rounded-full"></div>
                 </span>
               </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed px-4">
                 Cada imagen cuenta una historia de amor, cada detalle refleja
                 nuestro compromiso con la perfección
               </p>

@@ -47,6 +47,7 @@ const OfferFormSchema = z.object({
   subtitle: z.string().optional(),
   bannerImageUrl: z.string().optional(),
   pdfUrl: z.string().optional(),
+  destinationId: z.string().optional(),
   isFeatured: z.boolean().optional(),
   dateRange: z
     .object({
@@ -79,13 +80,28 @@ const useTags = () => {
   });
 };
 
+// Custom hook to fetch destinations
+const useDestinations = () => {
+  return useQuery({
+    queryKey: ["destinations"],
+    queryFn: async () => {
+      const res = await fetch("/api/destinations");
+      if (!res.ok) throw new Error("Failed to fetch destinations");
+      return res.json();
+    },
+  });
+};
+
 export function OfferForm({ onSuccess, initialValues }: OfferFormProps) {
   const [submitting, setSubmitting] = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
+  const [destinationsOpen, setDestinationsOpen] = useState(false);
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   const [selectedPdfFile, setSelectedPdfFile] = useState<File | null>(null);
   const { toast } = useToast();
   const { data: tags, isLoading: tagsLoading } = useTags();
+  const { data: destinations, isLoading: destinationsLoading } =
+    useDestinations();
 
   const handleDownloadPdf = async (pdfUrl: string, offerTitle: string) => {
     try {
@@ -113,6 +129,7 @@ export function OfferForm({ onSuccess, initialValues }: OfferFormProps) {
     resolver: zodResolver(OfferFormSchema),
     defaultValues: {
       title: "",
+      destinationId: "",
       isFeatured: false,
       status: "DRAFT",
       tagIds: [],
@@ -139,6 +156,7 @@ export function OfferForm({ onSuccess, initialValues }: OfferFormProps) {
         subtitle: (initialValues as any).subtitle ?? "",
         bannerImageUrl: (initialValues as any).bannerImageUrl ?? "",
         pdfUrl: (initialValues as any).pdfUrl ?? "",
+        destinationId: (initialValues as any).destinationId ?? "",
         isFeatured: Boolean((initialValues as any).isFeatured) ?? false,
         status: (initialValues as any).status ?? "DRAFT",
         dateRange,
@@ -323,6 +341,64 @@ export function OfferForm({ onSuccess, initialValues }: OfferFormProps) {
             </PopoverContent>
           </Popover>
         </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label>Destino</Label>
+        <Popover open={destinationsOpen} onOpenChange={setDestinationsOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={destinationsOpen}
+              className="w-full justify-between"
+              disabled={destinationsLoading}
+            >
+              {form.watch("destinationId")
+                ? destinations?.items?.find(
+                    (destination: any) =>
+                      destination.id === form.watch("destinationId")
+                  )?.city +
+                  ", " +
+                  destinations?.items?.find(
+                    (destination: any) =>
+                      destination.id === form.watch("destinationId")
+                  )?.country
+                : "Seleccionar destino..."}
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-full p-0">
+            <Command>
+              <CommandInput placeholder="Buscar destino..." />
+              <CommandList>
+                <CommandEmpty>No se encontraron destinos.</CommandEmpty>
+                <CommandGroup>
+                  {destinations?.items?.map((destination: any) => (
+                    <CommandItem
+                      key={destination.id}
+                      value={`${destination.city} ${destination.country}`}
+                      onSelect={() => {
+                        form.setValue("destinationId", destination.id);
+                        setDestinationsOpen(false);
+                      }}
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          form.watch("destinationId") === destination.id
+                            ? "opacity-100"
+                            : "opacity-0"
+                        )}
+                      />
+                      {destination.city}, {destination.country}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
       </div>
 
       <div className="space-y-2">

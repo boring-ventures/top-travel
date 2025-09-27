@@ -274,6 +274,36 @@ export async function uploadBlogPostImage(
   });
 }
 
+export async function uploadQuinceaneraDestinationImage(
+  file: File,
+  destinationSlug: string,
+  quality: number = 80
+): Promise<string> {
+  return uploadImageToStorage(file, {
+    bucket: "destinations",
+    folder: `quinceanera/${destinationSlug}`,
+    quality,
+    width: 1200,
+    height: 800,
+    fit: "cover",
+  });
+}
+
+export async function uploadWeddingDestinationImage(
+  file: File,
+  destinationSlug: string,
+  quality: number = 80
+): Promise<string> {
+  return uploadImageToStorage(file, {
+    bucket: "destinations",
+    folder: `wedding/${destinationSlug}`,
+    quality,
+    width: 1200,
+    height: 800,
+    fit: "cover",
+  });
+}
+
 export async function uploadPackagePdf(
   file: File,
   packageSlug: string

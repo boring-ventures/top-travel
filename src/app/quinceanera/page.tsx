@@ -43,8 +43,11 @@ export default async function QuinceaneraPage() {
         slug: true,
         name: true,
         title: true,
+        summary: true,
         description: true,
         heroImageUrl: true,
+        gallery: true,
+        location: true,
       },
     }),
     prisma.blogPost.findMany({
@@ -123,13 +126,13 @@ export default async function QuinceaneraPage() {
         <section className="py-16 bg-gradient-to-br from-[#e03d90]/5 to-[#e03d90]/10">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
                 Venues mágicos para{" "}
                 <span className="font-light italic text-[#e03d90]">
                   tu quinceañera perfecta
                 </span>
               </h2>
-              <div className="max-w-4xl mx-auto space-y-6 text-lg text-gray-700 leading-relaxed">
+              <div className="max-w-4xl mx-auto space-y-4 md:space-y-6 text-base md:text-lg text-gray-700 leading-relaxed">
                 <p>
                   Porque tu quinceañera merece un lugar extraordinario,
                   trabajamos con los venues más especiales del mundo. Cada lugar
@@ -342,7 +345,7 @@ export default async function QuinceaneraPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               {quinceaneraDestinations.length === 0 ? (
                 <div className="col-span-full text-center py-12">
                   <div className="bg-white p-8 rounded-lg shadow-sm">
@@ -376,12 +379,13 @@ export default async function QuinceaneraPage() {
                         </div>
                       )}
                     </div>
-                    <div className="p-6">
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    <div className="p-4 md:p-6">
+                      <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-2">
                         {dest.title || dest.name}
                       </h3>
-                      <p className="text-gray-600 mb-4">
-                        {dest.description ||
+                      <p className="text-sm md:text-base text-gray-600 mb-4 line-clamp-3">
+                        {dest.summary ||
+                          dest.description ||
                           "Destino perfecto para tu quinceañera de ensueño"}
                       </p>
                       <Link href={`/quinceanera-destinations/${dest.slug}`}>

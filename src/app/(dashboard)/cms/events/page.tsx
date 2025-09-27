@@ -47,7 +47,13 @@ export default function CmsEventsList() {
     const q = search.trim().toLowerCase();
     if (!q) return items;
     return items.filter((e: any) =>
-      [e.title, e.artistOrEvent, e.locationCity, e.locationCountry, e.slug]
+      [
+        e.title,
+        e.artistOrEvent,
+        e.destination?.city,
+        e.destination?.country,
+        e.slug,
+      ]
         .filter(Boolean)
         .some((v: string) => (v ?? "").toLowerCase().includes(q))
     );
@@ -148,9 +154,9 @@ export default function CmsEventsList() {
                           <div className="font-medium">{e.venue}</div>
                         )}
                         <div className="text-muted-foreground">
-                          {[e.locationCity, e.locationCountry]
-                            .filter(Boolean)
-                            .join(", ") || "—"}
+                          {e.destination
+                            ? `${e.destination.city}, ${e.destination.country}`
+                            : "—"}
                         </div>
                       </div>
                     </td>

@@ -84,6 +84,7 @@ export async function GET(request: Request) {
         skip,
         take: pageSize,
         include: {
+          destination: true,
           offerTags: {
             include: {
               tag: true,
@@ -147,6 +148,7 @@ export async function POST(request: Request) {
             : undefined,
       },
       include: {
+        destination: true,
         offerTags: {
           include: {
             tag: true,

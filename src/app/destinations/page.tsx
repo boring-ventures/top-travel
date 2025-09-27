@@ -29,7 +29,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import WhatsAppCTA from "@/components/utils/whatsapp-cta";
+import { ClientWhatsAppCTA } from "@/components/utils/client-whatsapp-cta";
 
 // Fallback images for different categories
 const FALLBACK_IMAGES = {
@@ -162,13 +162,17 @@ export default async function DestinationsPage({
           id: true,
           slug: true,
           title: true,
-          locationCity: true,
-          locationCountry: true,
           heroImageUrl: true,
           amenities: true,
           exclusions: true,
           startDate: true,
           endDate: true,
+          destination: {
+            select: {
+              city: true,
+              country: true,
+            },
+          },
         },
       }),
       // Fixed departures
@@ -267,14 +271,12 @@ export default async function DestinationsPage({
       items: allDestinations.map((dest) => ({
         id: dest.id,
         title: `${dest.city}, ${dest.country}`,
-        description:
-          "Explora destinos increíbles con nuestras experiencias únicas",
+        description: dest.description || null,
         imageUrl: getValidImageUrl(
           dest.heroImageUrl,
           FALLBACK_IMAGES.destinations
         ),
         href: `/destinations/${dest.slug}`,
-        price: "$800/persona",
         location: `${dest.city}, ${dest.country}`,
       })),
     },
@@ -285,11 +287,12 @@ export default async function DestinationsPage({
       items: featuredEvents.map((event) => ({
         id: event.id,
         title: event.title,
-        description: `${event.locationCity}, ${event.locationCountry}`,
+        description: event.artistOrEvent || null,
         imageUrl: getValidImageUrl(event.heroImageUrl, FALLBACK_IMAGES.events),
         href: `/events/${event.slug}`,
-        price: "$150/persona",
-        location: `${event.locationCity}, ${event.locationCountry}`,
+        location: event.destination
+          ? `${event.destination.city}, ${event.destination.country}`
+          : "Ubicación por confirmar",
         amenities: event.amenities || [],
         exclusions: event.exclusions || [],
       })),
@@ -301,27 +304,12 @@ export default async function DestinationsPage({
       items: fixedDepartures.map((dep) => ({
         id: dep.id,
         title: dep.title,
-        description: "Viajes programados con fechas fijas y precios especiales",
+        description: null,
         imageUrl: getValidImageUrl(dep.heroImageUrl, FALLBACK_IMAGES.mountains),
         href: `/fixed-departures/${dep.slug}`,
-        price: "$1200/persona",
         location: "Bolivia",
         amenities: dep.amenities || [],
         exclusions: dep.exclusions || [],
-      })),
-    },
-    {
-      id: "south-america",
-      label: "Destinos Sudamericanos",
-      href: "/destinations",
-      items: allDestinations.map((dest) => ({
-        id: dest.id,
-        title: `${dest.city}, ${dest.country}`,
-        description: "Descubre Sudamérica con nuestras rutas exclusivas",
-        imageUrl: getValidImageUrl(dest.heroImageUrl, FALLBACK_IMAGES.beaches),
-        href: `/destinations/${dest.slug}`,
-        price: "$950/persona",
-        location: `${dest.city}, ${dest.country}`,
       })),
     },
   ];
@@ -436,11 +424,40 @@ export default async function DestinationsPage({
                       <Button asChild variant="outline">
                         <Link href="/contact">Contactar</Link>
                       </Button>
-                      <WhatsAppCTA
-                        template="Hola! Quiero información sobre destinos próximos."
-                        variables={{}}
+                      <ClientWhatsAppCTA
+                        whatsappTemplate={
+                          whatsappTemplates.destinations
+                            ? {
+                                templateBody:
+                                  whatsappTemplates.destinations.templateBody,
+                                phoneNumber:
+                                  whatsappTemplates.destinations.phoneNumber,
+                                phoneNumbers:
+                                  whatsappTemplates.destinations.phoneNumbers,
+                              }
+                            : whatsappTemplates.general
+                              ? {
+                                  templateBody:
+                                    whatsappTemplates.general.templateBody,
+                                  phoneNumber:
+                                    whatsappTemplates.general.phoneNumber,
+                                  phoneNumbers:
+                                    whatsappTemplates.general.phoneNumbers,
+                                }
+                              : undefined
+                        }
+                        template={
+                          whatsappTemplates.destinations?.templateBody ||
+                          whatsappTemplates.general?.templateBody ||
+                          "Hola! Quiero información sobre destinos próximos."
+                        }
+                        variables={{
+                          context: "destinos",
+                          searchQuery: q || "",
+                        }}
+                        campaign="destinations_search"
+                        content="no_results"
                         label="Consultar por WhatsApp"
-                        phone="+59177802514"
                         size="default"
                       />
                     </div>
@@ -488,13 +505,17 @@ export default async function DestinationsPage({
                                 <h2 className="text-white text-xl font-semibold uppercase">
                                   {getLocationText(destination)}
                                 </h2>
-                                <p className="text-white">Destino increíble</p>
+                                {destination.description && (
+                                  <p className="text-white text-sm opacity-90">
+                                    {destination.description}
+                                  </p>
+                                )}
                               </div>
                             </div>
                             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
                               <div className="flex justify-between items-center">
                                 <p className="text-white text-lg font-bold">
-                                  Destino increíble
+                                  Explorar destino
                                 </p>
                                 <div className="text-white">
                                   <ArrowRight className="h-5 w-5" />

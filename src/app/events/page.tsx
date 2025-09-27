@@ -29,7 +29,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import WhatsAppCTA from "@/components/utils/whatsapp-cta";
+import { ClientWhatsAppCTA } from "@/components/utils/client-whatsapp-cta";
 import { ShineBorder } from "@/components/magicui/shine-border";
 
 // Fallback images for different categories
@@ -113,8 +113,12 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
           heroImageUrl: true,
           startDate: true,
           endDate: true,
-          locationCity: true,
-          locationCountry: true,
+          destination: {
+            select: {
+              city: true,
+              country: true,
+            },
+          },
         },
       }),
       // Festivals
@@ -129,8 +133,12 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
           heroImageUrl: true,
           startDate: true,
           endDate: true,
-          locationCity: true,
-          locationCountry: true,
+          destination: {
+            select: {
+              city: true,
+              country: true,
+            },
+          },
         },
       }),
       // Cultural
@@ -145,8 +153,12 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
           heroImageUrl: true,
           startDate: true,
           endDate: true,
-          locationCity: true,
-          locationCountry: true,
+          destination: {
+            select: {
+              city: true,
+              country: true,
+            },
+          },
         },
       }),
       // Sports
@@ -161,8 +173,12 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
           heroImageUrl: true,
           startDate: true,
           endDate: true,
-          locationCity: true,
-          locationCountry: true,
+          destination: {
+            select: {
+              city: true,
+              country: true,
+            },
+          },
         },
       }),
       // Filtered events query
@@ -176,18 +192,26 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
       // Get unique countries and cities for filters
       prisma.event.findMany({
         where: { status: "PUBLISHED" },
-        select: { locationCountry: true, locationCity: true },
-        orderBy: [{ locationCountry: "asc" }, { locationCity: "asc" }],
+        select: {
+          destination: {
+            select: {
+              city: true,
+              country: true,
+            },
+          },
+        },
       }),
     ]);
     [concerts, festivals, cultural, sports, filteredEvents, allEventsData] =
       results as any;
 
     const uniqueCountries = [
-      ...new Set(allEventsData.map((e) => e.locationCountry)),
+      ...new Set(
+        allEventsData.map((e) => e.destination?.country).filter(Boolean)
+      ),
     ].filter((c): c is string => Boolean(c));
     const uniqueCities = [
-      ...new Set(allEventsData.map((e) => e.locationCity)),
+      ...new Set(allEventsData.map((e) => e.destination?.city).filter(Boolean)),
     ].filter(Boolean);
     countries = uniqueCountries;
     cities = uniqueCities;
@@ -223,8 +247,8 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
 
   // Helper function to get location text
   const getLocationText = (event: any) => {
-    if (event.locationCity && event.locationCountry) {
-      return `${event.locationCity}, ${event.locationCountry}`;
+    if (event.destination?.city && event.destination?.country) {
+      return `${event.destination.city}, ${event.destination.country}`;
     }
     return "Bolivia";
   };
@@ -413,11 +437,40 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
                       <Button asChild variant="outline">
                         <Link href="/contact">Contactar</Link>
                       </Button>
-                      <WhatsAppCTA
-                        template="Hola! Quiero información sobre eventos próximos."
-                        variables={{}}
+                      <ClientWhatsAppCTA
+                        whatsappTemplate={
+                          whatsappTemplates.events
+                            ? {
+                                templateBody:
+                                  whatsappTemplates.events.templateBody,
+                                phoneNumber:
+                                  whatsappTemplates.events.phoneNumber,
+                                phoneNumbers:
+                                  whatsappTemplates.events.phoneNumbers,
+                              }
+                            : whatsappTemplates.general
+                              ? {
+                                  templateBody:
+                                    whatsappTemplates.general.templateBody,
+                                  phoneNumber:
+                                    whatsappTemplates.general.phoneNumber,
+                                  phoneNumbers:
+                                    whatsappTemplates.general.phoneNumbers,
+                                }
+                              : undefined
+                        }
+                        template={
+                          whatsappTemplates.events?.templateBody ||
+                          whatsappTemplates.general?.templateBody ||
+                          "Hola! Quiero información sobre eventos próximos."
+                        }
+                        variables={{
+                          context: "eventos",
+                          searchQuery: q || "",
+                        }}
+                        campaign="events_search"
+                        content="no_results"
                         label="Consultar por WhatsApp"
-                        phone="+59162241435"
                         size="default"
                       />
                     </div>

@@ -29,14 +29,24 @@ export async function GET(request: Request) {
 
     const where: any = {
       status: isSuperadmin ? (status ?? undefined) : "PUBLISHED",
-      locationCity: city,
-      locationCountry: country,
       ...(from || to
         ? {
             AND: [
               from ? { endDate: { gte: new Date(from) } } : {},
               to ? { startDate: { lte: new Date(to) } } : {},
             ],
+          }
+        : {}),
+      ...(city || country
+        ? {
+            destination: {
+              ...(city
+                ? { city: { contains: city, mode: "insensitive" } }
+                : {}),
+              ...(country
+                ? { country: { contains: country, mode: "insensitive" } }
+                : {}),
+            },
           }
         : {}),
     };
@@ -48,6 +58,7 @@ export async function GET(request: Request) {
         skip,
         take: pageSize,
         include: {
+          destination: true,
           eventTags: {
             include: {
               tag: true,
@@ -65,7 +76,12 @@ export async function GET(request: Request) {
       tags: item.eventTags.map((et) => et.tag),
     }));
 
-    return NextResponse.json({ items: transformedItems, total, page, pageSize });
+    return NextResponse.json({
+      items: transformedItems,
+      total,
+      page,
+      pageSize,
+    });
   } catch {
     return NextResponse.json(
       { error: "Failed to fetch events" },
@@ -103,13 +119,17 @@ export async function POST(request: Request) {
         ...eventData,
         detailsJson: sanitizeRichJson(eventData.detailsJson),
         gallery: sanitizeRichJson(eventData.gallery),
-        eventTags: tagIds && tagIds.length > 0 ? {
-          create: tagIds.map((tagId) => ({
-            tagId,
-          })),
-        } : undefined,
+        eventTags:
+          tagIds && tagIds.length > 0
+            ? {
+                create: tagIds.map((tagId) => ({
+                  tagId,
+                })),
+              }
+            : undefined,
       },
       include: {
+        destination: true,
         eventTags: {
           include: {
             tag: true,

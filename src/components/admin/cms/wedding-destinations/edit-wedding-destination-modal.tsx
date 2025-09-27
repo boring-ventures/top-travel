@@ -20,15 +20,20 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
 import { api } from "@/lib/api";
+import { ImageUpload } from "@/components/ui/image-upload";
+import { GalleryInput } from "@/components/ui/gallery-input";
+import { uploadWeddingDestinationImage } from "@/lib/supabase/storage";
 
 interface WeddingDestination {
   id: string;
   slug: string;
   name: string;
   title: string;
+  summary?: string;
   description?: string;
   heroImageUrl?: string;
   gallery?: string[];
+  location?: string;
   isFeatured: boolean;
   createdAt: string;
   updatedAt: string;
@@ -48,6 +53,8 @@ export function EditWeddingDestinationModal({
   onSuccess,
 }: EditWeddingDestinationModalProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [heroImageFile, setHeroImageFile] = useState<File | null>(null);
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
   const { toast } = useToast();
 
   const form = useForm<WeddingDestinationUpdate>({
@@ -56,9 +63,11 @@ export function EditWeddingDestinationModal({
       slug: destination.slug,
       name: destination.name,
       title: destination.title,
+      summary: destination.summary || "",
       description: destination.description || "",
       heroImageUrl: destination.heroImageUrl || "",
       gallery: destination.gallery || [],
+      location: destination.location || "",
       isFeatured: destination.isFeatured,
     },
   });
@@ -69,9 +78,11 @@ export function EditWeddingDestinationModal({
         slug: destination.slug,
         name: destination.name,
         title: destination.title,
+        summary: destination.summary || "",
         description: destination.description || "",
         heroImageUrl: destination.heroImageUrl || "",
         gallery: destination.gallery || [],
+        location: destination.location || "",
         isFeatured: destination.isFeatured,
       });
     }
@@ -80,11 +91,34 @@ export function EditWeddingDestinationModal({
   const onSubmit = async (data: WeddingDestinationUpdate) => {
     setIsLoading(true);
     try {
-      await api.put(`/api/wedding-destinations/${destination.slug}`, data);
+      let finalData = { ...data };
+
+      // Upload hero image if provided
+      if (heroImageFile) {
+        const heroImageUrl = await uploadWeddingDestinationImage(
+          heroImageFile,
+          destination.slug
+        );
+        finalData.heroImageUrl = heroImageUrl;
+      }
+
+      // Upload gallery images if provided
+      if (galleryFiles.length > 0) {
+        const galleryUrls = await Promise.all(
+          galleryFiles.map((file) =>
+            uploadWeddingDestinationImage(file, destination.slug)
+          )
+        );
+        finalData.gallery = [...(data.gallery || []), ...galleryUrls];
+      }
+
+      await api.put(`/api/wedding-destinations/${destination.slug}`, finalData);
       toast({
         title: "Destino actualizado",
         description: "El destino de boda ha sido actualizado exitosamente.",
       });
+      setHeroImageFile(null);
+      setGalleryFiles([]);
       onSuccess();
     } catch (error: any) {
       toast({
@@ -101,15 +135,15 @@ export function EditWeddingDestinationModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Editar Destino de Boda</DialogTitle>
           <DialogDescription>
             Modifica la información del destino de boda.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="slug">Slug *</Label>
               <Input
@@ -149,12 +183,41 @@ export function EditWeddingDestinationModal({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Descripción</Label>
+            <Label htmlFor="location">Ubicación</Label>
+            <Input
+              id="location"
+              {...form.register("location")}
+              placeholder="París, Francia"
+            />
+            {form.formState.errors.location && (
+              <p className="text-sm text-destructive">
+                {form.formState.errors.location.message}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="summary">Resumen</Label>
+            <Textarea
+              id="summary"
+              {...form.register("summary")}
+              placeholder="Breve descripción para tarjetas..."
+              rows={2}
+            />
+            {form.formState.errors.summary && (
+              <p className="text-sm text-destructive">
+                {form.formState.errors.summary.message}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="description">Descripción Completa</Label>
             <Textarea
               id="description"
               {...form.register("description")}
-              placeholder="Descripción del destino..."
-              rows={3}
+              placeholder="Descripción detallada del destino..."
+              rows={4}
             />
             {form.formState.errors.description && (
               <p className="text-sm text-destructive">
@@ -164,15 +227,36 @@ export function EditWeddingDestinationModal({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="heroImageUrl">URL de Imagen Principal</Label>
-            <Input
-              id="heroImageUrl"
-              {...form.register("heroImageUrl")}
-              placeholder="https://example.com/image.jpg"
+            <Label>Imagen Principal</Label>
+            <ImageUpload
+              value={form.watch("heroImageUrl")}
+              onChange={(url) => form.setValue("heroImageUrl", url)}
+              onFileSelect={setHeroImageFile}
+              placeholder="Subir imagen principal"
+              aspectRatio={16 / 9}
+              deferred={true}
             />
             {form.formState.errors.heroImageUrl && (
               <p className="text-sm text-destructive">
                 {form.formState.errors.heroImageUrl.message}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label>Galería de Imágenes</Label>
+            <GalleryInput
+              value={form.watch("gallery") || []}
+              onChange={(urls) => form.setValue("gallery", urls)}
+              onFileSelect={setGalleryFiles}
+              placeholder="Subir imágenes para la galería"
+              aspectRatio={16 / 9}
+              maxImages={10}
+              deferred={true}
+            />
+            {form.formState.errors.gallery && (
+              <p className="text-sm text-destructive">
+                {form.formState.errors.gallery.message}
               </p>
             )}
           </div>

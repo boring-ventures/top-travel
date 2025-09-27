@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Star, ArrowLeft, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import WhatsAppCTA from "@/components/utils/whatsapp-cta";
+import { ClientWhatsAppCTA } from "@/components/utils/client-whatsapp-cta";
+import { getWhatsAppTemplateByUsage } from "@/lib/whatsapp-utils";
 
 interface OfferPageProps {
   params: Promise<{ id: string }>;
@@ -16,6 +17,9 @@ interface OfferPageProps {
 
 export default async function OfferPage({ params }: OfferPageProps) {
   const { id } = await params;
+
+  // Fetch WhatsApp template for offers
+  const whatsappTemplate = await getWhatsAppTemplateByUsage("OFFERS");
 
   const offer = await prisma.offer.findUnique({
     where: { id },
@@ -231,11 +235,29 @@ export default async function OfferPage({ params }: OfferPageProps) {
                         Contáctanos por WhatsApp para obtener más información
                         sobre esta oferta.
                       </p>
-                      <WhatsAppCTA
-                        template={`Hola! Me interesa la oferta "${offer.title}". ¿Podrían darme más información?`}
-                        variables={{}}
+                      <ClientWhatsAppCTA
+                        whatsappTemplate={
+                          whatsappTemplate
+                            ? {
+                                templateBody: whatsappTemplate.templateBody,
+                                phoneNumber: whatsappTemplate.phoneNumber,
+                                phoneNumbers: whatsappTemplate.phoneNumbers,
+                              }
+                            : undefined
+                        }
                         label="Consultar por WhatsApp"
-                        phone="+59175651451"
+                        template={
+                          whatsappTemplate?.templateBody ||
+                          `Hola! Me interesa la oferta "${offer.title}". ¿Podrían darme más información?`
+                        }
+                        variables={{
+                          title: offer.title,
+                          slug: offer.id,
+                          itemTitle: offer.title,
+                          subtitle: offer.subtitle || "",
+                        }}
+                        campaign="offer_detail"
+                        content={offer.id}
                         size="default"
                         className="w-full"
                       />

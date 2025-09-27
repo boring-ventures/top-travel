@@ -81,6 +81,8 @@ model Destination {
   // Relations
   packageDestinations PackageDestination[]
   fixedDepartures     FixedDeparture[]
+  events              Event[]
+  offers              Offer[]
   destinationTags     DestinationTag[]
 
   createdAt     DateTime      @default(now())
@@ -183,8 +185,7 @@ model Event {
   slug            String         @unique
   title           String
   artistOrEvent   String
-  locationCity    String?
-  locationCountry String?
+  destinationId   String?        // Optional destination relation
   venue           String?
   startDate       DateTime
   endDate         DateTime
@@ -201,8 +202,10 @@ model Event {
   updatedAt       DateTime       @updatedAt
 
   // Relations
-  eventTags EventTag[]
+  destination Destination? @relation(fields: [destinationId], references: [id])
+  eventTags   EventTag[]
 
+  @@index([destinationId])
   @@index([startDate, endDate])
   @@index([status])
 }
@@ -252,6 +255,7 @@ model Offer {
   subtitle       String?
   bannerImageUrl String?
   pdfUrl         String?       // URL to PDF document in documents bucket
+  destinationId  String?       // Optional destination relation
   isFeatured     Boolean       @default(false)
   startAt        DateTime?
   endAt          DateTime?
@@ -263,11 +267,13 @@ model Offer {
   externalUrl String?
 
   // Relations
-  offerTags  OfferTag[]
+  destination Destination? @relation(fields: [destinationId], references: [id])
+  offerTags   OfferTag[]
 
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
+  @@index([destinationId])
   @@index([isFeatured])
   @@index([status])
   @@index([startAt, endAt])
@@ -312,9 +318,11 @@ model WeddingDestination {
   slug          String        @unique
   name          String        // e.g., "París"
   title         String        // e.g., "Bodas en París"
-  description   String?
-  heroImageUrl  String?
+  summary       String?       // Short description for cards
+  description   String?       // Full description
+  heroImageUrl  String?       // Hero image URL
   gallery       Json?         // Array of image URLs
+  location      String?       // Location information (open text)
   isFeatured    Boolean       @default(false)
   
   createdAt     DateTime      @default(now())
@@ -329,9 +337,11 @@ model QuinceaneraDestination {
   slug          String        @unique
   name          String        // e.g., "París"
   title         String        // e.g., "Quinceañeras en París"
-  description   String?
-  heroImageUrl  String?
+  summary       String?       // Short description for cards
+  description   String?       // Full description
+  heroImageUrl  String?       // Hero image URL
   gallery       Json?         // Array of image URLs
+  location      String?       // Location information (open text)
   isFeatured    Boolean       @default(false)
   
   createdAt     DateTime      @default(now())

@@ -41,10 +41,13 @@ const Navbar1 = () => {
   }
 
   // Páginas que necesitan header con fondo rosado (PRESERVAR)
-  const isPinkHeaderPage = pathname === "/quinceanera";
+  const isPinkHeaderPage =
+    pathname === "/quinceanera" ||
+    pathname.startsWith("/quinceanera-destinations");
 
   // Páginas que necesitan header con fondo rosado para weddings (PRESERVAR)
-  const isWeddingsHeaderPage = pathname === "/weddings";
+  const isWeddingsHeaderPage =
+    pathname === "/weddings" || pathname.startsWith("/wedding-destinations");
 
   const toggleMenu = () => setIsOpen(!isOpen);
 

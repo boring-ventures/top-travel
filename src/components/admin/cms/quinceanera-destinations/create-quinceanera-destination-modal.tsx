@@ -20,6 +20,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
 import { api } from "@/lib/api";
+import { ImageUpload } from "@/components/ui/image-upload";
+import { GalleryInput } from "@/components/ui/gallery-input";
+import { uploadQuinceaneraDestinationImage } from "@/lib/supabase/storage";
 
 interface CreateQuinceaneraDestinationModalProps {
   open: boolean;
@@ -33,6 +36,8 @@ export function CreateQuinceaneraDestinationModal({
   onSuccess,
 }: CreateQuinceaneraDestinationModalProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [heroImageFile, setHeroImageFile] = useState<File | null>(null);
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
   const { toast } = useToast();
 
   const form = useForm<QuinceaneraDestinationCreate>({
@@ -41,9 +46,11 @@ export function CreateQuinceaneraDestinationModal({
       slug: "",
       name: "",
       title: "",
+      summary: "",
       description: "",
       heroImageUrl: "",
       gallery: [],
+      location: "",
       isFeatured: false,
     },
   });
@@ -51,12 +58,35 @@ export function CreateQuinceaneraDestinationModal({
   const onSubmit = async (data: QuinceaneraDestinationCreate) => {
     setIsLoading(true);
     try {
-      await api.post("/api/quinceanera-destinations", data);
+      let finalData = { ...data };
+
+      // Upload hero image if provided
+      if (heroImageFile) {
+        const heroImageUrl = await uploadQuinceaneraDestinationImage(
+          heroImageFile,
+          data.slug
+        );
+        finalData.heroImageUrl = heroImageUrl;
+      }
+
+      // Upload gallery images if provided
+      if (galleryFiles.length > 0) {
+        const galleryUrls = await Promise.all(
+          galleryFiles.map((file) =>
+            uploadQuinceaneraDestinationImage(file, data.slug)
+          )
+        );
+        finalData.gallery = [...(data.gallery || []), ...galleryUrls];
+      }
+
+      await api.post("/api/quinceanera-destinations", finalData);
       toast({
         title: "Destino creado",
         description: "El destino de quinceañera ha sido creado exitosamente.",
       });
       form.reset();
+      setHeroImageFile(null);
+      setGalleryFiles([]);
       onSuccess();
     } catch (error: any) {
       toast({
@@ -73,36 +103,44 @@ export function CreateQuinceaneraDestinationModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Crear Nuevo Destino de Quinceañera</DialogTitle>
           <DialogDescription>
             Completa la información para crear un nuevo destino de quinceañera.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="slug">Slug *</Label>
-              <Input
-                id="slug"
-                {...form.register("slug")}
-                placeholder="quinceaneras-paris"
-              />
-              {form.formState.errors.slug && (
-                <p className="text-sm text-destructive">
-                  {form.formState.errors.slug.message}
-                </p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="name">Nombre *</Label>
-              <Input id="name" {...form.register("name")} placeholder="París" />
-              {form.formState.errors.name && (
-                <p className="text-sm text-destructive">
-                  {form.formState.errors.name.message}
-                </p>
-              )}
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          {/* Basic Information */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Información Básica</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="slug">Slug *</Label>
+                <Input
+                  id="slug"
+                  {...form.register("slug")}
+                  placeholder="quinceaneras-paris"
+                />
+                {form.formState.errors.slug && (
+                  <p className="text-sm text-destructive">
+                    {form.formState.errors.slug.message}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="name">Nombre *</Label>
+                <Input
+                  id="name"
+                  {...form.register("name")}
+                  placeholder="París"
+                />
+                {form.formState.errors.name && (
+                  <p className="text-sm text-destructive">
+                    {form.formState.errors.name.message}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
 
@@ -121,43 +159,109 @@ export function CreateQuinceaneraDestinationModal({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Descripción</Label>
-            <Textarea
-              id="description"
-              {...form.register("description")}
-              placeholder="Descripción del destino..."
-              rows={3}
-            />
-            {form.formState.errors.description && (
-              <p className="text-sm text-destructive">
-                {form.formState.errors.description.message}
-              </p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="heroImageUrl">URL de Imagen Principal</Label>
+            <Label htmlFor="location">Ubicación</Label>
             <Input
-              id="heroImageUrl"
-              {...form.register("heroImageUrl")}
-              placeholder="https://example.com/image.jpg"
+              id="location"
+              {...form.register("location")}
+              placeholder="París, Francia"
             />
-            {form.formState.errors.heroImageUrl && (
+            {form.formState.errors.location && (
               <p className="text-sm text-destructive">
-                {form.formState.errors.heroImageUrl.message}
+                {form.formState.errors.location.message}
               </p>
             )}
           </div>
 
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="isFeatured"
-              checked={form.watch("isFeatured")}
-              onCheckedChange={(checked) =>
-                form.setValue("isFeatured", checked)
-              }
-            />
-            <Label htmlFor="isFeatured">Destacado</Label>
+          {/* Content Information */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Contenido</h3>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="summary">Resumen</Label>
+                <Textarea
+                  id="summary"
+                  {...form.register("summary")}
+                  placeholder="Breve descripción para tarjetas..."
+                  rows={2}
+                />
+                {form.formState.errors.summary && (
+                  <p className="text-sm text-destructive">
+                    {form.formState.errors.summary.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="description">Descripción Completa</Label>
+                <Textarea
+                  id="description"
+                  {...form.register("description")}
+                  placeholder="Descripción detallada del destino..."
+                  rows={4}
+                />
+                {form.formState.errors.description && (
+                  <p className="text-sm text-destructive">
+                    {form.formState.errors.description.message}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Media Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Medios</h3>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Imagen Principal</Label>
+                <ImageUpload
+                  value={form.watch("heroImageUrl")}
+                  onChange={(url) => form.setValue("heroImageUrl", url)}
+                  onFileSelect={setHeroImageFile}
+                  placeholder="Subir imagen principal"
+                  aspectRatio={16 / 9}
+                  deferred={true}
+                />
+                {form.formState.errors.heroImageUrl && (
+                  <p className="text-sm text-destructive">
+                    {form.formState.errors.heroImageUrl.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label>Galería de Imágenes</Label>
+                <GalleryInput
+                  value={form.watch("gallery") || []}
+                  onChange={(urls) => form.setValue("gallery", urls)}
+                  onFileSelect={setGalleryFiles}
+                  placeholder="Subir imágenes para la galería"
+                  aspectRatio={16 / 9}
+                  maxImages={10}
+                  deferred={true}
+                />
+                {form.formState.errors.gallery && (
+                  <p className="text-sm text-destructive">
+                    {form.formState.errors.gallery.message}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Settings */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Configuración</h3>
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="isFeatured"
+                checked={form.watch("isFeatured")}
+                onCheckedChange={(checked) =>
+                  form.setValue("isFeatured", checked)
+                }
+              />
+              <Label htmlFor="isFeatured">Destacado</Label>
+            </div>
           </div>
 
           <DialogFooter>

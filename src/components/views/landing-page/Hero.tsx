@@ -345,7 +345,7 @@ export default function Hero({ items = [], tags = [] }: HeroProps) {
 
   return (
     <section
-      className="relative overflow-hidden -mt-16 sm:-mt-20"
+      className="relative overflow-hidden h-screen"
       aria-label="Sección principal de GABYTOPTRAVEL"
       role="region"
     >
@@ -385,7 +385,7 @@ export default function Hero({ items = [], tags = [] }: HeroProps) {
 
       {/* Foreground content */}
       <div
-        className="relative z-10 h-[120vh] flex items-center justify-center"
+        className="relative z-10 h-full flex items-center justify-center"
         style={{ isolation: "isolate" }}
       >
         <div className="w-full mx-auto px-0">

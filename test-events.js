@@ -12,8 +12,12 @@ async function checkEvents() {
         status: true,
         startDate: true,
         endDate: true,
-        locationCity: true,
-        locationCountry: true,
+        destination: {
+          select: {
+            city: true,
+            country: true,
+          },
+        },
       },
     });
 
@@ -31,18 +35,20 @@ async function checkEvents() {
     const publishedEvents = allEvents.filter((e) => e.status === "PUBLISHED");
     console.log(`\nPublished events (${publishedEvents.length}):`);
     publishedEvents.forEach((event) => {
-      console.log(
-        `- ${event.title} (${event.locationCity}, ${event.locationCountry}) - ${event.startDate}`
-      );
+      const location = event.destination
+        ? `${event.destination.city}, ${event.destination.country}`
+        : "Ubicación por confirmar";
+      console.log(`- ${event.title} (${location}) - ${event.startDate}`);
     });
 
     // Show draft events
     const draftEvents = allEvents.filter((e) => e.status === "DRAFT");
     console.log(`\nDraft events (${draftEvents.length}):`);
     draftEvents.forEach((event) => {
-      console.log(
-        `- ${event.title} (${event.locationCity}, ${event.locationCountry}) - ${event.startDate}`
-      );
+      const location = event.destination
+        ? `${event.destination.city}, ${event.destination.country}`
+        : "Ubicación por confirmar";
+      console.log(`- ${event.title} (${location}) - ${event.startDate}`);
     });
   } catch (error) {
     console.error("Error:", error);

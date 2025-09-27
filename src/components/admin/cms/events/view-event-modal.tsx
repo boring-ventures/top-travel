@@ -136,11 +136,9 @@ export function ViewEventModal({
                           Ubicación
                         </div>
                         <div className="text-sm">
-                          {event.locationCity && event.locationCountry
-                            ? `${event.locationCity}, ${event.locationCountry}`
-                            : event.locationCity ||
-                              event.locationCountry ||
-                              "No especificada"}
+                          {event.destination
+                            ? `${event.destination.city}, ${event.destination.country}`
+                            : "No especificada"}
                         </div>
                         {event.venue && (
                           <div className="text-sm text-muted-foreground mt-1">

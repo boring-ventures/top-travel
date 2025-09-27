@@ -471,90 +471,6 @@ async function main() {
     },
   });
 
-  // Event
-  await prisma.event.upsert({
-    where: { slug: "rock-in-rio-2025" },
-    update: {
-      startDate: new Date("2025-09-13"),
-      endDate: new Date("2025-09-22"),
-      status: "PUBLISHED",
-    },
-    create: {
-      slug: "rock-in-rio-2025",
-      title: "Rock in Rio 2025",
-      artistOrEvent: "Rock in Rio",
-      locationCity: "Rio de Janeiro",
-      locationCountry: "Brazil",
-      startDate: new Date("2025-09-13"),
-      endDate: new Date("2025-09-22"),
-      fromPrice: 300,
-      currency: "USD",
-      status: "PUBLISHED",
-    },
-  });
-
-  // More events (future dates)
-  await prisma.event.upsert({
-    where: { slug: "bad-bunny-miami-2026" },
-    update: {
-      startDate: new Date("2026-04-10"),
-      endDate: new Date("2026-04-12"),
-      status: "PUBLISHED",
-    },
-    create: {
-      slug: "bad-bunny-miami-2026",
-      title: "Bad Bunny World Tour 2026",
-      artistOrEvent: "Bad Bunny",
-      locationCity: "Miami",
-      locationCountry: "USA",
-      startDate: new Date("2026-04-10"),
-      endDate: new Date("2026-04-12"),
-      fromPrice: 280,
-      currency: "USD",
-      status: "PUBLISHED",
-    },
-  });
-  await prisma.event.upsert({
-    where: { slug: "karol-g-mx-2026" },
-    update: {
-      startDate: new Date("2026-05-20"),
-      endDate: new Date("2026-05-21"),
-      status: "PUBLISHED",
-    },
-    create: {
-      slug: "karol-g-mx-2026",
-      title: "Karol G – Mañana Será Bonito 2026",
-      artistOrEvent: "Karol G",
-      locationCity: "Ciudad de México",
-      locationCountry: "Mexico",
-      startDate: new Date("2026-05-20"),
-      endDate: new Date("2026-05-21"),
-      fromPrice: 220,
-      currency: "USD",
-      status: "PUBLISHED",
-    },
-  });
-  await prisma.event.upsert({
-    where: { slug: "vina-del-mar-2026" },
-    update: {
-      startDate: new Date("2026-02-20"),
-      endDate: new Date("2026-02-25"),
-      status: "PUBLISHED",
-    },
-    create: {
-      slug: "vina-del-mar-2026",
-      title: "Festival de Viña del Mar 2026",
-      artistOrEvent: "Festival de Viña del Mar",
-      locationCity: "Viña del Mar",
-      locationCountry: "Chile",
-      startDate: new Date("2026-02-20"),
-      endDate: new Date("2026-02-25"),
-      fromPrice: 260,
-      currency: "USD",
-      status: "PUBLISHED",
-    },
-  });
-
   // WhatsApp Template (default)
   await prisma.whatsAppTemplate.upsert({
     where: { name: "Default" },
@@ -790,6 +706,127 @@ async function main() {
       isFeatured: true,
       description: "Vibrant nightlife, beaches and Latin flavor.",
       heroImageUrl: "https://images.unsplash.com/photo-1545420331-221ea6b0d3f0",
+    },
+  });
+
+  // Additional destinations for events
+  const mexicoCity = await prisma.destination.upsert({
+    where: { slug: "mexico-city-mexico" },
+    update: {
+      isFeatured: false,
+      heroImageUrl:
+        "https://images.unsplash.com/photo-1518105779142-d975f22f1d14",
+    },
+    create: {
+      slug: "mexico-city-mexico",
+      country: "Mexico",
+      city: "Ciudad de México",
+      isFeatured: false,
+      description: "Vibrant capital with rich culture and entertainment.",
+      heroImageUrl:
+        "https://images.unsplash.com/photo-1518105779142-d975f22f1d14",
+    },
+  });
+
+  const vinaDelMar = await prisma.destination.upsert({
+    where: { slug: "vina-del-mar-chile" },
+    update: {
+      isFeatured: false,
+      heroImageUrl: "https://images.unsplash.com/photo-1544551763-46a013bb70d5",
+    },
+    create: {
+      slug: "vina-del-mar-chile",
+      country: "Chile",
+      city: "Viña del Mar",
+      isFeatured: false,
+      description: "Coastal city known for its music festival and beaches.",
+      heroImageUrl: "https://images.unsplash.com/photo-1544551763-46a013bb70d5",
+    },
+  });
+
+  // Events (after all destinations are created)
+  await prisma.event.upsert({
+    where: { slug: "rock-in-rio-2025" },
+    update: {
+      startDate: new Date("2025-09-13"),
+      endDate: new Date("2025-09-22"),
+      status: "PUBLISHED",
+      destinationId: rio.id,
+    },
+    create: {
+      slug: "rock-in-rio-2025",
+      title: "Rock in Rio 2025",
+      artistOrEvent: "Rock in Rio",
+      destinationId: rio.id,
+      startDate: new Date("2025-09-13"),
+      endDate: new Date("2025-09-22"),
+      fromPrice: 300,
+      currency: "USD",
+      status: "PUBLISHED",
+    },
+  });
+
+  // More events (future dates)
+  await prisma.event.upsert({
+    where: { slug: "bad-bunny-miami-2026" },
+    update: {
+      startDate: new Date("2026-04-10"),
+      endDate: new Date("2026-04-12"),
+      status: "PUBLISHED",
+      destinationId: miami.id,
+    },
+    create: {
+      slug: "bad-bunny-miami-2026",
+      title: "Bad Bunny World Tour 2026",
+      artistOrEvent: "Bad Bunny",
+      destinationId: miami.id,
+      startDate: new Date("2026-04-10"),
+      endDate: new Date("2026-04-12"),
+      fromPrice: 280,
+      currency: "USD",
+      status: "PUBLISHED",
+    },
+  });
+
+  await prisma.event.upsert({
+    where: { slug: "karol-g-mx-2026" },
+    update: {
+      startDate: new Date("2026-05-20"),
+      endDate: new Date("2026-05-21"),
+      status: "PUBLISHED",
+      destinationId: mexicoCity.id,
+    },
+    create: {
+      slug: "karol-g-mx-2026",
+      title: "Karol G – Mañana Será Bonito 2026",
+      artistOrEvent: "Karol G",
+      destinationId: mexicoCity.id,
+      startDate: new Date("2026-05-20"),
+      endDate: new Date("2026-05-21"),
+      fromPrice: 220,
+      currency: "USD",
+      status: "PUBLISHED",
+    },
+  });
+
+  await prisma.event.upsert({
+    where: { slug: "vina-del-mar-2026" },
+    update: {
+      startDate: new Date("2026-02-20"),
+      endDate: new Date("2026-02-25"),
+      status: "PUBLISHED",
+      destinationId: vinaDelMar.id,
+    },
+    create: {
+      slug: "vina-del-mar-2026",
+      title: "Festival de Viña del Mar 2026",
+      artistOrEvent: "Festival de Viña del Mar",
+      destinationId: vinaDelMar.id,
+      startDate: new Date("2026-02-20"),
+      endDate: new Date("2026-02-25"),
+      fromPrice: 260,
+      currency: "USD",
+      status: "PUBLISHED",
     },
   });
 

@@ -81,21 +81,18 @@ export default function About() {
   const testimonials = [
     {
       name: "Camila Silva",
-      text: "Optar por una boda en destino fue la mejor decisión que tomamos. Nuestra ceremonia en la playa de Cancún al atardecer fue mágica y llena de emociones. Gracias a Gaby Villegas y su equipo por hacer de nuestro día un reflejo perfecto de nuestro amor.",
-      image:
-        "https://images.unsplash.com/photo-1494790108755-2616b612b786?auto=format&fit=crop&w=100&q=80",
+      text: "Nuestra boda en destino fue un sueño hecho realidad. La ceremonia al atardecer en la playa de Cancún fue absolutamente mágica, con el océano como testigo de nuestro amor. Gaby y su equipo organizaron cada detalle a la perfección, desde la decoración hasta la música. Fue el día más hermoso de nuestras vidas.",
+      image: "/images/testimonials/1.png",
     },
     {
       name: "Nicole Green",
-      text: "Gracias a Gaby Top Travel, nuestro viaje familiar a Europa fue perfecto, sin complicaciones, incluso con 8 personas de diferentes edades. El equipo se encargó de todos los detalles, permitiéndonos disfrutar de cada momento. Estamos muy agradecidos por todo su apoyo y coordinación.",
-      image:
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=100&q=80",
+      text: "Nuestro viaje familiar a Europa con Gaby Top Travel fue una experiencia inolvidable. Con 8 personas de diferentes edades, pensamos que sería complicado, pero el equipo se encargó de todo. Desde los hoteles hasta las actividades, cada detalle fue perfecto. Pudimos disfrutar cada momento sin preocupaciones.",
+      image: "/images/testimonials/2.png",
     },
     {
       name: "Estefanía Maceda",
-      text: "Estamos muy agradecidos con Gaby Top Travel por su eficiencia y compromiso. Aunque vivimos en La Paz y ellos operaban desde Santa Cruz, la coordinación fue impecable. Nuestro viaje de quinceañera a Cancún fue una experiencia excepcional para toda la familia. ¡Los recuerdos son inolvidables!",
-      image:
-        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80",
+      text: "Mi viaje de quinceañera por Europa fue una aventura increíble por diferentes destinos. Visitamos París, Roma y Barcelona, cada ciudad más fascinante que la anterior. Aunque vivimos en La Paz y Gaby Top Travel opera desde Santa Cruz, la coordinación fue perfecta. Conocimos monumentos históricos, museos increíbles y culturas fascinantes. Fue el viaje de mis sueños.",
+      image: "/images/testimonials/3.JPG",
     },
   ];
 
