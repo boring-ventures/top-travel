@@ -11,6 +11,7 @@ export const EventCreateSchema = z.object({
   slug: SlugSchema,
   title: NonEmptyStringSchema,
   artistOrEvent: NonEmptyStringSchema,
+  category: z.enum(["MUSIC", "SPORTS", "SPECIAL"]).optional(),
   destinationId: z.string().optional(),
   venue: z.string().optional(),
   startDate: ISODateSchema,

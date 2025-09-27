@@ -752,11 +752,13 @@ async function main() {
       endDate: new Date("2025-09-22"),
       status: "PUBLISHED",
       destinationId: rio.id,
+      category: "MUSIC",
     },
     create: {
       slug: "rock-in-rio-2025",
       title: "Rock in Rio 2025",
       artistOrEvent: "Rock in Rio",
+      category: "MUSIC",
       destinationId: rio.id,
       startDate: new Date("2025-09-13"),
       endDate: new Date("2025-09-22"),
@@ -774,11 +776,13 @@ async function main() {
       endDate: new Date("2026-04-12"),
       status: "PUBLISHED",
       destinationId: miami.id,
+      category: "MUSIC",
     },
     create: {
       slug: "bad-bunny-miami-2026",
       title: "Bad Bunny World Tour 2026",
       artistOrEvent: "Bad Bunny",
+      category: "MUSIC",
       destinationId: miami.id,
       startDate: new Date("2026-04-10"),
       endDate: new Date("2026-04-12"),
@@ -795,11 +799,13 @@ async function main() {
       endDate: new Date("2026-05-21"),
       status: "PUBLISHED",
       destinationId: mexicoCity.id,
+      category: "MUSIC",
     },
     create: {
       slug: "karol-g-mx-2026",
       title: "Karol G – Mañana Será Bonito 2026",
       artistOrEvent: "Karol G",
+      category: "MUSIC",
       destinationId: mexicoCity.id,
       startDate: new Date("2026-05-20"),
       endDate: new Date("2026-05-21"),
@@ -816,15 +822,111 @@ async function main() {
       endDate: new Date("2026-02-25"),
       status: "PUBLISHED",
       destinationId: vinaDelMar.id,
+      category: "MUSIC",
     },
     create: {
       slug: "vina-del-mar-2026",
       title: "Festival de Viña del Mar 2026",
       artistOrEvent: "Festival de Viña del Mar",
+      category: "MUSIC",
       destinationId: vinaDelMar.id,
       startDate: new Date("2026-02-20"),
       endDate: new Date("2026-02-25"),
       fromPrice: 260,
+      currency: "USD",
+      status: "PUBLISHED",
+    },
+  });
+
+  // Add some sports events
+  await prisma.event.upsert({
+    where: { slug: "world-cup-2026" },
+    update: {
+      startDate: new Date("2026-06-15"),
+      endDate: new Date("2026-07-15"),
+      status: "PUBLISHED",
+      destinationId: miami.id,
+      category: "SPORTS",
+    },
+    create: {
+      slug: "world-cup-2026",
+      title: "Copa Mundial FIFA 2026",
+      artistOrEvent: "Copa Mundial FIFA",
+      category: "SPORTS",
+      destinationId: miami.id,
+      startDate: new Date("2026-06-15"),
+      endDate: new Date("2026-07-15"),
+      fromPrice: 500,
+      currency: "USD",
+      status: "PUBLISHED",
+    },
+  });
+
+  await prisma.event.upsert({
+    where: { slug: "super-bowl-2026" },
+    update: {
+      startDate: new Date("2026-02-08"),
+      endDate: new Date("2026-02-08"),
+      status: "PUBLISHED",
+      destinationId: miami.id,
+      category: "SPORTS",
+    },
+    create: {
+      slug: "super-bowl-2026",
+      title: "Super Bowl 2026",
+      artistOrEvent: "Super Bowl",
+      category: "SPORTS",
+      destinationId: miami.id,
+      startDate: new Date("2026-02-08"),
+      endDate: new Date("2026-02-08"),
+      fromPrice: 800,
+      currency: "USD",
+      status: "PUBLISHED",
+    },
+  });
+
+  // Add some special events
+  await prisma.event.upsert({
+    where: { slug: "fashion-week-paris-2026" },
+    update: {
+      startDate: new Date("2026-03-01"),
+      endDate: new Date("2026-03-08"),
+      status: "PUBLISHED",
+      destinationId: paris.id,
+      category: "SPECIAL",
+    },
+    create: {
+      slug: "fashion-week-paris-2026",
+      title: "Paris Fashion Week 2026",
+      artistOrEvent: "Paris Fashion Week",
+      category: "SPECIAL",
+      destinationId: paris.id,
+      startDate: new Date("2026-03-01"),
+      endDate: new Date("2026-03-08"),
+      fromPrice: 400,
+      currency: "USD",
+      status: "PUBLISHED",
+    },
+  });
+
+  await prisma.event.upsert({
+    where: { slug: "art-basel-miami-2026" },
+    update: {
+      startDate: new Date("2026-12-01"),
+      endDate: new Date("2026-12-04"),
+      status: "PUBLISHED",
+      destinationId: miami.id,
+      category: "SPECIAL",
+    },
+    create: {
+      slug: "art-basel-miami-2026",
+      title: "Art Basel Miami 2026",
+      artistOrEvent: "Art Basel Miami",
+      category: "SPECIAL",
+      destinationId: miami.id,
+      startDate: new Date("2026-12-01"),
+      endDate: new Date("2026-12-04"),
+      fromPrice: 350,
       currency: "USD",
       status: "PUBLISHED",
     },

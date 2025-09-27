@@ -52,6 +52,13 @@ enum TestimonialStatus {
   PUBLISHED
 }
 
+// Event categories for filtering and organization
+enum EventCategory {
+  MUSIC
+  SPORTS
+  SPECIAL
+}
+
 model Profile {
   id            String               @id @default(cuid())
   userId        String               @unique
@@ -185,6 +192,7 @@ model Event {
   slug            String         @unique
   title           String
   artistOrEvent   String
+  category        EventCategory? // Event category for filtering
   destinationId   String?        // Optional destination relation
   venue           String?
   startDate       DateTime
@@ -208,6 +216,7 @@ model Event {
   @@index([destinationId])
   @@index([startDate, endDate])
   @@index([status])
+  @@index([category])
 }
 
 // Explicit M:N between Event and Tag

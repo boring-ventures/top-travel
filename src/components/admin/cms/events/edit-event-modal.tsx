@@ -83,6 +83,7 @@ export function EditEventModal({
       slug: "",
       title: "",
       artistOrEvent: "",
+      category: undefined,
       destinationId: "",
       venue: "",
       heroImageUrl: undefined,
@@ -134,6 +135,7 @@ export function EditEventModal({
             slug: data.slug,
             title: data.title,
             artistOrEvent: data.artistOrEvent,
+            category: data.category,
             destinationId: data.destinationId || "",
             venue: data.venue || "",
             heroImageUrl: data.heroImageUrl || undefined,
@@ -296,6 +298,36 @@ export function EditEventModal({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
+                <Label htmlFor="category">Categoría</Label>
+                <Select
+                  value={form.watch("category") || ""}
+                  onValueChange={(value) =>
+                    form.setValue(
+                      "category",
+                      value as "MUSIC" | "SPORTS" | "SPECIAL" | undefined
+                    )
+                  }
+                >
+                  <SelectTrigger
+                    className={
+                      form.formState.errors.category ? "border-red-500" : ""
+                    }
+                  >
+                    <SelectValue placeholder="Seleccionar categoría" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="MUSIC">Música</SelectItem>
+                    <SelectItem value="SPORTS">Deportes</SelectItem>
+                    <SelectItem value="SPECIAL">Especiales</SelectItem>
+                  </SelectContent>
+                </Select>
+                {form.formState.errors.category && (
+                  <p className="text-sm text-red-500">
+                    {form.formState.errors.category.message}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
                 <Label>Destino</Label>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -349,6 +381,9 @@ export function EditEventModal({
                   </PopoverContent>
                 </Popover>
               </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="venue">Venue</Label>
                 <Input

@@ -16,6 +16,11 @@ export async function GET(request: Request) {
     const session = await auth();
     const isSuperadmin = session?.user?.role === "SUPERADMIN";
     const status = searchParams.get("status") as "DRAFT" | "PUBLISHED" | null;
+    const category = searchParams.get("category") as
+      | "MUSIC"
+      | "SPORTS"
+      | "SPECIAL"
+      | null;
     const city = searchParams.get("city") || undefined;
     const country = searchParams.get("country") || undefined;
     const from = searchParams.get("from");
@@ -29,6 +34,7 @@ export async function GET(request: Request) {
 
     const where: any = {
       status: isSuperadmin ? (status ?? undefined) : "PUBLISHED",
+      ...(category ? { category } : {}),
       ...(from || to
         ? {
             AND: [

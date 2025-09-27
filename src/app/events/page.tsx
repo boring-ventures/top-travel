@@ -3,9 +3,7 @@ import { filterValidImageUrls } from "@/lib/utils";
 import { getWhatsAppTemplateByUsage } from "@/lib/whatsapp-utils";
 import Header from "@/components/views/landing-page/Header";
 import Footer from "@/components/views/landing-page/Footer";
-import TabbedContent from "@/components/views/landing-page/TabbedContent";
 import { AnimatedHero } from "@/components/ui/animated-hero";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -15,7 +13,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import {
   Search,
   Calendar,
@@ -31,6 +28,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ClientWhatsAppCTA } from "@/components/utils/client-whatsapp-cta";
 import { ShineBorder } from "@/components/magicui/shine-border";
+import { EventsList } from "@/components/views/events/EventsList";
 
 // Fallback images for different categories
 const FALLBACK_IMAGES = {
@@ -47,6 +45,7 @@ const FALLBACK_IMAGES = {
 interface EventsPageProps {
   searchParams?: Promise<{
     q?: string;
+    category?: string;
     country?: string;
     city?: string;
     from?: string;
@@ -57,15 +56,16 @@ interface EventsPageProps {
 export default async function EventsPage({ searchParams }: EventsPageProps) {
   const params = await searchParams;
   const q = params?.q?.trim() || undefined;
+  const category = params?.category || undefined;
   const country = params?.country || undefined;
   const city = params?.city || undefined;
   const from = params?.from;
   const to = params?.to;
 
-  let concerts: any[] = [];
-  let festivals: any[] = [];
-  let cultural: any[] = [];
-  let sports: any[] = [];
+  let musicEvents: any[] = [];
+  let sportsEvents: any[] = [];
+  let specialEvents: any[] = [];
+  let allEvents: any[] = [];
   let filteredEvents: any[] = [];
   let allEventsData: any[] = [];
   let countries: any[] = [];
@@ -101,15 +101,16 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
     };
 
     const results = await Promise.all([
-      // Concerts
+      // Music events
       prisma.event.findMany({
-        where: { status: "PUBLISHED" },
+        where: { status: "PUBLISHED", category: "MUSIC" },
         orderBy: { startDate: "asc" },
         select: {
           id: true,
           slug: true,
           title: true,
           artistOrEvent: true,
+          category: true,
           heroImageUrl: true,
           startDate: true,
           endDate: true,
@@ -121,15 +122,16 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
           },
         },
       }),
-      // Festivals
+      // Sports events
       prisma.event.findMany({
-        where: { status: "PUBLISHED" },
+        where: { status: "PUBLISHED", category: "SPORTS" },
         orderBy: { startDate: "asc" },
         select: {
           id: true,
           slug: true,
           title: true,
           artistOrEvent: true,
+          category: true,
           heroImageUrl: true,
           startDate: true,
           endDate: true,
@@ -141,15 +143,16 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
           },
         },
       }),
-      // Cultural
+      // Special events
       prisma.event.findMany({
-        where: { status: "PUBLISHED" },
+        where: { status: "PUBLISHED", category: "SPECIAL" },
         orderBy: { startDate: "asc" },
         select: {
           id: true,
           slug: true,
           title: true,
           artistOrEvent: true,
+          category: true,
           heroImageUrl: true,
           startDate: true,
           endDate: true,
@@ -161,7 +164,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
           },
         },
       }),
-      // Sports
+      // All events
       prisma.event.findMany({
         where: { status: "PUBLISHED" },
         orderBy: { startDate: "asc" },
@@ -170,6 +173,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
           slug: true,
           title: true,
           artistOrEvent: true,
+          category: true,
           heroImageUrl: true,
           startDate: true,
           endDate: true,
@@ -202,8 +206,14 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
         },
       }),
     ]);
-    [concerts, festivals, cultural, sports, filteredEvents, allEventsData] =
-      results as any;
+    [
+      musicEvents,
+      sportsEvents,
+      specialEvents,
+      allEvents,
+      filteredEvents,
+      allEventsData,
+    ] = results as any;
 
     const uniqueCountries = [
       ...new Set(
@@ -253,74 +263,13 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
     return "Bolivia";
   };
 
-  // Prepare tabbed content data - Show ALL items without limit
-  const tabbedContent = [
-    {
-      id: "concerts",
-      label: "Conciertos",
-      href: "/events",
-      items: concerts.map((event) => ({
-        id: event.id,
-        title: event.title,
-        description: event.artistOrEvent || "Concierto musical",
-        imageUrl: getValidImageUrl(
-          event.heroImageUrl,
-          FALLBACK_IMAGES.concerts
-        ),
-        href: `/events/${event.slug}`,
-        price: formatDate(event.startDate),
-        location: getLocationText(event),
-      })),
-    },
-    {
-      id: "festivals",
-      label: "Festivales",
-      href: "/events",
-      items: festivals.map((event) => ({
-        id: event.id,
-        title: event.title,
-        description: event.artistOrEvent || "Festival de música",
-        imageUrl: getValidImageUrl(
-          event.heroImageUrl,
-          FALLBACK_IMAGES.festivals
-        ),
-        href: `/events/${event.slug}`,
-        price: formatDate(event.startDate),
-        location: getLocationText(event),
-      })),
-    },
-    {
-      id: "cultural",
-      label: "Culturales",
-      href: "/events",
-      items: cultural.map((event) => ({
-        id: event.id,
-        title: event.title,
-        description: event.artistOrEvent || "Evento cultural",
-        imageUrl: getValidImageUrl(
-          event.heroImageUrl,
-          FALLBACK_IMAGES.cultural
-        ),
-        href: `/events/${event.slug}`,
-        price: formatDate(event.startDate),
-        location: getLocationText(event),
-      })),
-    },
-    {
-      id: "sports",
-      label: "Deportivos",
-      href: "/events",
-      items: sports.map((event) => ({
-        id: event.id,
-        title: event.title,
-        description: event.artistOrEvent || "Evento deportivo",
-        imageUrl: getValidImageUrl(event.heroImageUrl, FALLBACK_IMAGES.sports),
-        href: `/events/${event.slug}`,
-        price: formatDate(event.startDate),
-        location: getLocationText(event),
-      })),
-    },
-  ];
+  // Prepare events data for the new component
+  const eventsData = {
+    music: musicEvents,
+    sports: sportsEvents,
+    special: specialEvents,
+    all: allEvents,
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-background via-background to-secondary/20">
@@ -540,10 +489,14 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
             </div>
           </section>
         ) : (
-          /* Tabbed Content Section */
+          /* Events List Section */
           <section className="py-12 w-full bg-white">
             <div className="container mx-auto px-4">
-              <TabbedContent tabs={tabbedContent} showViewAllButton={false} />
+              <EventsList
+                events={eventsData}
+                whatsappTemplates={whatsappTemplates}
+                fallbackImages={FALLBACK_IMAGES}
+              />
             </div>
           </section>
         )}

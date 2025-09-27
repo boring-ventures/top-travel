@@ -50,6 +50,7 @@ export default function CmsEventsList() {
       [
         e.title,
         e.artistOrEvent,
+        e.category,
         e.destination?.city,
         e.destination?.country,
         e.slug,
@@ -126,6 +127,7 @@ export default function CmsEventsList() {
                 <tr>
                   <th className="px-3 py-2 text-left">Evento</th>
                   <th className="px-3 py-2 text-left">Artista/Evento</th>
+                  <th className="px-3 py-2 text-left">Categoría</th>
                   <th className="px-3 py-2 text-left">Ubicación</th>
                   <th className="px-3 py-2 text-left">Etiquetas</th>
                   <th className="px-3 py-2 text-left">Fechas</th>
@@ -147,6 +149,32 @@ export default function CmsEventsList() {
                     </td>
                     <td className="px-3 py-2">
                       <span className="text-sm">{e.artistOrEvent || "—"}</span>
+                    </td>
+                    <td className="px-3 py-2">
+                      {e.category ? (
+                        <Badge
+                          variant="outline"
+                          className={
+                            e.category === "MUSIC"
+                              ? "border-blue-200 text-blue-700 bg-blue-50"
+                              : e.category === "SPORTS"
+                                ? "border-green-200 text-green-700 bg-green-50"
+                                : e.category === "SPECIAL"
+                                  ? "border-purple-200 text-purple-700 bg-purple-50"
+                                  : ""
+                          }
+                        >
+                          {e.category === "MUSIC"
+                            ? "Música"
+                            : e.category === "SPORTS"
+                              ? "Deportes"
+                              : e.category === "SPECIAL"
+                                ? "Especiales"
+                                : e.category}
+                        </Badge>
+                      ) : (
+                        <span className="text-muted-foreground text-sm">—</span>
+                      )}
                     </td>
                     <td className="px-3 py-2">
                       <div className="text-sm">
