@@ -284,29 +284,6 @@ export default function About() {
                   <div className="absolute -inset-4 bg-gradient-to-r from-wine/20 to-wine/10 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-500"></div>
                   <div className="relative">
                     <Image
-                      src="/images/team/founder1.png"
-                      alt="Elias Belmonte Eguez - Fundador"
-                      width={400}
-                      height={500}
-                      className="rounded-3xl shadow-2xl group-hover:scale-105 transition-transform duration-500 w-full h-auto"
-                    />
-                  </div>
-                </div>
-                <div className="bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-6 shadow-lg">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                    Elias Belmonte Eguez
-                  </h3>
-                  <div className="inline-flex items-center gap-2 bg-wine/10 text-wine px-3 py-1 rounded-full text-sm font-semibold">
-                    <Crown className="w-4 h-4" />
-                    Fundador
-                  </div>
-                </div>
-              </div>
-              <div className="text-center">
-                <div className="relative group mb-6">
-                  <div className="absolute -inset-4 bg-gradient-to-r from-wine/20 to-wine/10 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-500"></div>
-                  <div className="relative">
-                    <Image
                       src="/images/team/founder2.png"
                       alt="Gabriela Villegas Suárez - Fundadora"
                       width={400}
@@ -322,6 +299,29 @@ export default function About() {
                   <div className="inline-flex items-center gap-2 bg-wine/10 text-wine px-3 py-1 rounded-full text-sm font-semibold">
                     <Crown className="w-4 h-4" />
                     Fundadora
+                  </div>
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="relative group mb-6">
+                  <div className="absolute -inset-4 bg-gradient-to-r from-wine/20 to-wine/10 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-500"></div>
+                  <div className="relative">
+                    <Image
+                      src="/images/team/founder1.png"
+                      alt="Elias Belmonte Eguez - Fundador"
+                      width={400}
+                      height={500}
+                      className="rounded-3xl shadow-2xl group-hover:scale-105 transition-transform duration-500 w-full h-auto"
+                    />
+                  </div>
+                </div>
+                <div className="bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-6 shadow-lg">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                    Elias Belmonte Eguez
+                  </h3>
+                  <div className="inline-flex items-center gap-2 bg-wine/10 text-wine px-3 py-1 rounded-full text-sm font-semibold">
+                    <Crown className="w-4 h-4" />
+                    Fundador
                   </div>
                 </div>
               </div>
