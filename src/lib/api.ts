@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import axios from "axios";
 
 // Create axios instance with base configuration
+// Using relative URLs for API routes so it works in all environments
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
   headers: {
     "Content-Type": "application/json",
   },
