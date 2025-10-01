@@ -162,8 +162,8 @@ export default function TabbedContent({
                   onClick={() => setCurrentTab(tab.id)}
                   className={`px-4 sm:px-6 py-2 rounded-xl transition-all duration-200 font-medium flex items-center whitespace-nowrap flex-shrink-0 ${
                     currentTab === tab.id
-                      ? "bg-black text-white shadow-lg"
-                      : "hover:bg-black/10 text-black"
+                      ? "bg-corporate-blue text-white shadow-lg"
+                      : "hover:bg-corporate-blue/10 text-corporate-blue"
                   }`}
                 >
                   <IconComponent className="h-4 w-4 mr-1 sm:mr-2" />
@@ -241,7 +241,7 @@ export default function TabbedContent({
       {showViewAllButton && (
         <div className="mt-12 text-center">
           <Link
-            className="bg-black text-white px-8 py-4 rounded-full hover:bg-black/80 transition-colors duration-300 inline-flex items-center gap-2 text-lg font-semibold"
+            className="bg-corporate-blue text-white px-8 py-4 rounded-full hover:bg-corporate-blue/80 transition-colors duration-300 inline-flex items-center gap-2 text-lg font-semibold"
             href={currentTabData?.href || "/packages"}
           >
             Ver Todos

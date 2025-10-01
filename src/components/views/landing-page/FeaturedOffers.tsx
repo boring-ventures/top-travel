@@ -157,7 +157,7 @@ export default function FeaturedOffers({
 
         <div className="mt-12 text-center">
           <Link
-            className="bg-black text-white px-8 py-4 rounded-full hover:bg-black/80 transition-colors duration-300 inline-flex items-center gap-2 text-lg font-semibold"
+            className="bg-corporate-blue text-white px-8 py-4 rounded-full hover:bg-corporate-blue/80 transition-colors duration-300 inline-flex items-center gap-2 text-lg font-semibold"
             href="/offers"
           >
             Ver Todos

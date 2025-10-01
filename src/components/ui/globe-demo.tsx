@@ -289,10 +289,21 @@ export function World(props: WorldProps) {
         enableZoom={false}
         minDistance={cameraZ}
         maxDistance={cameraZ}
-        autoRotateSpeed={1}
-        autoRotate={true}
-        minPolarAngle={Math.PI / 3.5}
-        maxPolarAngle={Math.PI - Math.PI / 3}
+        autoRotateSpeed={globeConfig.autoRotateSpeed || 0.5}
+        autoRotate={globeConfig.autoRotate || true}
+        minPolarAngle={Math.PI / 2.2}
+        maxPolarAngle={Math.PI / 2.2}
+        target={
+          globeConfig.initialPosition
+            ? [
+                Math.cos((globeConfig.initialPosition.lat * Math.PI) / 180) *
+                  Math.cos((globeConfig.initialPosition.lng * Math.PI) / 180),
+                Math.sin((globeConfig.initialPosition.lat * Math.PI) / 180),
+                Math.cos((globeConfig.initialPosition.lat * Math.PI) / 180) *
+                  Math.sin((globeConfig.initialPosition.lng * Math.PI) / 180),
+              ]
+            : [0, 0, 0]
+        }
       />
     </Canvas>
   );

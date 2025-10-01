@@ -63,7 +63,7 @@ export default async function Home() {
     arcLength: 0.9,
     rings: 1,
     maxRings: 3,
-    initialPosition: { lat: 22.3193, lng: 114.1694 },
+    initialPosition: { lat: -16.2902, lng: -63.5887 }, // Bolivia coordinates (La Paz)
     autoRotate: true,
     autoRotateSpeed: 0.5,
   };
@@ -677,7 +677,7 @@ export default async function Home() {
         <section className="py-16 w-full bg-gray-50">
           <div className="container mx-auto px-4">
             <div className="text-center mb-8 sm:mb-12">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-corporate-blue mb-4">
                 Descubre las{" "}
                 <span className="font-bold text-blue-600">Maravillas</span> del
                 mundo

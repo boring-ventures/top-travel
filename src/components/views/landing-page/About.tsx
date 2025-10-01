@@ -131,7 +131,7 @@ export default function About() {
                   <Award className="w-4 h-4" />
                   Más de +20 años de experiencia
                 </div>
-                <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                <h2 className="text-4xl md:text-5xl font-bold text-corporate-blue mb-6">
                   Sobre{" "}
                   <span className="text-wine relative">
                     Gaby Top Travel
@@ -154,7 +154,7 @@ export default function About() {
                         <Globe className="w-8 h-8 text-wine" />
                       </div>
                       <div>
-                        <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-wine transition-colors duration-300">
+                        <h3 className="text-2xl font-bold text-corporate-blue mb-4 group-hover:text-wine transition-colors duration-300">
                           Nuestra Misión
                         </h3>
                         <p className="text-lg text-gray-700 leading-relaxed">
@@ -186,7 +186,7 @@ export default function About() {
                         <Award className="w-8 h-8 text-wine" />
                       </div>
                       <div>
-                        <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-wine transition-colors duration-300">
+                        <h3 className="text-2xl font-bold text-corporate-blue mb-4 group-hover:text-wine transition-colors duration-300">
                           Nuestra Experiencia
                         </h3>
                         <p className="text-lg text-gray-700 leading-relaxed">
@@ -220,7 +220,7 @@ export default function About() {
                       <Sparkles className="w-4 h-4" />
                       Nuestros Servicios
                     </div>
-                    <h3 className="text-3xl font-bold text-gray-900 mb-6">
+                    <h3 className="text-3xl font-bold text-corporate-blue mb-6">
                       Especialistas en Experiencias Únicas
                     </h3>
                     <p className="text-lg text-gray-700 leading-relaxed max-w-4xl mx-auto">
@@ -234,25 +234,25 @@ export default function About() {
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
                     <div className="bg-white/90 backdrop-blur-sm border border-wine/20 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group">
                       <Calendar className="w-8 h-8 text-wine mx-auto mb-3 group-hover:scale-110 transition-transform duration-300" />
-                      <div className="text-sm font-semibold text-gray-900">
+                      <div className="text-sm font-semibold text-corporate-blue">
                         Bodas de Destino
                       </div>
                     </div>
                     <div className="bg-white/90 backdrop-blur-sm border border-wine/20 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group">
                       <Heart className="w-8 h-8 text-wine mx-auto mb-3 group-hover:scale-110 transition-transform duration-300" />
-                      <div className="text-sm font-semibold text-gray-900">
+                      <div className="text-sm font-semibold text-corporate-blue">
                         Quinceañeras
                       </div>
                     </div>
                     <div className="bg-white/90 backdrop-blur-sm border border-wine/20 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group">
                       <Globe className="w-8 h-8 text-wine mx-auto mb-3 group-hover:scale-110 transition-transform duration-300" />
-                      <div className="text-sm font-semibold text-gray-900">
+                      <div className="text-sm font-semibold text-corporate-blue">
                         Viajes Familiares
                       </div>
                     </div>
                     <div className="bg-white/90 backdrop-blur-sm border border-wine/20 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group">
                       <Sparkles className="w-8 h-8 text-wine mx-auto mb-3 group-hover:scale-110 transition-transform duration-300" />
-                      <div className="text-sm font-semibold text-gray-900">
+                      <div className="text-sm font-semibold text-corporate-blue">
                         Viajes de Lujo
                       </div>
                     </div>
@@ -268,7 +268,7 @@ export default function About() {
           <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
           <div className="container mx-auto px-4">
             <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              <h2 className="text-4xl md:text-5xl font-bold text-corporate-blue mb-6">
                 <span className="text-wine relative">
                   Fundadores
                   <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-wine to-wine/50 rounded-full"></div>
@@ -293,7 +293,7 @@ export default function About() {
                   </div>
                 </div>
                 <div className="bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-6 shadow-lg">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  <h3 className="text-2xl font-bold text-corporate-blue mb-2">
                     Gabriela Villegas Suárez
                   </h3>
                   <div className="inline-flex items-center gap-2 bg-wine/10 text-wine px-3 py-1 rounded-full text-sm font-semibold">
@@ -316,7 +316,7 @@ export default function About() {
                   </div>
                 </div>
                 <div className="bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-6 shadow-lg">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  <h3 className="text-2xl font-bold text-corporate-blue mb-2">
                     Elias Belmonte Eguez
                   </h3>
                   <div className="inline-flex items-center gap-2 bg-wine/10 text-wine px-3 py-1 rounded-full text-sm font-semibold">
@@ -338,7 +338,7 @@ export default function About() {
                 <Star className="w-4 h-4" />
                 Nuestras fortalezas
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              <h2 className="text-4xl md:text-5xl font-bold text-corporate-blue mb-6">
                 ¿Por qué elegir{" "}
                 <span className="text-wine relative">
                   Gaby Top Travel
@@ -364,7 +364,7 @@ export default function About() {
                       <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-wine/10 to-wine/5 mb-8 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg">
                         <IconComponent className={`w-10 h-10 ${item.color}`} />
                       </div>
-                      <h3 className="text-xl font-bold text-gray-800 mb-4 transition-colors duration-300 group-hover:text-wine">
+                      <h3 className="text-xl font-bold text-corporate-blue mb-4 transition-colors duration-300 group-hover:text-wine">
                         {item.title}
                       </h3>
                       <p className="text-gray-600 leading-relaxed">
@@ -387,7 +387,7 @@ export default function About() {
                 <Users className="w-4 h-4" />
                 Conoce a nuestro equipo
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              <h2 className="text-4xl md:text-5xl font-bold text-corporate-blue mb-6">
                 Nuestro{" "}
                 <span className="text-wine relative">
                   equipo
@@ -468,7 +468,7 @@ export default function About() {
                 <Heart className="w-4 h-4" />
                 Testimonios reales
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              <h2 className="text-4xl md:text-5xl font-bold text-corporate-blue mb-6">
                 <span className="text-wine relative">
                   Testimonios
                   <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-wine to-wine/50 rounded-full"></div>
@@ -498,7 +498,7 @@ export default function About() {
                         />
                       </div>
                       <div>
-                        <h4 className="font-bold text-gray-900 text-lg group-hover:text-wine transition-colors duration-300">
+                        <h4 className="font-bold text-corporate-blue text-lg group-hover:text-wine transition-colors duration-300">
                           {testimonial.name}
                         </h4>
                         <div className="flex text-yellow-400 mt-2">
@@ -535,7 +535,7 @@ export default function About() {
                 <Globe className="w-4 h-4" />
                 Tu próxima aventura te espera
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-8 leading-tight">
+              <h2 className="text-4xl md:text-5xl font-bold text-corporate-blue mb-8 leading-tight">
                 En Gaby Top Travel, creemos que cada experiencia debe ser tan{" "}
                 <span className="text-wine relative">
                   especial y única

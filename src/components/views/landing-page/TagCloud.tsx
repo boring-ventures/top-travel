@@ -40,7 +40,7 @@ const getTypeColor = (type: string) => {
     case "DEPARTMENT":
       return "bg-red-lighter text-corporate-red hover:bg-red-light";
     default:
-      return "bg-gray-100 text-gray-800 hover:bg-gray-200";
+      return "bg-gray-100 text-corporate-blue hover:bg-gray-200";
   }
 };
 

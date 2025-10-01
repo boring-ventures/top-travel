@@ -68,7 +68,9 @@ export default function ContactInfo() {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-start mb-8">
           <div>
-            <h1 className="text-5xl font-bold mb-2">Información de <span className="font-light italic">Contacto</span></h1>
+            <h1 className="text-5xl font-bold mb-2">
+              Información de <span className="font-light italic">Contacto</span>
+            </h1>
           </div>
         </div>
 
@@ -76,16 +78,25 @@ export default function ContactInfo() {
           {/* Emails */}
           <div className="bg-white p-8 rounded-lg shadow-md">
             <div className="flex items-start">
-              <Mail className="text-black mr-6 text-4xl flex-shrink-0" />
+              <Mail className="text-corporate-blue mr-6 text-4xl flex-shrink-0" />
               <div className="flex-1">
-                <h3 className="text-2xl font-bold mb-6 text-gray-900">Email</h3>
+                <h3 className="text-2xl font-bold mb-6 text-corporate-blue">
+                  Email
+                </h3>
                 <div className="space-y-4">
                   {contactInfo.emails.map((email, index) => (
-                    <div key={index} className="border-b border-gray-100 pb-3 last:border-b-0 last:pb-0">
+                    <div
+                      key={index}
+                      className="border-b border-gray-100 pb-3 last:border-b-0 last:pb-0"
+                    >
                       <div className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-1">
-                        {email.includes('info') ? 'General' : 
-                         email.includes('reservas') ? 'Reservas' :
-                         email.includes('bodas') ? 'Bodas' : 'Quinceañeras'}
+                        {email.includes("info")
+                          ? "General"
+                          : email.includes("reservas")
+                            ? "Reservas"
+                            : email.includes("bodas")
+                              ? "Bodas"
+                              : "Quinceañeras"}
                       </div>
                       <a
                         href={`mailto:${email}`}
@@ -103,13 +114,18 @@ export default function ContactInfo() {
           {/* Phones */}
           <div className="bg-white p-8 rounded-lg shadow-md">
             <div className="flex items-start">
-              <Phone className="text-black mr-6 text-4xl flex-shrink-0" />
+              <Phone className="text-corporate-blue mr-6 text-4xl flex-shrink-0" />
               <div className="flex-1">
-                <h3 className="text-2xl font-bold mb-6 text-gray-900">Teléfonos</h3>
+                <h3 className="text-2xl font-bold mb-6 text-corporate-blue">
+                  Teléfonos
+                </h3>
                 <div className="space-y-5">
                   {contactInfo.phones.map((phone, index) => (
-                    <div key={index} className="border-b border-gray-100 pb-4 last:border-b-0 last:pb-0">
-                      <div className="text-sm font-bold text-gray-800 mb-2">
+                    <div
+                      key={index}
+                      className="border-b border-gray-100 pb-4 last:border-b-0 last:pb-0"
+                    >
+                      <div className="text-sm font-bold text-corporate-blue mb-2">
                         {phone.label}
                       </div>
                       <a
@@ -131,13 +147,18 @@ export default function ContactInfo() {
           {/* Locations */}
           <div className="bg-white p-8 rounded-lg shadow-md">
             <div className="flex items-start">
-              <MapPin className="text-black mr-6 text-4xl flex-shrink-0" />
+              <MapPin className="text-corporate-blue mr-6 text-4xl flex-shrink-0" />
               <div className="flex-1">
-                <h3 className="text-2xl font-bold mb-6 text-gray-900">Oficinas</h3>
+                <h3 className="text-2xl font-bold mb-6 text-corporate-blue">
+                  Oficinas
+                </h3>
                 <div className="space-y-5">
                   {contactInfo.locations.map((location, index) => (
-                    <div key={index} className="border-b border-gray-100 pb-4 last:border-b-0 last:pb-0">
-                      <div className="text-sm font-bold text-gray-800 mb-2">
+                    <div
+                      key={index}
+                      className="border-b border-gray-100 pb-4 last:border-b-0 last:pb-0"
+                    >
+                      <div className="text-sm font-bold text-corporate-blue mb-2">
                         {location.label}
                       </div>
                       <div className="text-gray-700 font-medium mb-1">
@@ -164,7 +185,8 @@ export default function ContactInfo() {
               ¿Listo para Planificar tu Viaje?
             </h3>
             <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-              Contáctanos hoy para una consulta gratuita y comienza a crear recuerdos inolvidables
+              Contáctanos hoy para una consulta gratuita y comienza a crear
+              recuerdos inolvidables
             </p>
 
             {/* Social Media Links */}
@@ -186,13 +208,13 @@ export default function ContactInfo() {
             </div>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link 
+              <Link
                 href="/contact"
-                className="bg-black text-white px-6 py-3 rounded-full hover:bg-gray-800 transition-colors duration-300"
+                className="bg-corporate-blue text-white px-6 py-3 rounded-full hover:bg-corporate-blue/90 transition-colors duration-300"
               >
                 Solicitar Consulta Gratuita
               </Link>
-              <Link 
+              <Link
                 href="/about"
                 className="border border-gray-300 text-gray-700 px-6 py-3 rounded-full hover:bg-gray-50 transition-colors duration-300"
               >
