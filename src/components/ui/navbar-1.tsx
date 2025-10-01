@@ -118,7 +118,7 @@ const Navbar1 = () => {
                     ? "text-[#e03d90] hover:opacity-80"
                     : isWeddingsHeaderPage
                       ? "text-[#eaa298] hover:text-[#eaa298]/80"
-                      : "text-gray-700 hover:text-gray-900"
+                      : "text-[#d64f39] hover:text-[#d64f39]/80"
                 )}
               >
                 {item.label}
@@ -129,7 +129,7 @@ const Navbar1 = () => {
                       ? "bg-[#e03d90]"
                       : isWeddingsHeaderPage
                         ? "bg-[#eaa298]"
-                        : "bg-corporate-blue"
+                        : "bg-[#d64f39]"
                   )}
                 />
               </Link>
@@ -185,7 +185,7 @@ const Navbar1 = () => {
             <Button
               asChild
               size="sm"
-              className="rounded-full transition-all duration-300 hover:scale-105 bg-corporate-blue text-white hover:bg-corporate-blue/90 shadow-blue-200/50"
+              className="rounded-full transition-all duration-300 hover:scale-105 bg-[#d64f39] text-white hover:bg-[#d64f39]/90 shadow-red-200/50"
             >
               <Link href="/sign-in">Sign In</Link>
             </Button>
@@ -210,7 +210,7 @@ const Navbar1 = () => {
                 ? "text-[#e03d90]"
                 : isWeddingsHeaderPage
                   ? "text-[#eaa298]"
-                  : "text-gray-700"
+                  : "text-[#d64f39]"
             )}
           />
         </motion.button>
@@ -251,7 +251,7 @@ const Navbar1 = () => {
                     ? "text-[#e03d90]"
                     : isWeddingsHeaderPage
                       ? "text-[#eaa298]"
-                      : "text-gray-700"
+                      : "text-[#d64f39]"
                 )}
               />
             </motion.button>
@@ -273,7 +273,7 @@ const Navbar1 = () => {
                         ? "text-[#e03d90] hover:opacity-80"
                         : isWeddingsHeaderPage
                           ? "text-[#eaa298] hover:text-[#eaa298]/80"
-                          : "text-gray-700 hover:text-gray-900"
+                          : "text-[#d64f39] hover:text-[#d64f39]/80"
                     )}
                     onClick={toggleMenu}
                   >
@@ -333,7 +333,7 @@ const Navbar1 = () => {
                     <Button
                       asChild
                       size="lg"
-                      className="w-full rounded-full bg-corporate-blue text-white hover:bg-corporate-blue/90 shadow-blue-200/50"
+                      className="w-full rounded-full bg-[#d64f39] text-white hover:bg-[#d64f39]/90 shadow-red-200/50"
                       onClick={toggleMenu}
                     >
                       <Link href="/sign-in">Sign In</Link>

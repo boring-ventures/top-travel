@@ -34,7 +34,7 @@ export function TextLogo({
 
   const variantClasses = {
     light: "text-corporate-blue",
-    dark: "text-primary",
+    dark: "text-[#d64f39]",
     pink: "text-[#e03d90]",
     white: "text-white",
     wine: "text-wine",
