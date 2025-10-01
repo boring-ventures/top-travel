@@ -28,7 +28,7 @@ const metrics: Metric[] = [
   },
   {
     id: "experience",
-    value: 10,
+    value: 20,
     label: "Años de Experiencia",
     icon: <Calendar className="h-8 w-8" />,
     suffix: "+",
