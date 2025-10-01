@@ -22,6 +22,7 @@ const navItems = [
   { href: "/weddings", label: "Bodas" },
   { href: "/quinceanera", label: "Quinceañeras" },
   { href: "/about", label: "Nosotros" },
+  { href: "/contact", label: "Contacto" },
 ];
 
 const Navbar1 = () => {

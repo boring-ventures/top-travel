@@ -13,7 +13,13 @@ type AuthContextType = {
   isLoading: boolean;
   isProfileLoading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string) => Promise<{
+    success: boolean;
+    user: User | null;
+    session: Session | null;
+    confirmEmail: boolean;
+    error: any;
+  }>;
   signOut: () => Promise<void>;
 };
 
@@ -24,7 +30,13 @@ const AuthContext = createContext<AuthContextType>({
   isLoading: true,
   isProfileLoading: false,
   signIn: async () => {},
-  signUp: async () => {},
+  signUp: async () => ({
+    success: false,
+    user: null,
+    session: null,
+    confirmEmail: false,
+    error: null,
+  }),
   signOut: async () => {},
 });
 
@@ -36,33 +48,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const router = useRouter();
 
-  // Try to get cached user data for faster initial load
+  // Clear any invalid cached data on mount
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const cachedUser = localStorage.getItem("sb-user");
-      const cachedSession = localStorage.getItem("sb-session");
-
-      if (cachedUser && cachedSession) {
-        try {
-          const parsedUser = JSON.parse(cachedUser);
-          const parsedSession = JSON.parse(cachedSession);
-
-          // Only use cache if it's recent (less than 5 minutes old)
-          if (
-            parsedSession?.expires_at &&
-            Date.now() < parsedSession.expires_at * 1000
-          ) {
-            setUser(parsedUser);
-            setSession(parsedSession);
-            setIsLoading(false);
-            console.log("Auth loaded from cache - user:", parsedUser.email);
-          }
-        } catch (error) {
-          console.error("Error parsing cached auth data:", error);
-          localStorage.removeItem("sb-user");
-          localStorage.removeItem("sb-session");
-        }
-      }
+      // Clear any custom cache keys that might conflict with Supabase's own storage
+      localStorage.removeItem("sb-user");
+      localStorage.removeItem("sb-session");
     }
   }, []);
 
@@ -109,7 +100,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const initializeAuth = async () => {
       try {
-        // Try to get session first (faster than getUser)
+        // Get session first - this is the most reliable way
         const {
           data: { session },
           error: sessionError,
@@ -125,51 +116,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return;
         }
 
-        // If we have a session, set it immediately
+        // If we have a valid session, use it
         if (session?.user) {
           setUser(session.user);
           setSession(session);
-          console.log(
-            "Auth initialized from session - user:",
-            session.user.email
-          );
+          console.log("Auth initialized from session - user:", session.user.email);
           setIsLoading(false);
-
-          // Cache the session for faster future loads
-          if (typeof window !== "undefined") {
-            localStorage.setItem("sb-user", JSON.stringify(session.user));
-            localStorage.setItem("sb-session", JSON.stringify(session));
-          }
 
           // Fetch profile in background
           fetchProfile(session.user.id).catch(console.error);
         } else {
-          // No session, verify with getUser as fallback
-          const {
-            data: { user },
-            error: userError,
-          } = await supabase.auth.getUser();
-
-          if (!isMounted) return;
-
-          if (userError) {
-            console.error("Error getting user:", userError);
-            setUser(null);
-            setSession(null);
-          } else {
-            setUser(user);
-            setSession(session);
-            console.log("Auth initialized from user - user:", user?.email);
-
-            if (user) {
-              fetchProfile(user.id).catch(console.error);
-            }
-          }
+          // No session found, user is not authenticated
+          setUser(null);
+          setSession(null);
           setIsLoading(false);
         }
       } catch (error) {
         console.error("Error initializing auth:", error);
         if (isMounted) {
+          setUser(null);
+          setSession(null);
           setIsLoading(false);
         }
       }
@@ -185,16 +151,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log("Auth state change:", event, session?.user?.email);
 
       if (session?.user) {
-        // Use session data directly (faster than getUser)
         setUser(session.user);
         setSession(session);
         setIsLoading(false);
-
-        // Cache the session for faster future loads
-        if (typeof window !== "undefined") {
-          localStorage.setItem("sb-user", JSON.stringify(session.user));
-          localStorage.setItem("sb-session", JSON.stringify(session));
-        }
 
         // Fetch profile in background
         fetchProfile(session.user.id).catch(console.error);
@@ -203,12 +162,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSession(null);
         setProfile(null);
         setIsLoading(false);
-
-        // Clear cache on logout
-        if (typeof window !== "undefined") {
-          localStorage.removeItem("sb-user");
-          localStorage.removeItem("sb-session");
-        }
       }
 
       if (event === "SIGNED_OUT") {
@@ -235,11 +188,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-    if (error) throw error;
+    try {
+      // Get the site URL from the environment or current location
+      const siteUrl =
+        process.env.NEXT_PUBLIC_SITE_URL ||
+        (typeof window !== "undefined" ? window.location.origin : "");
+
+      const { data, error } = await supabase.auth.signUp({
+        email: email.trim().toLowerCase(),
+        password,
+        options: {
+          emailRedirectTo: `${siteUrl}/auth/callback`,
+          data: {
+            email_confirmed: false,
+          },
+        },
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      return {
+        success: true,
+        user: data.user,
+        session: data.session,
+        confirmEmail: true,
+        error: null,
+      };
+    } catch (error) {
+      console.error("Sign up error:", error);
+      return {
+        success: false,
+        user: null,
+        session: null,
+        confirmEmail: false,
+        error,
+      };
+    }
   };
 
   const signOut = async () => {

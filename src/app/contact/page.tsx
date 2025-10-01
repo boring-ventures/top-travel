@@ -12,7 +12,6 @@ import {
   Globe,
   Check,
   Phone,
-  Mail,
   MessageCircle,
 } from "lucide-react";
 import Header from "@/components/views/landing-page/Header";
@@ -62,7 +61,7 @@ export default function ContactPage() {
             </div>
 
             {/* Contact Methods Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16 max-w-2xl mx-auto">
               {/* WhatsApp */}
               <Card className="p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                 <div className="text-center">
@@ -103,27 +102,6 @@ export default function ContactPage() {
                     className="inline-block text-lg font-semibold text-gray-900 hover:text-blue-600 transition-colors duration-200 bg-gray-50 hover:bg-blue-50 px-4 py-2 rounded-lg"
                   >
                     +591 756 514 51
-                  </Link>
-                </div>
-              </Card>
-
-              {/* Email */}
-              <Card className="p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 md:col-span-2 lg:col-span-1">
-                <div className="text-center">
-                  <div className="p-4 bg-purple-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                    <Mail className="h-8 w-8 text-purple-600" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    Email
-                  </h3>
-                  <p className="text-gray-600 mb-3 text-sm">
-                    Para consultas detalladas y propuestas
-                  </p>
-                  <Link
-                    href="mailto:info@gabytoptravel.com"
-                    className="inline-block text-lg font-semibold text-gray-900 hover:text-purple-600 transition-colors duration-200 bg-gray-50 hover:bg-purple-50 px-4 py-2 rounded-lg"
-                  >
-                    info@gabytoptravel.com
                   </Link>
                 </div>
               </Card>
@@ -363,7 +341,7 @@ export default function ContactPage() {
                 Contáctanos hoy para una consulta gratuita y déjanos ayudarte a
                 crear la experiencia de viaje de tus sueños.
               </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <div className="flex justify-center">
                 <WhatsAppCTA
                   template="Hola, quiero una consulta gratuita para mi próximo viaje — {url}"
                   variables={{ url: "" }}
@@ -372,14 +350,6 @@ export default function ContactPage() {
                   size="lg"
                   className="h-14 px-8 bg-wine hover:bg-wine/90 text-white border-0 text-lg font-semibold rounded-xl"
                 />
-                <Button
-                  asChild
-                  variant="outline"
-                  size="lg"
-                  className="h-14 px-8 text-lg font-semibold border-2 border-wine text-wine hover:bg-wine hover:text-white rounded-xl"
-                >
-                  <Link href="mailto:info@gabytoptravel.com">Enviar Email</Link>
-                </Button>
               </div>
             </div>
           </div>

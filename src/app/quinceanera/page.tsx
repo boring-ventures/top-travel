@@ -122,12 +122,12 @@ export default async function QuinceaneraPage() {
           />
         </section>
 
-        {/* Dream Quinceañera Venues */}
+        {/* Dream Quinceañera Locations */}
         <section className="py-16 bg-gradient-to-br from-[#e03d90]/5 to-[#e03d90]/10">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                Venues mágicos para{" "}
+                Lugares especiales para{" "}
                 <span className="font-light italic text-[#e03d90]">
                   tu quinceañera perfecta
                 </span>
@@ -313,18 +313,6 @@ export default async function QuinceaneraPage() {
                 <p className="text-gray-600">que une a toda la familia</p>
               </div>
             </div>
-
-            <div className="text-center">
-              <Link href="/quinceanera-destinations">
-                <Button
-                  size="lg"
-                  className="bg-[#e03d90] hover:bg-[#c8327a] text-white px-8 py-3 text-lg font-semibold rounded-xl"
-                >
-                  Ver Destinos
-                  <ArrowRight className="h-5 w-5 ml-2" />
-                </Button>
-              </Link>
-            </div>
           </div>
         </section>
 
@@ -363,7 +351,7 @@ export default async function QuinceaneraPage() {
                 quinceaneraDestinations.map((dest) => (
                   <Card
                     key={dest.id}
-                    className="overflow-hidden hover:shadow-lg transition-shadow duration-300"
+                    className="overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full"
                   >
                     <div className="relative h-48">
                       {dest.heroImageUrl ? (
@@ -379,24 +367,26 @@ export default async function QuinceaneraPage() {
                         </div>
                       )}
                     </div>
-                    <div className="p-4 md:p-6">
+                    <div className="p-4 md:p-6 flex flex-col flex-grow">
                       <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-2">
                         {dest.title || dest.name}
                       </h3>
-                      <p className="text-sm md:text-base text-gray-600 mb-4 line-clamp-3">
+                      <p className="text-sm md:text-base text-gray-600 mb-4 line-clamp-3 flex-grow">
                         {dest.summary ||
                           dest.description ||
                           "Destino perfecto para tu quinceañera de ensueño"}
                       </p>
-                      <Link href={`/quinceanera-destinations/${dest.slug}`}>
-                        <Button
-                          variant="outline"
-                          className="w-full border-[#e03d90] text-[#e03d90] hover:bg-[#e03d90] hover:text-white transition-colors duration-200"
-                        >
-                          Ver Detalles
-                          <ArrowRight className="h-4 w-4 ml-2" />
-                        </Button>
-                      </Link>
+                      <div className="mt-auto">
+                        <Link href={`/quinceanera-destinations/${dest.slug}`}>
+                          <Button
+                            variant="outline"
+                            className="w-full border-[#e03d90] text-[#e03d90] hover:bg-[#e03d90] hover:text-white transition-colors duration-200"
+                          >
+                            Ver Detalles
+                            <ArrowRight className="h-4 w-4 ml-2" />
+                          </Button>
+                        </Link>
+                      </div>
                     </div>
                   </Card>
                 ))
@@ -712,7 +702,7 @@ export default async function QuinceaneraPage() {
                   ¡Comienza a planificar tu quinceañera perfecta hoy mismo!
                 </p>
               </div>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <div className="flex justify-center">
                 <WhatsAppCTA
                   template={
                     quinceaneraTemplates.find(
@@ -737,14 +727,6 @@ export default async function QuinceaneraPage() {
                   size="lg"
                   className="h-14 px-8 bg-[#e03d90] hover:bg-[#c8327a] text-white border-0 text-lg font-semibold rounded-xl"
                 />
-                <Button
-                  asChild
-                  variant="outline"
-                  size="lg"
-                  className="h-14 px-8 text-lg font-semibold border-2 border-[#e03d90] text-[#e03d90] hover:bg-[#e03d90] hover:text-white rounded-xl"
-                >
-                  <Link href="/contact">Solicitar cotización</Link>
-                </Button>
               </div>
             </div>
           </div>

@@ -31,7 +31,7 @@ export default function Footer() {
             </div>
             <p className="text-gray-300 mb-6 leading-relaxed">
               Agencia de viajes líder en Bolivia, especializada en crear
-              experiencias de viaje personalizadas e inolvidables. Más de 10
+              experiencias de viaje personalizadas e inolvidables. Más de 20
               años de experiencia.
             </p>
             <div className="flex items-center gap-2 text-sm text-gray-400">

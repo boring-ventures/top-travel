@@ -314,12 +314,16 @@ export default async function WeddingsPage() {
             </div>
 
             <div className="text-center">
-              <Link href="/wedding-destinations">
+              <Link
+                href="https://destinosparabodas.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Button
                   size="lg"
                   className="bg-[#eaa298] hover:bg-[#d49186] text-white px-8 py-3 text-lg font-semibold rounded-xl"
                 >
-                  Ver Destinos
+                  Descubre Destinos para Bodas
                   <ArrowRight className="h-5 w-5 ml-2" />
                 </Button>
               </Link>

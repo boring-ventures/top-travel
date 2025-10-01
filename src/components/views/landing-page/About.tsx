@@ -44,7 +44,7 @@ export default function About() {
     {
       title: "Experiencia Comprobada",
       description:
-        "Nuestra trayectoria en el sector nos respalda. Con más de +10 años de experiencia, hemos ayudado a miles de clientes a vivir experiencias únicas en los destinos más hermosos del mundo.",
+        "Nuestra trayectoria en el sector nos respalda. Con más de +20 años de experiencia, hemos ayudado a miles de clientes a vivir experiencias únicas en los destinos más hermosos del mundo.",
       icon: Award,
       color: "text-wine",
     },
@@ -107,7 +107,7 @@ export default function About() {
           <AnimatedHero
             title="Conoce"
             subtitle="Gaby Top Travel"
-            description="Tu agencia de viajes de confianza en Bolivia, creando experiencias memorables desde hace más de +10 años. Descubre nuestra historia, valores y servicios que nos convierten en líderes del turismo."
+            description="Tu agencia de viajes de confianza en Bolivia, creando experiencias memorables desde hace más de +20 años. Descubre nuestra historia, valores y servicios que nos convierten en líderes del turismo."
             animatedWords={[
               "Nuestra Historia",
               "Nuestros Valores",
@@ -129,7 +129,7 @@ export default function About() {
               <div className="text-center mb-20">
                 <div className="inline-flex items-center gap-2 bg-wine/10 text-wine px-4 py-2 rounded-full text-sm font-medium mb-6">
                   <Award className="w-4 h-4" />
-                  Más de +10 años de experiencia
+                  Más de +20 años de experiencia
                 </div>
                 <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
                   Sobre{" "}
@@ -192,7 +192,7 @@ export default function About() {
                         <p className="text-lg text-gray-700 leading-relaxed">
                           Con más de{" "}
                           <strong className="text-wine">
-                            +10 años de experiencia
+                            +20 años de experiencia
                           </strong>{" "}
                           en la industria del turismo y la planificación de
                           eventos, hemos organizado innumerables viajes y
