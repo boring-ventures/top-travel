@@ -15,7 +15,7 @@ import { TextLogo } from "@/components/ui/text-logo";
 
 export default function Footer() {
   return (
-    <footer className="relative overflow-hidden bg-gray-900 text-white">
+    <footer className="relative overflow-hidden bg-gray-700 text-white">
       <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {/* Company Info */}
@@ -120,21 +120,72 @@ export default function Footer() {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <MapPin className="h-5 w-5 text-gray-400 mt-0.5 flex-shrink-0" />
-                <div>
-                  <div className="text-gray-300 text-sm font-medium">
-                    Santa Cruz, Bolivia
-                  </div>
-                  <div className="text-gray-400 text-xs">Oficina principal</div>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
                 <Clock className="h-5 w-5 text-gray-400 mt-0.5 flex-shrink-0" />
                 <div>
                   <div className="text-gray-300 text-sm font-medium">
                     Lun - Vie: 8:30 - 18:30
                   </div>
                   <div className="text-gray-400 text-xs">Sáb: 9:00 - 12:30</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <h5 className="text-sm font-semibold text-gray-300 mb-3">
+                Nuestras Oficinas
+              </h5>
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <MapPin className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <a
+                      href="https://maps.app.goo.gl/3CyKDKuUwj7GJ8Yf7"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-300 hover:text-white text-xs font-medium transition-colors"
+                    >
+                      Santa Cruz - Equipetrol Norte
+                    </a>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <MapPin className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <a
+                      href="https://maps.app.goo.gl/R88tDzsuBTFgR4M47"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-300 hover:text-white text-xs font-medium transition-colors"
+                    >
+                      Santa Cruz - 3er Anillo
+                    </a>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <MapPin className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <a
+                      href="https://maps.app.goo.gl/JfN5CKSx5rXgLCsm7"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-300 hover:text-white text-xs font-medium transition-colors"
+                    >
+                      Cochabamba - Centro
+                    </a>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <MapPin className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <a
+                      href="https://maps.app.goo.gl/BXcNshfLnZyXrkr3A"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-300 hover:text-white text-xs font-medium transition-colors"
+                    >
+                      La Paz - Calacoto
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>

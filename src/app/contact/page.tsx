@@ -126,7 +126,6 @@ export default function ContactPage() {
                     {
                       city: "Santa Cruz",
                       region: "Centro de Bolivia",
-                      description: "Oficina principal",
                       address:
                         "Av. San Martín, Equipetrol Norte Calle F, Edificio Aquarius 7",
                       mapsLink: "https://maps.app.goo.gl/3CyKDKuUwj7GJ8Yf7",
@@ -134,7 +133,6 @@ export default function ContactPage() {
                     {
                       city: "Santa Cruz",
                       region: "Centro de Bolivia",
-                      description: "Sucursal adicional",
                       address:
                         "3er Anillo Externo, Av. Marcelo Terceros, Esq. Salvador Pitare",
                       mapsLink: "https://maps.app.goo.gl/R88tDzsuBTFgR4M47",
@@ -142,14 +140,12 @@ export default function ContactPage() {
                     {
                       city: "Cochabamba",
                       region: "Valle de Bolivia",
-                      description: "Sucursal estratégica",
                       address: "Av. Gualberto Villarroel Esquina Av. Oblitas",
                       mapsLink: "https://maps.app.goo.gl/JfN5CKSx5rXgLCsm7",
                     },
                     {
                       city: "La Paz",
                       region: "Altiplano de Bolivia",
-                      description: "Punto de conexión",
                       address:
                         "Av. José Ballivián, C/20 de Calacoto, Edificio Platinum #1487, Of.01",
                       mapsLink: "https://maps.app.goo.gl/BXcNshfLnZyXrkr3A",
@@ -171,9 +167,6 @@ export default function ContactPage() {
                             >
                               {office.city}
                             </Badge>
-                            <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded-full shadow-sm">
-                              {office.description}
-                            </span>
                           </div>
                           <p className="text-sm text-gray-600 mb-2">
                             {office.region}
