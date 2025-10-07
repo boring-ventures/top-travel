@@ -407,29 +407,29 @@ export default async function WeddingsPage() {
         </section>
 
         {/* Wedding Gallery */}
-        <section className="py-20 bg-gradient-to-br from-gray-50 via-white to-gray-50 relative overflow-hidden">
+        <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-gray-50 via-white to-gray-50 relative overflow-hidden">
           <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
           <div className="container mx-auto px-4">
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-2 bg-[#eaa298]/10 text-[#eaa298] px-4 py-2 rounded-full text-sm font-medium mb-6">
-                <Camera className="w-4 h-4" />
+            <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+              <div className="inline-flex items-center gap-2 bg-[#eaa298]/10 text-[#eaa298] px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium mb-4 sm:mb-6">
+                <Camera className="w-3 h-3 sm:w-4 sm:h-4" />
                 Galería de bodas
               </div>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6">
                 Bodas que hemos{" "}
                 <span className="text-[#eaa298] relative">
                   hecho realidad
-                  <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-[#eaa298] to-[#eaa298]/50 rounded-full"></div>
+                  <div className="absolute -bottom-1 sm:-bottom-2 left-0 right-0 h-0.5 sm:h-1 bg-gradient-to-r from-[#eaa298] to-[#eaa298]/50 rounded-full"></div>
                 </span>
               </h2>
-              <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed px-4">
+              <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed px-2 sm:px-4">
                 Cada imagen cuenta una historia de amor, cada detalle refleja
                 nuestro compromiso con la perfección
               </p>
             </div>
           </div>
 
-          <div className="h-screen w-full">
+          <div className="h-[80vh] sm:h-[90vh] lg:h-screen w-full">
             <GridMotion
               items={[
                 // Wedding gallery images from local folder - all 17 images
