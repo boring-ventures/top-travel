@@ -54,11 +54,6 @@ const baseNavGroups: NavGroupProps[] = [
       { title: "Destinos", url: "/cms/destinations", icon: MapPin },
       { title: "Etiquetas", url: "/cms/tags", icon: Tags },
       {
-        title: "Testimonios",
-        url: "/cms/testimonials",
-        icon: MessageSquare,
-      },
-      {
         title: "Plantillas WhatsApp",
         url: "/cms/whatsapp-templates",
         icon: MessageSquareText,
@@ -68,11 +63,6 @@ const baseNavGroups: NavGroupProps[] = [
   {
     title: "Bodas y Quinceañeras",
     items: [
-      {
-        title: "Contenido de Páginas",
-        url: "/cms/departments",
-        icon: Building2,
-      },
       {
         title: "Destinos de Bodas",
         url: "/cms/wedding-destinations",
