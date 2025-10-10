@@ -42,11 +42,6 @@ export const sidebarData: SidebarData = {
         { title: "Destinos", url: "/cms/destinations", icon: MapPin },
         { title: "Etiquetas", url: "/cms/tags", icon: Tags },
         {
-          title: "Testimonios",
-          url: "/cms/testimonials",
-          icon: MessageSquare,
-        },
-        {
           title: "Plantillas WhatsApp",
           url: "/cms/whatsapp-templates",
           icon: MessageSquareText,
@@ -56,11 +51,6 @@ export const sidebarData: SidebarData = {
     {
       title: "Bodas y Quinceañeras",
       items: [
-        {
-          title: "Contenido de Páginas",
-          url: "/cms/departments",
-          icon: Building2,
-        },
         {
           title: "Destinos de Bodas",
           url: "/cms/wedding-destinations",
