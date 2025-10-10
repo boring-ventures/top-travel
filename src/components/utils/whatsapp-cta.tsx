@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { buildWhatsAppUrl } from "@/lib/utils";
+import { buildWhatsAppUrl, getRandomPhoneNumber } from "@/lib/utils";
 import { getPersistedUtm } from "./utm-provider";
 
 type WhatsAppCTAProps = {
@@ -10,6 +10,7 @@ type WhatsAppCTAProps = {
   variables: Record<string, string | undefined>;
   label?: string;
   phone?: string;
+  phoneNumbers?: string[];
   campaign?: string;
   content?: string;
   className?: string;
@@ -28,6 +29,7 @@ export function WhatsAppCTA({
   variables,
   label = "WhatsApp",
   phone,
+  phoneNumbers,
   campaign = "cta",
   content,
   className,
@@ -36,13 +38,24 @@ export function WhatsAppCTA({
 }: WhatsAppCTAProps) {
   const defaultPhone = process.env.NEXT_PUBLIC_WHATSAPP_PHONE || "";
 
+  // Get the phone number to use (random selection happens on click)
+  const getPhoneNumber = () => {
+    // Prioritize phoneNumbers array for random selection
+    if (phoneNumbers && phoneNumbers.length > 0) {
+      return getRandomPhoneNumber(phoneNumbers);
+    }
+    // Fallback to single phone number
+    if (phone) return phone;
+    return defaultPhone;
+  };
+
   // Build a deterministic initial href for SSR and first client render
   const [href, setHref] = useState<string>(() => {
     const initialVariables = {
       ...variables,
       url: "",
     };
-    return buildWhatsAppUrl(phone || defaultPhone, template, initialVariables, {
+    return buildWhatsAppUrl(getPhoneNumber(), template, initialVariables, {
       utm: {
         source: "site",
         medium: "whatsapp",
@@ -53,7 +66,7 @@ export function WhatsAppCTA({
     });
   });
 
-  // After mount, enhance with real page URL, persisted UTM params, and random phone number
+  // After mount, enhance with real page URL, persisted UTM params
   useEffect(() => {
     const pageUrl =
       typeof window !== "undefined" ? window.location.href : undefined;
@@ -67,7 +80,7 @@ export function WhatsAppCTA({
     };
 
     const enhanced = buildWhatsAppUrl(
-      phone || defaultPhone,
+      getPhoneNumber(),
       template,
       enhancedVariables,
       {
@@ -83,10 +96,39 @@ export function WhatsAppCTA({
     setHref(enhanced);
     // We intentionally do not include variables object identity; assume caller passes stable object
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phone, defaultPhone, template, campaign, content]);
+  }, [phone, phoneNumbers, defaultPhone, template, campaign, content]);
 
   const handleClick = () => {
     try {
+      // Generate new URL with random phone number on each click
+      const pageUrl =
+        typeof window !== "undefined" ? window.location.href : undefined;
+      const persisted =
+        typeof window !== "undefined" ? getPersistedUtm() : undefined;
+
+      const enhancedVariables = {
+        ...variables,
+        url: pageUrl || "",
+      };
+
+      const newHref = buildWhatsAppUrl(
+        getPhoneNumber(),
+        template,
+        enhancedVariables,
+        {
+          utm: {
+            source: persisted?.utm_source || "site",
+            medium: persisted?.utm_medium || "whatsapp",
+            campaign: persisted?.utm_campaign || campaign,
+            content: persisted?.utm_content || content,
+          },
+          pageUrl,
+        }
+      );
+
+      // Update href for the link
+      setHref(newHref);
+
       // Basic tracking hook; GA4 integration will replace this (Task 5.3)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const w: any = window as unknown as any;

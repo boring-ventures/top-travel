@@ -5,6 +5,18 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/**
+ * Selects a random phone number from an array of phone numbers
+ * @param phoneNumbers - Array of phone numbers
+ * @returns A randomly selected phone number
+ */
+export function getRandomPhoneNumber(phoneNumbers: string[]): string {
+  if (!phoneNumbers || phoneNumbers.length === 0) {
+    return "";
+  }
+  return phoneNumbers[Math.floor(Math.random() * phoneNumbers.length)];
+}
+
 export function buildWhatsAppUrl(
   phone: string,
   template: string,

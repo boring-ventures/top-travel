@@ -17,23 +17,36 @@ export default async function QuinceaneraDestinationPage({
 }: QuinceaneraDestinationPageProps) {
   const { slug } = await params;
 
-  const destination = await prisma.quinceaneraDestination.findUnique({
-    where: { slug },
-    select: {
-      id: true,
-      slug: true,
-      name: true,
-      title: true,
-      summary: true,
-      description: true,
-      heroImageUrl: true,
-      gallery: true,
-      location: true,
-      isFeatured: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-  });
+  const [destination, quinceaneraTemplates] = await Promise.all([
+    prisma.quinceaneraDestination.findUnique({
+      where: { slug },
+      select: {
+        id: true,
+        slug: true,
+        name: true,
+        title: true,
+        summary: true,
+        description: true,
+        heroImageUrl: true,
+        gallery: true,
+        location: true,
+        isFeatured: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    }),
+    prisma.whatsAppTemplate.findMany({
+      where: { usageType: "QUINCEANERA" as any },
+      select: {
+        id: true,
+        name: true,
+        templateBody: true,
+        phoneNumber: true,
+        phoneNumbers: true,
+        isDefault: true,
+      },
+    }),
+  ]);
 
   if (!destination) {
     notFound();
@@ -147,7 +160,7 @@ export default async function QuinceaneraDestinationPage({
                               alt={`${destination.title} - Imagen ${index + 1}`}
                               fill
                               className="object-cover hover:scale-105 transition-transform duration-300"
-                              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                              sizes="(max-inline-size: 640px) 100vw, (max-inline-size: 1024px) 50vw, 33vw"
                             />
                           </div>
                         ))}
@@ -170,9 +183,30 @@ export default async function QuinceaneraDestinationPage({
                       </p>
 
                       <WhatsAppCTA
-                        template={`Hola! Me interesa conocer más sobre quinceañeras en {destination}. ¿Podrían darme más información?`}
+                        template={
+                          quinceaneraTemplates.find(
+                            (t) => t.name === "Quinceañera Consultation"
+                          )?.templateBody ||
+                          `Hola! Me interesa conocer más sobre quinceañeras en {destination}. ¿Podrían darme más información?`
+                        }
                         variables={{ destination: destination.name }}
                         label="Consultar Ahora"
+                        phone={(() => {
+                          const consultationTemplate =
+                            quinceaneraTemplates.find(
+                              (t) => t.name === "Quinceañera Consultation"
+                            );
+                          return (
+                            consultationTemplate?.phoneNumber || "+59177355906"
+                          );
+                        })()}
+                        phoneNumbers={(() => {
+                          const consultationTemplate =
+                            quinceaneraTemplates.find(
+                              (t) => t.name === "Quinceañera Consultation"
+                            );
+                          return consultationTemplate?.phoneNumbers || [];
+                        })()}
                         className="w-full"
                       />
                     </div>
@@ -223,9 +257,26 @@ export default async function QuinceaneraDestinationPage({
               quinceañera de ensueño en {destination.name}.
             </p>
             <WhatsAppCTA
-              template={`Hola! Quiero planificar mi quinceañera en {destination}. ¿Podrían ayudarme?`}
+              template={
+                quinceaneraTemplates.find(
+                  (t) => t.name === "Quinceañera Quote Request"
+                )?.templateBody ||
+                `Hola! Quiero planificar mi quinceañera en {destination}. ¿Podrían ayudarme?`
+              }
               variables={{ destination: destination.name }}
               label="Comenzar Planificación"
+              phone={(() => {
+                const quoteTemplate = quinceaneraTemplates.find(
+                  (t) => t.name === "Quinceañera Quote Request"
+                );
+                return quoteTemplate?.phoneNumber || "+59177355906";
+              })()}
+              phoneNumbers={(() => {
+                const quoteTemplate = quinceaneraTemplates.find(
+                  (t) => t.name === "Quinceañera Quote Request"
+                );
+                return quoteTemplate?.phoneNumbers || [];
+              })()}
               variant="secondary"
               size="lg"
               className="w-full max-w-sm mx-auto"

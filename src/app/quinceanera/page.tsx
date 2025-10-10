@@ -374,13 +374,16 @@ export default async function QuinceaneraPage() {
                             quinceaneraTemplates.find(
                               (t) => t.name === "Quinceañera Consultation"
                             );
-                          if (consultationTemplate?.phoneNumber) {
-                            return consultationTemplate.phoneNumber;
-                          }
-                          if (consultationTemplate?.phoneNumbers?.[0]) {
-                            return consultationTemplate.phoneNumbers[0];
-                          }
-                          return "+59169671000";
+                          return (
+                            consultationTemplate?.phoneNumber || "+59177355906"
+                          );
+                        })()}
+                        phoneNumbers={(() => {
+                          const consultationTemplate =
+                            quinceaneraTemplates.find(
+                              (t) => t.name === "Quinceañera Consultation"
+                            );
+                          return consultationTemplate?.phoneNumbers || [];
                         })()}
                         size="lg"
                         className="h-12 px-6 bg-[#e03d90] hover:bg-[#c8327a] text-white border-0 font-semibold rounded-lg"
@@ -759,13 +762,13 @@ export default async function QuinceaneraPage() {
                     const quoteTemplate = quinceaneraTemplates.find(
                       (t) => t.name === "Quinceañera Quote Request"
                     );
-                    if (quoteTemplate?.phoneNumber) {
-                      return quoteTemplate.phoneNumber;
-                    }
-                    if (quoteTemplate?.phoneNumbers?.[0]) {
-                      return quoteTemplate.phoneNumbers[0];
-                    }
-                    return "+59169671000";
+                    return quoteTemplate?.phoneNumber || "+59177355906";
+                  })()}
+                  phoneNumbers={(() => {
+                    const quoteTemplate = quinceaneraTemplates.find(
+                      (t) => t.name === "Quinceañera Quote Request"
+                    );
+                    return quoteTemplate?.phoneNumbers || [];
                   })()}
                   size="lg"
                   className="h-14 px-8 bg-[#e03d90] hover:bg-[#c8327a] text-white border-0 text-lg font-semibold rounded-xl"
@@ -779,23 +782,8 @@ export default async function QuinceaneraPage() {
       <Footer />
       <PinkWhatsAppCTA
         variant="quinceanera"
-        whatsappTemplate={
-          quinceaneraTemplates.find(
-            (t) => t.name === "Quinceañera Consultation"
-          ) || quinceaneraTemplates.find((t) => t.isDefault)
-        }
-        phone={(() => {
-          const consultationTemplate = quinceaneraTemplates.find(
-            (t) => t.name === "Quinceañera Consultation"
-          );
-          if (consultationTemplate?.phoneNumber) {
-            return consultationTemplate.phoneNumber;
-          }
-          if (consultationTemplate?.phoneNumbers?.[0]) {
-            return consultationTemplate.phoneNumbers[0];
-          }
-          return "+59169671000";
-        })()}
+        whatsappTemplate={undefined}
+        phone="+59169671000"
       />
     </div>
   );

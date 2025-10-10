@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { ClientWhatsAppCTA } from "@/components/utils/client-whatsapp-cta";
+import WhatsAppCTA from "@/components/utils/whatsapp-cta";
 import { getWhatsAppTemplateByUsage } from "@/lib/whatsapp-utils";
 
 interface EventPageProps {
@@ -318,17 +318,7 @@ export default async function EventPage({ params }: EventPageProps) {
                         Contáctanos por WhatsApp para obtener más información
                         sobre este evento.
                       </p>
-                      <ClientWhatsAppCTA
-                        whatsappTemplate={
-                          whatsappTemplate
-                            ? {
-                                templateBody: whatsappTemplate.templateBody,
-                                phoneNumber: whatsappTemplate.phoneNumber,
-                                phoneNumbers: whatsappTemplate.phoneNumbers,
-                              }
-                            : undefined
-                        }
-                        label="Consultar por WhatsApp"
+                      <WhatsAppCTA
                         template={
                           whatsappTemplate?.templateBody ||
                           `Hola! Me interesa el evento "${event.title}". ¿Podrían darme más información?`
@@ -340,9 +330,11 @@ export default async function EventPage({ params }: EventPageProps) {
                           artistOrEvent: event.artistOrEvent || "",
                           venue: event.venue || "",
                         }}
+                        label="Consultar por WhatsApp"
+                        phone={whatsappTemplate?.phoneNumber || "+59177355906"}
+                        phoneNumbers={whatsappTemplate?.phoneNumbers || []}
                         campaign="event_detail"
                         content={event.slug}
-                        size="default"
                         className="w-full"
                       />
                     </div>
