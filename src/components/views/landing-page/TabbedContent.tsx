@@ -47,18 +47,33 @@ type TabbedContentProps = {
   tabs: TabItem[];
   activeTab?: string;
   showViewAllButton?: boolean;
+  customColors?: {
+    primary?: string;
+    primaryHover?: string;
+    primaryText?: string;
+    primaryHoverText?: string;
+  };
 };
 
 export default function TabbedContent({
   tabs,
   activeTab,
   showViewAllButton = true,
+  customColors,
 }: TabbedContentProps) {
   const [currentTab, setCurrentTab] = useState("");
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Color configuration
+  const colors = {
+    primary: customColors?.primary || "corporate-blue",
+    primaryHover: customColors?.primaryHover || "corporate-blue/90",
+    primaryText: customColors?.primaryText || "corporate-blue",
+    primaryHoverText: customColors?.primaryHoverText || "corporate-blue/10",
+  };
 
   // Función para obtener el icono apropiado para cada tab
   const getTabIcon = (tabId: string) => {
@@ -150,24 +165,26 @@ export default function TabbedContent({
   return (
     <div>
       {/* Tab Navigation */}
-      <div className="flex justify-center mb-12">
+      <div className="flex justify-center mb-12 px-4">
         {/* Filter Tabs with Glassmorphism Design */}
-        <div className="bg-white/80 backdrop-blur-sm border border-black/20 rounded-2xl p-2 shadow-lg">
-          <div className="flex space-x-1 overflow-x-auto scrollbar-hide">
+        <div className="bg-white/80 backdrop-blur-sm border border-black/20 rounded-2xl p-2 md:p-2 shadow-lg w-full max-w-2xl md:w-auto md:max-w-none">
+          <div className="grid grid-cols-2 md:flex md:space-x-2 md:overflow-x-auto md:scrollbar-hide">
             {tabs.map((tab) => {
               const IconComponent = getTabIcon(tab.id);
               return (
                 <button
                   key={tab.id}
                   onClick={() => setCurrentTab(tab.id)}
-                  className={`px-4 sm:px-6 py-2 rounded-xl transition-all duration-200 font-medium flex items-center whitespace-nowrap flex-shrink-0 ${
+                  className={`px-3 py-2 md:px-6 md:py-3 rounded-lg md:rounded-xl transition-all duration-200 font-medium flex items-center justify-center whitespace-nowrap flex-shrink-0 ${
                     currentTab === tab.id
-                      ? "bg-corporate-blue text-white shadow-lg"
-                      : "hover:bg-corporate-blue/10 text-corporate-blue"
+                      ? `bg-${colors.primary} text-white shadow-lg`
+                      : `hover:bg-${colors.primaryHoverText} text-${colors.primaryText}`
                   }`}
                 >
-                  <IconComponent className="h-4 w-4 mr-1 sm:mr-2" />
-                  <span className="text-sm sm:text-base">{tab.label}</span>
+                  <IconComponent className="h-4 w-4 md:h-5 md:w-5 mr-2 md:mr-3" />
+                  <span className="text-sm md:text-base font-medium">
+                    {tab.label}
+                  </span>
                 </button>
               );
             })}
@@ -241,7 +258,7 @@ export default function TabbedContent({
       {showViewAllButton && (
         <div className="mt-12 text-center">
           <Link
-            className="bg-corporate-blue text-white px-8 py-4 rounded-full hover:bg-corporate-blue/80 transition-colors duration-300 inline-flex items-center gap-2 text-lg font-semibold"
+            className={`bg-${colors.primary} text-white px-8 py-4 rounded-full hover:bg-${colors.primaryHover} transition-colors duration-300 inline-flex items-center gap-2 text-lg font-semibold`}
             href={currentTabData?.href || "/packages"}
           >
             Ver Todos

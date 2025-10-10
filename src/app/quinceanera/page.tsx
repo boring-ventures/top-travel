@@ -109,14 +109,8 @@ export default async function QuinceaneraPage() {
             title="Tu quinceañera perfecta"
             subtitle="en el destino de tus sueños"
             description="Transforma tu celebración de 15 años en una experiencia mágica que combina tradición, aventura y momentos inolvidables. Nosotros nos encargamos de todos los detalles para que tú solo te preocupes por brillar."
-            animatedWords={[
-              "Mágica",
-              "Única",
-              "Perfecta",
-              "Inolvidable",
-              "Especial",
-            ]}
-            backgroundImage="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1920&q=80"
+            animatedWords={["Mágica", "Única", "Perfecta"]}
+            backgroundImage="/images/hero/quince.webp"
             animatedWordColor="text-[#e03d90]"
             accentColor="bg-[#e03d90]"
           />
@@ -333,7 +327,7 @@ export default async function QuinceaneraPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 items-stretch">
               {quinceaneraDestinations.length === 0 ? (
                 <div className="col-span-full text-center py-12">
                   <div className="bg-white p-8 rounded-lg shadow-sm">
@@ -353,7 +347,7 @@ export default async function QuinceaneraPage() {
                     key={dest.id}
                     className="overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full"
                   >
-                    <div className="relative h-48">
+                    <div className="relative h-48 w-full">
                       {dest.heroImageUrl ? (
                         <Image
                           src={dest.heroImageUrl}
@@ -371,7 +365,7 @@ export default async function QuinceaneraPage() {
                       <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-2">
                         {dest.title || dest.name}
                       </h3>
-                      <p className="text-sm md:text-base text-gray-600 mb-4 line-clamp-3 flex-grow">
+                      <p className="text-sm md:text-base text-gray-600 mb-4">
                         {dest.summary ||
                           dest.description ||
                           "Destino perfecto para tu quinceañera de ensueño"}

@@ -282,13 +282,13 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
         {/* Hero Section */}
         <section className="relative">
           <AnimatedHero
-            title="Descubre los mejores"
+            title="Vive los mejores"
             subtitle="del mundo"
-            description="Conciertos, festivales y eventos únicos que crean experiencias inolvidables. Desde música en vivo hasta festivales internacionales."
-            animatedWords={["Eventos", "Conciertos", "Festivales", "Momentos"]}
-            backgroundImage="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=1920&q=80"
-            animatedWordColor="text-white"
-            accentColor="bg-white"
+            description="Conciertos épicos, festivales internacionales y eventos únicos que crearán recuerdos inolvidables. ¡La música y la diversión te esperan!"
+            animatedWords={["Eventos", "Conciertos", "Festivales"]}
+            backgroundImage="/images/hero/events.jpg"
+            animatedWordColor="text-red-600"
+            accentColor="bg-red-600"
           />
         </section>
 
@@ -459,7 +459,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
                               fill
                               className="object-cover transition-transform duration-300 group-hover:scale-105"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent p-6 flex flex-col justify-start">
+                            <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent p-6 flex flex-col justify-start">
                               <div>
                                 <h2 className="text-white text-xl font-semibold uppercase">
                                   {event.title}
@@ -469,7 +469,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
                                 </p>
                               </div>
                             </div>
-                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
+                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/40 to-transparent p-6">
                               <div className="flex justify-between items-center">
                                 <p className="text-white text-lg font-bold">
                                   {formatDate(event.startDate)}

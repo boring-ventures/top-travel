@@ -73,20 +73,6 @@ const allActions = [
     description: "Grupos organizados",
     href: "/fixed-departures",
   },
-  {
-    id: "5",
-    label: "Testimonios",
-    icon: <Star className="h-4 w-4 text-yellow-500" />,
-    description: "Experiencias reales",
-    href: "/testimonials",
-  },
-  {
-    id: "6",
-    label: "Blog de Viajes",
-    icon: <Camera className="h-4 w-4 text-pink-500" />,
-    description: "Consejos y guías",
-    href: "/blog",
-  },
 ];
 
 function ActionSearchBar({
@@ -206,10 +192,15 @@ function ActionSearchBar({
   return (
     <div className={`!w-full ${className}`}>
       <div className="relative flex flex-col justify-start items-center">
-        <div className="!w-full sticky top-0 z-10">
+        <div
+          className="!w-full sticky top-0 z-30 bg-white/55 border border-gray-200/30 rounded-[3rem] shadow-2xl"
+          style={{
+            backdropFilter: "blur(24px)",
+            WebkitBackdropFilter: "blur(24px)",
+            isolation: "isolate",
+          }}
+        >
           <div className="relative">
-            {/* Background overlay for better blur visibility */}
-            <div className="absolute inset-0 bg-black/20 rounded-[3rem] backdrop-blur-2xl"></div>
             <form onSubmit={handleSubmit} className="!w-full relative z-10">
               <Input
                 type="text"
@@ -218,7 +209,7 @@ function ActionSearchBar({
                 onChange={handleInputChange}
                 onFocus={handleFocus}
                 onBlur={() => setTimeout(() => setIsFocused(false), 200)}
-                className="!w-full pl-8 pr-16 py-4 h-16 text-xl rounded-[3rem] focus-visible:ring-offset-0 bg-transparent border-white/30 text-white placeholder:text-white/70 focus:border-white/50 focus:ring-2 focus:ring-white/20 shadow-2xl transition-all duration-300"
+                className="!w-full pl-8 pr-16 py-4 h-16 text-xl rounded-[3rem] focus-visible:ring-offset-0 bg-transparent border-0 text-gray-900 placeholder:text-gray-600 focus:border-corporate-blue focus:ring-2 focus:ring-corporate-blue/20 transition-all duration-300"
                 style={{ inlineSize: "100%" }}
               />
             </form>
@@ -232,7 +223,7 @@ function ActionSearchBar({
                     exit={{ y: 20, opacity: 0 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <Send className="w-6 h-6 text-white" />
+                    <Send className="w-6 h-6 text-corporate-blue" />
                   </motion.div>
                 ) : (
                   <motion.div
@@ -242,7 +233,7 @@ function ActionSearchBar({
                     exit={{ y: 20, opacity: 0 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <Search className="w-6 h-6 text-white" />
+                    <Search className="w-6 h-6 text-gray-600" />
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -254,7 +245,11 @@ function ActionSearchBar({
           <AnimatePresence>
             {isFocused && result && !selectedAction && (
               <motion.div
-                className="w-full border rounded-[3rem] shadow-2xl overflow-hidden bg-black/20 backdrop-blur-2xl border-white/30 mt-2"
+                className="w-full border rounded-[3rem] shadow-2xl overflow-hidden bg-white/90 border-gray-200/30 mt-2 relative z-30"
+                style={{
+                  backdropFilter: "blur(24px)",
+                  WebkitBackdropFilter: "blur(24px)",
+                }}
                 variants={container}
                 initial="hidden"
                 animate="show"
@@ -264,25 +259,25 @@ function ActionSearchBar({
                   {result.actions.map((action) => (
                     <motion.li
                       key={action.id}
-                      className="px-6 py-4 flex items-center hover:bg-white/20 cursor-pointer transition-all duration-300 rounded-2xl mx-2 my-1"
+                      className="px-6 py-4 flex items-center hover:bg-corporate-blue/10 cursor-pointer transition-all duration-300 rounded-2xl mx-2 my-1"
                       variants={item}
                       layout
                       onClick={() => handleActionClick(action)}
                     >
                       <div className="flex items-center gap-3">
-                        <span className="text-white/80">{action.icon}</span>
-                        <span className="text-lg font-semibold text-white">
+                        <span className="text-gray-700">{action.icon}</span>
+                        <span className="text-lg font-semibold text-gray-900">
                           {action.label}
                         </span>
-                        <span className="text-base text-white/70">
+                        <span className="text-base text-gray-600">
                           {action.description}
                         </span>
                       </div>
                     </motion.li>
                   ))}
                 </motion.ul>
-                <div className="px-6 py-4 border-t border-white/20 bg-black/10">
-                  <div className="flex items-center justify-between text-sm text-white/60">
+                <div className="px-6 py-4 border-t border-gray-200/30 bg-gray-50/50">
+                  <div className="flex items-center justify-between text-sm text-gray-600">
                     <span>Presiona Enter para buscar</span>
                     <span>ESC para cancelar</span>
                   </div>

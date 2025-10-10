@@ -281,30 +281,13 @@ export default async function DestinationsPage({
       })),
     },
     {
-      id: "events",
-      label: "Conciertos & Eventos",
-      href: "/events",
-      items: featuredEvents.map((event) => ({
-        id: event.id,
-        title: event.title,
-        description: event.artistOrEvent || null,
-        imageUrl: getValidImageUrl(event.heroImageUrl, FALLBACK_IMAGES.events),
-        href: `/events/${event.slug}`,
-        location: event.destination
-          ? `${event.destination.city}, ${event.destination.country}`
-          : "Ubicación por confirmar",
-        amenities: event.amenities || [],
-        exclusions: event.exclusions || [],
-      })),
-    },
-    {
       id: "fixed-departures",
       label: "Salidas Fijas",
       href: "/fixed-departures",
       items: fixedDepartures.map((dep) => ({
         id: dep.id,
         title: dep.title,
-        description: null,
+        description: "",
         imageUrl: getValidImageUrl(dep.heroImageUrl, FALLBACK_IMAGES.mountains),
         href: `/fixed-departures/${dep.slug}`,
         location: "Bolivia",
@@ -325,19 +308,13 @@ export default async function DestinationsPage({
         {/* Hero Section */}
         <section className="relative">
           <AnimatedHero
-            title="Descubre nuestros"
-            subtitle="de viaje"
-            description="Destinos increíbles, eventos únicos y experiencias inolvidables que se adaptan a tus sueños de viaje."
-            animatedWords={[
-              "Destinos",
-              "Aventuras",
-              "Experiencias",
-              "Sueños",
-              "Momentos",
-            ]}
-            backgroundImage="https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1920&q=80"
-            animatedWordColor="text-wine"
-            accentColor="bg-wine"
+            title="Explora los mejores"
+            subtitle="del mundo"
+            description="Descubre ciudades fascinantes, paisajes espectaculares y culturas únicas. Cada destino tiene su propia magia esperándote."
+            animatedWords={["Destinos", "Lugares", "Ciudades"]}
+            backgroundImage="/images/hero/destinations.jpg"
+            animatedWordColor="text-[#d64f39]"
+            accentColor="bg-[#d64f39]"
           />
         </section>
 
@@ -395,7 +372,7 @@ export default async function DestinationsPage({
                 <div>
                   <Button
                     type="submit"
-                    className="h-12 w-full bg-black text-white hover:bg-gray-800 transition-colors duration-200 font-medium rounded-xl"
+                    className="h-12 w-full bg-[#d64f39] text-white hover:bg-[#c2410c] transition-colors duration-200 font-medium rounded-xl"
                   >
                     Buscar Destinos »
                   </Button>
@@ -500,7 +477,7 @@ export default async function DestinationsPage({
                               fill
                               className="object-cover transition-transform duration-300 group-hover:scale-105"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent p-6 flex flex-col justify-start">
+                            <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent p-6 flex flex-col justify-start">
                               <div>
                                 <h2 className="text-white text-xl font-semibold uppercase">
                                   {getLocationText(destination)}
@@ -512,7 +489,7 @@ export default async function DestinationsPage({
                                 )}
                               </div>
                             </div>
-                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
+                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/40 to-transparent p-6">
                               <div className="flex justify-between items-center">
                                 <p className="text-white text-lg font-bold">
                                   Explorar destino
@@ -535,7 +512,16 @@ export default async function DestinationsPage({
           /* Tabbed Content Section */
           <section className="py-12 w-full bg-white">
             <div className="container mx-auto px-4">
-              <TabbedContent tabs={tabbedContent} showViewAllButton={false} />
+              <TabbedContent
+                tabs={tabbedContent}
+                showViewAllButton={false}
+                customColors={{
+                  primary: "[#d64f39]",
+                  primaryHover: "[#c2410c]",
+                  primaryText: "[#d64f39]",
+                  primaryHoverText: "[#d64f39]/10",
+                }}
+              />
             </div>
           </section>
         )}

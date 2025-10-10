@@ -48,11 +48,11 @@ export default function WeddingDestinations({
           </h1>
         </div>
 
-        <div className="flex overflow-x-auto scrollbar-hide gap-6 pb-4">
+        <div className="flex flex-wrap justify-center gap-6">
           {destinations.map((destination) => (
             <div
               key={destination.id}
-              className="relative overflow-hidden rounded-2xl group flex-shrink-0 w-80"
+              className="relative overflow-hidden rounded-2xl group w-full max-w-sm md:w-80"
             >
               <div className="relative h-80 sm:h-96">
                 {destination.heroImageUrl ? (

@@ -13,12 +13,16 @@ interface TextLogoProps {
     | "yellow"
     | "black"
     | "gold";
+  gabyColor?: string;
+  topTravelColor?: string;
 }
 
 export function TextLogo({
   className,
   size = "md",
   variant = "light",
+  gabyColor,
+  topTravelColor,
 }: TextLogoProps) {
   const sizeClasses = {
     sm: "text-xs",
@@ -49,7 +53,7 @@ export function TextLogo({
         className={cn(
           "font-['HomepageBaukasten-Bold'] leading-none tracking-wide",
           size === "sm" ? "text-lg" : size === "md" ? "text-xl" : "text-2xl",
-          variantClasses[variant]
+          gabyColor ? "" : variantClasses[variant]
         )}
         style={{
           textRendering: "optimizeLegibility",
@@ -57,6 +61,7 @@ export function TextLogo({
           MozOsxFontSmoothing: "grayscale",
           fontWeight: "900",
           textShadow: "0 0 0.5px currentColor",
+          color: gabyColor || undefined,
         }}
       >
         GABY
@@ -65,7 +70,7 @@ export function TextLogo({
         className={cn(
           "font-['BlarneyRegular'] leading-none -mt-0.5 tracking-wide relative",
           topTravelSizeClasses[size],
-          variantClasses[variant]
+          topTravelColor ? "" : variantClasses[variant]
         )}
         style={{
           textRendering: "optimizeLegibility",
@@ -73,6 +78,7 @@ export function TextLogo({
           MozOsxFontSmoothing: "grayscale",
           fontWeight: "bold",
           textShadow: "0 0 0.5px currentColor, 0 0 1px currentColor",
+          color: topTravelColor || undefined,
         }}
       >
         Top Travel

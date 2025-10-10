@@ -289,19 +289,13 @@ export default async function OffersPage({ searchParams }: OffersPageProps) {
         {/* Hero Section */}
         <section className="relative">
           <AnimatedHero
-            title="Descubre nuestras"
-            subtitle="especiales"
-            description="Ofertas únicas y promociones exclusivas en paquetes de viaje, eventos y experiencias que no te puedes perder."
-            animatedWords={[
-              "Ofertas",
-              "Promociones",
-              "Descuentos",
-              "Oportunidades",
-              "Ahorros",
-            ]}
-            backgroundImage="https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1920&q=80"
-            animatedWordColor="text-orange-600"
-            accentColor="bg-orange-600"
+            title="Aprovecha nuestras"
+            subtitle="exclusivas"
+            description="Ofertas limitadas en paquetes de viaje, eventos especiales y experiencias únicas. ¡No dejes pasar estas oportunidades increíbles!"
+            animatedWords={["Ofertas", "Promociones", "Descuentos"]}
+            backgroundImage="/images/hero/offers.jpg"
+            animatedWordColor="text-white"
+            accentColor="bg-blue-900"
           />
         </section>
 
@@ -383,7 +377,7 @@ export default async function OffersPage({ searchParams }: OffersPageProps) {
                 <div>
                   <Button
                     type="submit"
-                    className="h-12 w-full bg-orange-600 text-white hover:bg-orange-700 transition-colors duration-200 font-medium rounded-xl"
+                    className="h-12 w-full bg-blue-900 text-white hover:bg-blue-950 transition-colors duration-200 font-medium rounded-xl"
                   >
                     Buscar Ofertas »
                   </Button>
@@ -494,7 +488,7 @@ export default async function OffersPage({ searchParams }: OffersPageProps) {
                               fill
                               className="object-cover transition-transform duration-300 group-hover:scale-105"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent p-6 flex flex-col justify-start">
+                            <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent p-6 flex flex-col justify-start">
                               <div>
                                 <h2 className="text-white text-xl font-semibold uppercase">
                                   {offer.title}
@@ -506,7 +500,7 @@ export default async function OffersPage({ searchParams }: OffersPageProps) {
                                 )}
                               </div>
                             </div>
-                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
+                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/40 to-transparent p-6">
                               <div className="flex justify-between items-center">
                                 <p className="text-white text-lg font-bold">
                                   {formatPrice(offer)}

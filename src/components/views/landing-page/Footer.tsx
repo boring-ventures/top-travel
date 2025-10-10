@@ -187,6 +187,19 @@ export default function Footer() {
                     </a>
                   </div>
                 </div>
+                <div className="flex items-start gap-3">
+                  <MapPin className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <a
+                      href="https://maps.app.goo.gl/hAZKKtJAbr8nRC2e6"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-300 hover:text-white text-xs font-medium transition-colors"
+                    >
+                      Oruro - Centro
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

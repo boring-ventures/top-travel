@@ -107,14 +107,9 @@ export default async function WeddingsPage() {
             title="Tu boda de ensueño"
             subtitle="en el destino perfecto"
             description="Transforma tu día especial en una experiencia única que combina romance, aventura y momentos inolvidables. Nosotros nos encargamos de todos los detalles para que tú solo te preocupes por disfrutar."
-            animatedWords={[
-              "Romántica",
-              "Mágica",
-              "Perfecta",
-              "Inolvidable",
-              "Soñada",
-            ]}
-            backgroundImage="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1920&q=80"
+            animatedWords={["Romántica", "Mágica", "Perfecta"]}
+            //use the image in images/hero/wedding.jpg
+            backgroundImage="/images/hero/wedding.jpg"
             animatedWordColor="text-[#eaa298]"
             accentColor="bg-[#eaa298]"
           />

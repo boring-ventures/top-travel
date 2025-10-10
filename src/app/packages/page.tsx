@@ -258,19 +258,13 @@ export default async function PackagesPage({
         {/* Hero Section */}
         <section className="relative">
           <AnimatedHero
-            title="Descubre nuestros"
-            subtitle="de viaje"
-            description="Paquetes predefinidos y personalizados para crear experiencias únicas que se adaptan a tus sueños de viaje."
-            animatedWords={[
-              "Paquetes",
-              "Aventuras",
-              "Experiencias",
-              "Sueños",
-              "Momentos",
-            ]}
+            title="Diseña tu"
+            subtitle="perfecto"
+            description="Paquetes personalizados y experiencias únicas diseñadas especialmente para ti. Desde aventuras emocionantes hasta escapadas relajantes."
+            animatedWords={["Paquete", "Viaje", "Aventura"]}
             backgroundImage="https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1920&q=80"
-            animatedWordColor="text-wine"
-            accentColor="bg-wine"
+            animatedWordColor="text-[#d64f39]"
+            accentColor="bg-[#d64f39]"
           />
         </section>
 
@@ -351,7 +345,7 @@ export default async function PackagesPage({
                 <div>
                   <Button
                     type="submit"
-                    className="h-12 w-full bg-black text-white hover:bg-gray-800 transition-colors duration-200 font-medium rounded-xl"
+                    className="h-12 w-full bg-[#d64f39] text-white hover:bg-[#c2410c] transition-colors duration-200 font-medium rounded-xl"
                   >
                     Buscar Paquetes »
                   </Button>
@@ -433,7 +427,7 @@ export default async function PackagesPage({
                               fill
                               className="object-cover transition-transform duration-300 group-hover:scale-105"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent p-6 flex flex-col justify-start">
+                            <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent p-6 flex flex-col justify-start">
                               <div>
                                 <h2 className="text-white text-xl font-semibold uppercase">
                                   {p.title}
@@ -448,7 +442,7 @@ export default async function PackagesPage({
                                 </p>
                               </div>
                             </div>
-                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
+                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/40 to-transparent p-6">
                               <div className="flex justify-between items-center">
                                 <p className="text-white text-lg font-bold">
                                   {p.fromPrice

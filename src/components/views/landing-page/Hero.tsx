@@ -209,36 +209,8 @@ export default function Hero({ items = [], tags = [] }: HeroProps) {
   const featured = items[0];
   const { ref: metricsRef, inView } = useInView(0.1);
 
-  // Use a simple gradient background as fallback instead of external images
-  const fallbackBackgrounds: { src: string; title: string }[] = [
-    {
-      src: "/api/placeholder/1600/900",
-      title: "Travel destination",
-    },
-  ];
-  const [defaultBackgroundSrc, setDefaultBackgroundSrc] = useState(
-    fallbackBackgrounds[0].src
-  );
-
-  // Set month-based background on client side only
-  useEffect(() => {
-    const monthIndex = new Date().getMonth() % fallbackBackgrounds.length;
-    setDefaultBackgroundSrc(fallbackBackgrounds[monthIndex].src);
-  }, []);
-
-  const heroBackgroundSrc =
-    featured?.src && isValidImageUrl(featured.src)
-      ? featured.src
-      : defaultBackgroundSrc;
-  const [backgroundSrc, setBackgroundSrc] = useState<string>(heroBackgroundSrc);
-
-  useEffect(() => {
-    const validSrc =
-      heroBackgroundSrc && isValidImageUrl(heroBackgroundSrc)
-        ? heroBackgroundSrc
-        : defaultBackgroundSrc;
-    setBackgroundSrc(validSrc);
-  }, [heroBackgroundSrc, defaultBackgroundSrc]);
+  // Use fixed home hero image
+  const backgroundSrc = "/images/hero/home.jpg";
 
   const isVideo = useMemo(() => {
     if (!backgroundSrc) return false;
@@ -360,27 +332,28 @@ export default function Hero({ items = [], tags = [] }: HeroProps) {
               loop
               playsInline
               preload="metadata"
-              aria-label={featured?.title || "Hero background"}
-              onError={() => setBackgroundSrc(defaultBackgroundSrc)}
+              aria-label="GABY Top Travel - Tu viaje soñado empieza aquí"
+              onError={() => console.error("Error loading hero image")}
             >
               <source src={backgroundSrc} />
             </video>
           ) : (
             <Image
               src={backgroundSrc}
-              alt={featured?.title || "Hero"}
+              alt="GABY Top Travel - Tu viaje soñado empieza aquí"
               fill
               priority
               className="object-cover"
               sizes="100vw"
-              onError={() => setBackgroundSrc(defaultBackgroundSrc)}
+              onError={() => console.error("Error loading hero image")}
             />
           )
         ) : (
           <div className="absolute inset-0 bg-muted" />
         )}
         {/* Overlays for readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/40 to-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-br from-black/30 via-black/50 to-black/50" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
       </div>
 
       {/* Foreground content */}

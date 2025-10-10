@@ -73,7 +73,7 @@ export function HeroSection({
         fallbackGradient={fallbackGradient}
         priority={true}
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/40 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-background/30 to-transparent" />
 
       {/* Back Button */}
       <div className="absolute top-6 left-6 z-10">
@@ -162,4 +162,3 @@ export function HeroSection({
     </section>
   );
 }
-

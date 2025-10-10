@@ -174,7 +174,7 @@ export const SignInPage: React.FC<SignInPageProps> = ({
           {/* Logo centrado sobre la imagen */}
           <div className="absolute inset-0 flex items-center justify-center">
             <img
-              src="/logos/iso_blue.svg"
+              src="/logos/logo.svg"
               alt="Top Travel Logo"
               className="h-40 w-auto opacity-95 animate-fade-in drop-shadow-lg"
             />

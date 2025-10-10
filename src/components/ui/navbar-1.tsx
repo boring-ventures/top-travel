@@ -50,18 +50,30 @@ const Navbar1 = () => {
   const isWeddingsHeaderPage =
     pathname === "/weddings" || pathname.startsWith("/wedding-destinations");
 
+  // Página de inicio (homepage)
+  const isHomePage = pathname === "/";
+
+  // Páginas específicas con colores únicos
+  const isEventsPage =
+    pathname === "/events" || pathname.startsWith("/events/");
+  const isOffersPage =
+    pathname === "/offers" || pathname.startsWith("/offers/");
+  const isDestinationsPage =
+    pathname === "/destinations" || pathname.startsWith("/destinations/");
+  const isPackagesPage =
+    pathname === "/packages" || pathname.startsWith("/packages/");
+  const isAboutPage = pathname === "/about" || pathname.startsWith("/about/");
+  const isContactPage =
+    pathname === "/contact" || pathname.startsWith("/contact/");
+
   const toggleMenu = () => setIsOpen(!isOpen);
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50 flex justify-center w-full pt-4 pb-4 px-4">
       <div
         className={cn(
-          "flex items-center justify-between px-6 py-3 rounded-[3rem] shadow-2xl w-full max-w-5xl relative z-10 backdrop-blur-2xl border",
-          isPinkHeaderPage
-            ? "border-pink-200/30 bg-pink-50/20"
-            : isWeddingsHeaderPage
-              ? "border-pink-200/30 bg-pink-50/20"
-              : "bg-white/60 border-gray-200/30"
+          "flex items-center border-gray-200/30 justify-between px-6 py-3 rounded-[3rem] shadow-2xl w-full max-w-5xl relative z-10 backdrop-blur-xl border",
+          isWeddingsHeaderPage ? "bg-white/30" : "bg-white/55"
         )}
       >
         {/* Logo Section */}
@@ -79,7 +91,7 @@ const Navbar1 = () => {
                   ? "/logos/quinceanera_logo.svg"
                   : isWeddingsHeaderPage
                     ? "/logos/bodas_logo.svg"
-                    : "/logos/iso_blue.svg"
+                    : "/logos/logo.svg"
               }
               alt="Logo"
               width={44}
@@ -93,6 +105,14 @@ const Navbar1 = () => {
                   : isWeddingsHeaderPage
                     ? "gold"
                     : "dark"
+              }
+              gabyColor="#1e496e"
+              topTravelColor={
+                isPinkHeaderPage
+                  ? "#e03d90"
+                  : isWeddingsHeaderPage
+                    ? "#eaa298"
+                    : "#d64f39"
               }
               size="md"
               className="transition-all duration-300 ease-out"
@@ -118,7 +138,21 @@ const Navbar1 = () => {
                     ? "text-[#e03d90] hover:opacity-80"
                     : isWeddingsHeaderPage
                       ? "text-[#eaa298] hover:text-[#eaa298]/80"
-                      : "text-[#d64f39] hover:text-[#d64f39]/80"
+                      : isHomePage
+                        ? "text-corporate-blue hover:text-corporate-blue/80"
+                        : isEventsPage
+                          ? "text-red-600 hover:text-red-600/80"
+                          : isOffersPage
+                            ? "text-[#1e3a8a] hover:text-[#1e3a8a]/80"
+                            : isDestinationsPage
+                              ? "text-[#d64f39] hover:text-[#d64f39]/80"
+                              : isPackagesPage
+                                ? "text-[#d64f39] hover:text-[#d64f39]/80"
+                                : isAboutPage
+                                  ? "text-corporate-blue hover:text-corporate-blue/80"
+                                  : isContactPage
+                                    ? "text-corporate-blue hover:text-corporate-blue/80"
+                                    : "text-[#1e3a8a] hover:text-[#1e3a8a]/80"
                 )}
               >
                 {item.label}
@@ -129,7 +163,21 @@ const Navbar1 = () => {
                       ? "bg-[#e03d90]"
                       : isWeddingsHeaderPage
                         ? "bg-[#eaa298]"
-                        : "bg-[#d64f39]"
+                        : isHomePage
+                          ? "bg-corporate-blue"
+                          : isEventsPage
+                            ? "bg-red-600"
+                            : isOffersPage
+                              ? "bg-[#1e3a8a]"
+                              : isDestinationsPage
+                                ? "bg-[#d64f39]"
+                                : isPackagesPage
+                                  ? "bg-[#d64f39]"
+                                  : isAboutPage
+                                    ? "bg-corporate-blue"
+                                    : isContactPage
+                                      ? "bg-corporate-blue"
+                                      : "bg-[#1e3a8a]"
                   )}
                 />
               </Link>
@@ -185,7 +233,24 @@ const Navbar1 = () => {
             <Button
               asChild
               size="sm"
-              className="rounded-full transition-all duration-300 hover:scale-105 bg-[#d64f39] text-white hover:bg-[#d64f39]/90 shadow-red-200/50"
+              className={cn(
+                "rounded-full transition-all duration-300 hover:scale-105 text-white shadow-red-200/50",
+                isHomePage
+                  ? "bg-corporate-blue hover:bg-corporate-blue/90"
+                  : isEventsPage
+                    ? "bg-red-600 hover:bg-red-600/90"
+                    : isOffersPage
+                      ? "bg-[#1e3a8a] hover:bg-[#1e3a8a]/90"
+                      : isDestinationsPage
+                        ? "bg-[#d64f39] hover:bg-[#c2410c]"
+                        : isPackagesPage
+                          ? "bg-[#d64f39] hover:bg-[#c2410c]"
+                          : isAboutPage
+                            ? "bg-corporate-blue hover:bg-corporate-blue/90"
+                            : isContactPage
+                              ? "bg-corporate-blue hover:bg-corporate-blue/90"
+                              : "bg-[#1e3a8a] hover:bg-[#1e3a8a]/90"
+              )}
             >
               <Link href="/sign-in">Sign In</Link>
             </Button>
@@ -210,7 +275,7 @@ const Navbar1 = () => {
                 ? "text-[#e03d90]"
                 : isWeddingsHeaderPage
                   ? "text-[#eaa298]"
-                  : "text-[#d64f39]"
+                  : "text-[#1e3a8a]"
             )}
           />
         </motion.button>
@@ -251,7 +316,7 @@ const Navbar1 = () => {
                     ? "text-[#e03d90]"
                     : isWeddingsHeaderPage
                       ? "text-[#eaa298]"
-                      : "text-[#d64f39]"
+                      : "text-[#1e3a8a]"
                 )}
               />
             </motion.button>
@@ -273,7 +338,7 @@ const Navbar1 = () => {
                         ? "text-[#e03d90] hover:opacity-80"
                         : isWeddingsHeaderPage
                           ? "text-[#eaa298] hover:text-[#eaa298]/80"
-                          : "text-[#d64f39] hover:text-[#d64f39]/80"
+                          : "text-[#1e3a8a] hover:text-[#1e3a8a]/80"
                     )}
                     onClick={toggleMenu}
                   >
@@ -333,7 +398,24 @@ const Navbar1 = () => {
                     <Button
                       asChild
                       size="lg"
-                      className="w-full rounded-full bg-[#d64f39] text-white hover:bg-[#d64f39]/90 shadow-red-200/50"
+                      className={cn(
+                        "w-full rounded-full text-white shadow-red-200/50",
+                        isHomePage
+                          ? "bg-corporate-blue hover:bg-corporate-blue/90"
+                          : isEventsPage
+                            ? "bg-red-600 hover:bg-red-600/90"
+                            : isOffersPage
+                              ? "bg-[#1e3a8a] hover:bg-[#1e3a8a]/90"
+                              : isDestinationsPage
+                                ? "bg-[#d64f39] hover:bg-[#c2410c]"
+                                : isPackagesPage
+                                  ? "bg-[#d64f39] hover:bg-[#c2410c]"
+                                  : isAboutPage
+                                    ? "bg-corporate-blue hover:bg-corporate-blue/90"
+                                    : isContactPage
+                                      ? "bg-corporate-blue hover:bg-corporate-blue/90"
+                                      : "bg-[#1e3a8a] hover:bg-[#1e3a8a]/90"
+                      )}
                       onClick={toggleMenu}
                     >
                       <Link href="/sign-in">Sign In</Link>

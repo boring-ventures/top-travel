@@ -125,30 +125,32 @@ export default function ContactPage() {
                   {[
                     {
                       city: "Santa Cruz",
-                      region: "Centro de Bolivia",
                       address:
                         "Av. San Martín, Equipetrol Norte Calle F, Edificio Aquarius 7",
                       mapsLink: "https://maps.app.goo.gl/3CyKDKuUwj7GJ8Yf7",
                     },
                     {
                       city: "Santa Cruz",
-                      region: "Centro de Bolivia",
                       address:
                         "3er Anillo Externo, Av. Marcelo Terceros, Esq. Salvador Pitare",
                       mapsLink: "https://maps.app.goo.gl/R88tDzsuBTFgR4M47",
                     },
                     {
                       city: "Cochabamba",
-                      region: "Valle de Bolivia",
                       address: "Av. Gualberto Villarroel Esquina Av. Oblitas",
                       mapsLink: "https://maps.app.goo.gl/JfN5CKSx5rXgLCsm7",
                     },
                     {
                       city: "La Paz",
-                      region: "Altiplano de Bolivia",
                       address:
                         "Av. José Ballivián, C/20 de Calacoto, Edificio Platinum #1487, Of.01",
                       mapsLink: "https://maps.app.goo.gl/BXcNshfLnZyXrkr3A",
+                    },
+                    {
+                      city: "Oruro",
+                      address:
+                        "Calle Adolfo Mier 851, Cámara Departamental de Hotelería, Piso 1, Oficina 105",
+                      mapsLink: "https://maps.app.goo.gl/hAZKKtJAbr8nRC2e6",
                     },
                   ].map((office, index) => (
                     <Card
@@ -168,9 +170,6 @@ export default function ContactPage() {
                               {office.city}
                             </Badge>
                           </div>
-                          <p className="text-sm text-gray-600 mb-2">
-                            {office.region}
-                          </p>
                           <Link
                             href={office.mapsLink}
                             target="_blank"
