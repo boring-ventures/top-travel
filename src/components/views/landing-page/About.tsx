@@ -81,17 +81,17 @@ export default function About() {
   const testimonials = [
     {
       name: "Camila Silva",
-      text: "Nuestra boda en destino fue un sueño hecho realidad. La ceremonia al atardecer en la playa de Cancún fue absolutamente mágica, con el océano como testigo de nuestro amor. Gaby y su equipo organizaron cada detalle a la perfección, desde la decoración hasta la música. Fue el día más hermoso de nuestras vidas.",
+      text: "Nuestra boda en destino fue un sueño hecho realidad. Gaby y su equipo organizaron cada detalle a la perfección.",
       image: "/images/testimonials/1.png",
     },
     {
-      name: "Nicole Green",
-      text: "Nuestro viaje familiar a Europa con Gaby Top Travel fue una experiencia inolvidable. Con 8 personas de diferentes edades, pensamos que sería complicado, pero el equipo se encargó de todo. Desde los hoteles hasta las actividades, cada detalle fue perfecto. Pudimos disfrutar cada momento sin preocupaciones.",
+      name: "Paola M.",
+      text: "Mil gracias a todo el equipo de Gaby, por su paciencia, cuidado y cariño para nuestras niñas.",
       image: "/images/testimonials/2.png",
     },
     {
-      name: "Estefanía Maceda",
-      text: "Mi viaje de quinceañera por Europa fue una aventura increíble por diferentes destinos. Visitamos París, Roma y Barcelona, cada ciudad más fascinante que la anterior. Aunque vivimos en La Paz y Gaby Top Travel opera desde Santa Cruz, la coordinación fue perfecta. Conocimos monumentos históricos, museos increíbles y culturas fascinantes. Fue el viaje de mis sueños.",
+      name: "Carol",
+      text: "Muchas gracias! Gracias por cuidar de nuestras niñas y por todo el cariño!",
       image: "/images/testimonials/3.JPG",
     },
   ];

@@ -67,18 +67,32 @@ export default async function QuinceaneraPage() {
         publishedAt: true,
       },
     }),
-    prisma.testimonial.findMany({
-      where: { status: "PUBLISHED" },
-      orderBy: { createdAt: "desc" },
-      take: 3,
-      select: {
-        id: true,
-        authorName: true,
-        location: true,
-        rating: true,
-        content: true,
+    // Testimonios específicos para quinceañeras
+    Promise.resolve([
+      {
+        id: "quince-1",
+        authorName: "Kattia Barrancos",
+        location: null,
+        rating: 5,
+        content: "Gracias por todo!! Hermosa experiencia para las niñas!!",
       },
-    }),
+      {
+        id: "quince-2",
+        authorName: "Mariana Uriona",
+        location: null,
+        rating: 5,
+        content:
+          "Gracias por todo! María José muy feliz, se lleva una hermosa experiencia y nuevas amigas",
+      },
+      {
+        id: "quince-3",
+        authorName: "Mariele Prado",
+        location: null,
+        rating: 5,
+        content:
+          "Muy agradecida con cada una de las tías que cuidaron a las princesas. Muchas gracias por la paciencia y amor de las niñas. Gracias",
+      },
+    ]),
     prisma.whatsAppTemplate.findMany({
       where: { usageType: "QUINCEANERA" as any },
       select: {
