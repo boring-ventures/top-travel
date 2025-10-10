@@ -207,7 +207,7 @@ export default async function FixedDeparturesPage({
                       template="Hola! Quiero información sobre salidas fijas próximas."
                       variables={{}}
                       label="Consultar por WhatsApp"
-                      phone="+59175651451"
+                      phone="+59169671000"
                       size="default"
                     />
                   </div>

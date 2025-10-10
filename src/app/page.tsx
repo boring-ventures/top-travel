@@ -724,12 +724,12 @@ export default async function Home() {
         {/* Glass CTA Section */}
         <GlassCTA
           whatsappTemplate={whatsappTemplates.general}
-          fallbackPhone="+59175651451"
+          fallbackPhone="+59169671000"
         />
       </main>
 
       <PersistentWhatsAppCTA
-        whatsappTemplate={undefined}
+        whatsappTemplate={whatsappTemplates.general}
         fallbackPhone="+59169671000"
       />
       <Footer />

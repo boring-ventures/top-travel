@@ -716,7 +716,7 @@ export default async function QuinceaneraPage() {
                     if (quoteTemplate?.phoneNumbers?.[0]) {
                       return quoteTemplate.phoneNumbers[0];
                     }
-                    return "+59177355906";
+                    return "+59169671000";
                   })()}
                   size="lg"
                   className="h-14 px-8 bg-[#e03d90] hover:bg-[#c8327a] text-white border-0 text-lg font-semibold rounded-xl"
@@ -730,10 +730,8 @@ export default async function QuinceaneraPage() {
       <Footer />
       <PinkWhatsAppCTA
         variant="quinceanera"
-        whatsappTemplate={
-          quinceaneraTemplates.find((t) => t.isDefault) || undefined
-        }
-        phone="+59177355906"
+        whatsappTemplate={undefined}
+        phone="+59169671000"
       />
     </div>
   );

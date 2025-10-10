@@ -31,15 +31,19 @@ export default function PinkWhatsAppCTA({
   };
 
   const getPhone = () => {
-    // Prioritize template's phone number over fallback
+    // If phone is explicitly provided, always use it
+    if (phone) {
+      return phone;
+    }
+    // Otherwise, use template's phone number
     if (whatsappTemplate?.phoneNumber) {
       return whatsappTemplate.phoneNumber;
     }
     if (whatsappTemplate?.phoneNumbers?.[0]) {
       return whatsappTemplate.phoneNumbers[0];
     }
-    // Use fallback phone if no template phone available
-    return phone;
+    // Fallback to empty string if no phone available
+    return "";
   };
 
   return (

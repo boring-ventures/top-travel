@@ -78,7 +78,7 @@ export default function ContactPage() {
                     template="Hola! Quiero más información sobre sus servicios de viajes."
                     variables={{}}
                     label="Chatear por WhatsApp"
-                    phone="+59175651451"
+                    phone="+59169671000"
                     size="sm"
                     className="w-full bg-green-600 hover:bg-green-700 text-white"
                   />
@@ -98,10 +98,10 @@ export default function ContactPage() {
                     Lunes a Viernes: 8:30 AM - 6:30 PM
                   </p>
                   <Link
-                    href="tel:+59175651451"
+                    href="tel:+59169671000"
                     className="inline-block text-lg font-semibold text-gray-900 hover:text-blue-600 transition-colors duration-200 bg-gray-50 hover:bg-blue-50 px-4 py-2 rounded-lg"
                   >
-                    +591 756 514 51
+                    +591 696 710 00
                   </Link>
                 </div>
               </Card>
@@ -338,7 +338,7 @@ export default function ContactPage() {
                   template="Hola, quiero una consulta gratuita para mi próximo viaje — {url}"
                   variables={{ url: "" }}
                   label="Consulta Gratuita"
-                  phone="+59175651451"
+                  phone="+59169671000"
                   size="lg"
                   className="h-14 px-8 bg-wine hover:bg-wine/90 text-white border-0 text-lg font-semibold rounded-xl"
                 />

@@ -746,7 +746,7 @@ export default async function WeddingsPage() {
                     if (defaultTemplate?.phoneNumbers?.[0]) {
                       return defaultTemplate.phoneNumbers[0];
                     }
-                    return "+59163051335";
+                    return "+59169671000";
                   })()}
                   size="lg"
                   className="h-14 px-8 bg-[#eaa298] hover:bg-[#d49186] text-white border-0 text-lg font-semibold rounded-xl"
@@ -774,10 +774,8 @@ export default async function WeddingsPage() {
       <Footer />
       <PinkWhatsAppCTA
         variant="weddings"
-        whatsappTemplate={
-          weddingTemplates.find((t) => t.isDefault) || undefined
-        }
-        phone="+59163051335"
+        whatsappTemplate={undefined}
+        phone="+59169671000"
       />
     </div>
   );
