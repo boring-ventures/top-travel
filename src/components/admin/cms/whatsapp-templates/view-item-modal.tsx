@@ -14,7 +14,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, Loader2, ExternalLink, MessageSquare } from "lucide-react";
 import { buildWhatsAppUrl } from "@/lib/utils";
-import { getRandomPhoneNumber } from "@/lib/whatsapp-utils";
+import { getRandomPhoneNumber } from "@/lib/whatsapp-client-utils";
 import { WhatsAppTemplateBuilder } from "@/components/admin/forms/whatsapp-template-builder";
 
 interface ViewItemModalProps {

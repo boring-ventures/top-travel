@@ -17,12 +17,24 @@ const prisma =
         url: process.env.DATABASE_URL,
       },
     },
-    // Disable query engine logging in production
+    // Enhanced error handling and connection management
+    errorFormat: "pretty",
+    // Connection timeout settings
     ...(process.env.NODE_ENV === "production" && {
       log: ["error"],
     }),
   });
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+// Connection error handling is managed by Prisma internally
+
+// Graceful shutdown handling
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = prisma;
+} else {
+  // In production, handle graceful shutdown
+  process.on("beforeExit", async () => {
+    await prisma.$disconnect();
+  });
+}
 
 export default prisma;

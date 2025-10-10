@@ -112,7 +112,9 @@ const Navbar1 = () => {
                   ? "#e03d90"
                   : isWeddingsHeaderPage
                     ? "#eaa298"
-                    : "#d64f39"
+                    : isPackagesPage
+                      ? "#1e496e"
+                      : "#d64f39"
               }
               size="md"
               className="transition-all duration-300 ease-out"
@@ -147,7 +149,7 @@ const Navbar1 = () => {
                             : isDestinationsPage
                               ? "text-[#d64f39] hover:text-[#d64f39]/80"
                               : isPackagesPage
-                                ? "text-[#d64f39] hover:text-[#d64f39]/80"
+                                ? "text-[#1e496e] hover:text-[#1e496e]/80"
                                 : isAboutPage
                                   ? "text-corporate-blue hover:text-corporate-blue/80"
                                   : isContactPage
@@ -172,7 +174,7 @@ const Navbar1 = () => {
                               : isDestinationsPage
                                 ? "bg-[#d64f39]"
                                 : isPackagesPage
-                                  ? "bg-[#d64f39]"
+                                  ? "bg-[#1e496e]"
                                   : isAboutPage
                                     ? "bg-corporate-blue"
                                     : isContactPage
@@ -244,7 +246,7 @@ const Navbar1 = () => {
                       : isDestinationsPage
                         ? "bg-[#d64f39] hover:bg-[#c2410c]"
                         : isPackagesPage
-                          ? "bg-[#d64f39] hover:bg-[#c2410c]"
+                          ? "bg-[#1e496e] hover:bg-[#1a3d5a]"
                           : isAboutPage
                             ? "bg-corporate-blue hover:bg-corporate-blue/90"
                             : isContactPage
@@ -409,7 +411,7 @@ const Navbar1 = () => {
                               : isDestinationsPage
                                 ? "bg-[#d64f39] hover:bg-[#c2410c]"
                                 : isPackagesPage
-                                  ? "bg-[#d64f39] hover:bg-[#c2410c]"
+                                  ? "bg-[#1e496e] hover:bg-[#1a3d5a]"
                                   : isAboutPage
                                     ? "bg-corporate-blue hover:bg-corporate-blue/90"
                                     : isContactPage

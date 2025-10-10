@@ -13,7 +13,10 @@ type AuthContextType = {
   isLoading: boolean;
   isProfileLoading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<{
+  signUp: (
+    email: string,
+    password: string
+  ) => Promise<{
     success: boolean;
     user: User | null;
     session: Session | null;
@@ -62,32 +65,62 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  // Fetch profile function with timeout
+  // Fetch profile function with enhanced timeout and retry logic
   const fetchProfile = async (userId: string) => {
     try {
       setIsProfileLoading(true);
 
-      // Add timeout to prevent hanging
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+      // Enhanced timeout with retry logic
+      const maxRetries = 3;
+      let lastError: any;
 
-      const response = await fetch(`/api/profile`, {
-        signal: controller.signal,
-        headers: {
-          "Cache-Control": "max-age=300", // Cache for 5 minutes
-        },
-      });
+      for (let attempt = 0; attempt < maxRetries; attempt++) {
+        try {
+          // Add timeout to prevent hanging
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 8000); // Increased to 8 seconds
 
-      clearTimeout(timeoutId);
+          const response = await fetch(`/api/profile`, {
+            signal: controller.signal,
+            headers: {
+              "Cache-Control": "max-age=300", // Cache for 5 minutes
+            },
+          });
 
-      if (!response.ok) throw new Error("Failed to fetch profile");
-      const data = await response.json();
-      setProfile(data.profile);
-    } catch (error) {
-      if (error instanceof Error && error.name === "AbortError") {
-        console.warn("Profile fetch timed out");
+          clearTimeout(timeoutId);
+
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+
+          const data = await response.json();
+          setProfile(data.profile);
+          return; // Success, exit retry loop
+        } catch (error) {
+          lastError = error;
+
+          // Don't retry on client errors (4xx) or if it's the last attempt
+          if (error instanceof Error && error.message.includes("HTTP 4")) {
+            break;
+          }
+
+          if (attempt < maxRetries - 1) {
+            // Wait before retrying with exponential backoff
+            const delay = 1000 * Math.pow(2, attempt);
+            console.warn(
+              `Profile fetch failed (attempt ${attempt + 1}/${maxRetries}), retrying in ${delay}ms:`,
+              error instanceof Error ? error.message : String(error)
+            );
+            await new Promise((resolve) => setTimeout(resolve, delay));
+          }
+        }
+      }
+
+      // If all retries failed, handle the error
+      if (lastError instanceof Error && lastError.name === "AbortError") {
+        console.warn("Profile fetch timed out after all retries");
       } else {
-        console.error("Error fetching profile:", error);
+        console.error("Error fetching profile after all retries:", lastError);
       }
       setProfile(null);
     } finally {
@@ -120,7 +153,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (session?.user) {
           setUser(session.user);
           setSession(session);
-          console.log("Auth initialized from session - user:", session.user.email);
+          console.log(
+            "Auth initialized from session - user:",
+            session.user.email
+          );
           setIsLoading(false);
 
           // Fetch profile in background

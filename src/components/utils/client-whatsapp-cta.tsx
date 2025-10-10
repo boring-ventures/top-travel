@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { WhatsAppCTA } from "./whatsapp-cta";
-import { getRandomPhoneNumber } from "@/lib/whatsapp-utils";
+import { getRandomPhoneNumber } from "@/lib/whatsapp-client-utils";
 
 interface ClientWhatsAppCTAProps {
   template?: string;

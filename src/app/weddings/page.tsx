@@ -25,70 +25,53 @@ import {
 import { DepartmentType } from "@prisma/client";
 
 export default async function WeddingsPage() {
-  const [
-    dept,
-    weddingDestinations,
-    weddingBlogPosts,
-    testimonials,
-    weddingTemplates,
-  ] = await Promise.all([
-    prisma.department.findUnique({ where: { type: "WEDDINGS" } }),
-    prisma.weddingDestination.findMany({
-      where: { isFeatured: true },
-      take: 6,
-      select: {
-        id: true,
-        slug: true,
-        name: true,
-        title: true,
-        summary: true,
-        description: true,
-        heroImageUrl: true,
-        gallery: true,
-        location: true,
-      },
-    }),
-    prisma.blogPost.findMany({
-      where: {
-        type: "WEDDINGS",
-        status: "PUBLISHED",
-      },
-      orderBy: { publishedAt: "desc" },
-      take: 3,
-      select: {
-        id: true,
-        slug: true,
-        title: true,
-        excerpt: true,
-        heroImageUrl: true,
-        author: true,
-        publishedAt: true,
-      },
-    }),
-    prisma.testimonial.findMany({
-      where: { status: "PUBLISHED" },
-      orderBy: { createdAt: "desc" },
-      take: 3,
-      select: {
-        id: true,
-        authorName: true,
-        location: true,
-        rating: true,
-        content: true,
-      },
-    }),
-    prisma.whatsAppTemplate.findMany({
-      where: { usageType: "WEDDINGS" as any },
-      select: {
-        id: true,
-        name: true,
-        templateBody: true,
-        phoneNumber: true,
-        phoneNumbers: true,
-        isDefault: true,
-      },
-    }),
-  ]);
+  const [dept, weddingDestinations, weddingBlogPosts, weddingTemplates] =
+    await Promise.all([
+      prisma.department.findUnique({ where: { type: "WEDDINGS" } }),
+      prisma.weddingDestination.findMany({
+        where: { isFeatured: true },
+        take: 6,
+        select: {
+          id: true,
+          slug: true,
+          name: true,
+          title: true,
+          summary: true,
+          description: true,
+          heroImageUrl: true,
+          gallery: true,
+          location: true,
+        },
+      }),
+      prisma.blogPost.findMany({
+        where: {
+          type: "WEDDINGS",
+          status: "PUBLISHED",
+        },
+        orderBy: { publishedAt: "desc" },
+        take: 3,
+        select: {
+          id: true,
+          slug: true,
+          title: true,
+          excerpt: true,
+          heroImageUrl: true,
+          author: true,
+          publishedAt: true,
+        },
+      }),
+      prisma.whatsAppTemplate.findMany({
+        where: { usageType: "WEDDINGS" as any },
+        select: {
+          id: true,
+          name: true,
+          templateBody: true,
+          phoneNumber: true,
+          phoneNumbers: true,
+          isDefault: true,
+        },
+      }),
+    ]);
 
   const primary = (dept?.themeJson as any)?.primaryColor ?? "#eaa298";
   const accent = (dept?.themeJson as any)?.accentColor ?? "#fcf8fa";
@@ -565,66 +548,130 @@ export default async function WeddingsPage() {
         </section>
 
         {/* Testimonials */}
-        <section className="py-16 bg-white">
+        <section className="py-16 bg-gradient-to-br from-gray-50 via-white to-gray-50 relative overflow-hidden">
+          <div className="absolute inset-0 bg-grid-black/[0.02] -z-10" />
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                Testimonios de{" "}
-                <span className="font-light italic text-[#eaa298]">
-                  Parejas
-                </span>{" "}
-                Felices
+              <div className="inline-flex items-center gap-2 bg-[#eaa298]/10 text-[#eaa298] px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium mb-4 sm:mb-6">
+                <Star className="w-3 h-3 sm:w-4 sm:h-4" />
+                Testimonios
+              </div>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6">
+                Lo que dicen nuestras{" "}
+                <span className="text-[#eaa298] relative">
+                  parejas felices
+                  <div className="absolute -bottom-1 sm:-bottom-2 left-0 right-0 h-0.5 sm:h-1 bg-gradient-to-r from-[#eaa298] to-[#eaa298]/50 rounded-full"></div>
+                </span>
               </h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Lo que dicen nuestras parejas sobre su experiencia con nosotros
+              <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed px-2 sm:px-4">
+                Experiencias reales de parejas que confiaron en nosotros para
+                hacer realidad su boda de destino
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {testimonials.length === 0 ? (
-                <div className="col-span-full text-center py-12">
-                  <div className="bg-gray-50 p-8 rounded-lg">
-                    <Star className="h-12 w-12 mx-auto mb-4 text-[#eaa298]" />
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                      Testimonios próximamente
-                    </h3>
-                    <p className="text-gray-600">
-                      Pronto compartiremos las experiencias de nuestras parejas
-                      felices
-                    </p>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Testimonio Camila Silva */}
+              <Card className="p-6 sm:p-8 hover:shadow-lg transition-all duration-300 border-0 bg-white/80 backdrop-blur-sm">
+                <div className="flex items-center gap-1 mb-4">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      className="h-4 w-4 text-[#eaa298]"
+                      fill="currentColor"
+                    />
+                  ))}
+                </div>
+                <p className="text-gray-700 mb-6 italic text-sm sm:text-base leading-relaxed">
+                  "Optar por una boda en destino fue la mejor decisión que
+                  tomamos. Nuestra ceremonia en la playa de Cancún al atardecer
+                  fue mágica y llena de emociones. Gracias a Gaby Villegas,
+                  nuestra wedding planner Nahla Yusuf, y su equipo por hacer de
+                  nuestro día un reflejo perfecto de nuestro amor."
+                </p>
+                <div className="border-t border-gray-100 pt-4">
+                  <div className="font-semibold text-gray-900 text-sm sm:text-base">
+                    Camila Silva
+                  </div>
+                  <div className="text-xs sm:text-sm text-gray-500 mt-1">
+                    Boda en Cancún
                   </div>
                 </div>
-              ) : (
-                testimonials.map((testimonial) => (
-                  <Card key={testimonial.id} className="p-6">
-                    <div className="flex items-center gap-1 mb-4">
-                      {Array.from({
-                        length: Math.max(
-                          0,
-                          Math.min(5, testimonial.rating ?? 5)
-                        ),
-                      }).map((_, i) => (
-                        <Star
-                          key={i}
-                          className="h-4 w-4 text-[#eaa298]"
-                          fill="currentColor"
-                        />
-                      ))}
-                    </div>
-                    <p className="text-gray-700 mb-4 italic">
-                      "{testimonial.content}"
-                    </p>
-                    <div className="text-sm text-gray-600">
-                      <div className="font-semibold">
-                        {testimonial.authorName}
-                      </div>
-                      {testimonial.location && (
-                        <div>{testimonial.location}</div>
-                      )}
-                    </div>
-                  </Card>
-                ))
-              )}
+              </Card>
+
+              {/* Testimonio Nicole Green */}
+              <Card className="p-6 sm:p-8 hover:shadow-lg transition-all duration-300 border-0 bg-white/80 backdrop-blur-sm">
+                <div className="flex items-center gap-1 mb-4">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      className="h-4 w-4 text-[#eaa298]"
+                      fill="currentColor"
+                    />
+                  ))}
+                </div>
+                <p className="text-gray-700 mb-6 italic text-sm sm:text-base leading-relaxed">
+                  "Gracias a Gaby y su equipo, nuestra boda destino fue
+                  perfecta, sin complicaciones, incluso con 65 invitados de
+                  diferentes países. Nahla Yussuf se encargó de todos los
+                  detalles, permitiéndonos disfrutar de cada momento. Estamos
+                  muy agradecidos por todo su apoyo y coordinación para una boda
+                  perfecta."
+                </p>
+                <div className="border-t border-gray-100 pt-4">
+                  <div className="font-semibold text-gray-900 text-sm sm:text-base">
+                    Nicole Green
+                  </div>
+                  <div className="text-xs sm:text-sm text-gray-500 mt-1">
+                    Boda internacional
+                  </div>
+                </div>
+              </Card>
+
+              {/* Testimonio Estefanía Maceda */}
+              <Card className="p-6 sm:p-8 hover:shadow-lg transition-all duration-300 border-0 bg-white/80 backdrop-blur-sm">
+                <div className="flex items-center gap-1 mb-4">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      className="h-4 w-4 text-[#eaa298]"
+                      fill="currentColor"
+                    />
+                  ))}
+                </div>
+                <p className="text-gray-700 mb-6 italic text-sm sm:text-base leading-relaxed">
+                  "Estamos muy agradecidos con Gaby Top y su equipo por su
+                  eficiencia y compromiso. Aunque vivimos en La Paz y ellos
+                  operaban desde Santa Cruz, la coordinación fue impecable. Nos
+                  casamos en Cancún por la Iglesia Católica y fue una
+                  experiencia excepcional para nosotros y nuestros invitados.
+                  ¡Los recuerdos son inolvidables!"
+                </p>
+                <div className="border-t border-gray-100 pt-4">
+                  <div className="font-semibold text-gray-900 text-sm sm:text-base">
+                    Estefanía Maceda
+                  </div>
+                  <div className="text-xs sm:text-sm text-gray-500 mt-1">
+                    Boda religiosa en Cancún
+                  </div>
+                </div>
+              </Card>
+            </div>
+
+            {/* Call to action adicional */}
+            <div className="text-center mt-12">
+              <div className="bg-gradient-to-r from-[#eaa298]/10 to-[#eaa298]/5 rounded-2xl p-6 sm:p-8 max-w-4xl mx-auto">
+                <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
+                  ¿Lista para ser nuestra próxima pareja feliz?
+                </h3>
+                <p className="text-gray-600 mb-6 text-sm sm:text-base">
+                  Únete a estas parejas que confiaron en nosotros y vivieron la
+                  boda de sus sueños
+                </p>
+                <PinkWhatsAppCTA
+                  whatsappTemplate={weddingTemplates[0]}
+                  variant="weddings"
+                />
+              </div>
             </div>
           </div>
         </section>

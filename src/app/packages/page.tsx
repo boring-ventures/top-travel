@@ -263,8 +263,8 @@ export default async function PackagesPage({
             description="Paquetes personalizados y experiencias únicas diseñadas especialmente para ti. Desde aventuras emocionantes hasta escapadas relajantes."
             animatedWords={["Paquete", "Viaje", "Aventura"]}
             backgroundImage="https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1920&q=80"
-            animatedWordColor="text-[#d64f39]"
-            accentColor="bg-[#d64f39]"
+            animatedWordColor="text-white"
+            accentColor="bg-[#1e496e]"
           />
         </section>
 
@@ -345,7 +345,7 @@ export default async function PackagesPage({
                 <div>
                   <Button
                     type="submit"
-                    className="h-12 w-full bg-[#d64f39] text-white hover:bg-[#c2410c] transition-colors duration-200 font-medium rounded-xl"
+                    className="h-12 w-full bg-[#1e496e] text-white hover:bg-[#1a3d5a] transition-colors duration-200 font-medium rounded-xl"
                   >
                     Buscar Paquetes »
                   </Button>
