@@ -17,23 +17,36 @@ export default async function WeddingDestinationPage({
 }: WeddingDestinationPageProps) {
   const { slug } = await params;
 
-  const destination = await prisma.weddingDestination.findUnique({
-    where: { slug },
-    select: {
-      id: true,
-      slug: true,
-      name: true,
-      title: true,
-      summary: true,
-      description: true,
-      heroImageUrl: true,
-      gallery: true,
-      location: true,
-      isFeatured: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-  });
+  const [destination, weddingTemplates] = await Promise.all([
+    prisma.weddingDestination.findUnique({
+      where: { slug },
+      select: {
+        id: true,
+        slug: true,
+        name: true,
+        title: true,
+        summary: true,
+        description: true,
+        heroImageUrl: true,
+        gallery: true,
+        location: true,
+        isFeatured: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    }),
+    prisma.whatsAppTemplate.findMany({
+      where: { usageType: "WEDDINGS" as any },
+      select: {
+        id: true,
+        name: true,
+        templateBody: true,
+        phoneNumber: true,
+        phoneNumbers: true,
+        isDefault: true,
+      },
+    }),
+  ]);
 
   if (!destination) {
     notFound();
@@ -169,9 +182,38 @@ export default async function WeddingDestinationPage({
                       </p>
 
                       <WhatsAppCTA
-                        template={`Hola! Me interesa conocer más sobre bodas en {destination}. ¿Podrían darme más información?`}
+                        template={
+                          weddingTemplates.find((t) => t.isDefault)
+                            ?.templateBody ||
+                          `Hola! Me interesa conocer más sobre bodas en {destination}. ¿Podrían darme más información?`
+                        }
                         variables={{ destination: destination.name }}
                         label="Consultar Ahora"
+                        phone={(() => {
+                          const defaultTemplate = weddingTemplates.find(
+                            (t) => t.isDefault
+                          );
+
+                          // Si hay números en el array phoneNumbers, seleccionar uno aleatorio
+                          if (
+                            defaultTemplate?.phoneNumbers &&
+                            defaultTemplate.phoneNumbers.length > 0
+                          ) {
+                            const randomIndex = Math.floor(
+                              Math.random() *
+                                defaultTemplate.phoneNumbers.length
+                            );
+                            return defaultTemplate.phoneNumbers[randomIndex];
+                          }
+
+                          // Fallback al phoneNumber individual si existe
+                          if (defaultTemplate?.phoneNumber) {
+                            return defaultTemplate.phoneNumber;
+                          }
+
+                          // Fallback por defecto
+                          return "+59169671000";
+                        })()}
                         className="w-full"
                       />
                     </div>
@@ -222,9 +264,36 @@ export default async function WeddingDestinationPage({
               de ensueño en {destination.name}.
             </p>
             <WhatsAppCTA
-              template={`Hola! Quiero planificar mi boda en {destination}. ¿Podrían ayudarme?`}
+              template={
+                weddingTemplates.find((t) => t.isDefault)?.templateBody ||
+                `Hola! Quiero planificar mi boda en {destination}. ¿Podrían ayudarme?`
+              }
               variables={{ destination: destination.name }}
               label="Comenzar Planificación"
+              phone={(() => {
+                const defaultTemplate = weddingTemplates.find(
+                  (t) => t.isDefault
+                );
+
+                // Si hay números en el array phoneNumbers, seleccionar uno aleatorio
+                if (
+                  defaultTemplate?.phoneNumbers &&
+                  defaultTemplate.phoneNumbers.length > 0
+                ) {
+                  const randomIndex = Math.floor(
+                    Math.random() * defaultTemplate.phoneNumbers.length
+                  );
+                  return defaultTemplate.phoneNumbers[randomIndex];
+                }
+
+                // Fallback al phoneNumber individual si existe
+                if (defaultTemplate?.phoneNumber) {
+                  return defaultTemplate.phoneNumber;
+                }
+
+                // Fallback por defecto
+                return "+59169671000";
+              })()}
               variant="secondary"
               size="lg"
               className="w-full max-w-sm mx-auto"

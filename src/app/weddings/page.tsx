@@ -787,12 +787,24 @@ export default async function WeddingsPage() {
                     const defaultTemplate = weddingTemplates.find(
                       (t) => t.isDefault
                     );
+
+                    // Si hay números en el array phoneNumbers, seleccionar uno aleatorio
+                    if (
+                      defaultTemplate?.phoneNumbers &&
+                      defaultTemplate.phoneNumbers.length > 0
+                    ) {
+                      const randomIndex = Math.floor(
+                        Math.random() * defaultTemplate.phoneNumbers.length
+                      );
+                      return defaultTemplate.phoneNumbers[randomIndex];
+                    }
+
+                    // Fallback al phoneNumber individual si existe
                     if (defaultTemplate?.phoneNumber) {
                       return defaultTemplate.phoneNumber;
                     }
-                    if (defaultTemplate?.phoneNumbers?.[0]) {
-                      return defaultTemplate.phoneNumbers[0];
-                    }
+
+                    // Fallback por defecto
                     return "+59169671000";
                   })()}
                   size="lg"
