@@ -38,6 +38,7 @@ export default async function QuinceaneraPage() {
     prisma.quinceaneraDestination.findMany({
       where: { isFeatured: true },
       take: 6,
+      orderBy: { createdAt: "desc" },
       select: {
         id: true,
         slug: true,
@@ -344,15 +345,47 @@ export default async function QuinceaneraPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 items-stretch">
               {quinceaneraDestinations.length === 0 ? (
                 <div className="col-span-full text-center py-12">
-                  <div className="bg-white p-8 rounded-lg shadow-sm">
-                    <MapPin className="h-16 w-16 mx-auto mb-4 text-[#e03d90]" />
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                      Destinos próximamente
+                  <div className="bg-gradient-to-br from-[#e03d90]/5 to-[#e03d90]/10 p-8 rounded-lg shadow-sm border border-[#e03d90]/20">
+                    <div className="flex items-center justify-center mb-4">
+                      <Crown className="h-16 w-16 text-[#e03d90]" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                      Destinos especiales para{" "}
+                      <span className="text-[#e03d90]">quinceañeras</span>
                     </h3>
-                    <p className="text-gray-600">
-                      Estamos preparando destinos especiales para quinceañeras.
-                      Contáctanos para conocer nuestras opciones disponibles.
+                    <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+                      Estamos preparando destinos mágicos especialmente
+                      diseñados para celebrar quinceañeras inolvidables.
+                      Mientras tanto, contáctanos para conocer nuestras opciones
+                      personalizadas disponibles.
                     </p>
+                    <div className="flex justify-center">
+                      <WhatsAppCTA
+                        template={
+                          quinceaneraTemplates.find(
+                            (t) => t.name === "Quinceañera Consultation"
+                          )?.templateBody ||
+                          "Hola, quiero información sobre destinos para quinceañeras — {url}"
+                        }
+                        variables={{ url: "" }}
+                        label="Consultar destinos disponibles"
+                        phone={(() => {
+                          const consultationTemplate =
+                            quinceaneraTemplates.find(
+                              (t) => t.name === "Quinceañera Consultation"
+                            );
+                          if (consultationTemplate?.phoneNumber) {
+                            return consultationTemplate.phoneNumber;
+                          }
+                          if (consultationTemplate?.phoneNumbers?.[0]) {
+                            return consultationTemplate.phoneNumbers[0];
+                          }
+                          return "+59169671000";
+                        })()}
+                        size="lg"
+                        className="h-12 px-6 bg-[#e03d90] hover:bg-[#c8327a] text-white border-0 font-semibold rounded-lg"
+                      />
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -379,9 +412,11 @@ export default async function QuinceaneraPage() {
                       <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-2">
                         {dest.title || dest.name}
                       </h3>
-                      <p className="text-sm md:text-base text-gray-600 mb-4">
+                      <p className="text-sm md:text-base text-gray-600 mb-4 line-clamp-3">
                         {dest.summary ||
-                          dest.description ||
+                          (dest.description && dest.description.length > 150
+                            ? dest.description.substring(0, 150) + "..."
+                            : dest.description) ||
                           "Destino perfecto para tu quinceañera de ensueño"}
                       </p>
                       <div className="mt-auto">
@@ -744,8 +779,23 @@ export default async function QuinceaneraPage() {
       <Footer />
       <PinkWhatsAppCTA
         variant="quinceanera"
-        whatsappTemplate={undefined}
-        phone="+59169671000"
+        whatsappTemplate={
+          quinceaneraTemplates.find(
+            (t) => t.name === "Quinceañera Consultation"
+          ) || quinceaneraTemplates.find((t) => t.isDefault)
+        }
+        phone={(() => {
+          const consultationTemplate = quinceaneraTemplates.find(
+            (t) => t.name === "Quinceañera Consultation"
+          );
+          if (consultationTemplate?.phoneNumber) {
+            return consultationTemplate.phoneNumber;
+          }
+          if (consultationTemplate?.phoneNumbers?.[0]) {
+            return consultationTemplate.phoneNumbers[0];
+          }
+          return "+59169671000";
+        })()}
       />
     </div>
   );
