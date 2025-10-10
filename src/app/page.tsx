@@ -729,8 +729,8 @@ export default async function Home() {
       </main>
 
       <PersistentWhatsAppCTA
-        whatsappTemplate={whatsappTemplates.general}
-        fallbackPhone="+59175651451"
+        whatsappTemplate={undefined}
+        fallbackPhone="+59169671000"
       />
       <Footer />
     </div>
