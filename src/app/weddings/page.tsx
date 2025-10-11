@@ -24,6 +24,10 @@ import {
 
 import { DepartmentType } from "@prisma/client";
 
+// Force dynamic rendering to fetch fresh data on every request
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function WeddingsPage() {
   const [dept, weddingDestinations, weddingBlogPosts, weddingTemplates] =
     await Promise.all([
@@ -783,29 +787,17 @@ export default async function WeddingsPage() {
                   }
                   variables={{ url: "" }}
                   label="Cotiza HOY tu boda"
+                  phoneNumbers={(() => {
+                    const defaultTemplate = weddingTemplates.find(
+                      (t) => t.isDefault
+                    );
+                    return defaultTemplate?.phoneNumbers || [];
+                  })()}
                   phone={(() => {
                     const defaultTemplate = weddingTemplates.find(
                       (t) => t.isDefault
                     );
-
-                    // Si hay números en el array phoneNumbers, seleccionar uno aleatorio
-                    if (
-                      defaultTemplate?.phoneNumbers &&
-                      defaultTemplate.phoneNumbers.length > 0
-                    ) {
-                      const randomIndex = Math.floor(
-                        Math.random() * defaultTemplate.phoneNumbers.length
-                      );
-                      return defaultTemplate.phoneNumbers[randomIndex];
-                    }
-
-                    // Fallback al phoneNumber individual si existe
-                    if (defaultTemplate?.phoneNumber) {
-                      return defaultTemplate.phoneNumber;
-                    }
-
-                    // Fallback por defecto
-                    return "+59169671000";
+                    return defaultTemplate?.phoneNumber || "+59169671000";
                   })()}
                   size="lg"
                   className="h-14 px-8 bg-[#eaa298] hover:bg-[#d49186] text-white border-0 text-lg font-semibold rounded-xl"

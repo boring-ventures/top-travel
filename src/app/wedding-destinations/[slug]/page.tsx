@@ -189,30 +189,17 @@ export default async function WeddingDestinationPage({
                         }
                         variables={{ destination: destination.name }}
                         label="Consultar Ahora"
+                        phoneNumbers={(() => {
+                          const defaultTemplate = weddingTemplates.find(
+                            (t) => t.isDefault
+                          );
+                          return defaultTemplate?.phoneNumbers || [];
+                        })()}
                         phone={(() => {
                           const defaultTemplate = weddingTemplates.find(
                             (t) => t.isDefault
                           );
-
-                          // Si hay números en el array phoneNumbers, seleccionar uno aleatorio
-                          if (
-                            defaultTemplate?.phoneNumbers &&
-                            defaultTemplate.phoneNumbers.length > 0
-                          ) {
-                            const randomIndex = Math.floor(
-                              Math.random() *
-                                defaultTemplate.phoneNumbers.length
-                            );
-                            return defaultTemplate.phoneNumbers[randomIndex];
-                          }
-
-                          // Fallback al phoneNumber individual si existe
-                          if (defaultTemplate?.phoneNumber) {
-                            return defaultTemplate.phoneNumber;
-                          }
-
-                          // Fallback por defecto
-                          return "+59169671000";
+                          return defaultTemplate?.phoneNumber || "+59169671000";
                         })()}
                         className="w-full"
                       />
@@ -270,29 +257,17 @@ export default async function WeddingDestinationPage({
               }
               variables={{ destination: destination.name }}
               label="Comenzar Planificación"
+              phoneNumbers={(() => {
+                const defaultTemplate = weddingTemplates.find(
+                  (t) => t.isDefault
+                );
+                return defaultTemplate?.phoneNumbers || [];
+              })()}
               phone={(() => {
                 const defaultTemplate = weddingTemplates.find(
                   (t) => t.isDefault
                 );
-
-                // Si hay números en el array phoneNumbers, seleccionar uno aleatorio
-                if (
-                  defaultTemplate?.phoneNumbers &&
-                  defaultTemplate.phoneNumbers.length > 0
-                ) {
-                  const randomIndex = Math.floor(
-                    Math.random() * defaultTemplate.phoneNumbers.length
-                  );
-                  return defaultTemplate.phoneNumbers[randomIndex];
-                }
-
-                // Fallback al phoneNumber individual si existe
-                if (defaultTemplate?.phoneNumber) {
-                  return defaultTemplate.phoneNumber;
-                }
-
-                // Fallback por defecto
-                return "+59169671000";
+                return defaultTemplate?.phoneNumber || "+59169671000";
               })()}
               variant="secondary"
               size="lg"

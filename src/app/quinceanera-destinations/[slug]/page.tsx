@@ -184,28 +184,23 @@ export default async function QuinceaneraDestinationPage({
 
                       <WhatsAppCTA
                         template={
-                          quinceaneraTemplates.find(
-                            (t) => t.name === "Quinceañera Consultation"
-                          )?.templateBody ||
+                          quinceaneraTemplates.find((t) => t.isDefault)
+                            ?.templateBody ||
                           `Hola! Me interesa conocer más sobre quinceañeras en {destination}. ¿Podrían darme más información?`
                         }
                         variables={{ destination: destination.name }}
                         label="Consultar Ahora"
-                        phone={(() => {
-                          const consultationTemplate =
-                            quinceaneraTemplates.find(
-                              (t) => t.name === "Quinceañera Consultation"
-                            );
-                          return (
-                            consultationTemplate?.phoneNumber || "+59177355906"
-                          );
-                        })()}
                         phoneNumbers={(() => {
-                          const consultationTemplate =
-                            quinceaneraTemplates.find(
-                              (t) => t.name === "Quinceañera Consultation"
-                            );
-                          return consultationTemplate?.phoneNumbers || [];
+                          const defaultTemplate = quinceaneraTemplates.find(
+                            (t) => t.isDefault
+                          );
+                          return defaultTemplate?.phoneNumbers || [];
+                        })()}
+                        phone={(() => {
+                          const defaultTemplate = quinceaneraTemplates.find(
+                            (t) => t.isDefault
+                          );
+                          return defaultTemplate?.phoneNumber || "+59177355906";
                         })()}
                         className="w-full"
                       />
@@ -258,24 +253,23 @@ export default async function QuinceaneraDestinationPage({
             </p>
             <WhatsAppCTA
               template={
-                quinceaneraTemplates.find(
-                  (t) => t.name === "Quinceañera Quote Request"
-                )?.templateBody ||
+                quinceaneraTemplates.find((t) => t.isDefault)
+                  ?.templateBody ||
                 `Hola! Quiero planificar mi quinceañera en {destination}. ¿Podrían ayudarme?`
               }
               variables={{ destination: destination.name }}
               label="Comenzar Planificación"
-              phone={(() => {
-                const quoteTemplate = quinceaneraTemplates.find(
-                  (t) => t.name === "Quinceañera Quote Request"
-                );
-                return quoteTemplate?.phoneNumber || "+59177355906";
-              })()}
               phoneNumbers={(() => {
-                const quoteTemplate = quinceaneraTemplates.find(
-                  (t) => t.name === "Quinceañera Quote Request"
+                const defaultTemplate = quinceaneraTemplates.find(
+                  (t) => t.isDefault
                 );
-                return quoteTemplate?.phoneNumbers || [];
+                return defaultTemplate?.phoneNumbers || [];
+              })()}
+              phone={(() => {
+                const defaultTemplate = quinceaneraTemplates.find(
+                  (t) => t.isDefault
+                );
+                return defaultTemplate?.phoneNumber || "+59177355906";
               })()}
               variant="secondary"
               size="lg"

@@ -26,6 +26,10 @@ import {
 
 import { DepartmentType } from "@prisma/client";
 
+// Force dynamic rendering to fetch fresh data on every request
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function QuinceaneraPage() {
   const [
     dept,
@@ -362,28 +366,23 @@ export default async function QuinceaneraPage() {
                     <div className="flex justify-center">
                       <WhatsAppCTA
                         template={
-                          quinceaneraTemplates.find(
-                            (t) => t.name === "Quinceañera Consultation"
-                          )?.templateBody ||
+                          quinceaneraTemplates.find((t) => t.isDefault)
+                            ?.templateBody ||
                           "Hola, quiero información sobre destinos para quinceañeras — {url}"
                         }
                         variables={{ url: "" }}
                         label="Consultar destinos disponibles"
-                        phone={(() => {
-                          const consultationTemplate =
-                            quinceaneraTemplates.find(
-                              (t) => t.name === "Quinceañera Consultation"
-                            );
-                          return (
-                            consultationTemplate?.phoneNumber || "+59177355906"
-                          );
-                        })()}
                         phoneNumbers={(() => {
-                          const consultationTemplate =
-                            quinceaneraTemplates.find(
-                              (t) => t.name === "Quinceañera Consultation"
-                            );
-                          return consultationTemplate?.phoneNumbers || [];
+                          const defaultTemplate = quinceaneraTemplates.find(
+                            (t) => t.isDefault
+                          );
+                          return defaultTemplate?.phoneNumbers || [];
+                        })()}
+                        phone={(() => {
+                          const defaultTemplate = quinceaneraTemplates.find(
+                            (t) => t.isDefault
+                          );
+                          return defaultTemplate?.phoneNumber || "+59177355906";
                         })()}
                         size="lg"
                         className="h-12 px-6 bg-[#e03d90] hover:bg-[#c8327a] text-white border-0 font-semibold rounded-lg"
@@ -751,24 +750,23 @@ export default async function QuinceaneraPage() {
               <div className="flex justify-center">
                 <WhatsAppCTA
                   template={
-                    quinceaneraTemplates.find(
-                      (t) => t.name === "Quinceañera Quote Request"
-                    )?.templateBody ||
+                    quinceaneraTemplates.find((t) => t.isDefault)
+                      ?.templateBody ||
                     "Hola, quiero cotizar mi quinceañera de destino — {url}"
                   }
                   variables={{ url: "" }}
                   label="Cotiza HOY tu quinceañera"
-                  phone={(() => {
-                    const quoteTemplate = quinceaneraTemplates.find(
-                      (t) => t.name === "Quinceañera Quote Request"
-                    );
-                    return quoteTemplate?.phoneNumber || "+59177355906";
-                  })()}
                   phoneNumbers={(() => {
-                    const quoteTemplate = quinceaneraTemplates.find(
-                      (t) => t.name === "Quinceañera Quote Request"
+                    const defaultTemplate = quinceaneraTemplates.find(
+                      (t) => t.isDefault
                     );
-                    return quoteTemplate?.phoneNumbers || [];
+                    return defaultTemplate?.phoneNumbers || [];
+                  })()}
+                  phone={(() => {
+                    const defaultTemplate = quinceaneraTemplates.find(
+                      (t) => t.isDefault
+                    );
+                    return defaultTemplate?.phoneNumber || "+59177355906";
                   })()}
                   size="lg"
                   className="h-14 px-8 bg-[#e03d90] hover:bg-[#c8327a] text-white border-0 text-lg font-semibold rounded-xl"

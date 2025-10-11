@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { buildWhatsAppUrl, getRandomPhoneNumber } from "@/lib/utils";
+import { buildWhatsAppUrl } from "@/lib/utils";
 import { getPersistedUtm } from "./utm-provider";
 
 type WhatsAppCTAProps = {
@@ -38,13 +38,22 @@ export function WhatsAppCTA({
 }: WhatsAppCTAProps) {
   const defaultPhone = process.env.NEXT_PUBLIC_WHATSAPP_PHONE || "";
 
-  // Get the phone number to use (random selection happens on click)
-  const getPhoneNumber = () => {
-    // Prioritize phoneNumbers array for random selection
+  // Get deterministic phone number for initial SSR/hydration (no random selection)
+  const getDeterministicPhoneNumber = () => {
+    // Use first number from array, or single phone, or default
     if (phoneNumbers && phoneNumbers.length > 0) {
-      return getRandomPhoneNumber(phoneNumbers);
+      return phoneNumbers[0]; // Always use first number for SSR consistency
     }
-    // Fallback to single phone number
+    if (phone) return phone;
+    return defaultPhone;
+  };
+
+  // Get random phone number (for client-side clicks only)
+  const getRandomPhoneNumber = () => {
+    if (phoneNumbers && phoneNumbers.length > 0) {
+      const randomIndex = Math.floor(Math.random() * phoneNumbers.length);
+      return phoneNumbers[randomIndex];
+    }
     if (phone) return phone;
     return defaultPhone;
   };
@@ -55,7 +64,7 @@ export function WhatsAppCTA({
       ...variables,
       url: "",
     };
-    return buildWhatsAppUrl(getPhoneNumber(), template, initialVariables, {
+    return buildWhatsAppUrl(getDeterministicPhoneNumber(), template, initialVariables, {
       utm: {
         source: "site",
         medium: "whatsapp",
@@ -80,7 +89,7 @@ export function WhatsAppCTA({
     };
 
     const enhanced = buildWhatsAppUrl(
-      getPhoneNumber(),
+      getDeterministicPhoneNumber(), // Use deterministic for hydration consistency
       template,
       enhancedVariables,
       {
@@ -112,7 +121,7 @@ export function WhatsAppCTA({
       };
 
       const newHref = buildWhatsAppUrl(
-        getPhoneNumber(),
+        getRandomPhoneNumber(), // Random selection on each click
         template,
         enhancedVariables,
         {
