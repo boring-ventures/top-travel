@@ -27,7 +27,7 @@ import {
 import { DepartmentType } from "@prisma/client";
 
 // Force dynamic rendering to fetch fresh data on every request
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function QuinceaneraPage() {
@@ -129,7 +129,7 @@ export default async function QuinceaneraPage() {
             subtitle="en el destino de tus sueños"
             description="Transforma tu celebración de 15 años en una experiencia mágica que combina tradición, aventura y momentos inolvidables. Nosotros nos encargamos de todos los detalles para que tú solo te preocupes por brillar."
             animatedWords={["Mágica", "Única", "Perfecta"]}
-            backgroundImage="/images/hero/quince.webp"
+            backgroundImage="/images/hero/quince.png"
             animatedWordColor="text-[#e03d90]"
             accentColor="bg-[#e03d90]"
           />

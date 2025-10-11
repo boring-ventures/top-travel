@@ -25,7 +25,7 @@ import {
 import { DepartmentType } from "@prisma/client";
 
 // Force dynamic rendering to fetch fresh data on every request
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function WeddingsPage() {
@@ -96,7 +96,7 @@ export default async function WeddingsPage() {
             description="Transforma tu día especial en una experiencia única que combina romance, aventura y momentos inolvidables. Nosotros nos encargamos de todos los detalles para que tú solo te preocupes por disfrutar."
             animatedWords={["Romántica", "Mágica", "Perfecta"]}
             //use the image in images/hero/wedding.jpg
-            backgroundImage="/images/hero/wedding.jpg"
+            backgroundImage="/images/hero/wedding.png"
             animatedWordColor="text-[#eaa298]"
             accentColor="bg-[#eaa298]"
           />
