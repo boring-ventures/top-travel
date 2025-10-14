@@ -780,8 +780,16 @@ export default async function QuinceaneraPage() {
       <Footer />
       <PinkWhatsAppCTA
         variant="quinceanera"
-        whatsappTemplate={undefined}
-        phone="+59169671000"
+        whatsappTemplate={(() => {
+          const defaultTemplate = quinceaneraTemplates.find((t) => t.isDefault);
+          return defaultTemplate
+            ? {
+                templateBody: defaultTemplate.templateBody,
+                phoneNumber: defaultTemplate.phoneNumber,
+                phoneNumbers: defaultTemplate.phoneNumbers,
+              }
+            : undefined;
+        })()}
       />
     </div>
   );

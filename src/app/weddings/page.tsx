@@ -825,8 +825,16 @@ export default async function WeddingsPage() {
       <Footer />
       <PinkWhatsAppCTA
         variant="weddings"
-        whatsappTemplate={undefined}
-        phone="+59169671000"
+        whatsappTemplate={(() => {
+          const defaultTemplate = weddingTemplates.find((t) => t.isDefault);
+          return defaultTemplate
+            ? {
+                templateBody: defaultTemplate.templateBody,
+                phoneNumber: defaultTemplate.phoneNumber,
+                phoneNumbers: defaultTemplate.phoneNumbers,
+              }
+            : undefined;
+        })()}
       />
     </div>
   );
