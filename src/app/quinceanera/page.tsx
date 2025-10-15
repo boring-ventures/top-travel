@@ -76,26 +76,35 @@ export default async function QuinceaneraPage() {
     Promise.resolve([
       {
         id: "quince-1",
-        authorName: "Kattia Barrancos",
+        authorName: "ETMO",
         location: null,
         rating: 5,
-        content: "Gracias por todo!! Hermosa experiencia para las niñas!!",
+        content:
+          "Querida Gaby y a todo su gran equipo, quiero agradecer de corazón por toda la paciencia y dedicación con todas las niñas. La experiencia de conocer el Viejo mundo a esta edad sin duda fue un sueño hecho realidad para ellas. No solo vuelven encantadas de tan bellos lugares que conocieron, sino sobre todo con la mente más abierta y la visión más clara para comerse el mundo! 31 niñas que se fueron conociendo en el camino en un viaje que pasó de ser extraordinario a ser inolvidable para ellas.",
       },
       {
         id: "quince-2",
-        authorName: "Mariana Uriona",
+        authorName: "Sofia",
         location: null,
         rating: 5,
         content:
-          "Gracias por todo! María José muy feliz, se lleva una hermosa experiencia y nuevas amigas",
+          "Yo le agradezco mucho por hacer realidad un principio mi sueño desde aquella vez que vi a su madre en el periódico hablando sobre los tours de 15 años luego ya fue el sueño de mis hijas recuerdo bien cuando me llamaron de Miami diciéndome mai queremos ir al tour de Europa También, gracias Sra. Gaby a usted y a todo su equipo.",
       },
       {
         id: "quince-3",
-        authorName: "Mariele Prado",
+        authorName: "Lulu",
         location: null,
         rating: 5,
         content:
-          "Muy agradecida con cada una de las tías que cuidaron a las princesas. Muchas gracias por la paciencia y amor de las niñas. Gracias",
+          "Agradecer a la agencia de viajes Gaby Top por haber hecho de este viaje una experiencia inolvidable para nuestras niñas..., estoy segura que los bonitos momentos que las hicieron pasar, nunca lo olvidarán y quedarán para siempre en sus recuerdos. GRACIAS....!!!",
+      },
+      {
+        id: "quince-4",
+        authorName: "Ponch",
+        location: null,
+        rating: 5,
+        content:
+          "MUCHAS GRACIAS Gaby por todo y más por traer a nuestros tesoros como dijo, sin un cabello menos ni uno más. Y por la confianza desde un principio cuando salieron de viaje la información oportuna nos dio la confianza de estar tranquilos.",
       },
     ]),
     prisma.whatsAppTemplate.findMany({
@@ -597,7 +606,7 @@ export default async function QuinceaneraPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {testimonials.length === 0 ? (
                 <div className="col-span-full text-center py-12">
                   <div className="bg-white p-8 rounded-lg">
