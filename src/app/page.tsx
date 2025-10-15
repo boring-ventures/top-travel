@@ -25,6 +25,10 @@ export const metadata = {
   icons: { icon: "/favicon.ico" },
 };
 
+// Force dynamic rendering to fetch fresh data on every request
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 // Fallback images for different categories - using placeholder API
 const FALLBACK_IMAGES = {
   events: "/api/placeholder/400/300",

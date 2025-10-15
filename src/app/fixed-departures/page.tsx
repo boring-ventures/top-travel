@@ -28,6 +28,10 @@ import Header from "@/components/views/landing-page/Header";
 import Footer from "@/components/views/landing-page/Footer";
 import { AnimatedHero } from "@/components/ui/animated-hero";
 
+// Force dynamic rendering to fetch fresh data on every request
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 interface FDPageProps {
   searchParams?: Promise<{
     destinationId?: string;

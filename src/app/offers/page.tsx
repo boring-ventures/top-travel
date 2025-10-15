@@ -27,6 +27,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { ClientWhatsAppCTA } from "@/components/utils/client-whatsapp-cta";
 
+// Force dynamic rendering to fetch fresh data on every request
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 // Fallback images for different categories
 const FALLBACK_IMAGES = {
   offers:
