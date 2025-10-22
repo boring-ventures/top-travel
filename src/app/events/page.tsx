@@ -30,6 +30,10 @@ import { ClientWhatsAppCTA } from "@/components/utils/client-whatsapp-cta";
 import { ShineBorder } from "@/components/magicui/shine-border";
 import { EventsList } from "@/components/views/events/EventsList";
 
+// Force dynamic rendering to fetch fresh data on every request
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 // Fallback images for different categories
 const FALLBACK_IMAGES = {
   concerts:

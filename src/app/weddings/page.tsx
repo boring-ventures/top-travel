@@ -596,13 +596,10 @@ export default async function WeddingsPage() {
                   <div className="font-semibold text-gray-900 text-sm sm:text-base">
                     Camila Silva
                   </div>
-                  <div className="text-xs sm:text-sm text-gray-500 mt-1">
-                    Boda en Cancún
-                  </div>
                 </div>
               </Card>
 
-              {/* Testimonio Nicole Green */}
+              {/* Testimonio Bianka Uribe */}
               <Card className="p-6 sm:p-8 hover:shadow-lg transition-all duration-300 border-0 bg-white/80 backdrop-blur-sm">
                 <div className="flex items-center gap-1 mb-4">
                   {Array.from({ length: 5 }).map((_, i) => (
@@ -614,19 +611,21 @@ export default async function WeddingsPage() {
                   ))}
                 </div>
                 <p className="text-gray-700 mb-6 italic text-sm sm:text-base leading-relaxed">
-                  "Gracias a Gaby y su equipo, nuestra boda destino fue
-                  perfecta, sin complicaciones, incluso con 65 invitados de
-                  diferentes países. Nahla Yussuf se encargó de todos los
-                  detalles, permitiéndonos disfrutar de cada momento. Estamos
-                  muy agradecidos por todo su apoyo y coordinación para una boda
-                  perfecta."
+                  "Querida Gabriela, no quiero que pase más el tiempo sin
+                  agradecerle por la hermosa boda que tuvo mi hija, la hemos
+                  pasado muy bien, tal vez mejor de lo que esperábamos, pero
+                  realmente la pasamos muy bien, fue una linda ceremonia unos
+                  días muy bendecidos para nuestra familia lo cual no tiene
+                  precio, a nombre mío y de mi esposo le hago llegar un
+                  agradecimiento sincero y especial sin antes valorar el trabajo
+                  de Carol que se hizo un gran trabajo y no se descuidó ni un
+                  minuto para que todo salga bien !!! Millón de gracias
+                  Gabriela. Definitivamente seguiré viajando con su agencia !!!
+                  Dios la bendiga siempre"
                 </p>
                 <div className="border-t border-gray-100 pt-4">
                   <div className="font-semibold text-gray-900 text-sm sm:text-base">
-                    Nicole Green
-                  </div>
-                  <div className="text-xs sm:text-sm text-gray-500 mt-1">
-                    Boda internacional
+                    Bianka Uribe
                   </div>
                 </div>
               </Card>
@@ -653,9 +652,6 @@ export default async function WeddingsPage() {
                 <div className="border-t border-gray-100 pt-4">
                   <div className="font-semibold text-gray-900 text-sm sm:text-base">
                     Estefanía Maceda
-                  </div>
-                  <div className="text-xs sm:text-sm text-gray-500 mt-1">
-                    Boda religiosa en Cancún
                   </div>
                 </div>
               </Card>
@@ -825,8 +821,16 @@ export default async function WeddingsPage() {
       <Footer />
       <PinkWhatsAppCTA
         variant="weddings"
-        whatsappTemplate={undefined}
-        phone="+59169671000"
+        whatsappTemplate={(() => {
+          const defaultTemplate = weddingTemplates.find((t) => t.isDefault);
+          return defaultTemplate
+            ? {
+                templateBody: defaultTemplate.templateBody,
+                phoneNumber: defaultTemplate.phoneNumber,
+                phoneNumbers: defaultTemplate.phoneNumbers,
+              }
+            : undefined;
+        })()}
       />
     </div>
   );

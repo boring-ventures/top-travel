@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { WhatsAppCTA } from "./whatsapp-cta";
-import { getRandomPhoneNumber } from "@/lib/whatsapp-client-utils";
 
 interface ClientWhatsAppCTAProps {
   template?: string;
   variables?: Record<string, string | undefined>;
   label?: string;
   phone?: string;
+  phoneNumbers?: string[];
   campaign?: string;
   content?: string;
   className?: string;
@@ -32,6 +32,7 @@ export function ClientWhatsAppCTA({
   variables,
   label,
   phone,
+  phoneNumbers,
   campaign,
   content,
   className,
@@ -39,18 +40,11 @@ export function ClientWhatsAppCTA({
   size,
   whatsappTemplate,
 }: ClientWhatsAppCTAProps) {
-  const [clientPhone, setClientPhone] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
-    // Get random phone number on client side
-    const randomPhone = getRandomPhoneNumber(whatsappTemplate as any);
-    setClientPhone(randomPhone);
-  }, [whatsappTemplate]);
-
-  // Use the phone prop if provided, otherwise use the random phone from template
-  const finalPhone = phone || clientPhone;
+  }, []);
 
   // Don't render until client-side to avoid hydration mismatch
   if (!isClient) {
@@ -60,6 +54,7 @@ export function ClientWhatsAppCTA({
         variables={variables || {}}
         label={label}
         phone={phone || whatsappTemplate?.phoneNumber || ""}
+        phoneNumbers={phoneNumbers || whatsappTemplate?.phoneNumbers}
         campaign={campaign}
         content={content}
         className={className}
@@ -74,7 +69,8 @@ export function ClientWhatsAppCTA({
       template={template || whatsappTemplate?.templateBody || ""}
       variables={variables || {}}
       label={label}
-      phone={finalPhone || undefined}
+      phone={phone}
+      phoneNumbers={phoneNumbers || whatsappTemplate?.phoneNumbers}
       campaign={campaign}
       content={content}
       className={className}

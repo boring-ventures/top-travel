@@ -80,19 +80,52 @@ export default function About() {
 
   const testimonials = [
     {
-      name: "Camila Silva",
-      text: "Nuestra boda en destino fue un sueño hecho realidad. Gaby y su equipo organizaron cada detalle a la perfección.",
-      image: "/images/testimonials/1.png",
+      id: "about-1",
+      authorName: "ETMO",
+      location: null,
+      rating: 5,
+      content:
+        "Querida Gaby y a todo su gran equipo, quiero agradecer de corazón por toda la paciencia y dedicación con todas las niñas. La experiencia de conocer el Viejo mundo a esta edad sin duda fue un sueño hecho realidad para ellas. No solo vuelven encantadas de tan bellos lugares que conocieron, sino sobre todo con la mente más abierta y la visión más clara para comerse el mundo! 31 niñas que se fueron conociendo en el camino en un viaje que pasó de ser extraordinario a ser inolvidable para ellas.",
     },
     {
-      name: "Paola M.",
-      text: "Mil gracias a todo el equipo de Gaby, por su paciencia, cuidado y cariño para nuestras niñas.",
-      image: "/images/testimonials/2.png",
+      id: "about-2",
+      authorName: "Camila Silva",
+      location: null,
+      rating: 5,
+      content:
+        "Optar por una boda en destino fue la mejor decisión que tomamos. Nuestra ceremonia en la playa de Cancún al atardecer fue mágica y llena de emociones. Gracias a Gaby Villegas, nuestra wedding planner Nahla Yusuf, y su equipo por hacer de nuestro día un reflejo perfecto de nuestro amor.",
     },
     {
-      name: "Carol",
-      text: "Muchas gracias! Gracias por cuidar de nuestras niñas y por todo el cariño!",
-      image: "/images/testimonials/3.JPG",
+      id: "about-3",
+      authorName: "Bianka Uribe",
+      location: null,
+      rating: 5,
+      content:
+        "Querida Gabriela, no quiero que pase más el tiempo sin agradecerle por la hermosa boda que tuvo mi hija, la hemos pasado muy bien, tal vez mejor de lo que esperábamos, pero realmente la pasamos muy bien, fue una linda ceremonia unos días muy bendecidos para nuestra familia lo cual no tiene precio, a nombre mío y de mi esposo le hago llegar un agradecimiento sincero y especial sin antes valorar el trabajo de Carol que se hizo un gran trabajo y no se descuidó ni un minuto para que todo salga bien !!! Millón de gracias Gabriela. Definitivamente seguiré viajando con su agencia !!! Dios la bendiga siempre",
+    },
+    {
+      id: "about-4",
+      authorName: "Ponch",
+      location: null,
+      rating: 5,
+      content:
+        "MUCHAS GRACIAS Gaby por todo y más por traer a nuestros tesoros como dijo, sin un cabello menos ni uno más. Y por la confianza desde un principio cuando salieron de viaje la información oportuna nos dio la confianza de estar tranquilos.",
+    },
+    {
+      id: "about-5",
+      authorName: "Estefanía Maceda",
+      location: null,
+      rating: 5,
+      content:
+        "Estamos muy agradecidos con Gaby Top y su equipo por su eficiencia y compromiso. Aunque vivimos en La Paz y ellos operaban desde Santa Cruz, la coordinación fue impecable. Nos casamos en Cancún por la Iglesia Católica y fue una experiencia excepcional para nosotros y nuestros invitados. ¡Los recuerdos son inolvidables!",
+    },
+    {
+      id: "about-6",
+      authorName: "Sofia",
+      location: null,
+      rating: 5,
+      content:
+        "Yo le agradezco mucho por hacer realidad un principio mi sueño desde aquella vez que vi a su madre en el periódico hablando sobre los tours de 15 años luego ya fue el sueño de mis hijas recuerdo bien cuando me llamaron de Miami diciéndome mai queremos ir al tour de Europa También, gracias Sra. Gaby a usted y a todo su equipo.",
     },
   ];
 
@@ -479,48 +512,33 @@ export default function About() {
                 Top Travel
               </p>
             </div>
-            <div className="grid md:grid-cols-3 gap-8">
-              {testimonials.map((testimonial, index) => (
-                <div
-                  key={index}
-                  className="group relative bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-3xl p-8 hover:shadow-2xl transition-all duration-500 ease-in-out hover:-translate-y-3 hover:border-wine/20"
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {testimonials.map((testimonial) => (
+                <Card
+                  key={testimonial.id}
+                  className="p-6 hover:shadow-lg transition-shadow duration-300"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-wine/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  <div className="relative">
-                    <div className="flex items-center mb-8">
-                      <div className="relative w-20 h-20 mr-6 group-hover:scale-105 transition-transform duration-500">
-                        <div className="absolute -inset-1 bg-gradient-to-r from-wine/20 to-wine/10 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <Image
-                          src={testimonial.image}
-                          alt={testimonial.name}
-                          fill
-                          className="rounded-full object-cover shadow-lg border-2 border-white group-hover:border-wine/20 transition-colors duration-500"
-                        />
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-corporate-blue text-lg group-hover:text-wine transition-colors duration-300">
-                          {testimonial.name}
-                        </h4>
-                        <div className="flex text-yellow-400 mt-2">
-                          {[...Array(5)].map((_, i) => (
-                            <Star key={i} className="w-5 h-5 fill-current" />
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="relative">
-                      <div className="absolute -top-2 -left-2 text-wine/20 text-4xl font-serif">
-                        "
-                      </div>
-                      <p className="text-gray-600 leading-relaxed italic text-lg relative z-10">
-                        {testimonial.text}
-                      </p>
-                      <div className="absolute -bottom-2 -right-2 text-wine/20 text-4xl font-serif">
-                        "
-                      </div>
-                    </div>
+                  <div className="flex items-center gap-1 mb-4">
+                    {Array.from({
+                      length: Math.max(0, Math.min(5, testimonial.rating ?? 5)),
+                    }).map((_, i) => (
+                      <Star
+                        key={i}
+                        className="h-4 w-4 text-wine"
+                        fill="currentColor"
+                      />
+                    ))}
                   </div>
-                </div>
+                  <p className="text-gray-700 mb-4 italic">
+                    "{testimonial.content}"
+                  </p>
+                  <div className="text-sm text-gray-600">
+                    <div className="font-semibold">
+                      {testimonial.authorName}
+                    </div>
+                    {testimonial.location && <div>{testimonial.location}</div>}
+                  </div>
+                </Card>
               ))}
             </div>
           </div>
