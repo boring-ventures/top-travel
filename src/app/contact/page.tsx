@@ -98,10 +98,10 @@ export default function ContactPage() {
                     Lunes a Viernes: 8:30 AM - 6:30 PM
                   </p>
                   <Link
-                    href="tel:+59169671000"
+                    href="tel:+59175651451"
                     className="inline-block text-lg font-semibold text-gray-900 hover:text-blue-600 transition-colors duration-200 bg-gray-50 hover:bg-blue-50 px-4 py-2 rounded-lg"
                   >
-                    +591 696 710 00
+                    +591 756 514 51
                   </Link>
                 </div>
               </Card>
