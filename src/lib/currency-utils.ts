@@ -28,7 +28,7 @@ export const getCurrencyDisplay = (
  * @returns Formatted price string
  */
 export const formatPriceWithCurrency = (
-  price: number | string | null | undefined,
+  price: any,
   currency: string | null | undefined,
   showFrom: boolean = true
 ): string => {
@@ -37,5 +37,8 @@ export const formatPriceWithCurrency = (
   const currencyDisplay = getCurrencyDisplay(currency);
   const prefix = showFrom ? "Desde " : "";
 
-  return `${prefix}${currencyDisplay} ${price}`;
+  // Handle Prisma Decimal type
+  const priceValue = price.toString ? price.toString() : String(price);
+
+  return `${prefix}${currencyDisplay} ${priceValue}`;
 };
