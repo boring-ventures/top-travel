@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { DollarSign } from "lucide-react";
+import { formatPriceWithCurrency } from "@/lib/currency-utils";
 
 interface PriceDisplayProps {
   price?: number;
@@ -35,8 +36,7 @@ export function PriceDisplay({
     <div className={`flex items-center gap-2 ${className || ""}`}>
       <DollarSign className="h-4 w-4" />
       <span className="font-semibold">
-        {showFrom ? "Desde " : ""}
-        {currency} {price.toString()}
+        {formatPriceWithCurrency(price, currency, showFrom)}
       </span>
     </div>
   );
@@ -63,8 +63,7 @@ export function PriceBadge({
     <Badge
       className={`bg-white/90 text-black hover:bg-white text-xs ${className || ""}`}
     >
-      Desde ${price.toString()}
+      {formatPriceWithCurrency(price, currency, true)}
     </Badge>
   );
 }
-

@@ -1,5 +1,6 @@
 "use client";
 import { useMemo, useState } from "react";
+import { formatPriceWithCurrency } from "@/lib/currency-utils";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useQuery } from "@tanstack/react-query";
@@ -166,8 +167,11 @@ export default function CmsPackagesList() {
                     <td className="px-3 py-2">
                       {p.fromPrice ? (
                         <span className="text-sm font-medium">
-                          {p.currency === "USD" ? "$" : "Bs. "}
-                          {p.fromPrice}
+                          {formatPriceWithCurrency(
+                            p.fromPrice,
+                            p.currency,
+                            false
+                          )}
                         </span>
                       ) : (
                         <span className="text-muted-foreground">—</span>

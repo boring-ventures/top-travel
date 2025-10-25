@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
+import { formatPriceWithCurrency } from "@/lib/currency-utils";
 import Header from "@/components/views/landing-page/Header";
 import Footer from "@/components/views/landing-page/Footer";
 import { PdfSection } from "@/components/ui/pdf-section";
@@ -47,7 +48,11 @@ export default async function OfferPage({ params }: OfferPageProps) {
 
   const formatPrice = (offer: any) => {
     if (offer.package?.fromPrice) {
-      return `Desde $${offer.package.fromPrice}`;
+      return formatPriceWithCurrency(
+        offer.package.fromPrice,
+        offer.package.currency,
+        true
+      );
     }
     return "Consultar precio";
   };

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { formatPriceWithCurrency } from "@/lib/currency-utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -156,8 +157,11 @@ export function ViewEventModal({
                             Precio
                           </div>
                           <div className="text-sm font-medium">
-                            {event.currency === "USD" ? "$" : "Bs. "}
-                            {event.fromPrice}
+                            {formatPriceWithCurrency(
+                              event.fromPrice,
+                              event.currency,
+                              false
+                            )}
                           </div>
                         </div>
                       </div>

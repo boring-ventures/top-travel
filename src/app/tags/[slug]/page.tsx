@@ -1,5 +1,6 @@
 import Link from "next/link";
 import prisma from "@/lib/prisma";
+import { formatPriceWithCurrency } from "@/lib/currency-utils";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -220,7 +221,12 @@ export default async function TagPage({ params }: TagPageProps) {
                           {pkg.fromPrice && (
                             <div className="absolute top-3 right-3">
                               <Badge className="bg-white/90 text-black hover:bg-white text-xs">
-                                Desde ${pkg.fromPrice.toString()}
+                                Desde{" "}
+                                {formatPriceWithCurrency(
+                                  pkg.fromPrice,
+                                  pkg.currency,
+                                  false
+                                )}
                               </Badge>
                             </div>
                           )}

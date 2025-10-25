@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ClientWhatsAppCTA } from "@/components/utils/client-whatsapp-cta";
 import { pageMeta } from "@/lib/seo";
 import { getWhatsAppTemplateByUsage } from "@/lib/whatsapp-utils";
+import { formatPriceWithCurrency } from "@/lib/currency-utils";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -193,8 +194,11 @@ export default async function PackageDetailPage({ params }: Params) {
                           <span className="text-black/60">Precio desde:</span>
                         </div>
                         <span className="text-2xl font-bold text-black/90">
-                          {pkgWithNumbers.currency ?? "USD"}{" "}
-                          {pkgWithNumbers.fromPrice?.toString() ?? "—"}
+                          {formatPriceWithCurrency(
+                            pkgWithNumbers.fromPrice,
+                            pkgWithNumbers.currency,
+                            false
+                          )}
                         </span>
                       </div>
                       <div className="flex items-start gap-2">

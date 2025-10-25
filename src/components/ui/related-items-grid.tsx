@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { MapPin, Package, Plane } from "lucide-react";
+import { formatPriceWithCurrency } from "@/lib/currency-utils";
 import WhatsAppCTA from "@/components/utils/whatsapp-cta";
 
 interface RelatedItem {
@@ -138,7 +139,12 @@ export function RelatedItemsGrid({
                   {item.fromPrice && (
                     <div className="absolute top-3 right-3">
                       <Badge className="bg-white/90 text-black hover:bg-white text-xs">
-                        Desde ${item.fromPrice.toString()}
+                        Desde{" "}
+                        {formatPriceWithCurrency(
+                          item.fromPrice,
+                          item.currency,
+                          false
+                        )}
                       </Badge>
                     </div>
                   )}
@@ -188,4 +194,3 @@ export function RelatedItemsGrid({
     </div>
   );
 }
-

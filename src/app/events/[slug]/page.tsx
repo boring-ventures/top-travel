@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
+import { formatPriceWithCurrency } from "@/lib/currency-utils";
 import Header from "@/components/views/landing-page/Header";
 import Footer from "@/components/views/landing-page/Footer";
 import { PdfSection } from "@/components/ui/pdf-section";
@@ -61,7 +62,7 @@ export default async function EventPage({ params }: EventPageProps) {
 
   const formatPrice = (event: any) => {
     if (event.fromPrice) {
-      return `Desde $${event.fromPrice} ${event.currency || "USD"}`;
+      return formatPriceWithCurrency(event.fromPrice, event.currency, true);
     }
     return "Consultar precio";
   };

@@ -1,5 +1,6 @@
 "use client";
 import { useMemo, useState } from "react";
+import { formatPriceWithCurrency } from "@/lib/currency-utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -228,8 +229,11 @@ export default function CmsEventsList() {
                     <td className="px-3 py-2">
                       {e.fromPrice ? (
                         <span className="text-sm font-medium">
-                          {e.currency === "USD" ? "$" : "Bs. "}
-                          {e.fromPrice}
+                          {formatPriceWithCurrency(
+                            e.fromPrice,
+                            e.currency,
+                            false
+                          )}
                         </span>
                       ) : (
                         <span className="text-muted-foreground text-sm">—</span>

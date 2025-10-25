@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { getWhatsAppTemplateByUsage } from "@/lib/whatsapp-utils";
+import { formatPriceWithCurrency } from "@/lib/currency-utils";
 import Header from "@/components/views/landing-page/Header";
 import Footer from "@/components/views/landing-page/Footer";
 import { AnimatedHero } from "@/components/ui/animated-hero";
@@ -203,7 +204,11 @@ export default async function OffersPage({ searchParams }: OffersPageProps) {
 
   const formatPrice = (offer: any) => {
     if (offer.package?.fromPrice) {
-      return `Desde $${offer.package.fromPrice}`;
+      return formatPriceWithCurrency(
+        offer.package.fromPrice,
+        offer.package.currency,
+        true
+      );
     }
     return "Consultar precio";
   };

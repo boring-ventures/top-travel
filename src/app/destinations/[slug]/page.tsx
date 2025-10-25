@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
+import { formatPriceWithCurrency } from "@/lib/currency-utils";
 import Header from "@/components/views/landing-page/Header";
 import Footer from "@/components/views/landing-page/Footer";
 import { PdfSection } from "@/components/ui/pdf-section";
@@ -390,8 +391,12 @@ export default async function DestinationPage({
                                   </div>
                                   {event.fromPrice && (
                                     <p className="text-sm font-medium text-green-600 mt-1">
-                                      Desde ${event.fromPrice.toString()}{" "}
-                                      {event.currency}
+                                      Desde{" "}
+                                      {formatPriceWithCurrency(
+                                        event.fromPrice,
+                                        event.currency,
+                                        false
+                                      )}
                                     </p>
                                   )}
                                 </div>

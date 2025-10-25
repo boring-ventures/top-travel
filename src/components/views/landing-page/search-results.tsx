@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { formatPriceWithCurrency } from "@/lib/currency-utils";
 import {
   Package,
   MapPin,
@@ -70,7 +71,7 @@ const getTypeLabel = (type: SearchResult["type"]) => {
 
 const formatPrice = (price?: number, currency?: string) => {
   if (!price) return null;
-  return `${currency || "$"}${price.toLocaleString()}`;
+  return formatPriceWithCurrency(price, currency, false);
 };
 
 const formatDate = (dateString?: string) => {

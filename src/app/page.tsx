@@ -16,6 +16,7 @@ import { World } from "@/components/ui/globe-client";
 import { RotatingWords } from "@/components/ui/rotating-words";
 import prisma from "@/lib/prisma";
 import { filterValidImageUrls } from "@/lib/utils";
+import { formatPriceWithCurrency } from "@/lib/currency-utils";
 import { getWhatsAppTemplateByUsage } from "@/lib/whatsapp-utils";
 
 export const metadata = {
@@ -598,7 +599,7 @@ export default async function Home() {
         ),
         href: `/packages/${pkg.slug}`,
         price: pkg.fromPrice
-          ? `${pkg.currency || "USD"} ${pkg.fromPrice.toLocaleString()}`
+          ? formatPriceWithCurrency(pkg.fromPrice, pkg.currency, false)
           : "Consultar precio",
         location: pkg.packageDestinations?.[0]?.destination
           ? `${pkg.packageDestinations[0].destination.city}, ${pkg.packageDestinations[0].destination.country}`

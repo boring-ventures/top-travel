@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { getWhatsAppTemplateByUsage } from "@/lib/whatsapp-utils";
+import { formatPriceWithCurrency } from "@/lib/currency-utils";
 import Header from "@/components/views/landing-page/Header";
 import Footer from "@/components/views/landing-page/Footer";
 import { AnimatedHero } from "@/components/ui/animated-hero";
@@ -226,7 +227,9 @@ export default async function PackagesPage({
               {pkg.title}
             </h2>
             <p className="text-white text-lg font-normal drop-shadow-lg">
-              {pkg.fromPrice ? `Desde $${pkg.fromPrice}` : "Consultar precio"}
+              {pkg.fromPrice
+                ? formatPriceWithCurrency(pkg.fromPrice, pkg.currency, true)
+                : "Consultar precio"}
             </p>
             <Button
               asChild
@@ -450,7 +453,11 @@ export default async function PackagesPage({
                               <div className="flex justify-between items-center">
                                 <p className="text-white text-lg font-bold">
                                   {p.fromPrice
-                                    ? `Desde $${p.fromPrice}`
+                                    ? formatPriceWithCurrency(
+                                        p.fromPrice,
+                                        p.currency,
+                                        true
+                                      )
                                     : "Consultar precio"}
                                 </p>
                                 <div className="text-white">

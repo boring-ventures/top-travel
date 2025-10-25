@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { isValidImageUrl } from "@/lib/utils";
+import { formatPriceWithCurrency } from "@/lib/currency-utils";
 import { Button } from "@/components/ui/button";
 import { ClientWhatsAppCTA } from "@/components/utils/client-whatsapp-cta";
 
@@ -69,7 +70,11 @@ export default function FeaturedOffers({
                 ? `/packages/${o.package.slug}`
                 : o.externalUrl || "#";
               const price = o.package?.fromPrice
-                ? `Desde $${o.package.fromPrice}`
+                ? formatPriceWithCurrency(
+                    o.package.fromPrice,
+                    o.package.currency,
+                    true
+                  )
                 : "Consultar precio";
 
               return (
