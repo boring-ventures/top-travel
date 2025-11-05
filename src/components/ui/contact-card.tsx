@@ -44,7 +44,7 @@ export function ContactCard({
           className="w-full"
         />
 
-        {(showShareButton || showSaveButton) && (
+        {/*{(showShareButton || showSaveButton) && (
           <div className="flex gap-2">
             {showSaveButton && (
               <Button variant="outline" size="sm" className="flex-1">
@@ -59,9 +59,8 @@ export function ContactCard({
               </Button>
             )}
           </div>
-        )}
+        )}*/}
       </div>
     </Card>
   );
 }
-

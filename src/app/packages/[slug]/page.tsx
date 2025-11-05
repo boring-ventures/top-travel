@@ -421,7 +421,7 @@ export default async function PackageDetailPage({ params }: Params) {
                     size="lg"
                     className="w-full"
                   />
-
+                  {/*
                   <div className="flex gap-2">
                     <Button
                       variant="outline"
@@ -440,6 +440,7 @@ export default async function PackageDetailPage({ params }: Params) {
                       Compartir
                     </Button>
                   </div>
+                  */}
                 </div>
               </Card>
 

@@ -75,7 +75,7 @@ export function EventsList({
     if (event.destination?.city && event.destination?.country) {
       return `${event.destination.city}, ${event.destination.country}`;
     }
-    return "Bolivia";
+    return "";
   };
 
   // Helper function to get fallback image based on category

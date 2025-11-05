@@ -179,7 +179,7 @@ export default async function PackagesPage({
   };
 
   const getDestinationsText = (packageDestinations: any[]) => {
-    if (!packageDestinations.length) return "Bolivia";
+    if (!packageDestinations.length) return "";
     return packageDestinations
       .slice(0, 2)
       .map((pd) => pd.destination.city)
@@ -445,7 +445,7 @@ export default async function PackagesPage({
                                         .slice(0, 2)
                                         .map((pd: any) => pd.destination.city)
                                         .join(", ")
-                                    : "Bolivia"}
+                                    : ""}
                                 </p>
                               </div>
                             </div>

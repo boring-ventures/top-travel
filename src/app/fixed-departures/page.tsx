@@ -294,7 +294,7 @@ export default async function FixedDeparturesPage({
                                 <p className="text-white">
                                   {f.destination
                                     ? `${f.destination.city}, ${f.destination.country}`
-                                    : "Bolivia"}
+                                    : ""}
                                 </p>
                               </div>
                             </div>

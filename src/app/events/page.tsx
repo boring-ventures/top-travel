@@ -264,7 +264,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
     if (event.destination?.city && event.destination?.country) {
       return `${event.destination.city}, ${event.destination.country}`;
     }
-    return "Bolivia";
+    return "";
   };
 
   // Prepare events data for the new component

@@ -603,7 +603,7 @@ export default async function Home() {
           : "Consultar precio",
         location: pkg.packageDestinations?.[0]?.destination
           ? `${pkg.packageDestinations[0].destination.city}, ${pkg.packageDestinations[0].destination.country}`
-          : "Bolivia",
+          : "",
         isTop: true,
       })),
     },
