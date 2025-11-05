@@ -24,6 +24,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { DestinationSelectInfinite } from "@/components/admin/forms/destination-select-infinite";
 import {
   Dialog,
   DialogContent,
@@ -74,7 +75,6 @@ export function EditEventModal({
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(false);
   const [event, setEvent] = useState<any>(null);
-  const [destinations, setDestinations] = useState<any[]>([]);
   const [statusOpen, setStatusOpen] = useState(false);
   const [selectedPdfFile, setSelectedPdfFile] = useState<File | null>(null);
   const { toast } = useToast();
@@ -102,18 +102,6 @@ export function EditEventModal({
       tagIds: [],
     },
   });
-
-  // Fetch destinations when modal opens
-  useEffect(() => {
-    if (open) {
-      (async () => {
-        try {
-          const d = await fetch("/api/destinations").then((r) => r.json());
-          setDestinations(d.items ?? d ?? []);
-        } catch {}
-      })();
-    }
-  }, [open]);
 
   // Fetch event data when modal opens
   useEffect(() => {
@@ -353,57 +341,10 @@ export function EditEventModal({
               </div>
               <div className="space-y-2">
                 <Label>Destino</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className="w-full justify-between"
-                    >
-                      {form.watch("destinationId")
-                        ? destinations.find(
-                            (destination) =>
-                              destination.id === form.watch("destinationId")
-                          )?.city +
-                          ", " +
-                          destinations.find(
-                            (destination) =>
-                              destination.id === form.watch("destinationId")
-                          )?.country
-                        : "Seleccionar destino..."}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-full p-0">
-                    <Command>
-                      <CommandInput placeholder="Buscar destino..." />
-                      <CommandList>
-                        <CommandEmpty>No se encontraron destinos.</CommandEmpty>
-                        <CommandGroup>
-                          {destinations.map((destination) => (
-                            <CommandItem
-                              key={destination.id}
-                              value={`${destination.city} ${destination.country}`}
-                              onSelect={() => {
-                                form.setValue("destinationId", destination.id);
-                              }}
-                            >
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  form.watch("destinationId") === destination.id
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                )}
-                              />
-                              {destination.city}, {destination.country}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
+                <DestinationSelectInfinite
+                  value={form.watch("destinationId")}
+                  onChange={(value) => form.setValue("destinationId", value)}
+                />
               </div>
             </div>
 
