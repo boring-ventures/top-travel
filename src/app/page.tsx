@@ -450,6 +450,7 @@ export default async function Home() {
           exclusions: true,
           startDate: true,
           endDate: true,
+          venue: true,
           destination: {
             select: {
               city: true,
@@ -480,6 +481,12 @@ export default async function Home() {
           exclusions: true,
           startDate: true,
           endDate: true,
+          destination: {
+            select: {
+              city: true,
+              country: true,
+            },
+          },
         },
       }),
       prisma.tag.findMany({
@@ -614,11 +621,15 @@ export default async function Home() {
       items: featuredEvents.slice(0, 6).map((event) => ({
         id: event.id,
         title: event.title,
-        description: `${event.locationCity}, ${event.locationCountry}`,
+        description: event.destination
+          ? `${event.destination.city}, ${event.destination.country}`
+          : event.venue || "Ubicación por confirmar",
         imageUrl: getValidImageUrl(event.heroImageUrl, FALLBACK_IMAGES.events),
         href: `/events/${event.slug}`,
         price: "Consultar precio",
-        location: `${event.locationCity}, ${event.locationCountry}`,
+        location: event.destination
+          ? `${event.destination.city}, ${event.destination.country}`
+          : event.venue || "Ubicación por confirmar",
         amenities: event.amenities || [],
         exclusions: event.exclusions || [],
       })),
@@ -634,7 +645,9 @@ export default async function Home() {
         imageUrl: getValidImageUrl(dep.heroImageUrl, FALLBACK_IMAGES.mountains),
         href: `/fixed-departures/${dep.slug}`,
         price: "Consultar precio",
-        location: "Bolivia",
+        location: dep.destination
+          ? `${dep.destination.city}, ${dep.destination.country}`
+          : "Ubicación por confirmar",
         amenities: dep.amenities || [],
         exclusions: dep.exclusions || [],
       })),
