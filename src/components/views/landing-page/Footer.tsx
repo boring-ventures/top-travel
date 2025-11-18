@@ -114,7 +114,7 @@ export default function Footer() {
                 <Mail className="h-5 w-5 text-gray-400 mt-0.5 flex-shrink-0" />
                 <div>
                   <div className="text-gray-300 text-sm font-medium">
-                    info@gabytoptravel.com
+                    Elias@gabytoptravel.com
                   </div>
                   <div className="text-gray-400 text-xs">Atención general</div>
                 </div>
