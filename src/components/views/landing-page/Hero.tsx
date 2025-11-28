@@ -354,6 +354,7 @@ export default function Hero({ items = [], tags = [] }: HeroProps) {
         {/* Overlays for readability */}
         <div className="absolute inset-0 bg-gradient-to-br from-black/30 via-black/50 to-black/50" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-white/15" />
       </div>
 
       {/* Foreground content */}
@@ -364,8 +365,21 @@ export default function Hero({ items = [], tags = [] }: HeroProps) {
         <div className="w-full mx-auto px-0">
           {/* Hero content - centered vertically and horizontally */}
           <div className="flex flex-col items-center justify-center gap-6 sm:gap-8 text-center">
-            {/* Main title */}
+            {/* Black Friday Badge */}
             <BlurFade>
+              <div className="relative w-48 h-48 sm:w-48 sm:h-48 md:w-52 md:h-52 -mt-32 sm:-mt-12 md:-mt-16">
+                <Image
+                  src="/images/hero/black_friday.png"
+                  alt="Black Friday - Noviembre"
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </div>
+            </BlurFade>
+
+            {/* Main title */}
+            <BlurFade delay={0.04}>
               <div className="flex flex-col gap-2 text-center px-4">
                 <h1
                   className="text-white text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-tight tracking-[-0.033em] drop-shadow-lg uppercase"
